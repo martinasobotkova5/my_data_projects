@@ -21,11 +21,12 @@ print("Generováno skriptem `src/vypocty.py` z `src/params.py`. Hodnoty ≈ jsou
 # 1 ---------------------------------------------------------------------------
 print("## 1. Zatížení a síly\n")
 print(f"Plocha vzorku ⌀{p.D_SAMPLE:g}: {A:.0f} mm² = {A / 100:.2f} cm².\n")
-head("napětí [kPa]", "síla [N]", "závaží na páce 1:10 [kg]", "poznámka")
+head("napětí [kPa]", "síla [N]", "stlačení pružiny [mm]", "poznámka")
 for s in p.SURCHARGES_KPA + (500, 1000, 2000):
     f = s * A / 1000
     note = "varianta A" if s in p.SURCHARGES_KPA else "varianta B (tlak ze zdvihu)"
-    row(s, f"{f:.0f}", f"{f / p.LEVER_RATIO / 9.81:.1f}" if s in p.SURCHARGES_KPA else "–", note)
+    k_ = p.SPRINGS[0][1] if s <= 50 else p.SPRINGS[1][1]
+    row(s, f"{f:.0f}", f"{f / k_:.1f} (k = {k_:g} N/mm)" if s in p.SURCHARGES_KPA else "–", note)
 
 # 2 ---------------------------------------------------------------------------
 print("\n## 2. Tuhost rámu (varianta B, konstantní výška)\n")
@@ -106,7 +107,7 @@ print(f"Zmrznutí vody v pórech na místě: 9 % × θ {p.THETA} × {p.H_SAMPLE:
 # 6 ---------------------------------------------------------------------------
 print("## 6. Siloměry – rozsah a rozlišení\n")
 head("použití", "typ", "rozsah", "1 kPa ≙", "tep. drift nuly (0,02 %FS/10 K) při 20 K")
-for use, typ, fs in (("A: v sérii s pákou", "S-snímač tah/tlak, C3, kompenz. −10…+40 °C", 2000),
+for use, typ, fs in (("A: v sérii s pružinou", "S-snímač tah/tlak, C3, kompenz. −10…+40 °C", 2000),
                      ("B: nahoře", "kompresní (kanystr/sloupek), vysoká tuhost", 20000),
                      ("B: dole pod podstavcem", "kompresní, stejný typ", 20000)):
     drift = 0.0002 * fs * 2
@@ -114,16 +115,16 @@ for use, typ, fs in (("A: v sérii s pákou", "S-snímač tah/tlak, C3, kompenz.
         f"{drift:.1f} N ≈ {drift / A * 1000:.1f} kPa")
 
 # 7 ---------------------------------------------------------------------------
-print("\n## 7. Varianta A2 – přitížení pružinou místo páky\n")
+print("\n## 7. Varianta A – přitížení předepnutou pružinou\n")
 print(f"Pružina ⌀{p.SPRING_D:g} × {p.SPRING_L0:g} mm (ISO 10243) mezi siloměrem a stavěcím šroubem. "
       f"Dovolené stlačení ≈ {p.SPRING_MAX_DEFL * 100:.0f} % L0 = {p.SPRING_MAX_DEFL * p.SPRING_L0:.1f} mm.\n")
 head("pružina", "k [N/mm]", "přitížení [kPa]", "síla [N]", "stlačení [mm]", "Δσ při posunu 0,1 mm [kPa]",
      "Δσ od smrštění rámu [kPa]")
-d_fr = p.ALPHA_AL * p.FRAME_H_A2 * (p.T_WARM - p.T_COLD)
+d_fr = p.ALPHA_AL * p.FRAME_H_A * (p.T_WARM - p.T_COLD)
 for name, k, (lo, hi) in p.SPRINGS:
     for s in (lo, hi):
         f = s * A / 1000
         row(name, f"{k:g}", s, f"{f:.0f}", f"{f / k:.1f}", f"{k * 0.1 / A * 1000:.2f}", f"{k * d_fr / A * 1000:.2f}")
-print(f"\nSmrštění Al sloupů {p.FRAME_H_A2:g} mm při 20 K = {d_fr:.3f} mm. Pružina ho převede jen na malou "
+print(f"\nSmrštění Al sloupů {p.FRAME_H_A:g} mm při 20 K = {d_fr:.3f} mm. Pružina ho převede jen na malou "
       "změnu síly (poslední sloupec), na rozdíl od tuhého rámu varianty B. Stlačení musí zůstat pod dovoleným "
       "– pro 200 kPa vychází těsně, proto „heavy“ pružina 80 N/mm.\n")

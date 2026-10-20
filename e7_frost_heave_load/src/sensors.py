@@ -8,7 +8,7 @@ Specs from manufacturer / distributor pages found by web search (README §7);
 
 # tag: (what it measures, recommended model, short spec, CR1000 connection)
 PICK = {
-    "LC-A": ("load, rig A (lever)", "Interface SSM 2 kN",
+    "LC-A": ("load, rig A (spring)", "Interface SSM 2 kN",
              "S-type, comp. −15…+65 °C, IP67", "DIFF1, BrFull, VX1"),
     "LC-T": ("heave force, rig B top", "HBM C9C/20kN",
              "⌀26×13 mm, 1 mV/V, nom. −10…+70 °C, IP67", "DIFF2, BrFull, VX1"),

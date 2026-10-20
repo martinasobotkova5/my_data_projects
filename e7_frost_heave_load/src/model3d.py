@@ -254,29 +254,9 @@ def _piston_and_sensors(asm, prefix, with_wall_probes, sand=False):
     asm.add(bridge, name=prefix + "Invar/Al LVDT bridge", color=C["invar"])
 
 
-def variant_a(asm, prefix="", multiring=False):
-    frame(asm, prefix)
-    asm.add(cyl(60, H_BOT, 0), name=prefix + "Al spacer (bottom)", color=C["al"])
-    cell_stack(asm, "A", prefix, multiring=multiring)
-    asm.add(box(-25.5, 25.5, -9.5, 9.5, Z_LC, Z_LC + 64), name=prefix + "LC-A Interface SSM 2 kN",
-            color=C["sensor"])
-    z_lev = Z_BEAM + BEAM_H + 15
-    asm.add(cyl(16, z_lev - (Z_LC + 64), Z_LC + 64), name=prefix + "loading rod D16", color=C["steel"])
-    asm.add(box(-40, -20, -20, 20, Z_BEAM + BEAM_H, z_lev), name=prefix + "lever pivot block", color=C["al"])
-    lev_a, lev_l = 30.0, p.LEVER_L
-    xh = lev_l - lev_a
-    asm.add(box(-lev_a - 60, xh + 20, -7.5, 7.5, z_lev, z_lev + 12), name=prefix + "lever 1:10", color=C["al"])
-    asm.add(box(-lev_a - 60, -lev_a - 30, -15, 15, z_lev + 12, z_lev + 32), name=prefix + "counterweight",
-            color=C["weight"])
-    asm.add(cyl(6, z_lev - 250, 250, xh, 0), name=prefix + "weight hanger", color=C["steel"])
-    for k in range(4):
-        asm.add(cyl(80, 16, 250 - (k + 1) * 18, xh, 0), name=f"{prefix}dead weight {k + 1}", color=C["weight"])
-    asm.add(radial(90, 14, 40, Z_LC + 30, 1.6), name=prefix + "TLC 109SS", color=C["temp"])
-
-
-def variant_a_spring(asm, prefix=""):
-    """Variant A2: same sand / multi-ring cell / pressure sensors as A, surcharge by a die spring."""
-    zb = p.FRAME_H_A2
+def variant_a(asm, prefix=""):
+    """Variant A: unsaturated sand in the multi-ring cell, pressure sensors, surcharge by a die spring."""
+    zb = p.FRAME_H_A
     frame(asm, prefix, z_beam=zb)
     asm.add(cyl(60, H_BOT, 0), name=prefix + "Al spacer (bottom)", color=C["al"])
     cell_stack(asm, "A", prefix, multiring=True)
@@ -326,7 +306,7 @@ def freezer_layout():
     z0 = z_tray + 40 + 18 + p.BASE_T        # base plate top on feet on the tray
     sub_b, sub_a = cq.Assembly(name="rig B"), cq.Assembly(name="rig A")
     variant_b(sub_b)
-    variant_a(sub_a, multiring=True)
+    variant_a(sub_a)
     # chest freezer inside (origin at inner floor corner), tray and mat
     asm.add(box(0, p.FRZ_L, 0, p.FRZ_W, -5, 0), name="freezer floor (inside ≈ 900x550)", color=C["freezer"])
     walls = box(-10, p.FRZ_L + 10, -10, p.FRZ_W + 10, 0, p.FRZ_H).cut(box(0, p.FRZ_L, 0, p.FRZ_W, 0, p.FRZ_H))
@@ -343,19 +323,14 @@ def freezer_layout():
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    a = cq.Assembly(name="E7 variant A - constant load")
+    a = cq.Assembly(name="E7 variant A - spring surcharge, unsaturated sand")
     variant_a(a)
     b = cq.Assembly(name="E7 variant B - constant height")
     variant_b(b)
-    lay = freezer_layout()
-    amr = cq.Assembly(name="E7 variant A - multi-ring cell")
-    variant_a(amr, multiring=True)
-    a2 = cq.Assembly(name="E7 variant A2 - spring surcharge")
-    variant_a_spring(a2)
     mr = cq.Assembly(name="E7 multi-ring cell")
     multiring_cell(mr, with_sample=False)
-    for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (amr, "E7_variant_A_multiring"),
-                    (mr, "E7_multiring_cell"), (a2, "E7_variant_A2_spring"),
+    lay = freezer_layout()
+    for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (mr, "E7_multiring_cell"),
                     (lay, "E7_freezer_layout")):
         asm.save(os.path.join(OUT, fn + ".step"))
         cq.exporters.export(asm.toCompound(), os.path.join(OUT, fn + ".stl"), tolerance=0.2, angularTolerance=0.3)

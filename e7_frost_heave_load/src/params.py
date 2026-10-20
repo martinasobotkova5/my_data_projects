@@ -34,14 +34,12 @@ BASE_T = 25.0           # základová deska Al 6082, 260 × 200
 BASE_W, BASE_D = 260.0, 200.0   # dvě sestavy vedle sebe na vaně ≈ 530 × 340
 COL_PROFILE = "40x80"   # 2 sloupy
 COL_SPAN = 220.0        # osová vzdálenost sloupů
-FRAME_H = 330.0         # výška sloupů (snížená, aby se páka vešla pod víko mrazáku)
+FRAME_H = 330.0         # výška sloupů, varianta B (krátké → malý teplotní artefakt)
 BEAM_PROFILE = "80x80"  # příčník
 PEDESTAL_H = 30.0       # Al podstavec pod celou (varianta B: na spodním siloměru)
 
 # --- zatížení -------------------------------------------------------------------
-SURCHARGES_KPA = (25, 50, 100, 200)   # varianta A – konstantní zatížení
-LEVER_RATIO = 10.0                    # páka 1 : 10 se závažím
-LEVER_L = 300.0                       # délka páky od čepu po závěs (čep 30 mm od táhla)
+SURCHARGES_KPA = (25, 50, 100, 200)   # varianta A – konstantní přitížení pružinou
 B_MAX_KPA = 2000.0                    # varianta B – návrhový max. tlak (literatura: silty 0,2–2 MPa)
 SEATING_KPA = 5.0                     # varianta B – dosedací předpětí
 
@@ -83,8 +81,8 @@ PBASE = [("PB1", 25.0, 120.0)]               # (tag, r, úhel)
 PWALL = [("PW1", 20.0, 30.0), ("PW2", 42.0, 150.0), ("PW3", 64.0, 270.0)]
 PWALL_D = 8.0                                # PDA-PA v pouzdře ⌀8 (vejde se do kroužku 10 mm)
 
-# --- varianta A2: přitížení předepnutou pružinou (bez páky) ------------------------
-FRAME_H_A2 = 380.0           # vyšší sloupy kvůli pružinovému pouzdru
+# --- varianta A: přitížení předepnutou pružinou ------------------------------------
+FRAME_H_A = 380.0            # vyšší sloupy kvůli pružinovému pouzdru
 SPRING_D, SPRING_L0 = 32.0, 64.0     # lisovací pružina ISO 10243 ⌀32 × 64 (vnější ⌀, volná délka)
 SPRING_MAX_DEFL = 0.35       # dovolené stlačení ≈ 35 % L0 (podle řady pružiny, ověřit v katalogu)
 SPRINGS = [("light", 20.0, (25, 50)),     # tuhost N/mm, rozsah přitížení kPa

@@ -6,12 +6,12 @@ Generováno skriptem `src/vypocty.py` z `src/params.py`. Hodnoty ≈ jsou odhady
 
 Plocha vzorku ⌀100: 7854 mm² = 78.54 cm².
 
-| napětí [kPa] | síla [N] | závaží na páce 1:10 [kg] | poznámka |
+| napětí [kPa] | síla [N] | stlačení pružiny [mm] | poznámka |
 |---|---|---|---|
-| 25 | 196 | 2.0 | varianta A |
-| 50 | 393 | 4.0 | varianta A |
-| 100 | 785 | 8.0 | varianta A |
-| 200 | 1571 | 16.0 | varianta A |
+| 25 | 196 | 9.8 (k = 20 N/mm) | varianta A |
+| 50 | 393 | 19.6 (k = 20 N/mm) | varianta A |
+| 100 | 785 | 9.8 (k = 80 N/mm) | varianta A |
+| 200 | 1571 | 19.6 (k = 80 N/mm) | varianta A |
 | 500 | 3927 | – | varianta B (tlak ze zdvihu) |
 | 1000 | 7854 | – | varianta B (tlak ze zdvihu) |
 | 2000 | 15708 | – | varianta B (tlak ze zdvihu) |
@@ -68,11 +68,11 @@ Zmrznutí vody v pórech na místě: 9 % × θ 0.3 × 100 mm ≈ **2.7 mm**. Ote
 
 | použití | typ | rozsah | 1 kPa ≙ | tep. drift nuly (0,02 %FS/10 K) při 20 K |
 |---|---|---|---|---|
-| A: v sérii s pákou | S-snímač tah/tlak, C3, kompenz. −10…+40 °C | 2 kN | 7.9 N = 0.393 %FS | 0.8 N ≈ 0.1 kPa |
+| A: v sérii s pružinou | S-snímač tah/tlak, C3, kompenz. −10…+40 °C | 2 kN | 7.9 N = 0.393 %FS | 0.8 N ≈ 0.1 kPa |
 | B: nahoře | kompresní (kanystr/sloupek), vysoká tuhost | 20 kN | 7.9 N = 0.039 %FS | 8.0 N ≈ 1.0 kPa |
 | B: dole pod podstavcem | kompresní, stejný typ | 20 kN | 7.9 N = 0.039 %FS | 8.0 N ≈ 1.0 kPa |
 
-## 7. Varianta A2 – přitížení pružinou místo páky
+## 7. Varianta A – přitížení předepnutou pružinou
 
 Pružina ⌀32 × 64 mm (ISO 10243) mezi siloměrem a stavěcím šroubem. Dovolené stlačení ≈ 35 % L0 = 22.4 mm.
 
