@@ -1,11 +1,11 @@
 # E7: zatěžovací zkoušky zeminy při mrznutí a tání
 
-Vzorek ⌀100 × 100 mm (vnitřní) v tištěné cele z PETG-CF, ve vícekroužkové cele z PETG-CF, v truhlicovém mrazáku z E6 s programovatelným regulátorem. V obou variantách je **stejný vzorek** (nenasycený písek) a stejná cela. Varianta A má přitížení **závažím** (ocelové kotouče, max. 25 kPa) a měří tlaky uvnitř písku. Varianta B je **bez zatížení** a měří zdvih, sednutí a deformace po vrstvách mezi mrznutím a táním.
+Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiskem v jednom kuse, v truhlicovém mrazáku z E6 s programovatelným regulátorem. V obou variantách je **stejný vzorek** (nenasycený písek) a stejná cela. Varianta A má přitížení **závažím** (ocelové kotouče, max. 25 kPa) a měří tlaky uvnitř písku. Varianta B je **bez zatížení** a měří zdvih, sednutí a deformace po vrstvách mezi mrznutím a táním.
 
 | soubor | obsah |
 |---|---|
 | `vykresy/E7_drawings.pdf` | 6 listů A3, anglicky (PNG po listech ve stejné složce) |
-| `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, vícekroužková cela, obě v mrazáku (+ STL a PNG náhledy) |
+| `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, samotná cela, obě v mrazáku (+ STL a PNG náhledy) |
 | `vypocty.md` | zatížení, očekávané deformace, rozlišení LVDT, teplotní chyba stojanu, napětí v cele, závaží |
 | `src/params.py` | všechny rozměry a předpoklady |
 | `src/sensors.py` | výběr čidel a plán kanálů CR1000 |
@@ -20,14 +20,14 @@ Regenerace: `cd src && python vykresy.py && python vypocty.py > ../vypocty.md &&
 | | **A – konstantní přitížení** (E7-V01) | **B – bez zatížení** (E7-V02) |
 |---|---|---|
 | vzorek | nenasycený písek ⌀100 × 100 (Sr ≈ 0,3–0,5) | **stejný** |
-| cela | vícekroužková PETG-CF + namazaná latexová membrána | **stejná** |
+| cela | plná, 3D tisk PETG-CF v jednom kuse, PTFE fólie 0,5 mm + silikonový tuk | **stejná** |
 | zatížení | **závaží** 5–25 kPa (ocelové kotouče ⌀150 na nosné desce s vodicí tyčí) | **žádné** – jen lehká horní deska PETG-CF (≈ 0,08 kPa) |
 | co se měří | tlaky uvnitř písku, u dna a na stěně; LVDT kontrolují, že se vzorek nehýbe | zdvih při mrznutí, sednutí při tání, nevratná deformace za cyklus, poměrné deformace 4 vrstev po 25 mm |
 | snímače posunu | 2× LVDT ±10 mm s pružinou | 6× LVDT ±5 mm s **volným jádrem**: S1–S3 na horní desce, E1–E3 na kotvách v hloubce 25/50/75 mm |
 | rám | lehký 40×40, sloupy 410 mm, příčka s lineárním ložiskem | **žádný** – jen 3 Invarové sloupky a Al můstek s LVDT |
 | termistory | T1–T5 v písku, Ttop, Tbot, Tw, Tframe, Tair | T1–T5 v písku, Ttop, Tbot, Tstand, Tair |
 
-Obě varianty sdílejí základovou desku, Al distanční kus, mezikus G10, podstavec s porézním kamenem, vícekroužkovou celu a termistory T1–T5. Výsledky A a B jsou tak přímo srovnatelné: rozdíl je jen v přitížení.
+Obě varianty sdílejí základovou desku, Al distanční kus, mezikus G10, podstavec s porézním kamenem, tištěnou celu a termistory T1–T5. Výsledky A a B jsou tak přímo srovnatelné: rozdíl je jen v přitížení.
 
 **Proč závaží (A):**
 - Gravitace dává přesně konstantní přitížení. Nezávisí na posunu vzorku ani na smrštění rámu v mrazu.
@@ -83,23 +83,33 @@ O kolik tlak při mrznutí vzroste nad přitížení, tolik vytváří led v pó
 - **Málo malých inkluzí:** poměr průměr/tloušťka ≥ 10 a průměr / d50 ≥ 20 (disk ⌀20 v písku d50 0,3 mm → ≈ 65). Proto jen 2 vložené disky a ostatní snímače v lícu stěny a dna.
 - **Kalibrace v písku:** ve stejném písku a cele, pod známým přitížením 5–25 kPa (závaží), zatížení i odlehčení, při +10 a −10 °C.
 - **Teplota:** u každého snímače termistor a korekce nuly podle teploty. Zeng et al. (2022, doi:10.6052/1000-0879-21-231) ukázali při cyklech mrznutí a tání teplotní posun a degradaci miniaturních buněk.
-- **Led na membráně:** snímače utěsnit silikonem nebo epoxidem.
+- **Led na snímačích:** snímače utěsnit silikonem nebo epoxidem.
 - **Sání v nenasyceném písku:** tenziometry v mrazu zamrznou. Před zmrazením změřit sání (tenziometr nebo filtrační papír) a pak ho odhadovat z teploty (Clapeyron) nebo z obsahu nezamrzlé vody (TDR).
 
-## 4. Vícekroužková cela (obě varianty, E7-V03)
+## 4. Cela – plná, 3D tisk z PETG-CF (obě varianty, E7-V03)
 
-- **Kroužky:** spodní kroužek s patkou ⌀150 × 8, nad ním 10 kroužků PETG-CF ⌀117/101 × 10 mm.
-- **Podložky:** mezi kroužky PTFE podložky 1 mm.
-- **Vedení:** kroužky mají 3 oka, kterými volně kloužou po 3 vodicích tyčích ⌀5 s PTFE povlakem (r 63, po 120°).
-- **Membrána:** uvnitř namazaná latexová membrána 0,3 mm.
-- **Termistory:** 5 nálitků na kroužcích nejblíže hloubkám 10–90 mm, pod úhly 0/60/120/180/240°. Na dalších 3 kroužcích jsou snímače PW1–3.
-- **Izolace:** Kaiflex 18 mm. Vnější poloměr 89 mm se vejde mezi sloupy rámu A (r 90) i dovnitř Invarových sloupků B (r 100).
-- **Princip:** písek se posouvá s kroužky, takže tření o stěnu se téměř nepřenáší. Vícekroužkové cely jsou podle srovnání TRB/CRREL nejlepší řešení proti tření o stěnu.
+- **Tvar:** trubka ⌀117/101, výška 125 mm, patka ⌀150 × 8 se zaoblením R4, tištěno nastojato v jednom kuse. Nad vzorkem zůstává 25 mm pro píst (A) nebo horní desku (B).
+- **Vnitřek:** stěna utěsněná tenkou vrstvou epoxidu, pak PTFE fólie 0,5 mm (spoj natupo na 180°) a silikonový tuk → vnitřní ⌀100.
+- **Termistory:** 5 nálitků 8 × 10 mm s otvorem ⌀1,7 v hloubkách 10/30/50/70/90 mm pod úhly 0/72/144/216/288°. Ve variantě A hrot na r 9 mm, ve variantě B na r 40 mm (mimo tyčky kotev).
+- **Snímače na stěně PW1–3:** pouzdra ⌀8 v nálitcích, líc se snímačem zarovnaný s fólií (fólie má v těch místech výřezy ⌀8). Ve variantě B jsou volitelné.
+- **Izolace:** Kaiflex 25 mm (vnější r 83,5) s výřezy pro nálitky. Vejde se mezi sloupy rámu A (r 90) i dovnitř Invarových sloupků B (r 100).
+- **Cela není přišroubovaná**, jen leží patkou na podstavci. Tření pak stěnu tlačí, ale netrhá vrstvy tisku od sebe.
+
+**Tření o stěnu (`vypocty.md` §5):** u plné cely odnese část přitížení stěna. To vícekroužková cela řešila, plná cela ne, proto je fólie s tukem povinná.
+
+| rozhraní | μ | σv u dna / na povrchu |
+|---|---|---|
+| PTFE fólie + silikonový tuk | ≈ 0,05 | 0,89–0,92 |
+| PTFE fólie nasucho | ≈ 0,10 | 0,79–0,85 |
+| bez fólie (písek–PETG) | ≈ 0,5 | 0,30–0,45 |
+
+- **A:** PV1 (40 mm) a PB1 (dno) vyhodnocovat jako profil σv(z), ne jako jednu hodnotu. Rozdíl mezi nimi přímo ukáže tření.
+- **B:** přitížení je nulové, takže tření je malé. Zmrzlá horní vrstva ale může přimrznout ke stěně a brzdit zdvih. PTFE má ze všech běžných materiálů nejmenší adhezi ledu.
 
 ## 5. Varianta B – posuny a deformace mezi mrznutím a táním (E7-V02, `vypocty.md` §1–4)
 
 **Sestava:**
-- Stejný písek ve stejné vícekroužkové cele jako A, bez pístu a bez závaží.
+- Stejný písek ve stejné tištěné cele s PTFE fólií jako A, bez pístu a bez závaží.
 - Na povrchu leží **lehká horní deska** PETG-CF ⌀99 × 6 (≈ 65 g, tj. 0,08 kPa, to je jako tíha horních 5 mm písku). Deska je jen terč pro LVDT.
 - **3 povrchové LVDT S1–S3** (r 40, po 120°) stojí na desce. Jejich průměr dává zdvih nebo sednutí povrchu, rozdíl mezi nimi náklon desky.
 - **3 kotvy E1–E3** (settlement anchors) jsou při ukládání písku vloženy do hloubky 25, 50 a 75 mm (r 25, po 120°, mimo povrchová LVDT):
@@ -131,10 +141,10 @@ O kolik tlak při mrznutí vzroste nad přitížení, tolik vytváří led v pó
 - Linearita LVDT ±0,25 % FS → každý LVDT zkalibrovat mikrometrem.
 
 **Příprava vzorku B:**
-1. Do cely s membránou uložit písek po vrstvách 12,5 mm na cílovou hustotu a vlhkost.
+1. Do cely s namazanou PTFE fólií uložit písek po vrstvách 12,5 mm na cílovou hustotu a vlhkost.
 2. Po dosažení hloubky 75, 50 a 25 mm pod budoucím povrchem položit kotvu, na ní nasadit tyčku s trubičkou a pokračovat v hutnění (tyčky drží ve svislé poloze šablona nad celou).
 3. Zarovnat povrch, položit horní desku přes trubičky, nasadit můstek s LVDT a vynulovat.
-4. Mezeru mezi deskou a horním kroužkem překrýt volnou PE fólií, aby písek během týdnů nevysychal sublimací.
+4. Mezeru mezi deskou a stěnou cely překrýt volnou PE fólií, aby písek během týdnů nevysychal sublimací.
 
 **Siloměry** nejsou potřeba v žádné variantě. A je zatížená závažím (síla = hmotnost), B není zatížená vůbec.
 
@@ -150,21 +160,21 @@ O kolik tlak při mrznutí vzroste nad přitížení, tolik vytváří led v pó
 
 **Ano, pro obě varianty.** Pevnost PETG-CF z katalogových listů a literatury: ≈ 40–55 MPa ve směru vlákna nebo vrstvy, jen 15–30 MPa kolmo na vrstvy. Dlouhodobě počítám s ≈ 30 % pevnosti.
 
-| zatěžovací stav (obvodové napětí v kroužku) | napětí | bezpečnost krátkodobě | dlouhodobě |
+| zatěžovací stav (obvodové napětí ve stěně) | napětí | bezpečnost krátkodobě | dlouhodobě |
 |---|---|---|---|
 | A: přitížení 25 kPa, K0 = 1 | 0,16 MPa | > 250 | > 75 |
 | B: tlak ledu na stěnu 200 kPa (horní odhad) | 1,3 MPa | 32–44 | 9–13 |
 | extrém 1 MPa | 6,3 MPa | 6–9 | 1,9–2,6 |
 
-Osové namáhání přes vrstvy odpadá: kroužky po sobě kloužou na PTFE podložkách a smyk od tření nese namazaná membrána.
+Osové napětí přes vrstvy od tření je i bez fólie < 0,05 MPa (A, 25 kPa), tedy zanedbatelné. Cela je volně položená, takže tření stěnu tlačí, netáhne.
 
 Podmínky:
-- **Tisk:** každý kroužek naplocho, stěna 8 mm, pouze soustředné perimetry, 100 % výplň. Vytisknout 12 kroužků (2 rezervní), ⌀101 ± 0,1 zkontrolovat.
+- **Tisk:** nastojato v jednom kuse, stěna 8 mm, pouze soustředné perimetry, 100 % výplň, nálitky se zkosením 45° zespodu (bez podpor). Vrtání ⌀101 ± 0,1 zkontrolovat ve 3 výškách.
 - **Vnitřek:** utěsnit tenkou vrstvou epoxidu, aby voda nevnikla do mezer v tisku.
 - **Vruby:** žádné tištěné závity ani ostré rohy.
 - **Před použitím:**
   1. 10 cyklů mrznutí a tání nasycených vzorků materiálu a pak tahová zkouška;
-  2. sestava kroužků v mrazáku s Al náhradou: kroužky musí i při −10 °C volně klouzat.
+  2. kontrola průměru ⌀101 při +20 a −10 °C (smrštění 0,06–0,12 mm, píst A má vůli 0,25 mm).
 
 ## 8. Čidla a zapojení na CR1000 (E7-V05, `src/sensors.py`)
 
@@ -193,9 +203,9 @@ Podmínky:
 
 | soubor | obsah |
 |---|---|
-| `E7_variant_A.step` | varianta A – lehký rám 40×40 (sloupy 410, příčka s ložiskem), vícekroužková cela, nenasycený písek, tlakové snímače PV1/PH1/PB1/PW1–3, G10, nosná deska s tyčí, 3 + 1 ocelové kotouče, 2× LVDT na bocích (±y) s Invarovými sloupky, termistory včetně Tw |
-| `E7_variant_B.step` | varianta B – základová deska, vícekroužková cela, nenasycený písek, horní deska PETG-CF, kotvy E1–E3 s Invarovými tyčkami a PTFE trubičkami, 6× LVDT s volným jádrem, 3 Invarové sloupky, Al můstek, termistory |
-| `E7_multiring_cell.step` | samotná vícekroužková cela |
+| `E7_variant_A.step` | varianta A – lehký rám 40×40 (sloupy 410, příčka s ložiskem), tištěná cela s PTFE fólií, nenasycený písek, tlakové snímače PV1/PH1/PB1/PW1–3, G10, nosná deska s tyčí, 3 + 1 ocelové kotouče, 2× LVDT na bocích (±y) s Invarovými sloupky, termistory včetně Tw |
+| `E7_variant_B.step` | varianta B – základová deska, stejná tištěná cela, nenasycený písek, horní deska PETG-CF, kotvy E1–E3 s Invarovými tyčkami a PTFE trubičkami, 6× LVDT s volným jádrem, 3 Invarové sloupky, Al můstek, termistory |
+| `E7_cell.step` | samotná cela PETG-CF s nálitky, PTFE fólií, izolací, termistory a snímači PW |
 | `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku (stěny mrazáku průhledné, ≈ rozměry) |
 
 Náhledy jsou `3d/*.png`. Řezy ukazují `E7_variant_A_section.png` a `E7_variant_B_section.png`.
@@ -213,9 +223,9 @@ Náhledy jsou `3d/*.png`. Řezy ukazují `E7_variant_A_section.png` a `E7_varian
 ## 10. Literatura (ověřeno vyhledáním; DOI jen kde potvrzeno)
 
 - **Konrad & Morgenstern (1980)**, *Can. Geotech. J.* 17: 473–486. Segregační potenciál klesá s přitížením, proto zkoušet více úrovní přitížení.
-- **ASTM D5918**: vícekroužková cela, malé přitížení, dva cykly mrznutí a tání, LVDT.
+- **ASTM D5918**: malé přitížení, dva cykly mrznutí a tání, LVDT; norma doporučuje vícekroužkovou celu – u plné cely proto PTFE fólie a vyhodnocení tření.
 - **Nixon & Nixon (2015)**, GeoQuébec: tření o stěnu působí jako přitížení až ≈ 35 kPa.
-- **Srovnání cel (TRB/CRREL)**: vícekroužkové cely jsou výrazně lepší než kuželové nebo dělené.
+- **Srovnání cel (TRB/CRREL)**: vícekroužkové cely mají menší tření o stěnu než plné; u plné cely je proto nutné tření snížit (fólie, tuk) a změřit (PV1 vs. PB1).
 - **Jin et al. (2019)**, *Cold Reg. Sci. Technol.* 157: 119–132, doi:10.1016/j.coldregions.2018.09.011. Cela s vlastní regulací teploty.
 - **Hoekstra, Chamberlain & Frate (1965)**, CRREL RR 176: siloměr nad vzorkem měří tlak a zároveň brání zdvihu.
 - **Ji et al. (2019)**, *Bull. Eng. Geol. Environ.*, doi:10.1007/s10064-018-1345-z: tlak z mrazového zdvihu závisí na tuhosti omezení.

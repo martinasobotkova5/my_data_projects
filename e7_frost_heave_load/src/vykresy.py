@@ -66,88 +66,91 @@ def parts_list(sh, items, y0=276):
 
 
 def sheet_cell(pdf):
-    sh = Sheet("Multi-ring cell – PETG-CF, 3D printed (both variants)", "E7-V03", "1 : 1", 3, TOTAL,
-               "print each ring flat; hoop direction = layer direction; rings slide on 3 guide rods")
-    v = View(sh, 125, 120, 1.0)
-    RL, RG = 63.0, 5.0                 # guide-rod radius and diameter
-    # base ring with flange
+    sh = Sheet("Sample cell – PETG-CF, solid 3D print (both variants)", "E7-V03", "1 : 1", 3, TOTAL,
+               "print upright in one piece; hoop direction = layer direction; foot rests on the pedestal, not bolted")
+    v = View(sh, 120, 112, 1.0)
+    h = TUBE_TOP - Z_S0
     for s_ in (-1, 1):
-        v.rect(s_ * R_IN, 0, s_ * R_FOOT, 8, fc=PETG, hatch="\\\\\\\\")
-    zz = 9.0
-    for k in range(10):
-        for s_ in (-1, 1):
-            v.rect(s_ * R_IN, zz, s_ * R_OUT, zz + 10, fc=PETG, hatch="\\\\\\\\")
-            v.rect(s_ * (R_IN + 0.5), zz - 1, s_ * (RL - 6), zz, fc="white", lw=0.3)
-        v.rect(R_OUT, zz, RL + 7, zz + 10, fc=PETG, hatch="\\\\\\\\")       # lug (right, section through it)
-        v.rect(RL - 2.8, zz, RL + 2.8, zz + 10, fc="white", lw=0.3)
-        zz += 11
-    top = zz - 1
-    v.rect(RL - RG / 2, 0, RL + RG / 2, top + 12, fc=STEEL, lw=THIN)
-    for s_ in (-1, 1):
-        v.rect(s_ * (R_IN - 0.6), 0, s_ * R_IN, top, fc="#e0b080", lw=0.3)
-    # thermistor boss (left)
-    zb = 9 + 11 * 4 + 5
-    v.rect(-R_OUT - 8, zb - 5 - 0, -R_OUT, zb + 5, fc=PETG, lw=THIN)
-    v.rect(-R_OUT - 8, zb - 0.85, -R_IN, zb + 0.85, fc="white", lw=THIN)
-    v.line([(-R_OUT - 14, zb), (-40, zb)], lw=THICK, c=RED)
-    v.axis_line([(0, -5), (0, top + 15)])
-    v.dim_h(-R_IN, R_IN, top, top + 10, "⌀101 (printed ⌀101.0, sanded)")
-    v.dim_h(-R_OUT, R_OUT, top, top + 20, "⌀117")
-    v.dim_h(-R_FOOT, R_FOOT, 0, -8, "⌀150 base ring", side="below")
-    v.dim_v(0, top, -R_FOOT, -R_FOOT - 10, f"{top:g}")
-    v.dim_v(9, 19, RL + 7, RL + 18, "10")
-    v.note(R_OUT, 9.5 + 11, "PTFE washer 1 mm\n⌀103/114", 95, 20, ha="left")
-    v.note(RL + 7, 70, "lug 14×14, hole ⌀5.6\non guide rod ⌀5 (r 63)", 95, 70, ha="left")
-    v.note(RL, top + 8, "guide rod ⌀5 stainless,\nPTFE-coated", 95, top + 15, ha="left")
-    v.note(-R_IN + 0.3, 30, "latex membrane 0.3,\nsilicone grease both sides", -98, 12, ha="left")
-    v.note(-R_OUT - 6, zb + 3, "boss 8×10, ⌀1.7 hole\nfor 109SS (T1…T5)", -98, zb + 30, ha="left")
-    v.note(-R_IN - 1, 9 + 11 * 1 + 5, "PW holder ⌀8 flush\n(rings 2, 4, 6)", -98, -12, ha="left")
-    f = View(sh, 205, 56, 0.42, "VIEW F – ring from above  1 : 2.4", (205, 96))
+        v.rect(s_ * R_IN, 0, s_ * R_OUT, h, fc=PETG, hatch="\\\\\\\\")
+        v.rect(s_ * R_OUT, 0, s_ * R_FOOT, p.CELL_FOOT_T, fc=PETG, hatch="\\\\\\\\")
+        v.poly([(s_ * R_OUT, p.CELL_FOOT_T), (s_ * (R_OUT + 4), p.CELL_FOOT_T), (s_ * R_OUT, p.CELL_FOOT_T + 4)],
+               fc=PETG, lw=THIN)
+        v.rect(s_ * (R_IN - p.LINER), 0, s_ * R_IN, h, fc="white", lw=0.4)
+    # thermistor bosses (revolved into the section; true angles on view F)
+    for d, ang in WALL_TH:
+        s_ = 1 if math.cos(math.radians(ang)) >= 0 else -1
+        z = p.H_SAMPLE - d
+        v.rect(s_ * R_OUT, z - 5, s_ * (R_OUT + 8), z + 5, fc=PETG, lw=THIN)
+        v.rect(s_ * R_IN, z - 0.85, s_ * (R_OUT + 8), z + 0.85, fc="white", lw=THIN)
+        v.text(s_ * (R_OUT + 10), z, f"T  d{d} / {ang}°", fontsize=FS_SMALL - 0.5, va="center",
+               ha="left" if s_ > 0 else "right", color=RED)
+    # wall pressure-sensor holders PW1–3
+    for tag_, d, ang in p.PWALL:
+        s_ = 1 if math.cos(math.radians(ang)) >= 0 else -1
+        z = p.H_SAMPLE - d
+        v.rect(s_ * R_OUT, z - 6, s_ * (R_OUT + 8), z + 6, fc=PETG, lw=THIN)
+        v.rect(s_ * (R_IN - p.LINER), z - p.PWALL_D / 2, s_ * (R_OUT + 8), z + p.PWALL_D / 2, fc=PCOL, lw=THIN)
+        v.text(s_ * (R_OUT + 10), z, f"{tag_}  d{d:g} / {ang:g}°", fontsize=FS_SMALL - 0.5, va="center",
+               ha="left" if s_ > 0 else "right", color=PCOL, weight="bold")
+    v.axis_line([(0, -5), (0, h + 8)])
+    v.dim_h(-R_IN, R_IN, h, h + 8, "⌀101 (printed, reamed) → ⌀100 with liner")
+    v.dim_h(-R_OUT, R_OUT, h, h + 18, "⌀117")
+    v.dim_h(-R_FOOT, R_FOOT, 0, -8, "⌀150 foot", side="below")
+    v.dim_v(0, h, R_FOOT, R_FOOT + 10, f"{h:g}")
+    v.dim_v(0, p.CELL_FOOT_T, R_FOOT, R_FOOT + 4, f"{p.CELL_FOOT_T:g}")
+    v.dim_v(h - 25, h, -R_FOOT, -R_FOOT - 6, "25")
+    v.note(-R_IN + 0.25, 72, "PTFE film 0.5 mm, butt seam at 180°,\nsilicone grease; cut-outs ⌀8 at PW1–3", -98, 140,
+           ha="left")
+    v.note(R_OUT + 8, 10, "boss 8×10, ⌀1.7 hole for 109SS\n(45° chamfer below)", 95, -10, ha="left")
+    v.note(-R_OUT - 2, p.CELL_FOOT_T + 2, "fillet R4 (no notch)", -98, -18, ha="left")
+    v.note(R_IN - 10, h - 12, "25 free height above the sample:\npiston (A) / top plate (B)", 95, 140, ha="left")
+    f = View(sh, 205, 52, 0.42, "VIEW F – cell from above  1 : 2.4", (205, 94))
+    f.circle(0, 0, R_FOOT, fc="#eef0f2", lw=THIN)
     f.circle(0, 0, R_OUT, fc=PETG, lw=THIN)
     f.circle(0, 0, R_IN, fc="white", lw=THIN)
-    for ang in (90, 210, 330):
+    for d, ang in WALL_TH:
         c, s2 = math.cos(math.radians(ang)), math.sin(math.radians(ang))
-        f.circle(RL * c, RL * s2, 7, fc=PETG, lw=THIN)
-        f.circle(RL * c, RL * s2, 2.5, fc=STEEL, lw=THIN)
-    for ang in (0, 60, 120, 180, 240):
-        c, s2 = math.cos(math.radians(ang)), math.sin(math.radians(ang))
-        f.line([(R_OUT * c, R_OUT * s2), ((R_OUT + 8) * c, (R_OUT + 8) * s2)], lw=2.2, c=PETG)
-        f.line([(R_IN * c, R_IN * s2), ((R_OUT + 14) * c, (R_OUT + 14) * s2)], lw=0.6, c=RED)
+        f.line([(R_OUT * c, R_OUT * s2), ((R_OUT + 8) * c, (R_OUT + 8) * s2)], lw=2.6, c=PETG)
+        f.line([(9 * c, 9 * s2), ((R_OUT + 16) * c, (R_OUT + 16) * s2)], lw=0.7, c=RED)
     for tag_, d, ang in p.PWALL:
         c, s2 = math.cos(math.radians(ang)), math.sin(math.radians(ang))
-        f.circle((R_IN + 4) * c, (R_IN + 4) * s2, 4, fc=PCOL, lw=THIN)
-    sh.text(205, 8 + 14, "grey = guide rods 90/210/330°, red = thermistors 0–240°,\nblue = wall pressure holders 30/150/270°",
+        f.circle((R_OUT + 3) * c, (R_OUT + 3) * s2, 5, fc=PCOL, lw=THIN)
+    sh.text(205, 20, "red = thermistors T1–T5 at 0/72/144/216/288°, r 9 mm;\nblue = wall pressure holders PW1–3 at 30/150/270°",
             fontsize=FS_SMALL - 0.5, ha="center", va="top")
     sh.heading(255, 276, "Material check – PETG-CF")
-    rows = [["A: 25 kPa surcharge, K0 = 1", "0.16 MPa", "> 250", "> 75"],
-            ["B: ice on the wall 200 kPa (upper est.)", "1.3 MPa", "32–44", "9–13"],
-            ["extreme 1 MPa", "6.3 MPa", "6–9", "1.9–2.6"]]
-    table(sh, 255, 272, ["load case (hoop, per ring)", "stress", "SF short", "SF long"], rows, [62, 22, 22, 22],
-          row_h=4.6)
-    sh.text(255, 252,
+    rows = [["hoop: A 25 kPa surcharge, K0 = 1", "0.16 MPa", "> 250", "> 75"],
+            ["hoop: B ice on the wall 200 kPa (upper est.)", "1.3 MPa", "32–44", "9–13"],
+            ["hoop: extreme 1 MPa", "6.3 MPa", "6–9", "1.9–2.6"],
+            ["axial (across layers): friction, A 25 kPa", "< 0.05 MPa", "> 300", "> 90"]]
+    table(sh, 255, 272, ["load case", "stress", "SF short", "SF long"], rows, [66, 22, 20, 20], row_h=4.6)
+    sh.text(255, 246,
             "Assumed strength (data-sheet range, verify): XY 40–55 MPa, Z 15–30 MPa,\n"
             "E 3–6 GPa; long-term limit ≈ 30 % (creep, layer bond). Details: vypocty.md §5.\n"
             "\n"
-            "Verdict: suitable for both variants (no surcharge in B, ≤ 25 kPa in A).\n"
-            "Each ring carries its own hoop stress along the filament; axial load from wall\n"
-            "friction is not transferred – the rings slide on the PTFE washers and the\n"
-            "greased latex membrane takes the shear.\n"
-            "Conditions:\n"
+            "Verdict: suitable for both variants as a solid print (no sleeve needed).\n"
+            "\n"
+            "Wall friction (the price of a solid cell, vypocty.md §5)\n"
+            "• A: friction carries part of the surcharge into the wall; with the PTFE liner\n"
+            "  + grease (μ ≈ 0.05) the vertical stress at the base is ≈ 90 % of the top,\n"
+            "  without the liner (μ ≈ 0.5) only ≈ 30–45 % → compare PV1 / PB1 with it.\n"
+            "• B: friction and ice adhesion hold back heave of the frozen top layer;\n"
+            "  PTFE has very low ice adhesion – liner and grease are mandatory.\n"
+            "\n"
+            "Conditions\n"
             "• wall 8 mm, concentric perimeters only, 100 % infill;\n"
             "• no printed threads or sharp notches (CF lowers toughness at −10 °C);\n"
-            "• inside sealed with a thin epoxy coat (no water in print voids);\n"
-            "• ring stack free on the guide rods – not clamped from above.\n"
+            "• inside sealed with a thin epoxy coat before the liner goes in;\n"
+            "• cell not clamped at the foot – friction then pushes, never pulls layers.\n"
             "\n"
             "Print settings (starting point)\n"
             "hardened nozzle 0.6 mm, layer 0.2 mm, 250–260 °C, bed 80 °C, slow outer\n"
             "walls, filament dried 4 h at 65 °C, enclosure, part cooling ≤ 30 %.\n"
-            "Print 12 rings (2 spare), check ⌀101 ± 0.1 with a bore gauge.\n"
+            "Print upright, bosses with 45° chamfer underneath (no supports).\n"
             "\n"
             "Qualification before use\n"
             "1  10 freeze–thaw cycles −10/+10 °C of water-saturated coupons, then\n"
             "   tensile test XY and Z vs. dry control;\n"
-            "2  ring stack in the freezer with an Al dummy: rings must still slide\n"
-            "   freely at −10 °C (washer clearance, grease stiffening).",
+            "2  bore check ⌀101 ± 0.1 at 3 heights, at +20 and −10 °C.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V03_cell_PETG-CF.png"))
 
@@ -159,7 +162,7 @@ def sheet_frame(pdf):
     zb = p.FRAME_H_A
     v = View(sh, 80, 70, k, "A – FRONT VIEW  1 : 4", (80, 210))
     frame(v, z_beam=zb, beam_h=p.BEAM_H_A)
-    v.rect(-R_INS, Z_S0, R_INS, Z_S0 + 119, fc="none", lw=THIN, ls="--")
+    v.rect(-R_INS, Z_S0, R_INS, TUBE_TOP, fc="none", lw=THIN, ls="--")
     v.rect(-p.DW_D / 2, Z_BALL + 22, p.DW_D / 2, Z_BALL + 158, fc="none", lw=THIN, ls="--")
     v.dim_h(-p.BASE_W / 2, p.BASE_W / 2, -p.BASE_T, -p.BASE_T - 60, f"{p.BASE_W:g}", side="below")
     v.dim_h(-X_COL, X_COL, zb + p.BEAM_H_A, zb + p.BEAM_H_A + 40, f"{p.COL_SPAN:g}")
@@ -173,7 +176,7 @@ def sheet_frame(pdf):
     for x in (-p.STAND_R, p.STAND_R * math.cos(math.radians(60))):
         b.rect(x - 6, 0, x + 6, p.Z_BRIDGE, fc=INVAR, lw=THIN, alpha=0.8)
     b.rect(-p.BRIDGE_D / 2, p.Z_BRIDGE, p.BRIDGE_D / 2, p.Z_BRIDGE + p.BRIDGE_T, fc=METAL, lw=THIN, hatch="////")
-    b.rect(-R_INS, Z_S0, R_INS, Z_S0 + 119, fc="none", lw=THIN, ls="--")
+    b.rect(-R_INS, Z_S0, R_INS, TUBE_TOP, fc="none", lw=THIN, ls="--")
     for x in (-42, -22, 6, 22, 42):
         b.rect(x - 5, Z_BODY0, x + 5, Z_BODY0 + BODY_L, fc=SENS, lw=THIN)
     b.dim_h(-p.BASE_W / 2, p.BASE_W / 2, -p.BASE_T, -p.BASE_T - 60, f"{p.BASE_W:g}", side="below")
@@ -216,6 +219,15 @@ SENS_TXT = "#a05a00"
 TCOL = "#c0392b"      # temperature points
 
 
+def solid_cell(v, top=TUBE_TOP, foot=True):
+    """Solid 3D-printed PETG-CF cell with foot and PTFE liner (both variants)."""
+    for s_ in (-1, 1):
+        v.rect(s_ * R_IN, Z_S0, s_ * R_OUT, top, fc=PETG, lw=THIN, hatch="\\\\\\\\")
+        if foot:
+            v.rect(s_ * R_OUT, Z_S0, s_ * R_FOOT, Z_S0 + p.CELL_FOOT_T, fc=PETG, lw=THIN, hatch="\\\\\\\\")
+        v.rect(s_ * (R_IN - p.LINER), Z_S0, s_ * R_IN, top, fc="#f7f7f7", lw=0.3)
+
+
 def tag(v, x, z, tx, tz, text, color=INK, ha=None):
     a, b = v.p(x, z), v.p(tx, tz)
     v.ax.plot([a[0], b[0]], [a[1], b[1]], lw=THIN, c=color, zorder=7)
@@ -236,14 +248,8 @@ def simple_rig(v, variant):
     v.rect(-75, Z_PED, 75, Z_S0, fc=METAL, **light)
     # cell, insulation, sample
     for s_ in (-1, 1):
-        v.rect(s_ * R_OUT, Z_S0, s_ * R_INS, TUBE_TOP, fc=INSUL, lw=0.3)
-        if sand:                     # multi-ring cell: base ring + 10 rings with PTFE washers
-            v.rect(s_ * R_IN, Z_S0, s_ * R_OUT, Z_S0 + 8, fc=PETG, **light)
-            for k in range(10):
-                z0 = Z_S0 + 9 + 11 * k
-                v.rect(s_ * R_IN, z0, s_ * R_OUT, z0 + 10, fc=PETG, lw=0.4)
-        else:
-            v.rect(s_ * R_IN, Z_S0, s_ * R_OUT, TUBE_TOP, fc=PETG, **light)
+        v.rect(s_ * R_OUT, Z_S0 + p.CELL_FOOT_T, s_ * R_INS, TUBE_TOP, fc=INSUL, lw=0.3)
+    solid_cell(v)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8" if sand else FROZEN, **light)
     v.rect(-49.75, Z_S0 - 4, 49.75, Z_S0, fc="#bfc5b0", lw=0.3)
     v.rect(-49.75, Z_S1, 49.75, Z_S1 + 4, fc="#bfc5b0", lw=0.3)
@@ -306,15 +312,10 @@ def pressure_cells(v, labels=True):
 
 
 def cell_detail(sh, ox, oy, k):
-    """Enlarged section of the multi-ring cell with sand, pressure sensors and thermistors."""
+    """Enlarged section of the cell with sand, pressure sensors and thermistors."""
     v = View(sh, ox, oy, k)
     v.rect(-R_IN - 1, Z_S0 - 12, R_IN + 1, Z_S0, fc=METAL, lw=THIN)
-    for s_ in (-1, 1):
-        v.rect(s_ * R_IN, Z_S0, s_ * R_OUT, Z_S0 + 8, fc=PETG, lw=THIN)
-        for kk in range(10):
-            z0 = Z_S0 + 9 + 11 * kk
-            v.rect(s_ * R_IN, z0, s_ * R_OUT, z0 + 10, fc=PETG, lw=0.4)
-        v.rect(s_ * (R_IN - 0.6), Z_S0, s_ * R_IN, Z_S1 + 18, fc="#d9a066", lw=0)
+    solid_cell(v, top=Z_S1 + 18, foot=False)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
     import random
     rnd = random.Random(2)
@@ -378,8 +379,8 @@ def sheet_a_simple(pdf):
     tag(v, p.DW_D / 2 + 10, ztop - 20, 135, ztop - 45, "insulation wrap 10 (optional)", INK)
     tag(v, p.LVDT_R, z_lc + 25, 135, z_lc - 30, "LVDT-1, -2 at ±y (on target tabs)", SENS_TXT)
     tag(v, -(p.LVDT_R + 8), 60, -150, 200, "Invar reference", INVAR)
-    tag(v, -R_IN - 4, Z_S0 + 50, -150, 160, "multi-ring cell PETG-CF\n+ greased latex membrane", INK)
-    tag(v, -R_INS + 5, Z_S0 + 20, -150, 100, "insulation 18", INK)
+    tag(v, -R_IN - 4, Z_S0 + 50, -150, 160, "cell PETG-CF, solid print\n+ PTFE liner 0.5 + grease", INK)
+    tag(v, -R_INS + 5, Z_S0 + 20, -150, 100, "insulation Kaiflex 25", INK)
     tag(v, -60, Z_G10 + 5, -150, 40, "G10 thermal break", INK)
     tag(v, 0, -12, 60, -45, f"light frame: Al 40×40, columns {p.FRAME_H_A:g}", INK)
     rows = [["PV1 / PH1", "vert. / radial stress", sn.PICK["PC"][1], sn.PICK["PC"][3]],
@@ -426,12 +427,6 @@ X_S = {"S1": 42.0, "S2": -42.0}
 X_E = {"E1": 22.0, "E2": -22.0, "E3": 6.0}
 
 
-def ring_stack(v, z0=Z_S0, light=True):
-    for s_ in (-1, 1):
-        v.rect(s_ * R_IN, z0, s_ * R_OUT, z0 + 8, fc=PETG, lw=THIN)
-        for k in range(10):
-            zz = z0 + 9 + 11 * k
-            v.rect(s_ * R_IN, zz, s_ * R_OUT, zz + 10, fc=PETG, lw=0.4)
 
 
 def rig_b(v):
@@ -445,8 +440,8 @@ def rig_b(v):
     v.rect(-75, Z_G10, 75, Z_PED, fc=G10, **light)
     v.rect(-75, Z_PED, 75, Z_S0, fc=METAL, **light)
     for s_ in (-1, 1):
-        v.rect(s_ * R_OUT, Z_S0 + 8, s_ * R_INS, Z_S0 + 119, fc=INSUL, lw=0.3)
-    ring_stack(v)
+        v.rect(s_ * R_OUT, Z_S0 + p.CELL_FOOT_T, s_ * R_INS, TUBE_TOP, fc=INSUL, lw=0.3)
+    solid_cell(v)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", **light)
     v.rect(-49.75, Z_S0 - 4, 49.75, Z_S0, fc="#bfc5b0", lw=0.3)
     v.rect(-p.TOP_PLATE_D / 2, Z_S1, p.TOP_PLATE_D / 2, Z_TP, fc=PETG, **light)
@@ -505,12 +500,10 @@ def plate_plan(v):
 
 
 def anchor_detail(sh, ox, oy, k):
-    """Enlarged section: multi-ring cell, sand, top plate, anchors with rods and sleeves."""
+    """Enlarged section: cell, sand, top plate, anchors with rods and sleeves."""
     v = View(sh, ox, oy, k)
     v.rect(-R_IN - 1, Z_S0 - 12, R_IN + 1, Z_S0, fc=METAL, lw=THIN)
-    ring_stack(v)
-    for s_ in (-1, 1):
-        v.rect(s_ * (R_IN - 0.6), Z_S0, s_ * R_IN, Z_S1 + 18, fc="#d9a066", lw=0)
+    solid_cell(v, top=Z_S1 + 18, foot=False)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
     import random
     rnd = random.Random(2)
@@ -560,7 +553,7 @@ def sheet_b_simple(pdf):
     tag(v, -p.STAND_R, 60, -150, 120, "3 Invar posts ⌀12\nfrom the base plate", INVAR)
     tag(v, 30, Z_S1 + 3, 150, Z_S1 + 25, "top plate PETG-CF ⌀99×6\n≈ 65 g ≈ 0.08 kPa", INK)
     tag(v, 22, Z_S1 - 25, 150, Z_S1 - 10, "anchor ⌀16×1.5 + Invar rod ⌀2\nin PTFE sleeve ⌀4", INK)
-    tag(v, R_OUT, Z_S0 + 40, 150, Z_S0 + 20, "multi-ring cell PETG-CF\n+ greased latex (as A)", INK)
+    tag(v, R_OUT, Z_S0 + 40, 150, Z_S0 + 20, "same cell PETG-CF\n+ PTFE liner (as A)", INK)
     tag(v, -60, Z_G10 + 5, -150, 30, "G10 thermal break", INK)
     tag(v, 0, -12, 60, -40, "base plate Al 260×200×25 – no frame, no load", INK)
     rows = [["S1…S3", "surface heave / settlement", sn.PICK["LVDT-B"][1], "SE3–5"],
@@ -655,7 +648,7 @@ def sheet_layout(pdf):
                    fc=METAL, lw=THIN, z=2)
             for x in (-42, -22, 6, 22, 42):
                 e.rect(cx + x - 5, zb + Z_BODY0, cx + x + 5, zb + Z_BODY0 + BODY_L, fc=SENS, lw=THIN, z=3)
-        e.rect(cx - R_INS, zb + Z_S0, cx + R_INS, zb + Z_S0 + 119, fc=INSUL, lw=THIN, z=2.1)
+        e.rect(cx - R_INS, zb + Z_S0, cx + R_INS, zb + TUBE_TOP, fc=INSUL, lw=THIN, z=2.1)
         e.text(cx, zb + 120, var, fontsize=FS + 2, weight="bold", ha="center", va="center", zorder=5)
     top = max(zb + 257 + p.DW_ROD_L, zb + p.FRAME_H_A + p.BEAM_H_A)
     e.dim_v(0, top, 445 + 75, 640, f"{top:.0f}")
@@ -681,7 +674,7 @@ def sheet_layout(pdf):
             "Notes\n"
             "• Both rigs share the freezer program (Set A) and the CR1000; each rig has\n"
             "  its own Tair sensor at sample mid-height.\n"
-            "• Same sand, same multi-ring cell, same thermistors in A and B – the only\n"
+            "• Same sand, same printed cell, same thermistors in A and B – the only\n"
             "  difference is the load (A ≤ 25 kPa dead weight, B none).\n"
             "• Run the blank test with Al dummies in both rigs before the first sand run.\n"
             "• Dimensions marked ≈ are estimates from the photos (E6) – please measure.",

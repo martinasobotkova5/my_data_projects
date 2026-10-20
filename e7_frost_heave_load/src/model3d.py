@@ -29,31 +29,9 @@ R_IN, R_OUT = p.D_CELL_IN / 2, p.D_CELL_OUT / 2
 X_COL = p.COL_SPAN / 2
 WALL_TH = [(10, 0), (30, 72), (50, 144), (70, 216), (90, 288)]
 
-# multi-ring cell (variant A option): rings slide on 3 guide rods
-MR_FOOT_T = 8.0          # base ring with flange ⌀150
-MR_RING_H = 10.0
-MR_WASHER = 1.0          # PTFE washer between rings
-MR_N = 10
-MR_LATEX = 0.3           # greased latex membrane
-MR_ID = p.D_SAMPLE + 2 * MR_LATEX + 0.4     # 101.0 incl. clearance
-MR_LUG_R = 63.0          # guide rods ⌀5 at r 63, 3× 120°
-MR_INS_IN, MR_INS_T = 71.0, 18.0   # clears the lugs (r 70) and the columns (r 90)
-MR_PROBE_ANG = (0, 60, 120, 180, 240)   # 30° away from the guide-rod lugs (90/210/330)
+INS_T = 25.0             # Kaiflex around the cell
+CELL_H = TUBE_TOP - Z_S0     # 125
 
-
-def mr_ring_z(k):
-    """Bottom z of ring k (0 = lowest moving ring)."""
-    return Z_S0 + MR_FOOT_T + MR_WASHER + k * (MR_RING_H + MR_WASHER)
-
-
-def mr_probe_positions():
-    """Thermistor heights: centre of the ring nearest to each target depth."""
-    out = []
-    for (d, _), ang in zip(WALL_TH, MR_PROBE_ANG):
-        z_t = Z_S1 - d
-        k = min(range(MR_N), key=lambda i: abs(mr_ring_z(i) + MR_RING_H / 2 - z_t))
-        out.append((k, mr_ring_z(k) + MR_RING_H / 2, ang))
-    return out
 
 C = {
     "al": cq.Color(0.78, 0.80, 0.82),
@@ -94,69 +72,40 @@ def radial(ang, r0, r1, z, d):
     return c.rotate((0, 0, 0), (0, 0, 1), ang)
 
 
-def multiring_cell(asm, prefix="", with_sample=False):
-    """Multi-ring cell: base ring with flange, 10 rings h 10 with lugs, PTFE washers,
-    3 guide rods, greased latex membrane, thermistor bosses on the rings."""
-    foot = tube(p.CELL_FOOT_D, MR_ID, MR_FOOT_T, Z_S0)
-    for ang in (90, 210, 330):
-        foot = foot.cut(cyl(5.2, MR_FOOT_T, Z_S0, MR_LUG_R * math.cos(math.radians(ang)),
-                            MR_LUG_R * math.sin(math.radians(ang))))
-    asm.add(foot, name=prefix + "multi-ring base ring PETG-CF", color=C["petg"])
-    probes = {k: (z, ang) for k, z, ang in mr_probe_positions()}
-    walls = {}
+def solid_cell(asm, prefix="", t_tip=9.0):
+    """Solid 3D-printed PETG-CF cell: wall 8, foot D150, thermistor bosses, PW holders, PTFE liner,
+    Kaiflex 25 insulation; thermistors T1–T5 and wall pressure sensors PW1–3."""
+    cell = tube(p.D_CELL_OUT, p.D_CELL_IN, CELL_H, Z_S0)
+    cell = cell.union(tube(p.CELL_FOOT_D, p.D_CELL_IN, p.CELL_FOOT_T, Z_S0))
+    liner = tube(p.D_CELL_IN, p.D_SAMPLE, CELL_H, Z_S0)
+    ins = tube(2 * (R_OUT + INS_T), 2 * R_OUT, CELL_H - p.CELL_FOOT_T, Z_S0 + p.CELL_FOOT_T)
+    for d, ang in WALL_TH:
+        z = Z_S1 - d
+        cell = cell.union(box(R_OUT - 2, R_OUT + 8, -5, 5, z - 5, z + 5).rotate((0, 0, 0), (0, 0, 1), ang))
+        cell = cell.cut(radial(ang, R_IN - 1, R_OUT + 9, z, 1.7))
+        ins = ins.cut(box(R_OUT - 1, R_OUT + 9, -6, 6, z - 6, z + 6).rotate((0, 0, 0), (0, 0, 1), ang))
     for tag, d, ang in p.PWALL:
-        z_t = Z_S1 - d
-        k = min(range(MR_N), key=lambda i: abs(mr_ring_z(i) + MR_RING_H / 2 - z_t))
-        walls[k] = (tag, mr_ring_z(k) + MR_RING_H / 2, ang)
-    for k in range(MR_N):
-        z0 = mr_ring_z(k)
-        ring = tube(p.D_CELL_OUT, MR_ID, MR_RING_H, z0)
-        for ang in (90, 210, 330):
-            lug = (cq.Workplane("XY").workplane(offset=z0).center(MR_LUG_R, 0).rect(14, 14).extrude(MR_RING_H)
-                   .union(cq.Workplane("XY").workplane(offset=z0).center((R_OUT + MR_LUG_R) / 2 - 1, 0)
-                          .rect(MR_LUG_R - R_OUT + 2, 14).extrude(MR_RING_H))
-                   .rotate((0, 0, 0), (0, 0, 1), ang))
-            ring = ring.union(lug)
-            ring = ring.cut(cyl(5.6, MR_RING_H, z0, MR_LUG_R * math.cos(math.radians(ang)),
-                                MR_LUG_R * math.sin(math.radians(ang))))
-        if k in probes:
-            z, ang = probes[k]
-            ring = ring.union(box(R_OUT - 2, R_OUT + 6, -5, 5, z0, z0 + MR_RING_H)
-                              .rotate((0, 0, 0), (0, 0, 1), ang))
-            ring = ring.cut(radial(ang, MR_ID / 2 - 1, R_OUT + 7, z, 1.7))
-        if k in walls:
-            tag, z, ang = walls[k]
-            ring = ring.union(box(R_OUT - 2, R_OUT + 6, -7, 7, z0, z0 + MR_RING_H)
-                              .rotate((0, 0, 0), (0, 0, 1), ang))
-            ring = ring.cut(radial(ang, MR_ID / 2 - 1, R_OUT + 7, z, p.PWALL_D + 0.2))
-            asm.add(radial(ang, MR_ID / 2, R_OUT + 14, z, p.PWALL_D), name=f"{prefix}{tag} wall pressure sensor",
-                    color=C["pressure"])
-        asm.add(ring, name=f"{prefix}ring {k + 1:02d} PETG-CF", color=C["petg"])
-        asm.add(tube(MR_LUG_R * 2 - 12, MR_ID + 2, MR_WASHER, z0 - MR_WASHER),
-                name=f"{prefix}PTFE washer {k + 1:02d}", color=C["ptfe"])
-    top = mr_ring_z(MR_N) - MR_WASHER
-    for i, ang in enumerate((90, 210, 330), 1):
-        asm.add(cyl(5, top - Z_S0 + 15, Z_S0, MR_LUG_R * math.cos(math.radians(ang)),
-                    MR_LUG_R * math.sin(math.radians(ang))),
-                name=f"{prefix}guide rod {i} (PTFE-coated)", color=C["steel"])
-    asm.add(tube(p.D_SAMPLE + 2 * MR_LATEX, p.D_SAMPLE, top - Z_S0, Z_S0),
-            name=prefix + "latex membrane 0.3 (greased)", color=cq.Color(0.85, 0.62, 0.35))
-    asm.add(tube(2 * (MR_INS_IN + MR_INS_T), 2 * MR_INS_IN, top - Z_S0 - MR_FOOT_T, Z_S0 + MR_FOOT_T),
-            name=prefix + "insulation Kaiflex 18", color=C["ins"])
-    if with_sample:
-        asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0), name=prefix + "soil sample D100x100", color=C["soil"])
-    for i, (k, z, ang) in enumerate(mr_probe_positions(), 1):
-        asm.add(radial(ang, 9, MR_INS_IN + MR_INS_T + 15, z, 1.6), name=f"{prefix}T{i} 109SS", color=C["temp"])
-    return top
+        z = Z_S1 - d
+        cell = cell.union(box(R_OUT - 2, R_OUT + 8, -6, 6, z - 6, z + 6).rotate((0, 0, 0), (0, 0, 1), ang))
+        cell = cell.cut(radial(ang, R_IN - 1, R_OUT + 9, z, p.PWALL_D + 0.2))
+        liner = liner.cut(radial(ang, p.D_SAMPLE / 2 - 1, R_IN + 1, z, p.PWALL_D + 0.2))
+        ins = ins.cut(box(R_OUT - 1, R_OUT + 9, -7, 7, z - 7, z + 7).rotate((0, 0, 0), (0, 0, 1), ang))
+        asm.add(radial(ang, p.D_SAMPLE / 2, R_OUT + 14, z, p.PWALL_D), name=f"{prefix}{tag} wall pressure sensor",
+                color=C["pressure"])
+    asm.add(cell, name=prefix + "cell PETG-CF (solid print)", color=C["petg"])
+    asm.add(liner, name=prefix + "PTFE liner 0.5", color=C["ptfe"])
+    asm.add(ins, name=prefix + "insulation Kaiflex 25", color=C["ins"])
+    for i, (d, ang) in enumerate(WALL_TH, 1):
+        asm.add(radial(ang, t_tip, R_OUT + INS_T + 15, Z_S1 - d, 1.6), name=f"{prefix}T{i} 109SS", color=C["temp"])
 
 
-def cell_stack(asm, variant, prefix="", multiring=False):
+def cell_stack(asm, prefix=""):
     asm.add(cyl(150, G10_T, H_BOT), name=prefix + "G10 thermal break", color=C["g10"])
     ped = cyl(150, p.PEDESTAL_H, Z_PED).cut(cyl(99.6, 10, Z_S0 - 10))
     asm.add(ped, name=prefix + "pedestal Al", color=C["al"])
     asm.add(cyl(99.5, 10, Z_S0 - 10), name=prefix + "porous stone bottom", color=C["stone"])
-    multiring_cell(asm, prefix)
-    _piston_and_sensors(asm, prefix, with_wall_probes=False, sand=True)
+    solid_cell(asm, prefix)
+    _piston_and_sensors(asm, prefix, sand=True)
     embedded_cells(asm, prefix)
     base_cells(asm, prefix)
 
@@ -174,7 +123,7 @@ def embedded_cells(asm, prefix=""):
                  .translate((rr - p.PCELL_T / 2, 0, z)).rotate((0, 0, 0), (0, 0, 1), ang))
             label = "radial stress"
         asm.add(c, name=f"{prefix}{tag} earth pressure cell ({label})", color=C["pressure"])
-        asm.add(radial(ang, rr + p.PCELL_D / 2 * (kind == "v"), MR_INS_IN + MR_INS_T + 15, z, 2.5),
+        asm.add(radial(ang, rr + p.PCELL_D / 2 * (kind == "v"), R_OUT + INS_T + 15, z, 2.5),
                 name=f"{prefix}{tag} cable", color=C["pressure"])
 
 
@@ -185,7 +134,7 @@ def base_cells(asm, prefix=""):
                 color=C["pressure"])
 
 
-def _piston_and_sensors(asm, prefix, with_wall_probes, sand=False):
+def _piston_and_sensors(asm, prefix, sand=False):
     asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0),
             name=prefix + ("unsaturated sand D100x100" if sand else "soil sample D100x100"),
             color=C["sand"] if sand else C["soil"])
@@ -195,9 +144,6 @@ def _piston_and_sensors(asm, prefix, with_wall_probes, sand=False):
     asm.add(cq.Workplane("XY").sphere(6).translate((0, 0, BALL_C)), name=prefix + "steel ball D12",
             color=C["steel"])
     # thermistor probes (Campbell 109SS, D1.6)
-    if with_wall_probes:
-        for i, (d, ang) in enumerate(WALL_TH, 1):
-            asm.add(radial(ang, 9, R_OUT + 40, Z_S1 - d, 1.6), name=f"{prefix}T{i} 109SS", color=C["temp"])
     asm.add(radial(180, 10, 74, Z_PED + 15, 1.6), name=prefix + "Tbot 109SS", color=C["temp"])
     asm.add(radial(0, 10, 49, Z_PT - 8, 1.6), name=prefix + "Ttop 109SS", color=C["temp"])
     # Invar reference with 2 LVDTs (RDP DCTH400)
@@ -226,7 +172,7 @@ def _piston_and_sensors(asm, prefix, with_wall_probes, sand=False):
 
 
 def variant_a(asm, prefix=""):
-    """Variant A: unsaturated sand in the multi-ring cell, pressure sensors, dead-weight surcharge ≤ 25 kPa."""
+    """Variant A: unsaturated sand in the solid printed cell, pressure sensors, dead-weight surcharge ≤ 25 kPa."""
     zb = p.FRAME_H_A
     hb, hd = p.BASE_W / 2, p.BASE_D / 2
     asm.add(box(-hb, hb, -hd, hd, -p.BASE_T, 0), name=prefix + "base plate Al 6082", color=C["al"])
@@ -239,7 +185,7 @@ def variant_a(asm, prefix=""):
     asm.add(bar, name=prefix + "cross-bar 40x40 (guide only)", color=C["profile"])
     asm.add(tube(28, p.DW_ROD_D + 0.1, p.BEAM_H_A, zb), name=prefix + "linear ball bushing D16", color=C["steel"])
     asm.add(cyl(60, H_BOT, 0), name=prefix + "Al spacer (bottom)", color=C["al"])
-    cell_stack(asm, "A", prefix, multiring=True)
+    cell_stack(asm, prefix)
     zg = Z_LC
     asm.add(cyl(p.DW_G10_D, p.DW_G10_T, zg), name=prefix + "G10 thermal break D60x10", color=C["g10"])
     zc = zg + p.DW_G10_T
@@ -253,7 +199,7 @@ def variant_a(asm, prefix=""):
 
 
 def variant_b(asm, prefix=""):
-    """Variant B: same sand sample in the multi-ring cell, no load; surface + anchor LVDTs on an Invar stand."""
+    """Variant B: same sand sample in the same printed cell, no load; surface + anchor LVDTs on an Invar stand."""
     hb, hd = p.BASE_W / 2, p.BASE_D / 2
     asm.add(box(-hb, hb, -hd, hd, -p.BASE_T, 0), name=prefix + "base plate Al 6082", color=C["al"])
     for i, (x, y) in enumerate(((-hb + 20, -hd + 20), (hb - 20, -hd + 20), (0, hd - 20))):
@@ -263,7 +209,7 @@ def variant_b(asm, prefix=""):
     ped = cyl(150, p.PEDESTAL_H, Z_PED).cut(cyl(99.6, 10, Z_S0 - 10))
     asm.add(ped, name=prefix + "pedestal Al", color=C["al"])
     asm.add(cyl(99.5, 10, Z_S0 - 10), name=prefix + "porous stone bottom", color=C["stone"])
-    multiring_cell(asm, prefix)
+    solid_cell(asm, prefix, t_tip=40.0)
     z_tp = Z_S1 + p.TOP_PLATE_T
     sand = cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0)
     plate = cyl(p.TOP_PLATE_D, p.TOP_PLATE_T, Z_S1)
@@ -331,10 +277,10 @@ if __name__ == "__main__":
     variant_a(a)
     b = cq.Assembly(name="E7 variant B - no load, heave and layer strain")
     variant_b(b)
-    mr = cq.Assembly(name="E7 multi-ring cell")
-    multiring_cell(mr, with_sample=False)
+    mr = cq.Assembly(name="E7 cell PETG-CF")
+    solid_cell(mr)
     lay = freezer_layout()
-    for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (mr, "E7_multiring_cell"),
+    for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (mr, "E7_cell"),
                     (lay, "E7_freezer_layout")):
         asm.save(os.path.join(OUT, fn + ".step"))
         cq.exporters.export(asm.toCompound(), os.path.join(OUT, fn + ".stl"), tolerance=0.2, angularTolerance=0.3)

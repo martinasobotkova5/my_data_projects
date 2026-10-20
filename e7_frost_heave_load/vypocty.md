@@ -59,9 +59,22 @@ Zdánlivý posun ≈ 50 µm za 20 K je malý proti očekávaným desetinám mm, 
 | B: tlak ledu na stěnu 200 kPa (horní odhad) | 0.2 | 1.26 | 40–55 | 32–44 | 9.5–13.1 |
 | extrém 1 MPa | 1.0 | 6.31 | 40–55 | 6–9 | 1.9–2.6 |
 
-Vícekroužková cela: obvodové napětí nese každý kroužek 10 mm samostatně (stejný vzorec). Tření o stěnu přenáší namazaná latexová membrána, kroužky se po sobě volně posouvají.
+Cela je plná (jeden kus z 3D tisku), tištěná nastojato: obvodové napětí jde podél vláken.
 
-Rozdílná roztažnost cela/vzorek: α PETG-CF ≈ 30–60·10⁻⁶ 1/K → změna průměru při 20 K ≈ 0.06–0.12 mm (kroužky se při ochlazení zúží víc než písek; membrána a tuk to vyrovnají, horní deska má vůli ≥ 1 mm).
+**Tření o stěnu plné cely** – část přitížení odnese stěna (Janssen): σv(dno)/σv(povrch) = exp(−4·μ·K·H/D).
+
+| rozhraní | μ | K | σv dno / povrch | A: σv u dna při 25 kPa [kPa] | osová síla do stěny [N] |
+|---|---|---|---|---|---|
+| PTFE fólie + silikonový tuk | 0.05 | 0.4 | 0.92 | 23.1 | 15 |
+| PTFE fólie + silikonový tuk | 0.05 | 0.6 | 0.89 | 22.2 | 22 |
+| PTFE fólie nasucho | 0.1 | 0.4 | 0.85 | 21.3 | 29 |
+| PTFE fólie nasucho | 0.1 | 0.6 | 0.79 | 19.7 | 42 |
+| bez fólie (písek–PETG) | 0.5 | 0.4 | 0.45 | 11.2 | 108 |
+| bez fólie (písek–PETG) | 0.5 | 0.6 | 0.30 | 7.5 | 137 |
+
+S PTFE fólií a tukem dojde ke dnu ≈ 90 % přitížení, bez fólie jen 30–40 %. Proto: fólie povinná a PV1 (40 mm) a PB1 (dno) vyhodnocovat jako profil σv(z), ne jako jednu hodnotu. Ve variantě B je přitížení nulové, tření je malé, ale **přimrznutí ledu ke stěně** může brzdit zdvih zmrzlé horní vrstvy; PTFE má ze všech běžných materiálů nejmenší adhezi ledu. Osové napětí ve stěně od tření (A, 25 kPa, bez fólie): 0.045 MPa – zanedbatelné.
+
+Rozdílná roztažnost cela/vzorek: α PETG-CF ≈ 30–60·10⁻⁶ 1/K → změna průměru při 20 K ≈ 0.06–0.12 mm (cela se při ochlazení zúží víc než písek – boční tlak mírně vzroste; píst A má vůli ≥ 0,25 mm, horní deska B ≥ 0,5 mm).
 
 ## 6. Varianta A – zdvih pod přitížením
 
