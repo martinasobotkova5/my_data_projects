@@ -4,7 +4,8 @@ Vzorek ⌀100 × 100 mm (vnitřní) v tištěné cele z PETG-CF, v rámu z Al pr
 
 | soubor | obsah |
 |---|---|
-| `vykresy/E7_drawings.pdf` | 5 listů A3, anglicky (PNG po listech ve stejné složce) |
+| `vykresy/E7_drawings.pdf` | 6 listů A3, anglicky (PNG po listech ve stejné složce) |
+| `src/sensors.py` | výběr čidel a plán kanálů CR1000 |
 | `vypocty.md` | síly, tuhost rámu, teplotní artefakt, napětí v cele, siloměry |
 | `src/params.py` | všechny rozměry a předpoklady |
 | `src/vykresy.py`, `src/vypocty.py` | generátory |
@@ -88,7 +89,52 @@ Podmínky:
   - Economides et al. (2024), *Polymers* 16: 3336, doi:10.3390/polym16233336;
   - UMaine MS thesis (2024): cykly mrznutí a tání minimální vliv, voda škodí.
 
-## 6. Doporučení a otevřené otázky
+## 6. Výkresy (aktualizováno)
+
+| list | obsah |
+|---|---|
+| E7-V01 | varianta A – zjednodušené schéma se značkami čidel a doporučenými modely |
+| E7-V02 | varianta B – zjednodušené schéma se značkami čidel a doporučenými modely |
+| E7-V03 | cela PETG-CF (monolitická + vícekroužková) |
+| E7-V04 | rám z Al profilů – zmenšený: deska 260 × 200, sloupy 330 mm, příčník 260 mm |
+| E7-V05 | výběr čidel (varianty od více výrobců) a plán kanálů CR1000 |
+| E7-V06 | obě sestavy vedle sebe na vaně ve stejném mrazáku jako E6, CR1000 venku |
+
+Rám jsem zmenšil, aby se obě sestavy vešly vedle sebe na vanu (≈ 530 × 340 mm). Páka varianty A je kratší (300 mm, převod stále 1 : 10) a míří k volnému konci mrazáku. Nejvyšší bod je ≈ 555 mm proti odhadovaným ≈ 650 mm vnitřní výšky. Kratší sloupy zároveň snižují teplotní artefakt ve variantě B na ≈ 160 kPa; slepá zkouška zůstává nutná.
+
+## 7. Konkrétní čidla pro CR1000 (E7-V05, `src/sensors.py`)
+
+Údaje jsou z katalogových stránek výrobců a distributorů nalezených vyhledáváním. Stránky jsem nemohl otevřít přímo, takže teplotní rozsahy a deformace před objednáním ověřit u dodavatele. [U] = nepotvrzeno.
+
+| měření | doporučeno | proč | alternativy |
+|---|---|---|---|
+| síla, varianta A (2 kN) | **Interface SSM 2 kN** | S-typ, kompenzace −15 … +65 °C (nejnižší nalezená), provoz −55 … +90 °C, IP67 | HBM S9M/2kN (třída 0,02, IP68, −10 … +70 °C); HBM U2B; ME KD80s; Lorenz K-25 (rozšířený rozsah na dotaz) |
+| síla, varianta B (2× 20 kN) | **HBM C9C/20kN** | ⌀26 × 13 mm → velmi tuhý, 1 mV/V, jmenovitě −10 … +70 °C, provoz −30 … +85 °C, IP67 | Burster 8402 (≤ 50 µm, IP54); HBM C10 25 kN; Futek LTH500 |
+| posun (4×) | **RDP DCTH400** | DC-LVDT ±10 mm s vestavěnou elektronikou, výstup ±5 V přímo do CR1000, −40 … +80 °C | Micro-Epsilon DTA-10D + MSC7401; Solartron AX/10/S + OD5; HBM WA-L |
+| teplota (21×) | **Campbell 109SS** | trubička ⌀1,6 mm (pasuje do průchodek 1/16″), přímo na CR1000, ±0,38 °C při 0 °C | Campbell 107 (vzduch, rám); TE/YSI 44031 pro 0,01 °C (řetězec jako v E6) |
+
+**Nevhodné kvůli mrazu:**
+- TE DC-EC / HCD: jen 0 … +70 °C.
+- Interface LBM: kompenzace jen +21 … +77 °C.
+- AML DBBSM: kompenzace 0 … +70 °C, IP51.
+- Burster 8438: 0 … +85 °C.
+- HBM S2M: jen do 1 kN.
+
+**Zapojení na jeden CR1000 (obě sestavy):** CR1000 má 16 SE / 8 DIFF vstupů a 3 budicí výstupy ±2,5 V.
+
+| svorky CR1000 | připojeno | poznámka |
+|---|---|---|
+| DIFF1–3 + VX1 | 3 siloměry | BrFull, ratiometricky s reverzací |
+| DIFF4–7 | 4 LVDT | ±5000 mV; vlastní zdroj ±15 V |
+| SE15 + VX2 + C1/C2 | multiplexer AM16/32B | režim 2×32 pro 21 termistorů |
+
+- Moduly 4WFBS nejsou potřeba, slouží jen pro čtvrtmůstky.
+- Rozlišení síly s CR1000: ≈ 0,04 kPa (A) a ≈ 0,3 kPa (B).
+- Rozlišení posunu: ≈ 1,3 µm (0,7 µm s reverzací). Absolutní linearita LVDT ±0,25 % FS ≈ ±50 µm → kalibrovat mikrometrem.
+- CR1000 se už nevyrábí (nástupce CR1000X / CR1000Xe s 24bitovým převodníkem). Stávající stačí. Musí ale zůstat mimo mrazák, protože pracuje v rozsahu −25 … +50 °C.
+- Žádný siloměr jsem nenašel se standardní kompenzací do −20/−30 °C. Logovat teplotu siloměrů (TLC) a korigovat, případně poptat rozšířený rozsah (Interface, Lorenz).
+
+## 8. Doporučení a otevřené otázky
 
 1. **Program regulátoru:** „Set A“ (24 h +10 °C, pak lineární rampy 192 h mezi −10 a +10 °C) lze použít přímo. Teplota se ale mění pomalu a stále, takže čelo promrzání postupuje pomalu. Pro jasné kroky zvážit výdrže na −10 °C a +10 °C.
 2. **Směr promrzání:** v mrazáku promrzá vzorek ze všech stran. Izolace stěn a mezikus G10 pod podstavcem vedou k promrzání hlavně shora přes Al píst. Literatura doporučuje termostatované koncové desky a mrazák jen jako ochranné prostředí (Jin et al. 2019). Je to možné rozšíření.

@@ -501,11 +501,43 @@ def sheet_layout(pdf):
     sh.save(pdf, os.path.join(OUT, "E7-V06_freezer_layout.png"))
 
 
+def sheet_sensors(pdf):
+    sh = Sheet("Sensor selection and CR1000 wiring", "E7-V05", "–", 5, TOTAL,
+               "both rigs on one CR1000 + AM16/32B; models from manufacturer data (see README §7)")
+    sh.heading(28, 278, "Options per measurement (PICK = recommended)")
+    rows = [list(o) for o in sn.OPTIONS]
+    table(sh, 28, 274, ["sensor", "maker / model", "key specs", "verdict"], rows, [18, 58, 98, 34], row_h=4.4)
+    sh.heading(240, 278, "CR1000 channel plan")
+    y = table(sh, 240, 274, ["terminal", "connected to", "measurement"], [list(c) for c in sn.CHANNELS],
+              [24, 40, 106], row_h=4.6)
+    sh.text(240, y - 4,
+            "Channel count (2 rigs): 3 load cells + 4 LVDTs + 21 thermistors.\n"
+            "16 SE / 8 DIFF on the CR1000 → thermistors through the AM16/32B (2×32).\n"
+            "\n"
+            "Resolution with the CR1000 (13-bit ADC)\n"
+            "• LC-A 2 mV/V, 2.5 V: 5 mV FS → ≈ 0.3 N ≈ 0.04 kPa\n"
+            "• LC-T/B 1 mV/V: 2.5 mV FS → ≈ 2.6 N ≈ 0.3 kPa\n"
+            "• LVDT ±5 V over ±10 mm: ≈ 1.3 µm (0.7 µm with reversal);\n"
+            "  absolute linearity ±0.25 % FS ≈ ±50 µm → calibrate with a micrometer\n"
+            "• 109SS: ±0.38 °C at 0 °C; ice-point offset check improves it\n"
+            "\n"
+            "Notes\n"
+            "• CR1000 is discontinued (successor CR1000X / CR1000Xe, 24-bit); the\n"
+            "  existing one is fine for these resolutions.\n"
+            "• Logger outside the freezer (CR1000 −25…+50 °C).\n"
+            "• No load cell found with compensation to −20/−30 °C as standard:\n"
+            "  Interface SSM −15 °C, HBM −10 °C (op. −30 °C) – log TLC and\n"
+            "  correct; Interface/Lorenz offer extended ranges on request.\n"
+            "• 4WFBS modules are for quarter bridges – not needed here.",
+            fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.save(pdf, os.path.join(OUT, "E7-V05_sensors_CR1000.png"))
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
         if f.endswith((".png", ".pdf")):
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E7_drawings.pdf")) as pdf:
-        for fn in (sheet_a_simple, sheet_b_simple, sheet_cell, sheet_frame, sheet_layout):
+        for fn in (sheet_a_simple, sheet_b_simple, sheet_cell, sheet_frame, sheet_sensors, sheet_layout):
             fn(pdf)
