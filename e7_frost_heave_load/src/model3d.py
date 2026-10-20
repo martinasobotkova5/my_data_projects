@@ -174,6 +174,7 @@ def cell_stack(asm, variant, prefix="", multiring=False):
         multiring_cell(asm, prefix)
         _piston_and_sensors(asm, prefix, with_wall_probes=False, sand=True)
         embedded_cells(asm, prefix)
+        base_cells(asm, prefix)
         return
     # cell with foot and bosses
     cell = tube(p.D_CELL_OUT, p.D_CELL_IN, TUBE_TOP - Z_S0, Z_S0)
@@ -216,6 +217,13 @@ def embedded_cells(asm, prefix=""):
         asm.add(c, name=f"{prefix}{tag} earth pressure cell ({label})", color=C["pressure"])
         asm.add(radial(ang, rr + p.PCELL_D / 2 * (kind == "v"), MR_INS_IN + MR_INS_T + 15, z, 2.5),
                 name=f"{prefix}{tag} cable", color=C["pressure"])
+
+
+def base_cells(asm, prefix=""):
+    for tag, rr, ang in p.PBASE:
+        x, y = rr * math.cos(math.radians(ang)), rr * math.sin(math.radians(ang))
+        asm.add(cyl(8, 1.5, Z_S0 - 1.5, x, y), name=f"{prefix}{tag} base pressure sensor (flush)",
+                color=C["pressure"])
 
 
 def _piston_and_sensors(asm, prefix, with_wall_probes, sand=False):

@@ -73,10 +73,12 @@ SAND = dict(name="unsaturated sand", d50=0.3, Sr=(0.3, 0.5), theta=(0.10, 0.18))
 SURCHARGE_A_KPA = 50.0       # výchozí přitížení (rozsah 25–200)
 # vložené tlakové buňky: (tag, měří, hloubka pod povrchem [mm], r [mm], úhel [°])
 #   "v" = leží vodorovně → svislé napětí; "h" = stojí svisle, čelem k ose → radiální napětí
-PCELLS = [("PV1", "v", 40.0, 0.0, 0.0),
-          ("PV2", "v", 80.0, 22.0, 210.0),
-          ("PH1", "h", 62.0, 25.0, 30.0)]
-PCELL_D, PCELL_T = 20.0, 5.0     # obalové rozměry miniaturní buňky (upřesní rešerše)
-# tlakové snímače ve stěně (lícují s vnitřním povrchem): (tag, hloubka, úhel)
+PCELLS = [("PV1", "v", 40.0, 0.0, 0.0),        # na ose, svislé napětí
+          ("PH1", "h", 62.0, 25.0, 30.0)]       # radiální napětí (volitelné – další inkluze)
+# TML PDA-PA (⌀6,5 × 1 mm) vlepený do nerezového nosného disku ⌀20 × 2 → D/t = 10, D/d50 ≈ 65
+PCELL_D, PCELL_T = 20.0, 2.0
+# snímač v patce: PDA-PA zapuštěný lícem s horní plochou porézního kamene (svislé napětí u dna)
+PBASE = [("PB1", 25.0, 120.0)]               # (tag, r, úhel)
+# tlakové snímače ve stěně (lícují s vnitřním povrchem kroužku): (tag, hloubka, úhel)
 PWALL = [("PW1", 20.0, 30.0), ("PW2", 42.0, 150.0), ("PW3", 64.0, 270.0)]
-PWALL_D = 8.0
+PWALL_D = 8.0                                # PDA-PA v pouzdře ⌀8 (vejde se do kroužku 10 mm)

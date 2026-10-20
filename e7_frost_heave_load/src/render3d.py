@@ -66,7 +66,7 @@ if __name__ == "__main__":
     amr = cq.Assembly(); m.variant_a(amr, multiring=True)
     render(amr, os.path.join(m.OUT, "E7_variant_A_multiring.png"), title="E7 variant A – multi-ring cell")
     half = cq.Workplane("XY").box(2000, 1000, 2000, centered=(True, False, True)).val()
-    render(amr, os.path.join(m.OUT, "E7_variant_A_section.png"), elev=10, azim=90,
+    render(amr, os.path.join(m.OUT, "E7_variant_A_section.png"), elev=15, azim=75,
            title="E7 variant A – section: sand, pressure cells, thermistors", cut=half)
     mr = cq.Assembly(); m.multiring_cell(mr)
     render(mr, os.path.join(m.OUT, "E7_multiring_cell.png"), elev=18, azim=-50, title="E7 multi-ring cell")

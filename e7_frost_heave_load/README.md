@@ -166,7 +166,46 @@ Rám jsem zmenšil, aby se obě sestavy vešly vedle sebe na vanu (≈ 530 × 34
 
 Generuje `src/model3d.py` z `src/params.py`, náhledy `src/render3d.py`.
 
-## 9. Doporučení a otevřené otázky
+## 9. Varianta A upravená: nenasycený písek, přitížení, tlaky uvnitř (E7-V01, 3D)
+
+**Uspořádání:**
+- Nenasycený písek (Sr ≈ 0,3–0,5, θ ≈ 0,10–0,18) ve vícekroužkové cele ⌀100 × 100 mm mrzne a taje.
+- Nahoře je konstantní přitížení pákou se závažím, 25–200 kPa (výchozí 50 kPa = 4 kg). Drží vzorek na místě.
+- LVDT kontrolují, že se nehýbe (očekávaně < 0,1 mm).
+- Měří se tlaky uvnitř:
+
+| značka | co měří | umístění | čidlo |
+|---|---|---|---|
+| PV1 | svislé napětí v písku | na ose, hloubka 40 mm | TML PDA-PA 200 kPa vlepený do nerezového disku ⌀20 × 2 mm |
+| PH1 | radiální napětí v písku (volitelné) | r 25, hloubka 62 mm, disk na výšku | totéž |
+| PB1 | svislé napětí u dna | v patce, lícem s porézním kamenem, r 25 | TML PDA-PA v pouzdře ⌀8, zapuštěný |
+| PW1–PW3 | boční tlak na stěnu | v kroužcích, hloubky ≈ 20 / 42 / 64 mm | TML PDA-PA v pouzdře ⌀8, lícem s vnitřní stěnou |
+
+**Proč TML PDA-PA:**
+- Jako jediný miniaturní snímač má podle katalogu kompenzaci do −10 °C (provoz −20 … +70 °C). Je to destička ⌀6,5 × 1 mm, 0,8 mV/V, 350 Ω.
+- Kyowa BEC-A (⌀30 mm) je alternativa jen pro jednu buňku. Tloušťku a teplotní rozsah se nepodařilo potvrdit.
+- TML KDE/KDF (⌀50 mm) jsou na vzorek ⌀100 mm příliš velké.
+- Údaje jsou z katalogových stránek podle vyhledávání. Datasheety jsem nemohl otevřít, před objednáním ověřit.
+
+**Zásady z literatury** (Weiler & Kulhawy 1982; Labuz & Theroux 2005, doi:10.1520/GTJ12089; Talesnick 2005):
+- **Málo malých inkluzí:** poměr průměr/tloušťka ≥ 10 a průměr / d50 ≥ 20 (disk ⌀20 v písku d50 0,3 mm → ≈ 65). Proto jen 2 vložené disky a ostatní snímače v lícu stěny a dna.
+- **Kalibrace v pásku:** ve stejném písku a cele pod závažím 25–200 kPa, zatížení i odlehčení, při +10 a −10 °C.
+- **Teplota:** u každého snímače termistor a korekce nuly podle teploty. Zeng et al. (2022, doi:10.6052/1000-0879-21-231) ukázali při cyklech mrznutí a tání teplotní posun a degradaci miniaturních buněk.
+- **Led na membráně:** snímač utěsnit silikonem nebo epoxidem proti tvorbě ledu na membráně (TML uvádí „no icing“).
+- **Sání v nenasyceném písku:** tenzometry v mrazu zamrznou. Před zmrazením změřit sání (tenziometr nebo filtrační papír) a pak ho odhadovat z teploty (Clapeyron) nebo z obsahu nezamrzlé vody (TDR).
+
+**Zapojení CR1000** (obě sestavy):
+
+| svorky CR1000 | připojeno | poznámka |
+|---|---|---|
+| DIFF1–3 + VX1 | siloměry | |
+| SE7–10 | LVDT | |
+| DIFF6 + VX3 (2000 mV) + C1/C2 | multiplexer AM16/32B č. 1 (4×16) | 6 tlakových můstků |
+| SE13 + VX2 + C3/C4 | multiplexer AM16/32B č. 2 (2×32) | ≈ 24 termistorů |
+
+**3D:** v `E7_variant_A_multiring.step` jsou písek, disky PV1/PH1, snímač PB1 v patce a snímače PW1–3 v kroužcích. Řez ukazuje `3d/E7_variant_A_section.png`.
+
+## 10. Doporučení a otevřené otázky
 
 1. **Program regulátoru:** „Set A“ (24 h +10 °C, pak lineární rampy 192 h mezi −10 a +10 °C) lze použít přímo. Teplota se ale mění pomalu a stále, takže čelo promrzání postupuje pomalu. Pro jasné kroky zvážit výdrže na −10 °C a +10 °C.
 2. **Směr promrzání:** v mrazáku promrzá vzorek ze všech stran. Izolace stěn a mezikus G10 pod podstavcem vedou k promrzání hlavně shora přes Al píst. Literatura doporučuje termostatované koncové desky a mrazák jen jako ochranné prostředí (Jin et al. 2019). Je to možné rozšíření.
