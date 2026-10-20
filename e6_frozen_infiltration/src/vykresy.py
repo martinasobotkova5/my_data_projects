@@ -11,7 +11,7 @@ from drafting import (BLUE, FROZEN, FS, FS_SMALL, INK, INSUL, METAL, PLASTIC, RE
                       THICK, THIN, WATER, Sheet, View, table)
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "vykresy")
-TOTAL = 11
+TOTAL = 12
 BROWN = "#7a5a2a"
 FOAM = "#e7dcc6"
 
@@ -597,14 +597,14 @@ def sheet_v06(pdf):
     ax = sh.ax
     # chamber
     box(sh, 28, 58, 210, 222, "", fc="#f5f9fc", ec="#557", lw=THICK)
-    sh.text(32, 275, "programmable freezing chamber  −8 … +5 °C", fontsize=FS, weight="bold", va="top")
+    sh.text(32, 275, "lab bench after transfer (frozen in the chest freezer before, E6-V10)", fontsize=FS, weight="bold", va="top")
     # Mariotte bottle on balance
     box(sh, 40, 150, 30, 70, "", fc="white")
     ax.add_patch(Rectangle((40, 150), 30, 48, fc=WATER, ec="none", zorder=2.5))
     box(sh, 34, 140, 42, 9, "balance 0.01 g", fc="#eee")
     pipe(sh, [(52, 225), (52, 152)], c=INK, lw=1.0)
     sh.text(54, 226, "air inlet tube", fontsize=FS_SMALL)
-    sh.text(55, 205, "Mariotte bottle\n600 mL, labelled\nwater δ²H +200…+500 ‰\n+ Br⁻, jacket +0.5 °C",
+    sh.text(55, 205, "Mariotte bottle\n600 mL, labelled\nwater δ²H +200…+500 ‰\n+ Br⁻, ice bath 0 °C",
             fontsize=FS_SMALL - 0.5, ha="center", va="center", zorder=4)
     pipe(sh, [(70, 156), (100, 156), (100, 170), (128, 170)])
     valve(sh, 88, 156, "V1")
@@ -634,14 +634,14 @@ def sheet_v06(pdf):
     pipe(sh, [(cx, 98), (cx, 88), (cx + 30, 88), (cx + 30, 80)])
     valve(sh, cx, 92, "V3", vertical=True)
     pipe(sh, [(cx + 30, 88), (cx + 30, 88)])
-    sh.text(cx + 32, 95, "heated line +1 °C", fontsize=FS_SMALL - 0.5, color=BLUE)
+    sh.text(cx + 32, 95, "outflow line", fontsize=FS_SMALL - 0.5, color=BLUE)
     pipe(sh, [(cx - 24, 117), (cx - 36, 117)])
     valve(sh, cx - 40, 117, "V4")
     pipe(sh, [(cx - 44, 117), (cx - 52, 117)])
     sh.text(cx - 74, 117, "purge", fontsize=FS_SMALL, va="center")
     # collector box
     box(sh, 150, 62, 84, 30, "", fc="#eef3e9", ec="#4a7")
-    sh.text(152, 90, "insulated box +4 °C", fontsize=FS_SMALL, va="top", color="#2a6a3a")
+    sh.text(152, 90, "vials on ice / cold block", fontsize=FS_SMALL, va="top", color="#2a6a3a")
     ax.add_patch(Rectangle((cx + 26, 76), 8, 4, fc=WATER, ec=INK, lw=THIN, zorder=3))
     sh.text(cx + 36, 79, "overflow cup 0.5 mL\n(lip sets h_b)", fontsize=FS_SMALL - 0.5, va="center")
     for i in range(6):
@@ -669,7 +669,7 @@ def sheet_v06(pdf):
             ["V4", "air purge", "flush grooves before freezing"],
             ["top", "h₀ = −2 cm", "set by Mariotte air inlet; PT logs real h₀"],
             ["bottom", "h_b = 0…−30 cm", "set by overflow-cup lip; h_b = 0 →\nseepage face (original design)"],
-            ["sides", "≈ adiabatic", "Kaiflex 30 mm; check with T10…T90"],
+            ["sides", "≈ adiabatic", "insulation box 60–100 mm; HF2 checks"],
             ["cone", "T_b", "−3 °C freezing, +0.3 °C during outflow"]]
     table(sh, 250, 272, ["item", "setting", "note"], rows, [18, 36, 100], row_h=7.5)
     sh.text(250, 205, "Balances\n"
@@ -683,37 +683,155 @@ def sheet_v06(pdf):
 
 
 # ---------------------------------------------------------------------------
+def bench_curve(t_init, ins, ins_top, ins_bottom, t_room=20.0, hours=60.0):
+    """Lumped estimate of the mean sample temperature after transfer to the bench."""
+    ua, t0, tm_ = tm.warming(t_room, ins, ins_top, ins_bottom, t_init)
+    v = math.pi * (p.D_COL / 2000) ** 2 * p.H_SOIL / 1000
+    tau = 2.5e6 * v / ua / 3600            # thawed soil, C ≈ 2.5 MJ m-3 K-1
+    pts = []
+    for i in range(301):
+        t = hours * i / 300
+        if t < t0:
+            T = t_init * (1 - t / t0)
+        elif t < t0 + tm_:
+            T = 0.0
+        else:
+            T = t_room * (1 - math.exp(-(t - t0 - tm_) / tau))
+        pts.append((t, T))
+    return pts, t0, tm_
+
+
 def sheet_v07(pdf):
-    sh = Sheet("Run protocol – set-points", "E6-V07", "–", 7, TOTAL,
-               "one run ≈ 7–9 days; times are indicative")
-    ax = sh.fig.add_axes([0.08, 0.50, 0.84, 0.38])
-    phases = [("pack + equilibrate", 0, 24), ("freeze top-down", 24, 54), ("freeze base", 54, 66),
-              ("hold −3 °C", 66, 90), ("warm head", 90, 92), ("infiltration + outflow", 92, 200)]
-    air = [(0, 4), (24, 4), (24.1, -5), (66, -5), (66.1, -3), (90, -3), (92, 0.5), (200, 0.5)]
-    cone = [(0, 4), (24, 4), (24.1, 1), (54, 1), (66, -3), (92, -3), (92.1, 0.3), (200, 0.3)]
-    for (name, a, b), fc in zip(phases, ["#f2f2f2", "#e3edf7", "#d3e3f2", "#c6d8ec", "#f7ecdc", "#e6f2e3"]):
-        ax.axvspan(a, b, color=fc, lw=0)
-        ax.text((a + b) / 2, 6.3, name, ha="center", va="bottom", fontsize=FS_SMALL, rotation=0 if b - a > 15 else 90)
-    ax.plot(*zip(*air), c=BLUE, lw=1.6, label="chamber air")
-    ax.plot(*zip(*cone), c="#d08a4a", lw=1.6, label="cone (bath)")
-    ax.plot([0, 200], [0, 0], c="#888", lw=0.6, ls=":")
-    ax.set_xlim(0, 200)
-    ax.set_ylim(-6.5, 8.5)
-    ax.set_xlabel("time [h]", fontsize=FS)
-    ax.set_ylabel("set-point [°C]", fontsize=FS)
+    sh = Sheet("Run protocol – freeze in freezer, infiltrate on bench", "E6-V07", "–", 7, TOTAL,
+               "times indicative; bench phase from a lumped heat balance (E6-V12, vypocty.md §8)")
+    ax = sh.fig.add_axes([0.08, 0.60, 0.40, 0.30])
+    phases = [("pack +\ninstrument", -30, -24), ("freeze −10 °C\n(top-down)", -24, 0)]
+    ax.axvspan(-30, -24, color="#f2f2f2", lw=0)
+    ax.axvspan(-24, 0, color="#dde8f4", lw=0)
+    ax.text(-27, 21, "pack", ha="center", fontsize=FS_SMALL - 1)
+    ax.text(-12, 21, "in freezer: freeze + hold", ha="center", fontsize=FS_SMALL - 1)
+    ax.plot([-30, -24, -24, -6, -6, 0], [20, 20, -10, -10, -3, -3], c="#557", lw=1.2, label="freezer set-point")
+    ax.axvline(0, c=INK, lw=0.8)
+    ax.text(0.5, 21, "transfer ≤ 10 min → infiltration on bench (lab 20 °C)", fontsize=FS_SMALL - 1)
+    for (lab, ins, it, ib), col in zip(tm.BENCH_INSULATION, ["#c44", "#d08a4a", "#2b62a3"]):
+        for t_init, ls in ((-3, "-"), (-10, "--")):
+            pts, _, _ = bench_curve(t_init, ins, it, ib)
+            ax.plot([q[0] for q in pts], [q[1] for q in pts], c=col, lw=1.1, ls=ls,
+                    label=f"{lab}, start {t_init} °C")
+    ax.axhline(0, c="#888", lw=0.5, ls=":")
+    ax.set_xlim(-30, 60)
+    ax.set_ylim(-11, 23)
+    ax.set_xlabel("time from transfer [h]", fontsize=FS)
+    ax.set_ylabel("mean sample T [°C]", fontsize=FS)
     ax.tick_params(labelsize=FS_SMALL)
-    ax.legend(fontsize=FS_SMALL, loc="lower right", frameon=False)
+    ax.legend(fontsize=FS_SMALL - 1.5, loc="center left", bbox_to_anchor=(1.01, 0.5), frameon=False)
     for spine in ("top", "right"):
         ax.spines[spine].set_visible(False)
-    rows = [["1", "0–24 h", "pack in 10 mm lifts, wet to θ ≈ 0.30 with background water;\nflush grooves (V4), V3 closed", "T profile uniform ±0.05 K"],
-            ["2", "24–54 h", "air −5 °C, cone +1 °C: freezing front moves down;\nV3 closed", "front at T90 depth"],
-            ["3", "54–66 h", "cone ramp to −3 °C at 0.3 °C/h", "all T < −2.8 °C"],
-            ["4", "66–90 h", "isothermal hold −3 °C; record heave (LVDT)", "drift < 0.02 K/h"],
-            ["5", "90–92 h", "air to +0.5 °C; place dry, pre-cooled sand + head; fill supply", "Tdisc logged"],
-            ["6", "92 h →", "open V1; cone +0.3 °C, open V3; collect 2–5 mL fractions;\nrun until ≥ 1.5 PV (≈ 350 mL) out", "δ²H plateau or 200 h"],
-            ["7", "end", "close V1, V3; section in 10 mm slices: gravimetric θ, δ²H, Br⁻", "mass balance ±2 %"]]
-    table(sh, 30, 128, ["step", "time", "action", "go / no-go"], rows, [12, 20, 130, 50], row_h=8.5)
+    sh.text(30, 160, "The 0 °C plateau is the time with ice in the pores. Breakthrough of the label takes 44–111 h,\n"
+                     "so every run covers infiltration into frozen soil, its thawing, and flow through thawed soil.",
+            fontsize=FS_SMALL, va="top")
+    rows = [["1", "lab", "pack Ø100×100 in 10 mm lifts to θ ≈ 0.30 with background water;\nmount holder on cone, all probes in, V3 closed, flush V4", "probes read, TDR ok"],
+            ["2", "freezer", "freezer −10 °C, sides + cone insulated → freezing from the top\nthrough the Al plate; logger running through the collar", "front passes T90"],
+            ["3", "freezer", "hold at start temperature (−3 or −10 °C) ≥ 24 h", "all T within ±0.05 K"],
+            ["4", "prep", "ice-water bath for Mariotte bottle and contact sand; collector rack\non ice; insulation box open on the bench next to the freezer", "Tsup ≤ 0.5 °C"],
+            ["5", "transfer", "lift column + cone + stand as one unit, cables stay connected;\nclose box; write transfer start / end time", "≤ 10 min"],
+            ["6", "bench", "dry pre-cooled sand + AMDI; open V1 and V3; collect 2–5 mL\nfractions in septum vials on ice", "Tdisc logged"],
+            ["7", "end", "≥ 1.5 PV out or 120 h; close V1, V3; section in 10 mm slices:\ngravimetric θ, δ²H, Br⁻", "balance ±2 %"]]
+    table(sh, 30, 140, ["step", "where", "action", "go / no-go"], rows, [12, 18, 140, 36], row_h=10.0)
     sh.save(pdf, os.path.join(OUT, "E6-V07_protocol.png"))
+
+
+def sheet_v12(pdf):
+    sh = Sheet("Bench set-up after transfer", "E6-V12", "–", 12, TOTAL,
+               "infiltration outside the freezer; not to scale except marked heights")
+    ax = sh.ax
+    from matplotlib.patches import Polygon
+    ax.plot([25, 240], [60, 60], c=INK, lw=THICK)
+    ax.add_patch(Rectangle((25, 54), 215, 6, fc="#ddd", ec=INK, lw=THIN, hatch="////"))
+    sh.text(28, 50, "lab bench, 20 °C", fontsize=FS_SMALL, va="top")
+    # insulation box (two halves) around column + cone
+    cx = 95
+    ax.add_patch(Rectangle((cx - 42, 92), 84, 82, fc=INSUL, ec=PROP, lw=THIN, hatch="oo", zorder=1))
+    ax.plot([cx, cx], [92, 174], c=PROP, lw=THIN, ls="--", zorder=1.1)
+    sh.text(cx - 40, 177, "insulation box 60–100 mm, two halves (clamshell)", fontsize=FS_SMALL, color=PROP)
+    ax.add_patch(Rectangle((cx - 12, 120), 24, 40, fc=FROZEN, ec=INK, lw=THIN, zorder=2))
+    ax.add_patch(Rectangle((cx - 14, 118), 28, 2, fc=METAL, ec=INK, lw=THIN, zorder=2))
+    ax.add_patch(Polygon([(cx - 14, 118), (cx + 14, 118), (cx + 3, 104), (cx - 3, 104)], closed=True,
+                         fc=METAL, ec=INK, lw=THIN, zorder=2))
+    for xl in (cx - 10, cx + 10):
+        ax.plot([xl, xl], [104, 60], c=INK, lw=THICK, zorder=1.5)
+    ax.add_patch(Rectangle((cx - 13, 160), 26, 4, fc=METAL, ec=INK, lw=THIN, zorder=2))
+    ax.add_patch(Rectangle((cx - 6, 160), 12, 9, fc=PLASTIC, ec=INK, lw=THIN, zorder=3))
+    sh.text(cx, 140, "frozen\nsample", fontsize=FS_SMALL - 0.5, ha="center", va="center", zorder=4)
+    for k_, yy in enumerate((157, 153, 147, 140, 133, 125)):
+        ax.add_patch(Circle((cx - 8 + (k_ % 2) * 16, yy), 0.8, fc=PROP, ec="none", zorder=4))
+    # Mariotte bottle in ice-water bath on balance
+    ax.add_patch(Rectangle((150, 120), 40, 46, fc="#e4eef7", ec=INK, lw=THIN, zorder=1))
+    sh.text(192, 140, "ice-water\nbath 0 °C", fontsize=FS_SMALL - 0.5, ha="left", va="center")
+    ax.add_patch(Rectangle((160, 126), 20, 44, fc="white", ec=INK, lw=THIN, zorder=2))
+    ax.add_patch(Rectangle((160, 126), 20, 26, fc=WATER, ec="none", zorder=2.1))
+    ax.plot([170, 170], [176, 145], c=INK, lw=THIN, zorder=3)
+    ax.add_patch(Rectangle((146, 112), 48, 8, fc="#eee", ec=INK, lw=THIN, zorder=1))
+    sh.text(170, 116, "balance 0.01 g", fontsize=FS_SMALL - 1, ha="center", va="center")
+    ax.add_patch(Rectangle((150, 60), 40, 52, fc="none", ec="#888", lw=THIN, ls="--"))
+    sh.text(170, 85, "lab jack", fontsize=FS_SMALL - 1, ha="center", color="#666")
+    ax.plot([140, 200], [164, 164], c=RED, lw=THIN, ls="--")
+    ax.plot([164, 176], [145, 145], c=RED, lw=THIN)
+    sh.text(202, 160, "disc level;\nair-inlet tip 20 mm\nbelow (h₀ = −2 cm)", fontsize=FS_SMALL - 1, color=RED, va="center")
+    pipe(sh, [(160, 130), (140, 130), (140, 180), (cx - 3, 180), (cx - 3, 169)], lw=1.0)
+    ax.add_patch(Circle((170, 135), 0.9, fc=PROP, ec="none", zorder=4))
+    sh.text(172, 133, "Tsup", fontsize=FS_SMALL - 1, color=PROP)
+    # outflow → overflow cup → collector rack on ice
+    pipe(sh, [(cx, 104), (cx, 96), (cx - 55, 96), (cx - 55, 86)], lw=1.0)
+    ax.add_patch(Rectangle((cx - 59, 82), 8, 4, fc=WATER, ec=INK, lw=THIN, zorder=3))
+    ax.add_patch(Rectangle((28, 62), 46, 16, fc="#eef3e9", ec="#4a7", lw=THIN, zorder=2))
+    for i in range(5):
+        ax.add_patch(Rectangle((30 + i * 8.6, 64), 6, 10, fc="white", ec=INK, lw=THIN, zorder=3))
+    sh.text(51, 79.5, "vials on ice / cold block", fontsize=FS_SMALL - 1, ha="center", va="bottom", color="#2a6a3a")
+    ax.plot([cx - 70, cx - 12], [118, 118], c=RED, lw=THIN, ls="--")
+    ax.annotate("", xy=(cx - 64, 86), xytext=(cx - 64, 118),
+                arrowprops=dict(arrowstyle="<|-|>", lw=THIN, color=RED, mutation_scale=6))
+    sh.text(cx - 66, 104, "h_b", fontsize=FS_SMALL, ha="right", color=RED)
+    # optional bath on cone
+    box(sh, 110, 30, 50, 16, "circulating bath +0.5 °C\n(optional, cone coil)", fc="#fbeee3", fs=FS_SMALL - 1)
+    ax.plot([135, 135, cx + 4], [46, 100, 108], c="#d08a4a", lw=1.0, ls="--")
+    # logger cart and cables
+    box(sh, 200, 66, 38, 34, "logger cart\nCR3000 + R_ref\nsame cables as\nin the freezer", fc="#f1eff7", fs=FS_SMALL - 1)
+    ax.plot([cx + 42, 200], [150, 92], c="#6a3d9a", lw=1.0)
+    sh.text(200, 104, "cables ≥ 3 m, never unplugged", fontsize=FS_SMALL - 1, color="#6a3d9a")
+    shield(sh, 215, 190, "L1")
+    sh.text(215, 186, "lab air", fontsize=FS_SMALL - 1, ha="center", va="top")
+    box(sh, 200, 210, 38, 22, "ICE: ice-point\nDewar, check\nbefore / after", fc="white", fs=FS_SMALL - 1)
+    # LVDT not shown
+    sh.text(28, 250, "Freezer → bench: lift column + cone + stand as one unit; the logger cart stands next to the\n"
+                     "freezer so the cables reach both places; temperature record stays continuous.",
+            fontsize=FS_SMALL, va="top")
+
+    rows = []
+    for lab, ins, it, ib in tm.BENCH_INSULATION:
+        for t_init in (-3, -10):
+            ua, t0, tm_ = tm.warming(20.0, ins, it, ib, t_init)
+            rows.append([lab, f"{t_init}", f"{ua:.3f}", f"{t0:.1f}", f"{tm_:.0f}"])
+    sh.heading(252, 278, "How long does it stay frozen on the bench?")
+    table(sh, 252, 274, ["insulation", "start °C", "UA W/K", "to 0 °C h", "ice gone h"], rows,
+          [52, 18, 20, 22, 24], row_h=4.6)
+    sh.text(252, 238,
+            "Lumped estimate, lab 20 °C, conduction through the insulation only.\n"
+            "Real times are shorter: uninsulated AMDI head, legs, cables, and warm\n"
+            "infiltration water (84 J/mL at 20 °C vs 2 J/mL at 0.5 °C → use ice bath).\n"
+            "\n"
+            "What it means\n"
+            "• Use the thickest practical box (≥ 60 mm) and start colder (−10 °C)\n"
+            "  if the frozen phase is the target; −3 °C gives ≈ 1 h before 0 °C.\n"
+            "• The run always continues into thawing soil: the probes record when\n"
+            "  and where the ice disappears (0 °C plateau ends).\n"
+            "• Supply water, sand and the AMDI disc at 0–0.5 °C, otherwise the\n"
+            "  disc melts its own footprint first.\n"
+            "• Bottom: a frozen cone blocks the outlet; the optional bath at +0.5 °C\n"
+            "  thaws the lowest mm so water can leave at h_b.\n"
+            "• Collect fractions on ice in septum vials: lab air would evaporate them.",
+            fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.save(pdf, os.path.join(OUT, "E6-V12_bench_setup.png"))
 
 
 # ---------------------------------------------------------------------------
@@ -1167,5 +1285,5 @@ if __name__ == "__main__":
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E6_drawings.pdf")) as pdf:
         for fn in (sheet_v01, sheet_v02, sheet_v03, sheet_v04, sheet_v05, sheet_v06, sheet_v07,
-                   sheet_v08, sheet_v09, sheet_v10, sheet_v11):
+                   sheet_v08, sheet_v09, sheet_v10, sheet_v11, sheet_v12):
             fn(pdf)

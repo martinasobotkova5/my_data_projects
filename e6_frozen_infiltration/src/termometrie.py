@@ -73,20 +73,28 @@ K_INS = 0.035                 # W m-1 K-1, Kaiflex / XPS / PU
 H_INS_SIDE = p.L_TUBE / 1000
 
 
-def ua_column():
-    r1, r2 = (p.D_OUT / 2) / 1000, (p.D_OUT / 2 + p.INS) / 1000
+def ua_column(ins=p.INS, ins_top=p.INS_TOP, ins_bottom=20.0):
+    """Heat-loss coefficient of the insulated column [W/K] (conduction through insulation only)."""
+    r1, r2 = (p.D_OUT / 2) / 1000, (p.D_OUT / 2 + ins) / 1000
     side = 2 * math.pi * K_INS * H_INS_SIDE / math.log(r2 / r1)
-    top = K_INS / (p.INS_TOP / 1000) * math.pi * (p.D_COL / 2000) ** 2
+    top = K_INS / (ins_top / 1000) * math.pi * (p.D_COL / 2000) ** 2
     cone_area = math.pi * (p.CONE_R_TOP / 1000) * math.hypot(p.CONE_H, p.CONE_R_TOP - p.CONE_R_TIP) / 1000
-    bottom = K_INS / 0.020 * cone_area
+    bottom = K_INS / (ins_bottom / 1000) * cone_area
     return side + top + bottom
 
 
-def warming(t_room=20.0):
+def warming(t_room=20.0, ins=p.INS, ins_top=p.INS_TOP, ins_bottom=20.0, t_init=p.T_INIT):
+    """(UA, hours to warm from t_init to 0 °C, hours to melt all ice) for a column on the lab bench."""
     v = math.pi * (p.D_COL / 2000) ** 2 * p.H_SOIL / 1000
-    ua = ua_column()
-    cold = p.C_FROZEN * abs(p.T_INIT) * v                         # J
-    q_cold = ua * (t_room - p.T_INIT / 2)                           # W, mean while warming
+    ua = ua_column(ins, ins_top, ins_bottom)
+    cold = p.C_FROZEN * abs(t_init) * v                             # J
+    q_cold = ua * (t_room - t_init / 2)                             # W, mean while warming
     ice = (p.THETA_TOT - p.THETA_UNFROZEN) * v * 917 * p.L_F         # J
     q_melt = ua * t_room
     return ua, cold / q_cold / 3600, ice / q_melt / 3600
+
+
+# insulation options for the bench phase: (label, side, top annulus, bottom/cone) [mm]
+BENCH_INSULATION = [("Kaiflex 30 (as drawn)", 30, 20, 20),
+                    ("PU/XPS box 60", 60, 40, 40),
+                    ("PU/XPS box 100", 100, 60, 60)]

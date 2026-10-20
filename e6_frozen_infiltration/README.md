@@ -4,7 +4,7 @@ Revize dvou původních schémat: řez minidiskem na koloně ⌀100 × 100 a ses
 
 | soubor | obsah |
 |---|---|
-| `vykresy/E6_drawings.pdf` | 11 listů A3, anglicky (PNG po listech ve stejné složce) |
+| `vykresy/E6_drawings.pdf` | 12 listů A3, anglicky (PNG po listech ve stejné složce) |
 | `vypocty.md` | kontrolní a návrhové výpočty (generované) |
 | `src/params.py` | všechny rozměry a předpoklady na jednom místě |
 | `src/vykresy.py`, `src/drafting.py` | generátor výkresů (matplotlib) |
@@ -104,11 +104,12 @@ Ověřeno vyhledáním; DOI uvádím jen tam, kde se je podařilo potvrdit.
 | E6-V04 | Kónický odtok: řez, horní líc s drážkami, detail sevření membrány 5 : 1, varianta B |
 | E6-V05 | Detail disk–zemina 2 : 1, úpravy hlavy AMDI |
 | E6-V06 | Hydraulické a tepelné schéma, ventily, okrajové podmínky, bilance |
-| E6-V07 | Protokol běhu: průběh teplot a kroky s kritérii go/no-go |
+| E6-V07 | Protokol: zmrazení v mrazáku → přenos → infiltrace na stole, odhad teploty vzorku, kroky go/no-go |
 | E6-V08 | Měření teploty v truhlicovém mrazáku: rozmístění 20 kanálů uvnitř a vně, límec s průchodkami |
 | E6-V09 | Termistorová sonda ⌀1,6, uložení ve stěně, polomůstek, kalibrace, rozpočet nejistoty |
 | E6-V10 | Skutečná sestava podle fotek: půdorys a řez mrazákem 1 : 5, zjištění a změny |
 | E6-V11 | Tištěný držák vzorku 1 : 1: kam umístit teploměry, TDR a desky tepelného toku |
+| E6-V12 | Pracoviště na stole po vyndání z mrazáku, jak dlouho vydrží vzorek zmrzlý |
 
 Klíčová rozhodnutí:
 - Vzorek zůstává **⌀100 × 100 mm (vnitřní)**.
@@ -164,7 +165,28 @@ Doporučuji proto infiltraci nechat **v mrazáku**, s regulátorem nastaveným n
   - HF2 na plášti držáku (kontrola bočních ztrát),
   - vzduch A1–A3 a referenční cela s čistou vodou.
 
-## 7. Otevřené otázky
+## 7. Potvrzený postup: zmrazit v mrazáku, infiltrovat mimo něj (E6-V07, E6-V12)
+
+Vzorek se zmrazí v truhlicovém mrazáku, pak se vyndá a infiltrace běží na laboratorním stole. Důsledky a úpravy:
+
+- **Doba zmrzlého stavu je omezená.** Soustředěný odhad (`vypocty.md` §8) pro laboratoř 20 °C:
+
+  | izolace | start −3 °C: na 0 °C | start −10 °C: na 0 °C | led roztaje |
+  |---|---|---|---|
+  | Kaiflex 30 mm | 0,6 h | 1,7 h | ≈ 8 h |
+  | box PU/XPS 60 mm | 1,1 h | 3,1 h | ≈ 14 h |
+  | box PU/XPS 100 mm | 1,5 h | 4,4 h | ≈ 20 h |
+
+  Skutečné časy budou kratší: nezaizolovaná hlava AMDI, nožky, kabely a teplo vody. Průnik značky (44–111 h) proto vždy zahrne i tání a tok rozmrzlou zeminou. Teploty ukážou, kdy a kde led zmizí (konec plata 0 °C).
+- **Izolace:** pro infiltraci použít dvoudílný izolační box ≥ 60 mm. Pokud má být delší zmrzlá fáze, zmrazit na −10 °C.
+- **Teplota vody:** Mariottova láhev, kontaktní písek i disk na 0–0,5 °C (ledová lázeň). Voda 20 °C by nejdřív roztála stopu pod diskem.
+- **Teploty bez přerušení:** logger stojí na vozíku mezi mrazákem a stolem a kabely (≥ 3 m) se nikdy neodpojují. Záznam teplot je tak spojitý od zmrazení po konec infiltrace. Kalibrace zůstává platná, protože se nemění řetězec.
+- **Přenos:** kolona + kužel + stojan jako jeden celek, ≤ 10 min. Zapsat čas začátku a konce.
+- **Dno:** zmrzlý kužel blokuje odtok. Volitelná lázeň +0,5 °C na spirále kužele rozmrazí spodní milimetry, aby voda odtekla při h_b.
+- **Frakce:** vialky se septem na ledu nebo chladicím bloku, jinak se v laboratoři odpaří.
+- **Co odpadá:** zamrzání přívodu a výtoku (body A a B v části 2) se týká jen infiltrace v mrazáku.
+
+## 8. Otevřené otázky
 
 1. **Typ zeminy a cílová vlhkost při zmrazení.** Na nich závisí nezamrzlá voda i to, zda vůbec něco proteče (Stadler 2000). Ve výpočtech předpokládám θ = 0,30 a θ_u(−3 °C) = 0,07.
 2. **Nastavení h_b.** Navrhuji začít na −5 cm. h_b = 0 jako srovnávací běh s původním „volným“ výtokem?

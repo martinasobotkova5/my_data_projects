@@ -108,12 +108,17 @@ Termistor NTC 10 kΩ v polovičním můstku s referenčním odporem 30 kΩ, buze
 
 Podmínka: kalibrovat celý řetězec (čidlo + kabel + stejný logger a R_ref), ne jen čidlo.
 
-## 8. Kolona mimo mrazák (laboratoř 20 °C, izolace 30 mm)
+## 8. Kolona mimo mrazák: jak dlouho zůstane zmrzlá (laboratoř 20 °C)
 
-| veličina | hodnota | jednotka | poznámka |
-|---|---|---|---|
-| tepelná propustnost izolace UA | 0.097 | W/K | plášť + víko + kužel |
-| tepelný zisk při 20 °C | 1.9 | W |  |
-| ohřev −3 → 0 °C | 0.6 | h | jen citelný chlad, bez infiltrace |
-| roztátí veškerého ledu | 8 | h | průnik značky trvá 44–111 h |
-| citelné teplo přítoku vody 20 °C | 84 | J/ml | 1 ml roztaví 0,25 g ledu u disku |
+Soustředěný (lumped) odhad, jen vedení izolací; skutečné časy budou kratší (hlava AMDI, nožky, kabely, voda).
+
+| izolace | start [°C] | UA [W/K] | ohřev na 0 °C [h] | led roztaje [h] |
+|---|---|---|---|---|
+| Kaiflex 30 (as drawn) | -3 | 0.097 | 0.6 | 8 |
+| Kaiflex 30 (as drawn) | -10 | 0.097 | 1.7 | 8 |
+| PU/XPS box 60 | -3 | 0.054 | 1.1 | 14 |
+| PU/XPS box 60 | -10 | 0.054 | 3.1 | 14 |
+| PU/XPS box 100 | -3 | 0.038 | 1.5 | 20 |
+| PU/XPS box 100 | -10 | 0.038 | 4.4 | 20 |
+
+Citelné teplo přítoku: voda 20 °C nese 84 J/ml, voda 0,5 °C jen 2 J/ml → Mariottovu láhev držet v ledové lázni.
