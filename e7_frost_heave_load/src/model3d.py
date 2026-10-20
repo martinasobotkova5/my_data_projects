@@ -72,6 +72,8 @@ C = {
     "invar": cq.Color(0.56, 0.49, 0.76),
     "weight": cq.Color(0.35, 0.35, 0.38),
     "tray": cq.Color(0.85, 0.86, 0.88, 0.6),
+    "pressure": cq.Color(0.12, 0.48, 0.55),
+    "sand": cq.Color(0.86, 0.78, 0.58),
     "freezer": cq.Color(0.9, 0.95, 1.0, 0.15),
 }
 
@@ -116,6 +118,11 @@ def multiring_cell(asm, prefix="", with_sample=False):
                             MR_LUG_R * math.sin(math.radians(ang))))
     asm.add(foot, name=prefix + "multi-ring base ring PETG-CF", color=C["petg"])
     probes = {k: (z, ang) for k, z, ang in mr_probe_positions()}
+    walls = {}
+    for tag, d, ang in p.PWALL:
+        z_t = Z_S1 - d
+        k = min(range(MR_N), key=lambda i: abs(mr_ring_z(i) + MR_RING_H / 2 - z_t))
+        walls[k] = (tag, mr_ring_z(k) + MR_RING_H / 2, ang)
     for k in range(MR_N):
         z0 = mr_ring_z(k)
         ring = tube(p.D_CELL_OUT, MR_ID, MR_RING_H, z0)
@@ -132,6 +139,13 @@ def multiring_cell(asm, prefix="", with_sample=False):
             ring = ring.union(box(R_OUT - 2, R_OUT + 6, -5, 5, z0, z0 + MR_RING_H)
                               .rotate((0, 0, 0), (0, 0, 1), ang))
             ring = ring.cut(radial(ang, MR_ID / 2 - 1, R_OUT + 7, z, 1.7))
+        if k in walls:
+            tag, z, ang = walls[k]
+            ring = ring.union(box(R_OUT - 2, R_OUT + 6, -7, 7, z0, z0 + MR_RING_H)
+                              .rotate((0, 0, 0), (0, 0, 1), ang))
+            ring = ring.cut(radial(ang, MR_ID / 2 - 1, R_OUT + 7, z, p.PWALL_D + 0.2))
+            asm.add(radial(ang, MR_ID / 2, R_OUT + 14, z, p.PWALL_D), name=f"{prefix}{tag} wall pressure sensor",
+                    color=C["pressure"])
         asm.add(ring, name=f"{prefix}ring {k + 1:02d} PETG-CF", color=C["petg"])
         asm.add(tube(MR_LUG_R * 2 - 12, MR_ID + 2, MR_WASHER, z0 - MR_WASHER),
                 name=f"{prefix}PTFE washer {k + 1:02d}", color=C["ptfe"])
@@ -158,7 +172,8 @@ def cell_stack(asm, variant, prefix="", multiring=False):
     asm.add(cyl(99.5, 10, Z_S0 - 10), name=prefix + "porous stone bottom", color=C["stone"])
     if multiring:
         multiring_cell(asm, prefix)
-        _piston_and_sensors(asm, prefix, with_wall_probes=False)
+        _piston_and_sensors(asm, prefix, with_wall_probes=False, sand=True)
+        embedded_cells(asm, prefix)
         return
     # cell with foot and bosses
     cell = tube(p.D_CELL_OUT, p.D_CELL_IN, TUBE_TOP - Z_S0, Z_S0)
@@ -186,8 +201,27 @@ def cell_stack(asm, variant, prefix="", multiring=False):
     _piston_and_sensors(asm, prefix, with_wall_probes=True)
 
 
-def _piston_and_sensors(asm, prefix, with_wall_probes):
-    asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0), name=prefix + "soil sample D100x100", color=C["soil"])
+def embedded_cells(asm, prefix=""):
+    """Miniature earth pressure cells inside the sand (variant A)."""
+    for tag, kind, d, rr, ang in p.PCELLS:
+        z = Z_S1 - d
+        x, y = rr * math.cos(math.radians(ang)), rr * math.sin(math.radians(ang))
+        if kind == "v":
+            c = cyl(p.PCELL_D, p.PCELL_T, z - p.PCELL_T / 2, x, y)
+            label = "vertical stress"
+        else:
+            c = (cq.Workplane("YZ").circle(p.PCELL_D / 2).extrude(p.PCELL_T)
+                 .translate((rr - p.PCELL_T / 2, 0, z)).rotate((0, 0, 0), (0, 0, 1), ang))
+            label = "radial stress"
+        asm.add(c, name=f"{prefix}{tag} earth pressure cell ({label})", color=C["pressure"])
+        asm.add(radial(ang, rr + p.PCELL_D / 2 * (kind == "v"), MR_INS_IN + MR_INS_T + 15, z, 2.5),
+                name=f"{prefix}{tag} cable", color=C["pressure"])
+
+
+def _piston_and_sensors(asm, prefix, with_wall_probes, sand=False):
+    asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0),
+            name=prefix + ("unsaturated sand D100x100" if sand else "soil sample D100x100"),
+            color=C["sand"] if sand else C["soil"])
     asm.add(cyl(99.5, 10, Z_S1), name=prefix + "porous stone top", color=C["stone"])
     asm.add(cyl(99.5, Z_PT - Z_S1 - 10, Z_S1 + 10), name=prefix + "piston Al", color=C["al"])
     asm.add(cyl(140, 5, Z_PT), name=prefix + "LVDT target plate", color=C["al"])

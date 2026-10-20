@@ -287,11 +287,20 @@ def simple_rig(v, variant):
     # cell, insulation, sample
     for s_ in (-1, 1):
         v.rect(s_ * R_OUT, Z_S0, s_ * R_INS, TUBE_TOP, fc=INSUL, lw=0.3)
-        v.rect(s_ * R_IN, Z_S0, s_ * R_OUT, TUBE_TOP, fc=PETG, **light)
-    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc=FROZEN, **light)
+        if variant == "A":           # multi-ring cell: base ring + 10 rings with PTFE washers
+            v.rect(s_ * R_IN, Z_S0, s_ * R_OUT, Z_S0 + 8, fc=PETG, **light)
+            for k in range(10):
+                z0 = Z_S0 + 9 + 11 * k
+                v.rect(s_ * R_IN, z0, s_ * R_OUT, z0 + 10, fc=PETG, lw=0.4)
+        else:
+            v.rect(s_ * R_IN, Z_S0, s_ * R_OUT, TUBE_TOP, fc=PETG, **light)
+    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8" if variant == "A" else FROZEN, **light)
     v.rect(-49.75, Z_S0 - 4, 49.75, Z_S0, fc="#bfc5b0", lw=0.3)
     v.rect(-49.75, Z_S1, 49.75, Z_S1 + 4, fc="#bfc5b0", lw=0.3)
-    v.text(0, (Z_S0 + Z_S1) / 2 + 12, "soil sample\n⌀100 × 100", fontsize=FS_SMALL, ha="center", va="center")
+    if variant == "A":
+        pressure_cells(v, labels=False)
+    else:
+        v.text(0, (Z_S0 + Z_S1) / 2 + 12, "soil sample\n⌀100 × 100", fontsize=FS_SMALL, ha="center", va="center")
     v.rect(-49.75, Z_S1 + 4, 49.75, Z_PT, fc=METAL, **light)
     v.rect(-70, Z_PT, 70, Z_PT + TARGET_T, fc=METAL, **light)
     v.circle(0, Z_BALL + 6, 6, fc=STEEL, lw=THIN)
@@ -318,6 +327,59 @@ def simple_rig(v, variant):
     v.rect(-10, Z_BEAM - 15, 10, Z_BEAM + BEAM_H + 35, fc=STEEL, lw=THIN)
     v.rect(-45, Z_BEAM + BEAM_H + 35, 45, Z_BEAM + BEAM_H + 42, fc=STEEL, lw=THIN)
     return z_lc, None, None
+
+
+PCOL = "#1f7a8c"     # pressure sensors
+
+
+def pressure_cells(v, labels=True):
+    """Embedded cells (revolved into the section plane) and wall sensors, variant A."""
+    side = {"PV1": 0, "PV2": -1, "PH1": 1}
+    for tag_, kind, d, r, ang in p.PCELLS:
+        x = side[tag_] * r
+        z = Z_S1 - d
+        if kind == "v":
+            v.rect(x - p.PCELL_D / 2, z - p.PCELL_T / 2, x + p.PCELL_D / 2, z + p.PCELL_T / 2, fc=PCOL, lw=THIN, z=4)
+        else:
+            v.rect(x - p.PCELL_T / 2, z - p.PCELL_D / 2, x + p.PCELL_T / 2, z + p.PCELL_D / 2, fc=PCOL, lw=THIN, z=4)
+        if labels:
+            v.text(x, z + (p.PCELL_D / 2 + 1 if kind == "h" else p.PCELL_T / 2 + 1), tag_, fontsize=FS_SMALL,
+                   color=PCOL, ha="center", va="bottom", weight="bold", zorder=6)
+    for tag_, d, ang in p.PWALL:
+        z = Z_S1 - d
+        v.rect(-R_IN - 3, z - p.PWALL_D / 2, -R_IN + 0.5, z + p.PWALL_D / 2, fc=PCOL, lw=THIN, z=4)
+        if labels:
+            v.text(-R_IN - 5, z, tag_, fontsize=FS_SMALL, color=PCOL, ha="right", va="center", weight="bold")
+
+
+def cell_detail(sh, ox, oy, k):
+    """Enlarged section of the multi-ring cell with sand, pressure sensors and thermistors."""
+    v = View(sh, ox, oy, k)
+    v.rect(-R_IN - 1, Z_S0 - 12, R_IN + 1, Z_S0, fc=METAL, lw=THIN)
+    for s_ in (-1, 1):
+        v.rect(s_ * R_IN, Z_S0, s_ * R_OUT, Z_S0 + 8, fc=PETG, lw=THIN)
+        for kk in range(10):
+            z0 = Z_S0 + 9 + 11 * kk
+            v.rect(s_ * R_IN, z0, s_ * R_OUT, z0 + 10, fc=PETG, lw=0.4)
+        v.rect(s_ * (R_IN - 0.6), Z_S0, s_ * R_IN, Z_S1 + 18, fc="#d9a066", lw=0)
+    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
+    import random
+    rnd = random.Random(2)
+    for _ in range(260):
+        v.circle(rnd.uniform(-48, 48), rnd.uniform(Z_S0 + 1, Z_S1 - 1), 0.35, fc="#b39a6b", ec="none", lw=0, z_=2.1)
+    v.rect(-49.75, Z_S1, 49.75, Z_S1 + 4, fc="#bfc5b0", lw=0.3)
+    v.rect(-49.75, Z_S1 + 4, 49.75, Z_S1 + 18, fc=METAL, lw=THIN)
+    v.text(0, Z_S1 + 11, "piston + surcharge σ = const", fontsize=FS_SMALL - 0.5, ha="center", va="center")
+    for i, (d, ang) in enumerate(WALL_TH, 1):
+        s_ = 1 if i % 2 else -1
+        z = Z_S1 - d
+        v.line([(s_ * R_OUT, z), (s_ * 9, z)], lw=0.7, c=TCOL)
+        v.circle(s_ * 9, z, 1.2, fc=TCOL, lw=0)
+        v.text(s_ * (R_OUT + 2), z, f"T{i}", fontsize=FS_SMALL - 0.5, color=TCOL, va="center",
+               ha="left" if s_ > 0 else "right")
+    pressure_cells(v, labels=True)
+    v.dim_v(Z_S0, Z_S1, R_OUT, R_OUT + 14, "100")
+    v.dim_h(-p.D_SAMPLE / 2, p.D_SAMPLE / 2, Z_S0 - 12, Z_S0 - 18, "⌀100 unsaturated sand", side="below")
 
 
 def temp_points(v, variant, z_lc):
@@ -349,34 +411,42 @@ def legend(sh, rows, y0=276):
 
 
 def sheet_a_simple(pdf):
-    sh = Sheet("Variant A – constant load (simplified)", "E7-V01", "≈ 1 : 3", 1, TOTAL,
-               "schematic, proportions to scale; sensors in orange (force, displacement) and red (temperature)")
+    sh = Sheet("Variant A – unsaturated sand, surcharge, internal pressures", "E7-V01", "≈ 1 : 3", 1, TOTAL,
+               "schematic; orange = force / displacement, blue = pressure, red = temperature; cells revolved into section")
     v = View(sh, 88, 68, 1 / 3)
     z_lc, z_lev, xh = simple_rig(v, "A")
     temp_points(v, "A", z_lc)
     tag(v, 0, z_lc + 27, 75, z_lc + 120, "LC-A  load cell 2 kN", SENS_TXT)
     tag(v, 62, z_lc + 25, 140, z_lc + 10, "LVDT-1, -2  ±10 mm", SENS_TXT)
-    tag(v, xh, 200, xh + 20, 120, "dead weights 2–16 kg\n= 25–200 kPa", INK)
+    tag(v, xh, 200, xh + 20, 120, f"dead weights 2–16 kg = 25–200 kPa\n(default {p.SURCHARGE_A_KPA:g} kPa: 4 kg)", INK)
     tag(v, -LEV_A, z_lev + 6, -110, z_lev + 60, "lever 1:10, pivot", INK)
     tag(v, 0, Z_BEAM + 40, 60, Z_BEAM + 60, "rod in linear bushing", INK)
     tag(v, -75, 60, -150, 200, "Invar reference", INVAR)
-    tag(v, -R_IN - 4, Z_S0 + 50, -150, 160, "cell PETG-CF\n+ PTFE liner", INK)
-    tag(v, -R_INS + 5, Z_S0 + 20, -150, 100, "insulation 25", INK)
+    tag(v, -R_IN - 4, Z_S0 + 50, -150, 160, "multi-ring cell PETG-CF\n+ greased latex membrane", INK)
+    tag(v, -R_INS + 5, Z_S0 + 20, -150, 100, "insulation 18", INK)
     tag(v, -60, Z_G10 + 5, -150, 40, "G10 thermal break", INK)
     tag(v, 0, -12, 60, -45, f"frame: Al profiles, base {p.BASE_W:g}×{p.BASE_D:g}", INK)
     rows = [["LC-A", "applied load", sn.PICK["LC-A"][1], sn.PICK["LC-A"][3]],
-            ["LVDT-1,2", "heave / settlement", sn.PICK["LVDT"][1], sn.PICK["LVDT"][3]],
+            ["PV1, PV2", "vertical stress in sand", sn.PICK["PC"][1], sn.PICK["PC"][3]],
+            ["PH1", "radial stress in sand", sn.PICK["PC"][1], sn.PICK["PC"][3]],
+            ["PW1…PW3", "lateral stress on wall", sn.PICK["PW"][1], sn.PICK["PW"][3]],
+            ["LVDT-1,2", "check: no movement", sn.PICK["LVDT"][1], sn.PICK["LVDT"][3]],
             ["T1…T5", "soil, r 9 mm", sn.PICK["T"][1], sn.PICK["T"][3]],
             ["Ttop, Tbot", "piston, pedestal", sn.PICK["T"][1], "(same)"],
             ["TLC, Tframe, Tair", "load cell, frame, air", sn.PICK["TX"][1], sn.PICK["TX"][3]]]
     y = legend(sh, rows)
+    sh.text(330, 176, "DETAIL – sand, pressure sensors, thermistors  ≈ 1 : 1.25", fontsize=FS + 0.5,
+            weight="bold", ha="center")
+    cell_detail(sh, 330, 10, 0.8)
     sh.text(255, y - 4,
             "How it works\n"
-            "The lever multiplies the dead weight 10× and keeps the vertical stress\n"
-            "constant while the sample heaves (freezing) and settles (thawing).\n"
-            "LC-A checks the real load, the two LVDTs measure the piston movement\n"
-            "against an Invar reference that does not shrink with the cold.\n"
-            "Re-level the lever if the hanger moves > 25 mm.",
+            "Unsaturated sand (Sr ≈ 0.3–0.5) freezes and thaws under a constant\n"
+            "surcharge from the lever (10× the dead weight). The surcharge keeps the\n"
+            "sand in place; the LVDTs confirm it does not move (expected < 0.1 mm).\n"
+            "Embedded cells measure vertical (PV) and radial (PH) stress inside the\n"
+            "sand, wall sensors (PW) the lateral stress; the rise above the surcharge\n"
+            "during freezing is the pressure generated by ice in the pores.\n"
+            "Cells are calibrated in sand under dead weight at −10 and +10 °C first.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V01_variant_A_scheme.png"))
 

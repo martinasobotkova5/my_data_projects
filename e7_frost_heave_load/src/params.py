@@ -67,3 +67,16 @@ THETA = 0.30
 FRZ_L, FRZ_W, FRZ_H = 900.0, 550.0, 650.0
 TRAY_L, TRAY_W = 530.0, 340.0
 INS = 25.0              # izolace kolem cely
+
+# --- varianta A: nenasycený písek, tlaky uvnitř vzorku -----------------------------
+SAND = dict(name="unsaturated sand", d50=0.3, Sr=(0.3, 0.5), theta=(0.10, 0.18))
+SURCHARGE_A_KPA = 50.0       # výchozí přitížení (rozsah 25–200)
+# vložené tlakové buňky: (tag, měří, hloubka pod povrchem [mm], r [mm], úhel [°])
+#   "v" = leží vodorovně → svislé napětí; "h" = stojí svisle, čelem k ose → radiální napětí
+PCELLS = [("PV1", "v", 40.0, 0.0, 0.0),
+          ("PV2", "v", 80.0, 22.0, 210.0),
+          ("PH1", "h", 62.0, 25.0, 30.0)]
+PCELL_D, PCELL_T = 20.0, 5.0     # obalové rozměry miniaturní buňky (upřesní rešerše)
+# tlakové snímače ve stěně (lícují s vnitřním povrchem): (tag, hloubka, úhel)
+PWALL = [("PW1", 20.0, 30.0), ("PW2", 42.0, 150.0), ("PW3", 64.0, 270.0)]
+PWALL_D = 8.0

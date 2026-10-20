@@ -18,6 +18,8 @@ PICK = {
              "DC-LVDT ±10 mm, ±5 V out, −40…+80 °C", "DIFF4–7, VoltDiff ±5 V"),
     "T": ("soil, cell wall, piston, pedestal", "Campbell 109SS",
           "⌀1.6 mm sheath, ±0.38 °C at 0 °C", "AM16/32B → SE15, VX2"),
+    "PC": ("stress inside the sand", "TBD", "", "MUX-1 (4×16), BrFull"),
+    "PW": ("lateral stress on wall", "TBD", "", "MUX-1 (4×16), BrFull"),
     "TX": ("load cell, frame, air", "Campbell 109SS / 107",
            "107: ⌀7.6 mm, ±0.2 °C (0–50 °C)", "AM16/32B → SE15, VX2"),
 }
