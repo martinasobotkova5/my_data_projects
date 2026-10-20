@@ -102,3 +102,22 @@ Doladění tenkými kotouči / podložkami; celkovou hmotnost všeho, co leží 
 
 Závaží za vzduchem v mrazáku zaostává jen o desetiny kelvinu, protože program mění teplotu pomalu. Mezikus G10 ⌀60 × 10 pod nosnou deskou omezí tok tepla ze závaží do vzorku; teplotu závaží logovat (Tw).
 
+## 8. Bod M – TDR, Pt100 a optické čidlo ve stejném místě (obě varianty)
+
+| stav písku | εa (≈) | dvojí doba běhu t [ns] | Δεa při Δt 12 ps | Δθ (Topp, ≈) |
+|---|---|---|---|---|
+| suchý | 3 | 0.46 | 0.16 | 0.004 |
+| θ 0,10 | 6 | 0.65 | 0.22 | 0.005 |
+| θ 0,18 | 10 | 0.84 | 0.29 | 0.006 |
+| zmrzlý, nezamrzlá voda ≈ 0,02 | 4 | 0.53 | 0.18 | 0.005 |
+
+Tyčky 40 mm jsou na hranici – krátká doba běhu. Proto: průměrovat více průběhů, kalibrovat sondu přímo v tomto písku (několik vlhkostí, +10 °C) a pro zmrzlý stav použít kalibraci nezamrzlé vody (Spaans & Baker 1995; Watanabe & Wake 2009). Citlivý objem 3-tyčkové sondy sahá ≈ 1–1,5× rozteč (5 mm) od tyček; Pt100 a FBG jsou 12 mm stranou, takže měření TDR téměř neovlivní.
+
+| čidlo | přesnost | rozlišení na CR1000 / převodníku | poznámka |
+|---|---|---|---|
+| Pt100 1/10 DIN, 4vodič, 4WPB100 | ±0,03 °C při 0 °C | ≈ 0,01 °C (BrHalf4W, 2500 mV) | reference pro FBG a T3 |
+| FBG v kapiláře ⌀1 | ±0,2–0,5 °C po kalibraci | ≈ 0,05–0,1 °C (≈ 10 pm/K, 1 pm) | kapilára = bez vlivu deformace |
+| termistor 109SS (T3, 4 mm výš, r 40) | ±0,38 °C při 0 °C | ≈ 0,01 °C | porovnání s Pt100 → korekce |
+
+Všechny tři prvky leží v hloubce 54 mm, kolem r ≈ 25 mm, v pásu ±12 mm do strany (TDR tyčky nad sebou ±5 mm), takže měří stejnou vrstvu ve stejný okamžik promrzání. Pt100 je teplotní reference: přes ni se kalibruje FBG i termistor T3 přímo v cele (ledový bod při tání), a TDR se vztahuje k teplotě Pt100 → křivka nezamrzlé vody θu(T) (charakteristika mrznutí písku).
+

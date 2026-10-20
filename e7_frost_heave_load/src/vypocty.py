@@ -160,3 +160,28 @@ row("časová konstanta (volná konvekce h ≈ 5 W m⁻² K⁻¹)", f"{tau:.1f} 
 row("zpoždění teploty závaží při rampě programu", f"{rate * tau:.2f} K", f"rampa {rate:.2f} K/h (Set A)")
 print("\nZávaží za vzduchem v mrazáku zaostává jen o desetiny kelvinu, protože program mění teplotu pomalu. "
       "Mezikus G10 ⌀60 × 10 pod nosnou deskou omezí tok tepla ze závaží do vzorku; teplotu závaží logovat (Tw).\n")
+
+# 8 ---------------------------------------------------------------------------
+print("## 8. Bod M – TDR, Pt100 a optické čidlo ve stejném místě (obě varianty)\n")
+c0 = 0.2998                       # m/ns
+L = p.TDR_ROD_L / 1000
+dt = 0.0122                       # ns, rozlišení TDR200 (≈, ověřit)
+head("stav písku", "εa (≈)", "dvojí doba běhu t [ns]", "Δεa při Δt 12 ps", "Δθ (Topp, ≈)")
+for name, ea in (("suchý", 3.0), ("θ 0,10", 6.0), ("θ 0,18", 10.0), ("zmrzlý, nezamrzlá voda ≈ 0,02", 4.0)):
+    t = 2 * L * ea ** 0.5 / c0
+    de = 2 * ea / t * dt
+    dth = de * (0.0292 - 2 * 0.00055 * ea + 3 * 4.3e-6 * ea ** 2)
+    row(name, f"{ea:g}", f"{t:.2f}", f"{de:.2f}", f"{dth:.3f}")
+print(f"\nTyčky {p.TDR_ROD_L:g} mm jsou na hranici – krátká doba běhu. Proto: průměrovat více průběhů, "
+      "kalibrovat sondu přímo v tomto písku (několik vlhkostí, +10 °C) a pro zmrzlý stav použít "
+      "kalibraci nezamrzlé vody (Spaans & Baker 1995; Watanabe & Wake 2009). Citlivý objem 3-tyčkové sondy "
+      f"sahá ≈ 1–1,5× rozteč (5 mm) od tyček; Pt100 a FBG jsou {p.M_SIDE:g} mm stranou, takže měření TDR "
+      "téměř neovlivní.\n")
+head("čidlo", "přesnost", "rozlišení na CR1000 / převodníku", "poznámka")
+row("Pt100 1/10 DIN, 4vodič, 4WPB100", "±0,03 °C při 0 °C", "≈ 0,01 °C (BrHalf4W, 2500 mV)", "reference pro FBG a T3")
+row("FBG v kapiláře ⌀1", "±0,2–0,5 °C po kalibraci", "≈ 0,05–0,1 °C (≈ 10 pm/K, 1 pm)", "kapilára = bez vlivu deformace")
+row("termistor 109SS (T3, 4 mm výš, r 40)", "±0,38 °C při 0 °C", "≈ 0,01 °C", "porovnání s Pt100 → korekce")
+print("\nVšechny tři prvky leží v hloubce 54 mm, kolem r ≈ 25 mm, v pásu ±12 mm do strany (TDR tyčky nad sebou ±5 mm), takže "
+      "měří stejnou vrstvu ve stejný okamžik promrzání. Pt100 je teplotní reference: přes ni se kalibruje FBG "
+      "i termistor T3 přímo v cele (ledový bod při tání), a TDR se vztahuje k teplotě Pt100 → křivka nezamrzlé "
+      "vody θu(T) (charakteristika mrznutí písku).\n")

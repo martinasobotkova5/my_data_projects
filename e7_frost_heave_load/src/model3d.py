@@ -51,6 +51,9 @@ C = {
     "pressure": cq.Color(0.12, 0.48, 0.55),
     "sand": cq.Color(0.86, 0.78, 0.58),
     "freezer": cq.Color(0.9, 0.95, 1.0, 0.15),
+    "tdr": cq.Color(0.20, 0.55, 0.25),
+    "pt100": cq.Color(0.85, 0.85, 0.20),
+    "fbg": cq.Color(0.10, 0.75, 0.90),
 }
 
 
@@ -72,7 +75,52 @@ def radial(ang, r0, r1, z, d):
     return c.rotate((0, 0, 0), (0, 0, 1), ang)
 
 
-def solid_cell(asm, prefix="", t_tip=9.0):
+def radial_off(ang, r0, r1, z, d, w=0.0):
+    """Like radial(), but shifted sideways by w (perpendicular to the radius) before rotating."""
+    c = cq.Workplane("YZ").circle(d / 2).extrude(r1 - r0).translate((r0, w, z))
+    return c.rotate((0, 0, 0), (0, 0, 1), ang)
+
+
+def m_point(asm, prefix=""):
+    """Measuring point M: 3-rod mini TDR probe, Pt100 and FBG side by side at one depth."""
+    z = Z_S1 - p.M_DEPTH
+    a = p.M_ANG
+    r_wall = p.D_SAMPLE / 2
+    hw, hh, hd = p.TDR_HEAD
+    head = box(R_OUT - 2, R_OUT - 2 + hd, -hw / 2, hw / 2, z - hh / 2, z + hh / 2).rotate((0, 0, 0), (0, 0, 1), a)
+    asm.add(head, name=prefix + "M TDR probe head (epoxy)", color=C["tdr"])
+    for i, dz in enumerate(p.TDR_RODS_DZ, 1):
+        asm.add(radial_off(a, r_wall - p.TDR_ROD_L, R_OUT, z + dz, p.TDR_ROD_D),
+                name=f"{prefix}M TDR rod {i} D1.6", color=C["steel"])
+    asm.add(radial_off(a, R_OUT + hd - 2, R_OUT + 60, z, 5.0), name=prefix + "M TDR coax cable", color=C["tdr"])
+    asm.add(radial_off(a, p.PT100_TIP_R, R_OUT + INS_T + 25, z, p.PT100_D, w=p.M_SIDE),
+            name=prefix + "M Pt100 1/10 DIN D3", color=C["pt100"])
+    asm.add(radial_off(a, p.FBG_TIP_R, R_OUT + INS_T + 25, z, p.FBG_D, w=-p.M_SIDE),
+            name=prefix + "M FBG temperature sensor (capillary D1)", color=C["fbg"])
+
+
+def m_boss_cuts(cell, liner, ins):
+    """Printed boss for point M on the cell wall + holes in wall, liner and insulation."""
+    z = Z_S1 - p.M_DEPTH
+    a = p.M_ANG
+    bw, bh, bt = p.M_BOSS
+    hw, hh, hd = p.TDR_HEAD
+    cell = cell.union(box(R_OUT - 2, R_OUT + bt, -bw / 2, bw / 2, z - bh / 2, z + bh / 2)
+                      .rotate((0, 0, 0), (0, 0, 1), a))
+    cell = cell.cut(box(R_OUT - 2, R_OUT + bt + 1, -hw / 2 - 0.3, hw / 2 + 0.3, z - hh / 2 - 0.3, z + hh / 2 + 0.3)
+                    .rotate((0, 0, 0), (0, 0, 1), a))
+    for dz in p.TDR_RODS_DZ:
+        cell = cell.cut(radial_off(a, R_IN - 1, R_OUT, z + dz, p.TDR_ROD_D + 0.2))
+        liner = liner.cut(radial_off(a, p.D_SAMPLE / 2 - 1, R_IN + 1, z + dz, p.TDR_ROD_D + 0.6))
+    for w, d in ((p.M_SIDE, p.PT100_D), (-p.M_SIDE, p.FBG_D)):
+        cell = cell.cut(radial_off(a, R_IN - 1, R_OUT + bt + 1, z, d + 0.2, w))
+        liner = liner.cut(radial_off(a, p.D_SAMPLE / 2 - 1, R_IN + 1, z, d + 0.6, w))
+    ins = ins.cut(box(R_OUT - 1, R_OUT + bt + 1, -bw / 2 - 1, bw / 2 + 1, z - bh / 2 - 1, z + bh / 2 + 1)
+                  .rotate((0, 0, 0), (0, 0, 1), a))
+    return cell, liner, ins
+
+
+def solid_cell(asm, prefix="", t_tip=None):
     """Solid 3D-printed PETG-CF cell: wall 8, foot D150, thermistor bosses, PW holders, PTFE liner,
     Kaiflex 25 insulation; thermistors T1–T5 and wall pressure sensors PW1–3."""
     cell = tube(p.D_CELL_OUT, p.D_CELL_IN, CELL_H, Z_S0)
@@ -92,9 +140,12 @@ def solid_cell(asm, prefix="", t_tip=9.0):
         ins = ins.cut(box(R_OUT - 1, R_OUT + 9, -7, 7, z - 7, z + 7).rotate((0, 0, 0), (0, 0, 1), ang))
         asm.add(radial(ang, p.D_SAMPLE / 2, R_OUT + 14, z, p.PWALL_D), name=f"{prefix}{tag} wall pressure sensor",
                 color=C["pressure"])
+    cell, liner, ins = m_boss_cuts(cell, liner, ins)
+    m_point(asm, prefix)
     asm.add(cell, name=prefix + "cell PETG-CF (solid print)", color=C["petg"])
     asm.add(liner, name=prefix + "PTFE liner 0.5", color=C["ptfe"])
     asm.add(ins, name=prefix + "insulation Kaiflex 25", color=C["ins"])
+    t_tip = t_tip or p.T_TIP_R
     for i, (d, ang) in enumerate(WALL_TH, 1):
         asm.add(radial(ang, t_tip, R_OUT + INS_T + 15, Z_S1 - d, 1.6), name=f"{prefix}T{i} 109SS", color=C["temp"])
 
@@ -209,7 +260,7 @@ def variant_b(asm, prefix=""):
     ped = cyl(150, p.PEDESTAL_H, Z_PED).cut(cyl(99.6, 10, Z_S0 - 10))
     asm.add(ped, name=prefix + "pedestal Al", color=C["al"])
     asm.add(cyl(99.5, 10, Z_S0 - 10), name=prefix + "porous stone bottom", color=C["stone"])
-    solid_cell(asm, prefix, t_tip=40.0)
+    solid_cell(asm, prefix)
     z_tp = Z_S1 + p.TOP_PLATE_T
     sand = cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0)
     plate = cyl(p.TOP_PLATE_D, p.TOP_PLATE_T, Z_S1)

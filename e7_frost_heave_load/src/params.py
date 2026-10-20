@@ -109,3 +109,15 @@ Z_BRIDGE = 250.0                          # spodní líc můstku nad základovou
 LVDT_B_BODY = (19.0, 90.0)                # ⌀ × délka těla (≈, RDP DCTH200 s volným jádrem – ověřit)
 LVDT_B_RANGE = 5.0                        # ±mm
 ALPHA_G10 = 15e-6
+
+# --- bod M: TDR + Pt100 + optické čidlo ve stejném místě (obě varianty) ----------------
+# všechny tři vstupují vodorovně jedním nálitkem ve stěně, rovnoběžně s radiálou pod úhlem M_ANG
+M_DEPTH, M_ANG = 54.0, 108.0            # hloubka pod povrchem, úhel (mezi termistory 72° a 144°)
+TDR_RODS_DZ = (-5.0, 0.0, 5.0)          # 3 tyčky TDR nad sebou (svislá rovina), rozteč 5 mm
+TDR_ROD_D, TDR_ROD_L = 1.6, 40.0        # nerez ⌀1,6, od stěny (r 50) po r 10
+TDR_HEAD = (18.0, 16.0, 14.0)           # epoxidová hlava v nálitku: šířka × výška × hloubka
+M_SIDE = 12.0                           # boční odsazení Pt100 (+) a optického čidla (−) od roviny TDR
+PT100_D, PT100_TIP_R = 3.0, 20.0        # Pt100 1/10 DIN, plášť ⌀3, hrot na r 20 (element r 20–30)
+FBG_D, FBG_TIP_R = 1.0, 20.0            # FBG v nerezové kapiláře ⌀1, mřížka 10 mm u hrotu (r 20–30)
+M_BOSS = (34.0, 22.0, 10.0)             # nálitek na stěně: šířka × výška × přesah
+T_TIP_R = 40.0                          # hroty termistorů T1–T5 (obě varianty), mimo bod M a kotvy

@@ -102,7 +102,7 @@ def sheet_cell(pdf):
     v.note(-R_IN + 0.25, 72, "PTFE film 0.5 mm, butt seam at 180°,\nsilicone grease; cut-outs ⌀8 at PW1–3", -98, 140,
            ha="left")
     v.note(R_OUT + 8, 10, "boss 8×10, ⌀1.7 hole for 109SS\n(45° chamfer below)", 95, -10, ha="left")
-    v.note(-R_OUT - 2, p.CELL_FOOT_T + 2, "fillet R4 (no notch)", -98, -18, ha="left")
+    v.note(-R_OUT - 2, p.CELL_FOOT_T + 2, "fillet R4 (no notch)", -98, -7, ha="left")
     v.note(R_IN - 10, h - 12, "25 free height above the sample:\npiston (A) / top plate (B)", 95, 140, ha="left")
     f = View(sh, 205, 52, 0.42, "VIEW F – cell from above  1 : 2.4", (205, 94))
     f.circle(0, 0, R_FOOT, fc="#eef0f2", lw=THIN)
@@ -111,11 +111,18 @@ def sheet_cell(pdf):
     for d, ang in WALL_TH:
         c, s2 = math.cos(math.radians(ang)), math.sin(math.radians(ang))
         f.line([(R_OUT * c, R_OUT * s2), ((R_OUT + 8) * c, (R_OUT + 8) * s2)], lw=2.6, c=PETG)
-        f.line([(9 * c, 9 * s2), ((R_OUT + 16) * c, (R_OUT + 16) * s2)], lw=0.7, c=RED)
+        f.line([(p.T_TIP_R * c, p.T_TIP_R * s2), ((R_OUT + 16) * c, (R_OUT + 16) * s2)], lw=0.7, c=RED)
     for tag_, d, ang in p.PWALL:
         c, s2 = math.cos(math.radians(ang)), math.sin(math.radians(ang))
         f.circle((R_OUT + 3) * c, (R_OUT + 3) * s2, 5, fc=PCOL, lw=THIN)
-    sh.text(205, 20, "red = thermistors T1–T5 at 0/72/144/216/288°, r 9 mm;\nblue = wall pressure holders PW1–3 at 30/150/270°",
+    c, s2 = math.cos(math.radians(p.M_ANG)), math.sin(math.radians(p.M_ANG))
+    f.line([(R_OUT * c, R_OUT * s2), ((R_OUT + p.M_BOSS[2]) * c, (R_OUT + p.M_BOSS[2]) * s2)], lw=8, c=TDRC)
+    f.text((R_OUT + 20) * c, (R_OUT + 20) * s2, "M", fontsize=FS_SMALL, color="#d33682", ha="center",
+           va="center", weight="bold")
+    sh.text(85, 88, f"DETAIL M – sensor port, plan at depth {p.M_DEPTH:g} mm (angle {p.M_ANG:g}°)  1 : 1",
+            fontsize=FS + 0.5, weight="bold", ha="center")
+    m_plan(View(sh, 35, 58, 1.0))
+    sh.text(205, 20, "red = thermistors T1–T5 at 0/72/144/216/288°, tip r 40;\nblue = PW1–3 at 30/150/270°; green = point M at 108°",
             fontsize=FS_SMALL - 0.5, ha="center", va="top")
     sh.heading(255, 276, "Material check – PETG-CF")
     rows = [["hoop: A 25 kPa surcharge, K0 = 1", "0.16 MPa", "> 250", "> 75"],
@@ -255,6 +262,7 @@ def simple_rig(v, variant):
     v.rect(-49.75, Z_S1, 49.75, Z_S1 + 4, fc="#bfc5b0", lw=0.3)
     if sand:
         pressure_cells(v, labels=False)
+        m_section(v)
     else:
         v.text(0, (Z_S0 + Z_S1) / 2 + 12, "soil sample\n⌀100 × 100", fontsize=FS_SMALL, ha="center", va="center")
     v.rect(-49.75, Z_S1 + 4, 49.75, Z_PT, fc=METAL, **light)
@@ -287,6 +295,54 @@ def simple_rig(v, variant):
 PCOL = "#1f7a8c"     # pressure sensors
 
 
+TDRC, PTC, FBGC = "#2e7d32", "#c9a800", "#0097a7"     # point M colours
+
+
+def m_section(v, side=-1, labels=False, big=False):
+    """Point M revolved into the section on `side`: 3 TDR rods; Pt100 and FBG lie ±12 mm beside them
+    (hidden behind / in front of the rods – true layout on the plan of point M)."""
+    z = Z_S1 - p.M_DEPTH
+    r_w = p.D_SAMPLE / 2
+    hw, hh, hd = p.TDR_HEAD
+    v.rect(side * R_OUT, z - p.M_BOSS[1] / 2, side * (R_OUT + p.M_BOSS[2]), z + p.M_BOSS[1] / 2, fc=PETG, lw=THIN, z=4)
+    v.rect(side * (R_OUT - 2), z - hh / 2, side * (R_OUT - 2 + hd), z + hh / 2, fc=TDRC, lw=THIN, z=4.5)
+    for dz in p.TDR_RODS_DZ:
+        v.line([(side * R_OUT, z + dz), (side * (r_w - p.TDR_ROD_L), z + dz)], lw=1.1 if big else 0.9, c="#555", z=5)
+    v.line([(side * (R_OUT + p.M_BOSS[2]), z + 2.5), (side * p.PT100_TIP_R, z + 2.5)], lw=0.8, c=PTC, ls=(0, (3, 1.5)), z=5.2)
+    v.line([(side * (R_OUT + p.M_BOSS[2]), z - 2.5), (side * p.FBG_TIP_R, z - 2.5)], lw=0.8, c=FBGC, ls=(0, (1, 1)), z=5.2)
+    v.circle(side * 25, z, 2.2 if big else 3.5, fc="none", ec="#d33682", lw=0.8, z_=6)
+    if labels:
+        v.text(side * 25, z - 6, "M", fontsize=FS_SMALL, color="#d33682", ha="center", va="top", weight="bold", zorder=6)
+
+
+def m_plan(v):
+    """Plan of point M at its depth: boss, TDR head + 3 rods (stacked), Pt100 (+12) and FBG (−12)."""
+    r_w = p.D_SAMPLE / 2
+    hw, hh, hd = p.TDR_HEAD
+    bw, bh, bt = p.M_BOSS
+    # local frame: x = radius (0 = axis, wall at 50…58.5), y = sideways
+    v.rect(0, -bw / 2 - 12, r_w, bw / 2 + 12, fc="#e9dcb8", lw=THIN)
+    v.rect(r_w - p.LINER, -bw / 2 - 12, r_w, bw / 2 + 12, fc="#f7f7f7", lw=0.3)
+    v.rect(R_IN, -bw / 2 - 12, R_OUT, bw / 2 + 12, fc=PETG, lw=THIN, hatch="\\\\\\\\")
+    v.rect(R_OUT, -bw / 2, R_OUT + bt, bw / 2, fc=PETG, lw=THIN, hatch="\\\\\\\\")
+    v.rect(R_OUT - 2, -hw / 2, R_OUT - 2 + hd, hw / 2, fc=TDRC, lw=THIN, z=4)
+    v.rect(r_w - p.TDR_ROD_L, -p.TDR_ROD_D / 2, R_OUT - 2, p.TDR_ROD_D / 2, fc="#888", lw=0.4, z=4)
+    v.rect(p.PT100_TIP_R, p.M_SIDE - p.PT100_D / 2, R_OUT + bt + 25, p.M_SIDE + p.PT100_D / 2, fc=PTC, lw=0.4, z=4)
+    v.rect(p.PT100_TIP_R, p.M_SIDE - p.PT100_D / 2, p.PT100_TIP_R + 10, p.M_SIDE + p.PT100_D / 2, fc="#8a7300",
+           lw=0.4, z=4.1)
+    v.rect(p.FBG_TIP_R, -p.M_SIDE - p.FBG_D / 2, R_OUT + bt + 25, -p.M_SIDE + p.FBG_D / 2, fc=FBGC, lw=0.4, z=4)
+    v.rect(p.FBG_TIP_R, -p.M_SIDE - 1.2, p.FBG_TIP_R + 10, -p.M_SIDE + 1.2, fc="none", ec="#00606b", lw=0.5, z=4.1)
+    v.circle(25, 0, 4.5, fc="none", ec="#d33682", lw=0.9, z_=6)
+    v.text(0, bw / 2 + 13, "r 0 (cell axis)", fontsize=FS_SMALL - 1, ha="left", va="bottom", color="#555")
+    v.text(R_OUT + bt + 27, p.M_SIDE, "Pt100 1/10 DIN ⌀3", fontsize=FS_SMALL - 0.5, va="center", color="#8a7300")
+    v.text(R_OUT + bt + 27, -p.M_SIDE, "FBG in capillary ⌀1", fontsize=FS_SMALL - 0.5, va="center", color="#00606b")
+    v.text(R_OUT + bt + 27, 0, "TDR head + coax", fontsize=FS_SMALL - 0.5, va="center", color=TDRC)
+    v.dim_h(r_w - p.TDR_ROD_L, r_w, -bw / 2 - 12, -bw / 2 - 18, f"TDR rods {p.TDR_ROD_L:g} (3× ⌀1.6, 5 apart vertically)",
+            side="below")
+    v.dim_v(0, p.M_SIDE, 10, 4, f"{p.M_SIDE:g}")
+    v.dim_v(-p.M_SIDE, 0, 10, 4, f"{p.M_SIDE:g}")
+
+
 def pressure_cells(v, labels=True):
     """Embedded cells (revolved into the section plane) and wall sensors, variant A."""
     side = {"PV1": 0, "PH1": 1}
@@ -308,7 +364,8 @@ def pressure_cells(v, labels=True):
         z = Z_S1 - d
         v.rect(-R_IN - 3, z - p.PWALL_D / 2, -R_IN + 0.5, z + p.PWALL_D / 2, fc=PCOL, lw=THIN, z=4)
         if labels:
-            v.text(-R_IN - 5, z, tag_, fontsize=FS_SMALL, color=PCOL, ha="right", va="center", weight="bold")
+            v.text(-R_IN + 3, z, tag_, fontsize=FS_SMALL - 0.5, color=PCOL, ha="left", va="center", weight="bold",
+                   bbox=dict(fc="white", ec="none", pad=0.2), zorder=7)
 
 
 def cell_detail(sh, ox, oy, k):
@@ -327,11 +384,12 @@ def cell_detail(sh, ox, oy, k):
     for i, (d, ang) in enumerate(WALL_TH, 1):
         s_ = 1 if i % 2 else -1
         z = Z_S1 - d
-        v.line([(s_ * R_OUT, z), (s_ * 9, z)], lw=0.7, c=TCOL)
-        v.circle(s_ * 9, z, 1.2, fc=TCOL, lw=0)
+        v.line([(s_ * R_OUT, z), (s_ * p.T_TIP_R, z)], lw=0.7, c=TCOL)
+        v.circle(s_ * p.T_TIP_R, z, 1.2, fc=TCOL, lw=0)
         v.text(s_ * (R_OUT + 2), z, f"T{i}", fontsize=FS_SMALL - 0.5, color=TCOL, va="center",
                ha="left" if s_ > 0 else "right")
     pressure_cells(v, labels=True)
+    m_section(v, labels=True)
     v.dim_v(Z_S0, Z_S1, R_OUT, R_OUT + 14, "100")
     v.dim_h(-p.D_SAMPLE / 2, p.D_SAMPLE / 2, Z_S0 - 12, Z_S0 - 18, "⌀100 unsaturated sand", side="below")
 
@@ -341,15 +399,15 @@ def temp_points(v, variant, z_lc):
     for i, (d, ang) in enumerate(WALL_TH, 1):
         s_ = 1 if i % 2 else -1
         z = Z_S1 - d
-        v.line([(s_ * R_INS, z), (s_ * 9, z)], lw=0.8, c=TCOL)
-        v.circle(s_ * 9, z, 2.0, fc=TCOL, lw=0)
+        v.line([(s_ * R_INS, z), (s_ * p.T_TIP_R, z)], lw=0.8, c=TCOL)
+        v.circle(s_ * p.T_TIP_R, z, 2.0, fc=TCOL, lw=0)
         v.text(s_ * (R_INS + 3), z, f"T{i}", fontsize=FS_SMALL, color=TCOL, va="center",
                ha="left" if s_ > 0 else "right", weight="bold")
     for name, x, z in (("Ttop", 30, Z_PT - 8), ("Tbot", 30, Z_PED + 15)):
         v.circle(x, z, 2.0, fc=TCOL, lw=0)
         v.text(x + 5, z, name, fontsize=FS_SMALL, color=TCOL, va="center", weight="bold")
-    v.circle(-X_COL, 120, 2.0, fc=TCOL, lw=0)
-    v.text(-X_COL - 26, 120, "Tframe", fontsize=FS_SMALL, color=TCOL, va="center", ha="right", weight="bold")
+    v.circle(-X_COL, 70, 2.0, fc=TCOL, lw=0)
+    v.text(-X_COL - 26, 70, "Tframe", fontsize=FS_SMALL, color=TCOL, va="center", ha="right", weight="bold")
     v.circle(-X_COL - 60, 260, 2.0, fc=TCOL, lw=0)
     v.text(-X_COL - 60, 268, "Tair", fontsize=FS_SMALL, color=TCOL, ha="center", weight="bold")
 
@@ -381,13 +439,17 @@ def sheet_a_simple(pdf):
     tag(v, -(p.LVDT_R + 8), 60, -150, 200, "Invar reference", INVAR)
     tag(v, -R_IN - 4, Z_S0 + 50, -150, 160, "cell PETG-CF, solid print\n+ PTFE liner 0.5 + grease", INK)
     tag(v, -R_INS + 5, Z_S0 + 20, -150, 100, "insulation Kaiflex 25", INK)
+    tag(v, -25, Z_S1 - p.M_DEPTH, -150, 130, f"M: TDR + Pt100 + FBG at one point\n(depth {p.M_DEPTH:g}, r ≈ 25, 108°)", "#d33682")
     tag(v, -60, Z_G10 + 5, -150, 40, "G10 thermal break", INK)
     tag(v, 0, -12, 60, -45, f"light frame: Al 40×40, columns {p.FRAME_H_A:g}", INK)
     rows = [["PV1 / PH1", "vert. / radial stress", sn.PICK["PC"][1], sn.PICK["PC"][3]],
             ["PB1", "vertical stress at base", sn.PICK["PW"][1], sn.PICK["PW"][3]],
             ["PW1…PW3", "lateral stress on wall", sn.PICK["PW"][1], sn.PICK["PW"][3]],
             ["LVDT-1,2", "check: no movement", sn.PICK["LVDT"][1], sn.PICK["LVDT"][3]],
-            ["T1…T5", "soil, r 9 mm", sn.PICK["T"][1], sn.PICK["T"][3]],
+            ["T1…T5", "soil, r 40 mm", sn.PICK["T"][1], sn.PICK["T"][3]],
+            ["M: TDR", "water / unfrozen water", sn.PICK["TDR"][1], sn.PICK["TDR"][3]],
+            ["M: Pt100", "reference temperature", sn.PICK["PT100"][1], sn.PICK["PT100"][3]],
+            ["M: FBG", "optical temperature", sn.PICK["FBG"][1], sn.PICK["FBG"][3]],
             ["Ttop, Tbot, Tw", "piston, pedestal, weights", sn.PICK["T"][1], "(same)"],
             ["Tframe, Tair", "frame, air", sn.PICK["TX"][1], sn.PICK["TX"][3]]]
     y = legend(sh, rows)
@@ -424,7 +486,7 @@ BODY_D, BODY_L = p.LVDT_B_BODY
 Z_BODY0 = Z_BR - 35.0                          # LVDT body bottom (clamped in the bridge)
 # x positions in the revolved section (true positions on the plan view)
 X_S = {"S1": 42.0, "S2": -42.0}
-X_E = {"E1": 22.0, "E2": -22.0, "E3": 6.0}
+X_E = {"E1": -22.0, "E2": 22.0, "E3": 6.0}
 
 
 
@@ -464,6 +526,7 @@ def rig_b(v):
         v.rect(x - 6, Z_BODY0, x + 6, Z_BODY0 + BODY_L, fc=SENS, **light)
         v.text(x + (p.ANCHOR_D / 2 + 1) * (1 if x > 0 else -1), z, t, fontsize=FS_SMALL - 0.5, va="center",
                ha="left" if x > 0 else "right", color="#333", weight="bold", zorder=6)
+    m_section(v)
     for name, x, z in (("Ttop", -35, Z_S1 + 3), ("Tbot", 30, Z_PED + 15), ("Tstand", -p.STAND_R, 228)):
         v.circle(x, z, 2.0, fc=TCOL, lw=0, z_=6)
         v.text(x + (5 if name != "Ttop" else -5), z, name, fontsize=FS_SMALL, color=TCOL, va="center", weight="bold", zorder=6,
@@ -532,6 +595,7 @@ def anchor_detail(sh, ox, oy, k):
     for tag_, d, ang in p.PWALL:
         z = Z_S1 - d
         v.rect(-R_IN - 3, z - p.PWALL_D / 2, -R_IN + 0.5, z + p.PWALL_D / 2, fc=PCOL, lw=THIN, z=4)
+    m_section(v, labels=True)
     zt = Z_S1
     for _, d, _, _ in p.ANCHORS:
         v.dim_v(Z_S1 - d, zt, R_OUT, R_OUT + 12, f"{(zt and 25):g}")
@@ -555,11 +619,15 @@ def sheet_b_simple(pdf):
     tag(v, 22, Z_S1 - 25, 150, Z_S1 - 10, "anchor ⌀16×1.5 + Invar rod ⌀2\nin PTFE sleeve ⌀4", INK)
     tag(v, R_OUT, Z_S0 + 40, 150, Z_S0 + 20, "same cell PETG-CF\n+ PTFE liner (as A)", INK)
     tag(v, -60, Z_G10 + 5, -150, 30, "G10 thermal break", INK)
+    tag(v, -25, Z_S1 - p.M_DEPTH, -150, Z_S1 - 30, f"M: TDR + Pt100 + FBG at one point\n(depth {p.M_DEPTH:g}, r ≈ 25, 108°)", "#d33682")
     tag(v, 0, -12, 60, -40, "base plate Al 260×200×25 – no frame, no load", INK)
     rows = [["S1…S3", "surface heave / settlement", sn.PICK["LVDT-B"][1], "SE3–5"],
             ["E1…E3", "anchor displ. at 25/50/75", sn.PICK["LVDT-B"][1], "SE6–8"],
             ["PW1…PW3", "lateral stress (optional)", sn.PICK["PW"][1], sn.PICK["PW"][3]],
             ["T1…T5", "soil, r 40 mm", sn.PICK["T"][1], sn.PICK["T"][3]],
+            ["M: TDR", "water / unfrozen water", sn.PICK["TDR"][1], sn.PICK["TDR"][3]],
+            ["M: Pt100", "reference temperature", sn.PICK["PT100"][1], sn.PICK["PT100"][3]],
+            ["M: FBG", "optical temperature", sn.PICK["FBG"][1], sn.PICK["FBG"][3]],
             ["Ttop, Tbot", "top plate, pedestal", sn.PICK["T"][1], "(same)"],
             ["Tstand, Tair", "Invar stand, air", sn.PICK["TX"][1], sn.PICK["TX"][3]]]
     y = legend(sh, rows)
@@ -692,9 +760,9 @@ def sheet_sensors(pdf):
     y = table(sh, 240, 274, ["terminal", "connected to", "measurement"], [list(c) for c in sn.CHANNELS],
               [24, 40, 106], row_h=4.6)
     sh.text(240, y - 4,
-            "Channel count (2 rigs): 8 LVDTs (A 2, B 6), 9 pressure bridges, ≈ 20 thermistors.\n"
+            "Channel count (2 rigs): 8 LVDTs, 9 pressure bridges, ≈ 20 thermistors,\n"
+            "point M ×2: 2 TDR (TDR200 + SDMX50SP), 2 Pt100 (MUX-1), 2 FBG (interrogator).\n"
             "No load cells: A is loaded by dead weight, B is not loaded at all.\n"
-            "16 SE / 8 DIFF on the CR1000 → two AM16/32B: bridges (4×16), thermistors (2×32).\n"
             "\n"
             "Resolution with the CR1000 (13-bit ADC, ±5000 mV range)\n"
             "• LVDT ±10 mm (A): ≈ 1.3 µm; LVDT ±5 mm (B): ≈ 0.7 µm\n"
@@ -710,6 +778,8 @@ def sheet_sensors(pdf):
             "• CR1000 is discontinued (successor CR1000X / CR1000Xe, 24-bit); the\n"
             "  existing one is fine for these resolutions.\n"
             "• Logger outside the freezer (CR1000 −25…+50 °C).\n"
+            "• Point M: TDR, Pt100 and FBG sit 12 mm apart at one depth – Pt100 is the\n"
+            "  reference for the FBG and for T3; TDR gives unfrozen water vs. temperature.\n"
             "• Pressure cells: calibrate in the same sand under dead weight (5–25 kPa)\n"
             "  at +10 and −10 °C; correct zero(T) with the neighbouring thermistor.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)

@@ -26,8 +26,9 @@ Regenerace: `cd src && python vykresy.py && python vypocty.py > ../vypocty.md &&
 | snímače posunu | 2× LVDT ±10 mm s pružinou | 6× LVDT ±5 mm s **volným jádrem**: S1–S3 na horní desce, E1–E3 na kotvách v hloubce 25/50/75 mm |
 | rám | lehký 40×40, sloupy 410 mm, příčka s lineárním ložiskem | **žádný** – jen 3 Invarové sloupky a Al můstek s LVDT |
 | termistory | T1–T5 v písku, Ttop, Tbot, Tw, Tframe, Tair | T1–T5 v písku, Ttop, Tbot, Tstand, Tair |
+| **bod M** | **TDR + Pt100 + optické čidlo (FBG)** v jednom místě | **stejně** |
 
-Obě varianty sdílejí základovou desku, Al distanční kus, mezikus G10, podstavec s porézním kamenem, tištěnou celu a termistory T1–T5. Výsledky A a B jsou tak přímo srovnatelné: rozdíl je jen v přitížení.
+Obě varianty sdílejí základovou desku, Al distanční kus, mezikus G10, podstavec s porézním kamenem, tištěnou celu, termistory T1–T5 a bod M (TDR + Pt100 + optické čidlo). Výsledky A a B jsou tak přímo srovnatelné: rozdíl je jen v přitížení.
 
 **Proč závaží (A):**
 - Gravitace dává přesně konstantní přitížení. Nezávisí na posunu vzorku ani na smrštění rámu v mrazu.
@@ -90,9 +91,10 @@ O kolik tlak při mrznutí vzroste nad přitížení, tolik vytváří led v pó
 
 - **Tvar:** trubka ⌀117/101, výška 125 mm, patka ⌀150 × 8 se zaoblením R4, tištěno nastojato v jednom kuse. Nad vzorkem zůstává 25 mm pro píst (A) nebo horní desku (B).
 - **Vnitřek:** stěna utěsněná tenkou vrstvou epoxidu, pak PTFE fólie 0,5 mm (spoj natupo na 180°) a silikonový tuk → vnitřní ⌀100.
-- **Termistory:** 5 nálitků 8 × 10 mm s otvorem ⌀1,7 v hloubkách 10/30/50/70/90 mm pod úhly 0/72/144/216/288°. Ve variantě A hrot na r 9 mm, ve variantě B na r 40 mm (mimo tyčky kotev).
+- **Termistory:** 5 nálitků 8 × 10 mm s otvorem ⌀1,7 v hloubkách 10/30/50/70/90 mm pod úhly 0/72/144/216/288°. Hroty v obou variantách na r 40 mm (mimo bod M a tyčky kotev).
 - **Snímače na stěně PW1–3:** pouzdra ⌀8 v nálitcích, líc se snímačem zarovnaný s fólií (fólie má v těch místech výřezy ⌀8). Ve variantě B jsou volitelné.
 - **Izolace:** Kaiflex 25 mm (vnější r 83,5) s výřezy pro nálitky. Vejde se mezi sloupy rámu A (r 90) i dovnitř Invarových sloupků B (r 100).
+- **Bod M:** jeden širší nálitek 34 × 22 mm v hloubce 54 mm pod úhlem 108° pro TDR, Pt100 a optické čidlo (kap. 4a).
 - **Cela není přišroubovaná**, jen leží patkou na podstavci. Tření pak stěnu tlačí, ale netrhá vrstvy tisku od sebe.
 
 **Tření o stěnu (`vypocty.md` §5):** u plné cely odnese část přitížení stěna. To vícekroužková cela řešila, plná cela ne, proto je fólie s tukem povinná.
@@ -105,6 +107,25 @@ O kolik tlak při mrznutí vzroste nad přitížení, tolik vytváří led v pó
 
 - **A:** PV1 (40 mm) a PB1 (dno) vyhodnocovat jako profil σv(z), ne jako jednu hodnotu. Rozdíl mezi nimi přímo ukáže tření.
 - **B:** přitížení je nulové, takže tření je malé. Zmrzlá horní vrstva ale může přimrznout ke stěně a brzdit zdvih. PTFE má ze všech běžných materiálů nejmenší adhezi ledu.
+
+## 4a. Bod M – TDR, Pt100 a optické čidlo ve stejném místě (obě varianty, E7-V03 detail M, `vypocty.md` §8)
+
+Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely, rovnoběžně, a měří stejnou vrstvu písku ve stejném okamžiku promrzání. Poloha je v obou variantách stejná: **hloubka 54 mm pod povrchem, r ≈ 25 mm, úhel 108°** (mezi termistory T2 a T3, mimo kotvy B a tlakové snímače A; kolize zkontrolované v 3D).
+
+| čidlo | provedení | poloha v bodě M | měří | připojení |
+|---|---|---|---|---|
+| **TDR** | mini 3-tyčková sonda, nerez ⌀1,6 × 40 mm, tyčky nad sebou po 5 mm (hloubky 49/54/59), epoxidová hlava v nálitku | od stěny (r 50) po r 10 | objemová vlhkost, ve zmrzlém stavu **nezamrzlá voda** | koax → SDMX50SP → **TDR200** (SDM C1–C3) |
+| **Pt100** | 1/10 DIN, 4vodičové, plášť ⌀3, element 10 mm u hrotu | 12 mm vedle roviny TDR, element r 20–30 | referenční teplota (±0,03 °C při 0 °C) | **4WPB100** → MUX-1 (BrHalf4W) |
+| **optické čidlo** | FBG (Braggova mřížka) v nerezové kapiláře ⌀1, mřížka 10 mm u hrotu (bez vlivu deformace) | 12 mm na druhé straně, mřížka r 20–30 | teplota optickou cestou | vlákno ven z mrazáku → interrogátor (HBM FS22 / Luna si155 [ověřit]) na PC |
+
+- **Proč takhle:** kovový plášť Pt100 a kapilára FBG jsou 12 mm od tyček TDR, tj. mimo jeho citlivý objem (≈ 1–1,5× rozteč 5 mm). Přitom všechna tři čidla leží ve stejné hloubce a ve stejném pásu ±12 mm.
+- **Co z toho vznikne:**
+  - Pt100 je **teplotní reference**: v cele přes ni zkalibrujete FBG i termistor T3 (ledový bod při tání);
+  - TDR proti teplotě Pt100 dá **křivku nezamrzlé vody θu(T)**, tedy charakteristiku mrznutí písku;
+  - totéž ve variantě A (přitížení 25 kPa) a B (bez zatížení) → vliv přitížení na mrznutí ve stejném bodě.
+- **TDR v malém vzorku:** tyčky 40 mm jsou na hranici (dvojí doba běhu jen ≈ 0,5–0,8 ns). Rozlišení vlhkosti je i tak ≈ 0,005, ale je potřeba průměrovat průběhy a sondu kalibrovat přímo v tomto písku. Campbell CS645 (75 mm) je na ⌀100 příliš dlouhá.
+- **Montáž:** tyčky TDR a Pt100/FBG se zasunou otvory ve stěně a ve fólii do už uloženého písku (nebo se písek ukládá kolem nich). Hlava TDR zalepená v nálitku, Pt100 a FBG utěsněné silikonem.
+- **Optické čidlo:** předpokládám teplotní FBG. Pokud máte jiný typ (fluorescenční sonda, např. Opsens OTG-F s analogovým výstupem do CR1000, nebo distribuované měření DTS), poloha zůstane stejná, změní se jen průměr otvoru a připojení.
 
 ## 5. Varianta B – posuny a deformace mezi mrznutím a táním (E7-V02, `vypocty.md` §1–4)
 
@@ -183,6 +204,9 @@ Podmínky:
 | posun A (2×) | **RDP DCTH400** – DC-LVDT ±10 mm, výstup ±5 V, −40 … +80 °C | Micro-Epsilon DTA-10D, Solartron AX/10/S, HBM WA-L |
 | posun B (6×, volné jádro) | **RDP DCTH200** s volným (unguided) jádrem, ±5 mm [ověřit u RDP] | Micro-Epsilon DTA-5G8, Solartron AX/5/F |
 | tlak (A 6×, B 3× volitelně) | **TML PDA-PA 200 kPa** | Kyowa BEC-A (jen 1 buňka), TE EPL (stěna) |
+| vlhkost, bod M (2×) | **mini 3-tyčková TDR 40 mm** + Campbell TDR200 + SDMX50SP [ověřit] | Easy Test LP/ms; CS645 je příliš dlouhá |
+| referenční teplota, bod M (2×) | **Pt100 1/10 DIN, 4vodič, ⌀3** + Campbell 4WPB100 | – |
+| optická teplota, bod M (2×) | **FBG v kapiláře ⌀1** + interrogátor HBM FS22 / Luna si155 [ověřit] | fluorescenční Opsens OTG-F (analogově do CR1000) |
 | teplota (≈ 20×) | **Campbell 109SS** – ⌀1,6 mm, ±0,38 °C při 0 °C | Campbell 107 (vzduch, stojan) |
 
 **Nevhodné kvůli mrazu:** TE DC-EC/HCD (provoz od 0 °C), laserové snímače optoNCDT (provoz od 0 °C, námraza na okénku).
@@ -192,9 +216,11 @@ Podmínky:
 | SE1–2 | LVDT-A1, A2 | ±5000 mV, vlastní zdroj ±15 V |
 | SE3–5 | LVDT S1–S3 (B, povrch) | ±5000 mV |
 | SE6–8 | LVDT E1–E3 (B, kotvy) | ±5000 mV |
-| DIFF6 + VX3 (2000 mV) + C1/C2 | multiplexer AM16/32B č. 1 (4×16) | 9 tlakových můstků (A 6, B 3) |
-| SE13 + VX2 + C3/C4 | multiplexer AM16/32B č. 2 (2×32) | ≈ 20 termistorů |
-| SE9–10, SE14–16 | rezerva | |
+| DIFF6 + DIFF5 + VX3 + C4/C5 | multiplexer AM16/32B č. 1 (4×16) | 9 tlakových můstků (A 6, B 3) + 2× Pt100 přes 4WPB100 |
+| C1–C3 (SDM) + 12V | TDR200 → SDMX50SP | 2 sondy TDR (bod M, A i B) |
+| SE13 + VX2 + C6/C7 | multiplexer AM16/32B č. 2 (2×32) | ≈ 20 termistorů |
+| – | FBG interrogátor (oba body M na jednom vlákně) | vlastní PC, hodiny synchronizované s CR1000 |
+| SE14–16 | rezerva | |
 
 - **Rozlišení:** posun ≈ 1,3 µm (A) a ≈ 0,7 µm (B). Absolutní linearita LVDT → kalibrovat mikrometrem.
 - **CR1000:** se už nevyrábí (nástupce CR1000X / CR1000Xe). Stávající stačí, ale musí zůstat mimo mrazák.
@@ -205,7 +231,7 @@ Podmínky:
 |---|---|
 | `E7_variant_A.step` | varianta A – lehký rám 40×40 (sloupy 410, příčka s ložiskem), tištěná cela s PTFE fólií, nenasycený písek, tlakové snímače PV1/PH1/PB1/PW1–3, G10, nosná deska s tyčí, 3 + 1 ocelové kotouče, 2× LVDT na bocích (±y) s Invarovými sloupky, termistory včetně Tw |
 | `E7_variant_B.step` | varianta B – základová deska, stejná tištěná cela, nenasycený písek, horní deska PETG-CF, kotvy E1–E3 s Invarovými tyčkami a PTFE trubičkami, 6× LVDT s volným jádrem, 3 Invarové sloupky, Al můstek, termistory |
-| `E7_cell.step` | samotná cela PETG-CF s nálitky, PTFE fólií, izolací, termistory a snímači PW |
+| `E7_cell.step` | samotná cela PETG-CF s nálitky, PTFE fólií, izolací, termistory, snímači PW a bodem M (TDR, Pt100, FBG) |
 | `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku (stěny mrazáku průhledné, ≈ rozměry) |
 
 Náhledy jsou `3d/*.png`. Řezy ukazují `E7_variant_A_section.png` a `E7_variant_B_section.png`.
@@ -247,7 +273,9 @@ Náhledy jsou `3d/*.png`. Řezy ukazují `E7_variant_A_section.png` a `E7_varian
 3. **Písek:** zrnitost (d50) a cílová vlhkost / stupeň nasycení určí velikost tlakových disků a rozsah snímačů (200 kPa).
 4. **Přitížení A:** stačí 5–25 kPa (závaží)? Pro vyšší přitížení je připravená varianta s pružinou.
 5. **Varianta B – uzavřený, nebo otevřený systém?** Návrh je uzavřený (bez přítoku vody). Přívod vody zespodu přes porézní kámen (Mariottova láhev) lze doplnit, zdvih pak bude větší a LVDT ±5 mm může být málo.
-6. **Kotvy:** stačí 3 hloubky (25/50/75 mm), nebo chcete hustší profil (např. 5 kotev po 15 mm s menšími kotoučky)?
-7. **Rozměry mrazáku a vany:** prosím změřit. Nejvyšší bod (vodicí tyč A) je ≈ 590 mm nad podlahou mrazáku.
+6. **Optické čidlo:** jaký typ máte (FBG, fluorescenční sonda, DTS)? Návrh počítá s teplotním FBG v kapiláře ⌀1.
+7. **TDR:** máte TDR100/TDR200, nebo jiný přístroj (např. Easy Test)? Podle toho se upraví sonda.
+8. **Kotvy:** stačí 3 hloubky (25/50/75 mm), nebo chcete hustší profil (např. 5 kotev po 15 mm s menšími kotoučky)?
+9. **Rozměry mrazáku a vany:** prosím změřit. Nejvyšší bod (vodicí tyč A) je ≈ 590 mm nad podlahou mrazáku.
 
 > Výkresy jsou NÁVRH. Profilové hodnoty, hmotnosti závaží a údaje o čidlech jsou katalogové odhady. Ověřit u dodavatele a nechat zkontrolovat konstruktérem.
