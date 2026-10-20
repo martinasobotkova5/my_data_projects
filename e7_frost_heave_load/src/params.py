@@ -30,18 +30,18 @@ E_AL = 70_000.0         # MPa
 ALPHA_AL = 23.1e-6      # 1/K
 ALPHA_STEEL = 11.5e-6
 ALPHA_INVAR = 1.2e-6
-BASE_T = 25.0           # základová deska Al 6082, 300 × 250
-BASE_W, BASE_D = 300.0, 250.0
+BASE_T = 25.0           # základová deska Al 6082, 260 × 200
+BASE_W, BASE_D = 260.0, 200.0   # dvě sestavy vedle sebe na vaně ≈ 530 × 340
 COL_PROFILE = "40x80"   # 2 sloupy
-COL_SPAN = 240.0        # osová vzdálenost sloupů
-FRAME_H = 420.0         # výška sloupů (od horního líce základové desky)
+COL_SPAN = 220.0        # osová vzdálenost sloupů
+FRAME_H = 330.0         # výška sloupů (snížená, aby se páka vešla pod víko mrazáku)
 BEAM_PROFILE = "80x80"  # příčník
 PEDESTAL_H = 30.0       # Al podstavec pod celou (varianta B: na spodním siloměru)
 
 # --- zatížení -------------------------------------------------------------------
 SURCHARGES_KPA = (25, 50, 100, 200)   # varianta A – konstantní zatížení
 LEVER_RATIO = 10.0                    # páka 1 : 10 se závažím
-LEVER_L = 500.0                       # délka páky od čepu po závěs
+LEVER_L = 300.0                       # délka páky od čepu po závěs (čep 30 mm od táhla)
 B_MAX_KPA = 2000.0                    # varianta B – návrhový max. tlak (literatura: silty 0,2–2 MPa)
 SEATING_KPA = 5.0                     # varianta B – dosedací předpětí
 
@@ -62,3 +62,8 @@ LONG_TERM_FACTOR = 0.3       # dovolené dlouhodobé napětí ≈ 30 % pevnosti 
 # --- zemina (pro odhad) -----------------------------------------------------------
 E_FROZEN = 200.0             # MPa, modul zmrzlé zeminy (hrubý odhad)
 THETA = 0.30
+
+# --- mrazák (stejný jako E6, ≈ odhad z fotek – ZMĚŘIT) ---------------------------
+FRZ_L, FRZ_W, FRZ_H = 900.0, 550.0, 650.0
+TRAY_L, TRAY_W = 530.0, 340.0
+INS = 25.0              # izolace kolem cely

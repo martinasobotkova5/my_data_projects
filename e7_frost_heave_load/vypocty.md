@@ -20,11 +20,11 @@ Plocha vzorku ⌀100: 7854 mm² = 78.54 cm².
 
 | složka | poddajnost při 15.7 kN [mm] | poznámka |
 |---|---|---|
-| příčník 80x80, rozpětí 240 | 0.046 | ohyb, prostý nosník |
-| 2 sloupy 40x80, délka 420 | 0.045 | tah |
+| příčník 80x80, rozpětí 220 | 0.036 | ohyb, prostý nosník |
+| 2 sloupy 40x80, délka 330 | 0.035 | tah |
 | kompresní siloměr 20 kN (≈) | 0.050 | podle katalogu, typicky 0,02–0,1 |
 | spoje profilů (≈) | 0.02–0.15 | šrouby do čela / úhelníky – rozhoduje |
-| **celkem** | **0.16–0.29** | tuhost 54–98 kN/mm |
+| **celkem** | **0.14–0.27** | tuhost 58–112 kN/mm |
 
 Pro srovnání: tuhost zmrzlého vzorku E·A/H ≈ 16 kN/mm (E = 200 MPa). Rám tedy není dokonale tuhý – posun pístu je nutné měřit (LVDT) a výsledek uvádět jako tlak při známé tuhosti omezení.
 
@@ -32,12 +32,12 @@ Pro srovnání: tuhost zmrzlého vzorku E·A/H ≈ 16 kN/mm (E = 200 MPa). Rám 
 
 | veličina | hodnota | jednotka | poznámka |
 |---|---|---|---|
-| zkrácení sloupů Al 420 mm při ΔT 20 K | 0.194 | mm |
+| zkrácení sloupů Al 330 mm při ΔT 20 K | 0.152 | mm |
 | zkrácení vnitřní sestavy (Al podstavec + píst, ocel. siloměr + šroub) | 0.051 | mm | bez zeminy |
-| rozdíl, který stlačí vzorek při ochlazení | 0.143 | mm |
-| tuhost rám + zmrzlý vzorek v sérii | 12.2 | kN/mm |
-| **falešná síla jen z teploty** | **1744** | N | ≈ 222 kPa – srovnatelné s měřeným tlakem |
-| s tepelně sladěnou sestavou (Al distanční trubka místo oceli) | 113 | N | zbývá jen siloměr ≈ 40 mm oceli |
+| rozdíl, který stlačí vzorek při ochlazení | 0.102 | mm |
+| tuhost rám + zmrzlý vzorek v sérii | 12.4 | kN/mm |
+| **falešná síla jen z teploty** | **1258** | N | ≈ 160 kPa – srovnatelné s měřeným tlakem |
+| s tepelně sladěnou sestavou (Al distanční trubka místo oceli) | 115 | N | zbývá jen siloměr ≈ 40 mm oceli |
 
 Opatření: (1) sestavu mezi základem a příčníkem udělat z Al tak, aby se smršťovala stejně jako sloupy; (2) slepá zkouška s ocelovou/Al náhradou vzorku ve stejném programu → odečíst teplotní artefakt; (3) LVDT vztažené k Invarové tyči ze základu.
 
