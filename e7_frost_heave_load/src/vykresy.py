@@ -10,7 +10,7 @@ from drafting import (BLUE, FROZEN, FS, FS_SMALL, INK, INSUL, METAL, PLASTIC, RE
                       THICK, THIN, WATER, Sheet, View, table)
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "vykresy")
-TOTAL = 6
+TOTAL = 7
 PETG = "#cfd8dc"
 G10 = "#c9d9a6"
 INVAR = "#8e7cc3"
@@ -39,8 +39,9 @@ X_COL = p.COL_SPAN / 2
 WALL_TH = [(10, 0), (30, 72), (50, 144), (70, 216), (90, 288)]   # depth below sample top, angle
 
 
-def frame(v, extend=None):
+def frame(v, extend=None, z_beam=None):
     extend = extend or X_COL + 20
+    Z_BEAM = z_beam or p.FRAME_H
     hb = p.BASE_W / 2
     v.rect(-hb, -p.BASE_T, hb, 0, fc=METAL, hatch="////")
     for xf in (-hb + 20, hb - 20):
@@ -274,8 +275,10 @@ def tag(v, x, z, tx, tz, text, color=INK, ha=None):
 
 
 def simple_rig(v, variant):
-    """Simplified elevation of one rig; returns z of the top of the sample stack."""
-    frame(v)
+    """Simplified elevation of one rig (A lever, A2 spring, B restrained)."""
+    zb = p.FRAME_H_A2 if variant == "A2" else Z_BEAM
+    frame(v, z_beam=zb)
+    sand = variant in ("A", "A2")
     light = dict(lw=THIN)
     # bottom: spacer (A) or load cell (B)
     if variant == "B":
@@ -287,17 +290,17 @@ def simple_rig(v, variant):
     # cell, insulation, sample
     for s_ in (-1, 1):
         v.rect(s_ * R_OUT, Z_S0, s_ * R_INS, TUBE_TOP, fc=INSUL, lw=0.3)
-        if variant == "A":           # multi-ring cell: base ring + 10 rings with PTFE washers
+        if sand:                     # multi-ring cell: base ring + 10 rings with PTFE washers
             v.rect(s_ * R_IN, Z_S0, s_ * R_OUT, Z_S0 + 8, fc=PETG, **light)
             for k in range(10):
                 z0 = Z_S0 + 9 + 11 * k
                 v.rect(s_ * R_IN, z0, s_ * R_OUT, z0 + 10, fc=PETG, lw=0.4)
         else:
             v.rect(s_ * R_IN, Z_S0, s_ * R_OUT, TUBE_TOP, fc=PETG, **light)
-    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8" if variant == "A" else FROZEN, **light)
+    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8" if sand else FROZEN, **light)
     v.rect(-49.75, Z_S0 - 4, 49.75, Z_S0, fc="#bfc5b0", lw=0.3)
     v.rect(-49.75, Z_S1, 49.75, Z_S1 + 4, fc="#bfc5b0", lw=0.3)
-    if variant == "A":
+    if sand:
         pressure_cells(v, labels=False)
     else:
         v.text(0, (Z_S0 + Z_S1) / 2 + 12, "soil sample\n⌀100 × 100", fontsize=FS_SMALL, ha="center", va="center")
@@ -310,6 +313,26 @@ def simple_rig(v, variant):
         v.rect(s_ * 62 - 6, z_lc + 5, s_ * 62 + 6, z_lc + 45, fc=SENS, **light)
         v.line([(s_ * 62, z_lc + 5), (s_ * 62, Z_PT + TARGET_T)], lw=THICK)
     v.line([(-75, 0), (-75, z_lc + 50), (75, z_lc + 50), (75, 0)], lw=THIN, ls=(0, (4, 2)), c=INVAR)
+    if variant == "A2":
+        v.rect(-18, z_lc, 18, z_lc + 64, fc=SENS, **light)
+        zp = z_lc + 64
+        v.rect(-30, zp, 30, zp + 8, fc=METAL, **light)
+        k_ = p.SPRINGS[0]
+        comp = p.SURCHARGE_A_KPA * math.pi * 2500 / 1000 / k_[1]
+        top = zp + 8 + p.SPRING_L0 - comp
+        n = 8
+        pts = [(0, zp + 8)]
+        for i in range(n):
+            zz = zp + 8 + (top - zp - 8) * (i + 0.5) / n
+            pts.append(((-1) ** i * p.SPRING_D / 2, zz))
+        pts.append((0, top))
+        v.line(pts, lw=1.3, c="#2b6cb0")
+        v.rect(-p.SPRING_D / 2 - 4, zp + 8, p.SPRING_D / 2 + 4, top + 8, fc="none", lw=THIN, ls=(0, (3, 2)))
+        v.rect(-30, top, 30, top + 8, fc=METAL, **light)
+        v.rect(-10, top + 8, 10, zb + BEAM_H + 35, fc=STEEL, lw=THIN)
+        v.rect(-20, zb + BEAM_H, 20, zb + BEAM_H + 12, fc=STEEL, lw=THIN)
+        v.rect(-45, zb + BEAM_H + 35, 45, zb + BEAM_H + 42, fc=STEEL, lw=THIN)
+        return z_lc, (zp, top), zb
     if variant == "A":
         v.rect(-18, z_lc, 18, z_lc + 55, fc=SENS, **light)
         v.rect(-6, z_lc + 55, 6, Z_BEAM + BEAM_H + 18, fc=STEEL, lw=THIN)
@@ -610,11 +633,55 @@ def sheet_sensors(pdf):
     sh.save(pdf, os.path.join(OUT, "E7-V05_sensors_CR1000.png"))
 
 
+def sheet_a2_simple(pdf):
+    sh = Sheet("Variant A2 – spring surcharge, no lever", "E7-V07", "≈ 1 : 3", 7, TOTAL,
+               "same sample, cell and pressure sensors as A; the lever is replaced by a pre-compressed spring")
+    v = View(sh, 105, 68, 1 / 3)
+    z_lc, (zp, top), zb = simple_rig(v, "A2")
+    temp_points(v, "A", z_lc)
+    tag(v, 0, z_lc + 32, 120, z_lc + 20, "LC-A  load cell 2 kN", SENS_TXT)
+    tag(v, 62, z_lc + 25, 120, z_lc - 25, "LVDT-1, -2  ±10 mm", SENS_TXT)
+    tag(v, p.SPRING_D / 2, (zp + top) / 2 + 4, 120, (zp + top) / 2 + 30,
+        f"die spring ⌀{p.SPRING_D:g}×{p.SPRING_L0:g} (ISO 10243)\nin guide tube", "#2b6cb0")
+    tag(v, 0, zb + 40, 120, zb + 75, "screw M20×1.5 + lock nut\n(sets the spring force)", INK)
+    tag(v, -75, 60, -150, 200, "Invar reference", INVAR)
+    tag(v, -R_IN - 4, Z_S0 + 50, -150, 160, "multi-ring cell PETG-CF\n+ greased latex membrane", INK)
+    tag(v, -R_INS + 5, Z_S0 + 20, -150, 100, "insulation 18", INK)
+    tag(v, -60, Z_G10 + 5, -150, 40, "G10 thermal break", INK)
+    tag(v, 0, -12, 60, -45, f"frame: Al profiles, columns {p.FRAME_H_A2:g}", INK)
+    rows = []
+    A_ = math.pi * 2500
+    for name, k_, (lo, hi) in p.SPRINGS:
+        for s_ in (lo, hi):
+            f_ = s_ * A_ / 1000
+            rows.append([name, f"{k_:g}", f"{s_}", f"{f_:.0f}", f"{f_ / k_:.1f}", f"{k_ * 0.1 / A_ * 1000:.2f}"])
+    sh.heading(255, 278, "Spring selection")
+    y = table(sh, 255, 274, ["spring", "k N/mm", "σ kPa", "F N", "compr. mm", "Δσ / 0.1 mm"], rows,
+              [18, 18, 18, 18, 24, 30], row_h=5.0)
+    sh.heading(255, y - 6, "Ways to apply a constant surcharge")
+    rows2 = [["lever + weights (A)", "exact, simple", "needs ≈ 300 mm overhang"],
+             ["spring + screw (A2)", "compact, no weights, frame-shrink ≈ 0.5–2 kPa", "re-check force (LC-A)"],
+             ["dead weight on piston", "exact", "50 kPa = 40 kg on the sample"],
+             ["air cylinder (Bellofram)", "exact, adjustable", "dry air line into freezer"]]
+    y = table(sh, 255, y - 10, ["method", "plus", "minus"], rows2, [44, 62, 46], row_h=5.0)
+    sh.text(255, y - 4,
+            "How it works\n"
+            "Turn the screw until LC-A shows the target force (e.g. 393 N = 50 kPa),\n"
+            "then lock the nut. The spring is soft compared with the sand, so a sample\n"
+            "movement of 0.1 mm changes the stress by only 0.25 kPa (light spring),\n"
+            "and the 0.18 mm shrinkage of the Al frame in the cold by < 0.5 kPa.\n"
+            "LC-A logs the real force; re-adjust only if it drifts > 2 %.\n"
+            "Sand, multi-ring cell, pressure sensors and thermistors as in E7-V01.",
+            fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.save(pdf, os.path.join(OUT, "E7-V07_variant_A2_spring.png"))
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
         if f.endswith((".png", ".pdf")):
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E7_drawings.pdf")) as pdf:
-        for fn in (sheet_a_simple, sheet_b_simple, sheet_cell, sheet_frame, sheet_sensors, sheet_layout):
+        for fn in (sheet_a_simple, sheet_b_simple, sheet_cell, sheet_frame, sheet_sensors, sheet_layout,
+                   sheet_a2_simple):
             fn(pdf)

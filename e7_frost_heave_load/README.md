@@ -4,7 +4,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v tištěné cele z PETG-CF, v rámu z Al pr
 
 | soubor | obsah |
 |---|---|
-| `vykresy/E7_drawings.pdf` | 6 listů A3, anglicky (PNG po listech ve stejné složce) |
+| `vykresy/E7_drawings.pdf` | 7 listů A3, anglicky (PNG po listech ve stejné složce) |
 | `src/sensors.py` | výběr čidel a plán kanálů CR1000 |
 | `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, obě v mrazáku (+ STL a PNG náhledy) |
 | `vypocty.md` | síly, tuhost rámu, teplotní artefakt, napětí v cele, siloměry |
@@ -205,7 +205,36 @@ Generuje `src/model3d.py` z `src/params.py`, náhledy `src/render3d.py`.
 
 **3D:** v `E7_variant_A_multiring.step` jsou písek, disky PV1/PH1, snímač PB1 v patce a snímače PW1–3 v kroužcích. Řez ukazuje `3d/E7_variant_A_section.png`.
 
-## 10. Doporučení a otevřené otázky
+## 10. Varianta A2 – přitížení pružinou, bez páky (E7-V07, `3d/E7_variant_A2_spring.step`)
+
+Stejný vzorek, vícekroužková cela, tlakové snímače a termistory jako A. Páku se závažím nahrazuje **předepnutá lisovací pružina** (ISO 10243, ⌀32 × 64 mm) ve vodicí trubce mezi siloměrem LC-A a stavěcím šroubem M20 × 1,5 v příčníku.
+
+**Postup:** šroubem dotáhnout, dokud LC-A neukáže cílovou sílu (50 kPa = 393 N), a zajistit pojistnou maticí.
+
+**Proč to funguje:** pružina je proti písku měkká.
+
+| pružina | tuhost | přitížení | stlačení | změna napětí při posunu 0,1 mm | změna od smrštění rámu 0,18 mm |
+|---|---|---|---|---|---|
+| „light“ | 20 N/mm | 25–50 kPa | 9,8–19,6 mm | 0,25 kPa | 0,45 kPa |
+| „heavy“ | 80 N/mm | 100–200 kPa | 9,8–19,6 mm | 1,0 kPa | 1,8 kPa |
+
+Pro 200 kPa vychází stlačení těsně pod dovoleným (≈ 35 % volné délky). Konkrétní pružiny vybrat z katalogu, např. Lesjöfors, Danly, Meusburger nebo Fibro podle tuhosti a dovoleného zdvihu.
+
+**Rám:**
+- Sloupy jsou 380 mm, tedy o 50 mm vyšší kvůli pružině.
+- Celková výška je ≈ 610 mm včetně vany, proti ≈ 650 mm vnitřní výšky mrazáku.
+- Nic nepřesahuje mimo rám, takže se vejde i tam, kde by páka nešla.
+
+**Srovnání způsobů přitížení:**
+
+| způsob | výhody | nevýhody |
+|---|---|---|
+| páka + závaží (A) | síla přesně konstantní | přesah ≈ 300 mm |
+| **pružina + šroub (A2)** | kompaktní, bez závaží, vliv smrštění rámu jen ≈ 0,5–2 kPa | sílu kontrolovat siloměrem LC-A |
+| závaží přímo na pístu | jednoduché | 50 kPa = 40 kg na vzorku, velká tepelná hmota nad vzorkem |
+| pneumatický válec (Bellofram) | přesné, nastavitelné | přívod suchého vzduchu do mrazáku, riziko námrazy |
+
+## 11. Doporučení a otevřené otázky
 
 1. **Program regulátoru:** „Set A“ (24 h +10 °C, pak lineární rampy 192 h mezi −10 a +10 °C) lze použít přímo. Teplota se ale mění pomalu a stále, takže čelo promrzání postupuje pomalu. Pro jasné kroky zvážit výdrže na −10 °C a +10 °C.
 2. **Směr promrzání:** v mrazáku promrzá vzorek ze všech stran. Izolace stěn a mezikus G10 pod podstavcem vedou k promrzání hlavně shora přes Al píst. Literatura doporučuje termostatované koncové desky a mrazák jen jako ochranné prostředí (Jin et al. 2019). Je to možné rozšíření.

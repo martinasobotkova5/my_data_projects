@@ -96,7 +96,8 @@ def radial(ang, r0, r1, z, d):
     return c.rotate((0, 0, 0), (0, 0, 1), ang)
 
 
-def frame(asm, prefix=""):
+def frame(asm, prefix="", z_beam=None):
+    Z_BEAM = z_beam or p.FRAME_H
     hb, hd = p.BASE_W / 2, p.BASE_D / 2
     asm.add(box(-hb, hb, -hd, hd, -p.BASE_T, 0), name=prefix + "base plate Al 6082", color=C["al"])
     for i, (x, y) in enumerate(((-hb + 20, -hd + 20), (hb - 20, -hd + 20), (0, hd - 20))):
@@ -273,6 +274,37 @@ def variant_a(asm, prefix="", multiring=False):
     asm.add(radial(90, 14, 40, Z_LC + 30, 1.6), name=prefix + "TLC 109SS", color=C["temp"])
 
 
+def variant_a_spring(asm, prefix=""):
+    """Variant A2: same sand / multi-ring cell / pressure sensors as A, surcharge by a die spring."""
+    zb = p.FRAME_H_A2
+    frame(asm, prefix, z_beam=zb)
+    asm.add(cyl(60, H_BOT, 0), name=prefix + "Al spacer (bottom)", color=C["al"])
+    cell_stack(asm, "A", prefix, multiring=True)
+    asm.add(box(-25.5, 25.5, -9.5, 9.5, Z_LC, Z_LC + 64), name=prefix + "LC-A Interface SSM 2 kN",
+            color=C["sensor"])
+    zp = Z_LC + 64
+    asm.add(cyl(50, 8, zp), name=prefix + "lower spring plate", color=C["al"])
+    k = p.SPRINGS[0][1]
+    comp = p.SURCHARGE_A_KPA * math.pi * 2500 / 1000 / k
+    h = p.SPRING_L0 - comp
+    wire = 4.0
+    helix = cq.Wire.makeHelix(pitch=h / 6, height=h, radius=p.SPRING_D / 2 - wire / 2)
+    profile = cq.Workplane("XZ").center(p.SPRING_D / 2 - wire / 2, 0).circle(wire / 2)
+    try:
+        spring = profile.sweep(cq.Workplane("XY").add(helix), isFrenet=True).translate((0, 0, zp + 8))
+    except Exception:
+        spring = tube(p.SPRING_D, p.SPRING_D - 2 * wire, h, zp + 8)
+    asm.add(spring, name=prefix + f"die spring D{p.SPRING_D:g}x{p.SPRING_L0:g} ISO 10243", color=cq.Color(0.17, 0.42, 0.69))
+    asm.add(tube(p.SPRING_D + 10, p.SPRING_D + 4, h - 4, zp + 10), name=prefix + "spring guide tube (cut-away)",
+            color=cq.Color(0.8, 0.8, 0.8, 0.3))
+    top = zp + 8 + h
+    asm.add(cyl(50, 8, top), name=prefix + "upper spring plate", color=C["al"])
+    asm.add(cyl(20, zb + BEAM_H + 35 - (top + 8), top + 8), name=prefix + "screw M20x1.5", color=C["steel"])
+    asm.add(cyl(36, 12, zb + BEAM_H), name=prefix + "lock nut", color=C["steel"])
+    asm.add(cyl(90, 7, zb + BEAM_H + 35), name=prefix + "handwheel", color=C["steel"])
+    asm.add(radial(90, 14, 40, Z_LC + 30, 1.6), name=prefix + "TLC 109SS", color=C["temp"])
+
+
 def variant_b(asm, prefix=""):
     frame(asm, prefix)
     asm.add(cyl(60, H_BOT - 13, 0), name=prefix + "steel seat (bottom)", color=C["steel"])
@@ -318,10 +350,13 @@ if __name__ == "__main__":
     lay = freezer_layout()
     amr = cq.Assembly(name="E7 variant A - multi-ring cell")
     variant_a(amr, multiring=True)
+    a2 = cq.Assembly(name="E7 variant A2 - spring surcharge")
+    variant_a_spring(a2)
     mr = cq.Assembly(name="E7 multi-ring cell")
     multiring_cell(mr, with_sample=False)
     for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (amr, "E7_variant_A_multiring"),
-                    (mr, "E7_multiring_cell"), (lay, "E7_freezer_layout")):
+                    (mr, "E7_multiring_cell"), (a2, "E7_variant_A2_spring"),
+                    (lay, "E7_freezer_layout")):
         asm.save(os.path.join(OUT, fn + ".step"))
         cq.exporters.export(asm.toCompound(), os.path.join(OUT, fn + ".stl"), tolerance=0.2, angularTolerance=0.3)
         print(fn, "ok", len(asm.children) if hasattr(asm, "children") else "")

@@ -82,3 +82,10 @@ PBASE = [("PB1", 25.0, 120.0)]               # (tag, r, úhel)
 # tlakové snímače ve stěně (lícují s vnitřním povrchem kroužku): (tag, hloubka, úhel)
 PWALL = [("PW1", 20.0, 30.0), ("PW2", 42.0, 150.0), ("PW3", 64.0, 270.0)]
 PWALL_D = 8.0                                # PDA-PA v pouzdře ⌀8 (vejde se do kroužku 10 mm)
+
+# --- varianta A2: přitížení předepnutou pružinou (bez páky) ------------------------
+FRAME_H_A2 = 380.0           # vyšší sloupy kvůli pružinovému pouzdru
+SPRING_D, SPRING_L0 = 32.0, 64.0     # lisovací pružina ISO 10243 ⌀32 × 64 (vnější ⌀, volná délka)
+SPRING_MAX_DEFL = 0.35       # dovolené stlačení ≈ 35 % L0 (podle řady pružiny, ověřit v katalogu)
+SPRINGS = [("light", 20.0, (25, 50)),     # tuhost N/mm, rozsah přitížení kPa
+           ("heavy", 80.0, (100, 200))]

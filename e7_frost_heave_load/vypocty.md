@@ -71,3 +71,17 @@ Zmrznutí vody v pórech na místě: 9 % × θ 0.3 × 100 mm ≈ **2.7 mm**. Ote
 | A: v sérii s pákou | S-snímač tah/tlak, C3, kompenz. −10…+40 °C | 2 kN | 7.9 N = 0.393 %FS | 0.8 N ≈ 0.1 kPa |
 | B: nahoře | kompresní (kanystr/sloupek), vysoká tuhost | 20 kN | 7.9 N = 0.039 %FS | 8.0 N ≈ 1.0 kPa |
 | B: dole pod podstavcem | kompresní, stejný typ | 20 kN | 7.9 N = 0.039 %FS | 8.0 N ≈ 1.0 kPa |
+
+## 7. Varianta A2 – přitížení pružinou místo páky
+
+Pružina ⌀32 × 64 mm (ISO 10243) mezi siloměrem a stavěcím šroubem. Dovolené stlačení ≈ 35 % L0 = 22.4 mm.
+
+| pružina | k [N/mm] | přitížení [kPa] | síla [N] | stlačení [mm] | Δσ při posunu 0,1 mm [kPa] | Δσ od smrštění rámu [kPa] |
+|---|---|---|---|---|---|---|
+| light | 20 | 25 | 196 | 9.8 | 0.25 | 0.45 |
+| light | 20 | 50 | 393 | 19.6 | 0.25 | 0.45 |
+| heavy | 80 | 100 | 785 | 9.8 | 1.02 | 1.79 |
+| heavy | 80 | 200 | 1571 | 19.6 | 1.02 | 1.79 |
+
+Smrštění Al sloupů 380 mm při 20 K = 0.176 mm. Pružina ho převede jen na malou změnu síly (poslední sloupec), na rozdíl od tuhého rámu varianty B. Stlačení musí zůstat pod dovoleným – pro 200 kPa vychází těsně, proto „heavy“ pružina 80 N/mm.
+
