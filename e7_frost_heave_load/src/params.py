@@ -34,14 +34,12 @@ BASE_T = 25.0           # základová deska Al 6082, 260 × 200
 BASE_W, BASE_D = 260.0, 200.0   # dvě sestavy vedle sebe na vaně ≈ 530 × 340
 COL_PROFILE = "40x80"   # 2 sloupy
 COL_SPAN = 220.0        # osová vzdálenost sloupů
-FRAME_H = 330.0         # výška sloupů, varianta B (krátké → malý teplotní artefakt)
+FRAME_H = 330.0         # (původní tuhý rám B – už se nepoužívá, B je bez zatížení)
 BEAM_PROFILE = "80x80"  # příčník
-PEDESTAL_H = 30.0       # Al podstavec pod celou (varianta B: na spodním siloměru)
+PEDESTAL_H = 30.0       # Al podstavec pod celou
 
 # --- zatížení -------------------------------------------------------------------
 SURCHARGES_KPA = (5, 10, 15, 20, 25)   # varianta A – přitížení závažím (max. 25 kPa)
-B_MAX_KPA = 2000.0                    # varianta B – návrhový max. tlak (literatura: silty 0,2–2 MPa)
-SEATING_KPA = 5.0                     # varianta B – dosedací předpětí
 
 # --- teploty --------------------------------------------------------------------
 T_COLD, T_WARM = -10.0, 10.0          # program regulátoru (Set A)
@@ -92,3 +90,22 @@ DW_ROD_D, DW_ROD_L = 16.0, 230.0
 DW_G10_D, DW_G10_T = 60.0, 10.0     # tepelný mezikus pod nosnou deskou
 PISTON_ASSY_KG = 1.0         # píst + porézní kámen + terčík + kulička (≈, zvážit)
 LVDT_R = 95.0                # LVDT na bocích (±y), terčík má výstupky do r 100
+
+# --- varianta B: stejný vzorek bez zatížení, posuny a deformace po vrstvách ------------
+TOP_PLATE_D, TOP_PLATE_T = 99.0, 6.0      # lehká horní deska PETG-CF (≈ 60 g ≈ 0,1 kPa), jen terč pro LVDT
+TOP_PLATE_KG = 0.065
+# povrchové LVDT na horní desce: (tag, r, úhel) → průměrný zdvih + náklon
+SURF_LVDT = [("S1", 40.0, 30.0), ("S2", 40.0, 150.0), ("S3", 40.0, 270.0)]
+# kotvy (settlement anchors) uvnitř písku: (tag, hloubka pod povrchem, r, úhel)
+ANCHORS = [("E1", 25.0, 25.0, 90.0), ("E2", 50.0, 25.0, 210.0), ("E3", 75.0, 25.0, 330.0)]
+ANCHOR_D, ANCHOR_T = 16.0, 1.5            # nerezový kotouček
+ROD_D, SLEEVE_D = 2.0, 4.0                # Invarová tyčka ⌀2 v PTFE trubičce ⌀4/2,5 (sleeve)
+PLATE_HOLE_D = 7.0                        # otvor v horní desce pro trubičku (deska se po ní volně posouvá)
+# referenční stojan: 3 Invarové sloupky ze základové desky + Al můstek s LVDT
+STAND_R, STAND_POST_D = 100.0, 12.0
+STAND_ANG = (60.0, 180.0, 300.0)
+BRIDGE_D, BRIDGE_T = 220.0, 10.0
+Z_BRIDGE = 250.0                          # spodní líc můstku nad základovou deskou
+LVDT_B_BODY = (19.0, 90.0)                # ⌀ × délka těla (≈, RDP DCTH200 s volným jádrem – ověřit)
+LVDT_B_RANGE = 5.0                        # ±mm
+ALPHA_G10 = 15e-6

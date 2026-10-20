@@ -2,76 +2,70 @@
 
 Generováno skriptem `src/vypocty.py` z `src/params.py`. Hodnoty ≈ jsou odhady k ověření.
 
-## 1. Zatížení a síly
+## 1. Zatížení
 
 Plocha vzorku ⌀100: 7854 mm² = 78.54 cm².
 
-| napětí [kPa] | síla [N] | hmotnost celkem [kg] | poznámka |
+| varianta | napětí na povrchu [kPa] | síla [N] | hmotnost na vzorku [kg] |
 |---|---|---|---|
-| 5 | 39 | 4.0 | varianta A (závaží) |
-| 10 | 79 | 8.0 | varianta A (závaží) |
-| 15 | 118 | 12.0 | varianta A (závaží) |
-| 20 | 157 | 16.0 | varianta A (závaží) |
-| 25 | 196 | 20.0 | varianta A (závaží) |
-| 500 | 3927 | – | varianta B (tlak ze zdvihu) |
-| 1000 | 7854 | – | varianta B (tlak ze zdvihu) |
-| 2000 | 15708 | – | varianta B (tlak ze zdvihu) |
+| A – závaží | 5 | 39 | 4.0 |
+| A – závaží | 10 | 79 | 8.0 |
+| A – závaží | 15 | 118 | 12.0 |
+| A – závaží | 20 | 157 | 16.0 |
+| A – závaží | 25 | 196 | 20.0 |
+| B – jen horní deska PETG-CF | 0.08 | 0.64 | 0.065 |
 
-## 2. Tuhost rámu (varianta B, konstantní výška)
+Ve variantě B nese písek jen lehkou desku (0.08 kPa) – to odpovídá vlastní tíze horních 5 mm písku (≈ 0.08 kPa). Kotvy s Invarovými tyčkami váží dohromady 17 g a visí každá na svém místě v písku. LVDT mají **volné jádro** (bez pružiny), takže na vzorek netlačí. Běžné LVDT s pružinou by přidaly ≈ 1–2 N na hrot, tj. 0,1–0,25 kPa na každý snímač.
 
-| složka | poddajnost při 15.7 kN [mm] | poznámka |
-|---|---|---|
-| příčník 80x80, rozpětí 220 | 0.036 | ohyb, prostý nosník |
-| 2 sloupy 40x80, délka 330 | 0.035 | tah |
-| kompresní siloměr 20 kN (≈) | 0.050 | podle katalogu, typicky 0,02–0,1 |
-| spoje profilů (≈) | 0.02–0.15 | šrouby do čela / úhelníky – rozhoduje |
-| **celkem** | **0.14–0.27** | tuhost 58–112 kN/mm |
+## 2. Varianta B – očekávané deformace (uzavřený systém)
 
-Pro srovnání: tuhost zmrzlého vzorku E·A/H ≈ 16 kN/mm (E = 200 MPa). Rám tedy není dokonale tuhý – posun pístu je nutné měřit (LVDT) a výsledek uvádět jako tlak při známé tuhosti omezení.
+| θ [-] | Sr [-] | pórovitost n | vzduch n(1−Sr) | objem z mrznutí 0,09·θ | horní mez zdvihu [mm] |
+|---|---|---|---|---|---|
+| 0.11 | 0.3 | 0.38 | 0.27 | 0.010 | 1.0 |
+| 0.15 | 0.4 | 0.38 | 0.23 | 0.014 | 1.4 |
+| 0.19 | 0.5 | 0.38 | 0.19 | 0.017 | 1.7 |
 
-## 3. Teplotní roztažnost rámu – největší zdroj chyby ve variantě B
+Horní mez platí, jen kdyby se celé rozpínání vody při mrznutí projevilo svisle. V nenasyceném písku je ale vzduchových pórů mnohonásobně víc, než kolik objemu led přidá. Celkový zdvih bude proto malý (desetiny mm), ale **uvnitř vzorku se může voda přesouvat** k čelu promrzání (kryosukce): nahoře vrstva nabobtná, níž se vysuší a smrští. Proto se měří deformace **po vrstvách** (kotvy E1–E3), ne jen povrch. Při tání se ukáže nevratné sednutí (zhutnění) za každý cyklus.
 
-| veličina | hodnota | jednotka | poznámka |
+## 3. Varianta B – rozlišení posunů a poměrných deformací
+
+| vrstva | hloubka [mm] | tloušťka L0 [mm] | posun = rozdíl | rozlišení ε [–] |
+|---|---|---|---|---|
+| povrch – E1 | 0–25 | 25 | S̄ − E1 | 3.8e-05 |
+| E1 – E2 | 25–50 | 25 | E1 − E2 | 3.8e-05 |
+| E2 – E3 | 50–75 | 25 | E2 − E3 | 3.8e-05 |
+| E3 – dno | 75–100 | 25 | E3 − 0 (dno pevné) | 2.7e-05 |
+
+LVDT ±5 mm s výstupem ±5 V na rozsahu CR1000 ±5000 mV: rozlišení ≈ 0.67 µm. Poměrná deformace vrstvy 25 mm se tak rozliší na ≈ 4·10⁻⁵ (0,004 %). Absolutní linearita LVDT (±0,25 % FS ≈ ±25 µm) se odstraní kalibrací mikrometrem; pro deformace mezi cykly rozhoduje stabilita, ne linearita.
+
+## 4. Varianta B – teplotní chyba referenčního stojanu
+
+| prvek | délka [mm] | α [1/K] | změna při 20 K [µm] |
 |---|---|---|---|
-| zkrácení sloupů Al 330 mm při ΔT 20 K | 0.152 | mm |
-| zkrácení vnitřní sestavy (Al podstavec + píst, ocel. siloměr + šroub) | 0.051 | mm | bez zeminy |
-| rozdíl, který stlačí vzorek při ochlazení | 0.102 | mm |
-| tuhost rám + zmrzlý vzorek v sérii | 12.4 | kN/mm |
-| **falešná síla jen z teploty** | **1258** | N | ≈ 160 kPa – srovnatelné s měřeným tlakem |
-| s tepelně sladěnou sestavou (Al distanční trubka místo oceli) | 115 | N | zbývá jen siloměr ≈ 40 mm oceli |
+| Al distanční kus + podstavec | 70 | 23.1·10⁻⁶ | +32 |
+| G10 mezikus | 10 | 15.0·10⁻⁶ | +3 |
+| Invarové sloupky 250 mm | 250 | 1.2·10⁻⁶ | -6 |
+| tělo LVDT (nerez) od upnutí k nule | 45 | 17.0·10⁻⁶ | +15 |
+| horní deska PETG-CF | 6 | 45.0·10⁻⁶ | +5 |
+| **zdánlivý posun povrchu** |  |  | **+50** |
 
-Opatření: (1) sestavu mezi základem a příčníkem udělat z Al tak, aby se smršťovala stejně jako sloupy; (2) slepá zkouška s ocelovou/Al náhradou vzorku ve stejném programu → odečíst teplotní artefakt; (3) LVDT vztažené k Invarové tyči ze základu.
+Zdánlivý posun ≈ 50 µm za 20 K je malý proti očekávaným desetinám mm, ale ne zanedbatelný. Odstraní se **slepou zkouškou** s Al náhradou vzorku ve stejném programu (odečíst jako funkci teploty Tbot a Tbridge). Kotvy mají Invarové tyčky (100–160 mm × 1,2·10⁻⁶ × 20 K ≈ 3–4 µm), takže chyba vrstev je hlavně společná všem snímačům a v rozdílech mezi kotvami se odečte.
 
-## 4. Cela z PETG-CF – napětí
+## 5. Cela z PETG-CF – napětí
 
 | případ | boční tlak p [MPa] | obvodové napětí σθ [MPa] | pevnost XY [MPa] | bezpečnost krátkodobě | dlouhodobě (30 %) |
 |---|---|---|---|---|---|
-| A: 200 kPa, K0 = 1 | 0.2 | 1.3 | 40–55 | 32–44 | 9.5–13.1 |
-| B: 1 MPa, K0 = 1 (horní mez) | 1.0 | 6.3 | 40–55 | 6–9 | 1.9–2.6 |
-| B: 2 MPa (extrém) | 2.0 | 12.6 | 40–55 | 3–4 | 1.0–1.3 |
+| A: 25 kPa, K0 = 1 | 0.025 | 0.16 | 40–55 | 253–349 | 76.0–104.6 |
+| B: tlak ledu na stěnu 200 kPa (horní odhad) | 0.2 | 1.26 | 40–55 | 32–44 | 9.5–13.1 |
+| extrém 1 MPa | 1.0 | 6.31 | 40–55 | 6–9 | 1.9–2.6 |
 
-**Osové napětí ve stěně od tření** (táhne vrstvy od sebe, pokud je cela dole uchycená):
+Vícekroužková cela: obvodové napětí nese každý kroužek 10 mm samostatně (stejný vzorec). Tření o stěnu přenáší namazaná latexová membrána, kroužky se po sobě volně posouvají.
 
-| případ | μ | třecí síla [kN] | osové napětí stěny [MPa] | pevnost Z [MPa] | bezpečnost |
-|---|---|---|---|---|---|
-| bez fólie (zmrzlá zemina–PETG) | 0.5 | 15.9 | 5.8 | 15–30 | 2.6–5.2 |
-| PTFE fólie + silikonový tuk | 0.05 | 1.6 | 0.6 | 15–30 | 25.9–51.8 |
+Rozdílná roztažnost cela/vzorek: α PETG-CF ≈ 30–60·10⁻⁶ 1/K → změna průměru při 20 K ≈ 0.06–0.12 mm (kroužky se při ochlazení zúží víc než písek; membrána a tuk to vyrovnají, horní deska má vůli ≥ 1 mm).
 
-(boční tlak 1 MPa). Bez fólie je osové napětí přes vrstvy kritické → fólie + cela volně uložená (neupnutá), aby tření stěnu tlačilo, ne táhlo.
+## 6. Varianta A – zdvih pod přitížením
 
-Rozdílná roztažnost cela/vzorek: α PETG-CF ≈ 30–60·10⁻⁶ 1/K → změna průměru při 20 K ≈ 0.06–0.12 mm (cela se při ochlazení zúží víc než Al píst ⌀99,5 – vůle pístu ≥ 0,3 mm).
-
-## 5. Očekávaný zdvih (uzavřený systém, bez přítoku vody)
-
-Zmrznutí vody v pórech na místě: 9 % × θ 0.3 × 100 mm ≈ **2.7 mm**. Otevřený systém (přítok vody zespodu, růst ledových čoček) dá víc – podle zeminy několik mm až cm. Rozsah LVDT ±10 mm a volný zdvih pístu 15 mm pokrývají oba případy.
-
-## 6. Siloměry – rozsah a rozlišení
-
-| použití | typ | rozsah | 1 kPa ≙ | tep. drift nuly (0,02 %FS/10 K) při 20 K |
-|---|---|---|---|---|
-| A: v sérii s pružinou | S-snímač tah/tlak, C3, kompenz. −10…+40 °C | 2 kN | 7.9 N = 0.393 %FS | 0.8 N ≈ 0.1 kPa |
-| B: nahoře | kompresní (kanystr/sloupek), vysoká tuhost | 20 kN | 7.9 N = 0.039 %FS | 8.0 N ≈ 1.0 kPa |
-| B: dole pod podstavcem | kompresní, stejný typ | 20 kN | 7.9 N = 0.039 %FS | 8.0 N ≈ 1.0 kPa |
+Horní mez při θ 0.18: 9 % × θ × 100 mm ≈ **1.6 mm**; v nenasyceném písku podstatně méně (viz §2). LVDT ±10 mm stačí s rezervou.
 
 ## 7. Varianta A – přitížení závažím (max. 25 kPa)
 

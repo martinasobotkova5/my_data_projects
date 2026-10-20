@@ -1,12 +1,12 @@
 # E7: zatěžovací zkoušky zeminy při mrznutí a tání
 
-Vzorek ⌀100 × 100 mm (vnitřní) v tištěné cele z PETG-CF, v rámu z Al profilů, v truhlicovém mrazáku z E6 s programovatelným regulátorem. Obě sestavy jsou **bez páky**: varianta A má přitížení **závažím** (ocelové kotouče, max. 25 kPa), varianta B pevné omezení šroubem.
+Vzorek ⌀100 × 100 mm (vnitřní) v tištěné cele z PETG-CF, ve vícekroužkové cele z PETG-CF, v truhlicovém mrazáku z E6 s programovatelným regulátorem. V obou variantách je **stejný vzorek** (nenasycený písek) a stejná cela. Varianta A má přitížení **závažím** (ocelové kotouče, max. 25 kPa) a měří tlaky uvnitř písku. Varianta B je **bez zatížení** a měří zdvih, sednutí a deformace po vrstvách mezi mrznutím a táním.
 
 | soubor | obsah |
 |---|---|
 | `vykresy/E7_drawings.pdf` | 6 listů A3, anglicky (PNG po listech ve stejné složce) |
 | `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, vícekroužková cela, obě v mrazáku (+ STL a PNG náhledy) |
-| `vypocty.md` | síly, závaží a jejich tepelná setrvačnost, tuhost rámu, teplotní artefakt, napětí v cele, siloměry |
+| `vypocty.md` | zatížení, očekávané deformace, rozlišení LVDT, teplotní chyba stojanu, napětí v cele, závaží |
 | `src/params.py` | všechny rozměry a předpoklady |
 | `src/sensors.py` | výběr čidel a plán kanálů CR1000 |
 | `src/vykresy.py`, `src/vypocty.py`, `src/model3d.py`, `src/render3d.py` | generátory |
@@ -17,22 +17,19 @@ Regenerace: `cd src && python vykresy.py && python vypocty.py > ../vypocty.md &&
 
 ## 1. Dvě varianty
 
-| | **A – nenasycený písek, konstantní přitížení** (E7-V01) | **B – konstantní výška** (E7-V02) |
+| | **A – konstantní přitížení** (E7-V01) | **B – bez zatížení** (E7-V02) |
 |---|---|---|
-| vzorek | nenasycený písek (Sr ≈ 0,3–0,5) | zemina podle zadání |
-| co se drží | svislé napětí 5 / 10 / 15 / 20 / 25 kPa (výchozí 25 kPa) | výška vzorku (píst opřený o rám) |
-| zatížení | **závaží** – ocelové kotouče ⌀150 na nosné desce s vodicí tyčí ⌀16 | jemný šroub M24 × 1,5, dosedací předpětí 5 kPa |
-| co se měří | tlaky uvnitř písku, u dna a na stěně; LVDT kontrolují, že se vzorek nehýbe | síla z mrazového zdvihu nahoře a dole (rozdíl = tření o stěnu) |
-| siloměr | není potřeba (síla = hmotnost závaží) | 2× kompresní 20 kN |
-| cela | vícekroužková + latexová membrána | monolitická + Al objímka 5 mm |
-| rám | lehký 40×40, sloupy 410 mm, příčka s lineárním ložiskem | 40×80, sloupy 330 mm, příčník 80×80 |
+| vzorek | nenasycený písek ⌀100 × 100 (Sr ≈ 0,3–0,5) | **stejný** |
+| cela | vícekroužková PETG-CF + namazaná latexová membrána | **stejná** |
+| zatížení | **závaží** 5–25 kPa (ocelové kotouče ⌀150 na nosné desce s vodicí tyčí) | **žádné** – jen lehká horní deska PETG-CF (≈ 0,08 kPa) |
+| co se měří | tlaky uvnitř písku, u dna a na stěně; LVDT kontrolují, že se vzorek nehýbe | zdvih při mrznutí, sednutí při tání, nevratná deformace za cyklus, poměrné deformace 4 vrstev po 25 mm |
+| snímače posunu | 2× LVDT ±10 mm s pružinou | 6× LVDT ±5 mm s **volným jádrem**: S1–S3 na horní desce, E1–E3 na kotvách v hloubce 25/50/75 mm |
+| rám | lehký 40×40, sloupy 410 mm, příčka s lineárním ložiskem | **žádný** – jen 3 Invarové sloupky a Al můstek s LVDT |
+| termistory | T1–T5 v písku, Ttop, Tbot, Tw, Tframe, Tair | T1–T5 v písku, Ttop, Tbot, Tstand, Tair |
 
-Obě varianty sdílejí spodní a horní část sestavy:
-- podstavec s porézním kamenem a izolační mezikus G10,
-- píst s porézním kamenem a kuličku v kuželových sedlech,
-- LVDT na Invarovém rámečku a termistory ve stěně.
+Obě varianty sdílejí základovou desku, Al distanční kus, mezikus G10, podstavec s porézním kamenem, vícekroužkovou celu a termistory T1–T5. Výsledky A a B jsou tak přímo srovnatelné: rozdíl je jen v přitížení.
 
-**Proč závaží:**
+**Proč závaží (A):**
 - Gravitace dává přesně konstantní přitížení. Nezávisí na posunu vzorku ani na smrštění rámu v mrazu.
 - Není potřeba siloměr ani dotahování. Rám jen vede tyč a nese LVDT, takže nic nezatěžuje.
 - Do 25 kPa je to 20 kg, tedy 3 plné a 1 poloviční kotouč (výška 126 mm). To se do mrazáku vejde.
@@ -89,77 +86,107 @@ O kolik tlak při mrznutí vzroste nad přitížení, tolik vytváří led v pó
 - **Led na membráně:** snímače utěsnit silikonem nebo epoxidem.
 - **Sání v nenasyceném písku:** tenziometry v mrazu zamrznou. Před zmrazením změřit sání (tenziometr nebo filtrační papír) a pak ho odhadovat z teploty (Clapeyron) nebo z obsahu nezamrzlé vody (TDR).
 
-## 4. Vícekroužková cela (varianta A, E7-V03)
+## 4. Vícekroužková cela (obě varianty, E7-V03)
 
 - **Kroužky:** spodní kroužek s patkou ⌀150 × 8, nad ním 10 kroužků PETG-CF ⌀117/101 × 10 mm.
 - **Podložky:** mezi kroužky PTFE podložky 1 mm.
 - **Vedení:** kroužky mají 3 oka, kterými volně kloužou po 3 vodicích tyčích ⌀5 s PTFE povlakem (r 63, po 120°).
 - **Membrána:** uvnitř namazaná latexová membrána 0,3 mm.
 - **Termistory:** 5 nálitků na kroužcích nejblíže hloubkám 10–90 mm, pod úhly 0/60/120/180/240°. Na dalších 3 kroužcích jsou snímače PW1–3.
-- **Izolace:** Kaiflex 18 mm. Vnější poloměr 89 mm se ještě vejde mezi sloupy (r 90).
+- **Izolace:** Kaiflex 18 mm. Vnější poloměr 89 mm se vejde mezi sloupy rámu A (r 90) i dovnitř Invarových sloupků B (r 100).
 - **Princip:** písek se posouvá s kroužky, takže tření o stěnu se téměř nepřenáší. Vícekroužkové cely jsou podle srovnání TRB/CRREL nejlepší řešení proti tření o stěnu.
 
-## 5. Vážní čidla, nebo siloměry?
+## 5. Varianta B – posuny a deformace mezi mrznutím a táním (E7-V02, `vypocty.md` §1–4)
 
-**Siloměry**, tedy tahové a tlakové snímače síly zapojené do osy zatěžování. Ne plošinová ani jednobodová vážní čidla.
+**Sestava:**
+- Stejný písek ve stejné vícekroužkové cele jako A, bez pístu a bez závaží.
+- Na povrchu leží **lehká horní deska** PETG-CF ⌀99 × 6 (≈ 65 g, tj. 0,08 kPa, to je jako tíha horních 5 mm písku). Deska je jen terč pro LVDT.
+- **3 povrchové LVDT S1–S3** (r 40, po 120°) stojí na desce. Jejich průměr dává zdvih nebo sednutí povrchu, rozdíl mezi nimi náklon desky.
+- **3 kotvy E1–E3** (settlement anchors) jsou při ukládání písku vloženy do hloubky 25, 50 a 75 mm (r 25, po 120°, mimo povrchová LVDT):
+  - nerezový kotouček ⌀16 × 1,5;
+  - Invarová tyčka ⌀2 vede nahoru v PTFE trubičce ⌀4 (trubička odděluje tyčku od písku nad kotvou);
+  - tyčka prochází otvorem ⌀7 v horní desce (deska se po ní volně posouvá) a nese jádro LVDT.
+- **LVDT s volným jádrem** (bez pružiny): na vzorek netlačí. Běžné LVDT s pružinou by přidaly 0,1–0,25 kPa na každý snímač, což je víc než celá horní deska.
+- **Reference:** těla LVDT jsou upnutá v Al můstku ⌀220 × 10 na 3 Invarových sloupcích ⌀12 (r 100) přišroubovaných do základové desky. Můstek se při plnění cely sundá.
 
-- **Vážní čidla** jsou stavěná pro plošinu s výstředným zatížením. V osové sestavě mezi pístem a rámem se ohýbají a jsou poddajná.
-- **Kompresní siloměry** jsou tuhé (≈ 0,02–0,1 mm při plném rozsahu). To je pro variantu B zásadní, protože tlak z mrazového zdvihu silně závisí na tuhosti omezení (Ji et al. 2019).
-- **Varianta A** siloměr nepotřebuje, síla je dána hmotností závaží.
-- **Teplota:** běžné siloměry třídy C3 jsou kompenzované v rozsahu −10 … +40 °C, takže −10 °C je na hraně. Logovat teplotu siloměru a korigovat.
+**Co se vyhodnocuje v každém cyklu:**
 
-## 6. Rám z Al profilů (E7-V04)
+| veličina | výpočet |
+|---|---|
+| zdvih povrchu při mrznutí | S̄ = (S1 + S2 + S3)/3, od začátku mrznutí do konce |
+| sednutí při tání | pokles S̄ během tání |
+| nevratná deformace za cyklus | S̄ na konci tání − S̄ na začátku cyklu |
+| deformace vrstev 0–25 / 25–50 / 50–75 / 75–100 mm | Δh₁ = S̄ − E1, Δh₂ = E1 − E2, Δh₃ = E2 − E3, Δh₄ = E3 (dno pevné); εᵢ = Δhᵢ / 25 mm |
+| hloubka promrzání | izoterma 0 °C z T1–T5 → deformace zmrzlé vs. nezmrzlé vrstvy v čase |
+| po posledním cyklu | výška vzorku (posuvka), hmotnost, vlhkost 5 plátků po 20 mm (přesun vody) |
 
-- **Sestava:** základová deska Al 260 × 200 × 25, 2 sloupy 40×80, příčník 80×80 dlouhý 260 mm. To je rám B. Rám A je lehký: 2 sloupy 40×40 × 410 mm a příčka 40×40 s lineárním ložiskem ⌀16 pro vodicí tyč závaží.
-- **Výška:** nejvyšší bod (vodicí tyč varianty A) je ≈ 530 mm nad podlahou mrazáku, proti odhadovaným ≈ 650 mm vnitřní výšky.
-- **Tuhost varianty B při 15,7 kN:** příčník 0,036 mm, sloupy 0,035 mm, siloměr ≈ 0,05 mm, spoje 0,02–0,15 mm. **Rozhodují spoje.** Proto šrouby do čela profilů a žádné úhelníky v silové cestě.
-- **Teplotní artefakt varianty B:** Al sloupy 330 mm se při změně o 20 K zkrátí o 0,15 mm. S ocelovou vnitřní sestavou by to do zmrzlého vzorku zatlačilo ≈ 160 kPa. Opatření:
-  1. Al distanční trubka v silové cestě;
-  2. **slepá zkouška** s Al náhradou vzorku;
-  3. LVDT na Invarovém rámečku.
-- **Varianta A:** tento problém nemá. Rám nenese zatížení, takže jeho smrštění přitížení nemění.
+**Co čekat (`vypocty.md` §2):**
+- Horní mez zdvihu z rozpínání vody je 1,0–1,7 mm, ale v nenasyceném písku má led dost místa ve vzduchových pórech. Celkový zdvih bude spíš v desetinách mm.
+- Voda se ale může přesouvat k čelu promrzání: horní vrstva nabobtná, spodní se vysuší a smrští. Povrchové LVDT by to nerozlišilo, proto kotvy po vrstvách.
+- Při tání se ukáže nevratné zhutnění. To je hlavní výsledek pro porovnání cyklů.
 
-## 7. Vydrží PETG-CF? (E7-V03, `vypocty.md` §4)
+**Přesnost (`vypocty.md` §3–4):**
+- LVDT ±5 mm na CR1000: rozlišení ≈ 0,7 µm, poměrná deformace vrstvy 25 mm ≈ 4·10⁻⁵.
+- Teplotní chyba stojanu: Al podstavec a distanční kus proti Invaru ≈ 50 µm na 20 K. Odstraní se **slepou zkouškou** s Al náhradou vzorku ve stejném programu (korekce podle Tbot a Tstand). Chyba je společná všem LVDT, takže v rozdílech mezi kotvami se z velké části odečte.
+- Linearita LVDT ±0,25 % FS → každý LVDT zkalibrovat mikrometrem.
 
-**Varianta A ano. Varianta B jen s Al objímkou.** Pevnost PETG-CF z katalogových listů a literatury: ≈ 40–55 MPa ve směru vlákna nebo vrstvy, jen 15–30 MPa kolmo na vrstvy. Dlouhodobě počítám s ≈ 30 % pevnosti.
+**Příprava vzorku B:**
+1. Do cely s membránou uložit písek po vrstvách 12,5 mm na cílovou hustotu a vlhkost.
+2. Po dosažení hloubky 75, 50 a 25 mm pod budoucím povrchem položit kotvu, na ní nasadit tyčku s trubičkou a pokračovat v hutnění (tyčky drží ve svislé poloze šablona nad celou).
+3. Zarovnat povrch, položit horní desku přes trubičky, nasadit můstek s LVDT a vynulovat.
+4. Mezeru mezi deskou a horním kroužkem překrýt volnou PE fólií, aby písek během týdnů nevysychal sublimací.
 
-| zatěžovací stav | napětí | bezpečnost krátkodobě | dlouhodobě |
+**Siloměry** nejsou potřeba v žádné variantě. A je zatížená závažím (síla = hmotnost), B není zatížená vůbec.
+
+## 6. Rám A a stojan B (E7-V04)
+
+- **Základ:** v obou variantách základová deska Al 260 × 200 × 25 na 3 stavitelných nožkách.
+- **Rám A:** 2 sloupy 40×40 × 410 mm a příčka 40×40 s lineárním kuličkovým ložiskem ⌀16 pro vodicí tyč závaží. Rám nenese zatížení, jen vede tyč a nese Invarové sloupky LVDT.
+- **Stojan B:** 3 Invarové sloupky ⌀12 × 250 mm (r 100, 60/180/300°, mimo izolaci), nahoře Al můstek ⌀220 × 10 s děleným upnutím pro 5 LVDT (+1 rezerva). Žádný rám, nic se nezatěžuje.
+- **Výška:** nejvyšší bod je vodicí tyč A (≈ 590 mm nad podlahou mrazáku, vč. vany). Sestava B je vysoká ≈ 330 mm vč. desky.
+- **Teplota:** rám A přitížení nemění. Stojan B je reference posunu, jeho chyba ≈ 50 µm / 20 K se koriguje slepou zkouškou.
+
+## 7. Vydrží PETG-CF? (E7-V03, `vypocty.md` §5)
+
+**Ano, pro obě varianty.** Pevnost PETG-CF z katalogových listů a literatury: ≈ 40–55 MPa ve směru vlákna nebo vrstvy, jen 15–30 MPa kolmo na vrstvy. Dlouhodobě počítám s ≈ 30 % pevnosti.
+
+| zatěžovací stav (obvodové napětí v kroužku) | napětí | bezpečnost krátkodobě | dlouhodobě |
 |---|---|---|---|
-| obvod, A 200 kPa | 1,3 MPa | > 30 | > 9 |
-| obvod, B 2 MPa | 12,6 MPa | 3–4 | **1,0–1,3 – nestačí** |
-| obvod, B 2 MPa + Al objímka 5 mm | ≈ 1 MPa v PETG | > 40 | > 12 |
-| osově přes vrstvy, tření bez fólie, 1 MPa | 5,8 MPa | 2,6–5 | **< 1,6** |
-| osově, PTFE fólie / kroužky, 1 MPa | 0,6 MPa | > 25 | > 7 |
+| A: přitížení 25 kPa, K0 = 1 | 0,16 MPa | > 250 | > 75 |
+| B: tlak ledu na stěnu 200 kPa (horní odhad) | 1,3 MPa | 32–44 | 9–13 |
+| extrém 1 MPa | 6,3 MPa | 6–9 | 1,9–2,6 |
+
+Osové namáhání přes vrstvy odpadá: kroužky po sobě kloužou na PTFE podložkách a smyk od tření nese namazaná membrána.
 
 Podmínky:
-- **Tisk:** nastojato, stěna ≥ 8 mm, pouze soustředné perimetry, 100 % výplň.
-- **Vnitřek:** utěsnit epoxidem, aby voda nevnikla do mezer v tisku a tam nezmrzla.
-- **Vruby:** žádné tištěné závity ani ostré rohy. Místo nich zalisované závitové vložky a zaoblení.
-- **Vůle pístu:** ≥ 0,3 mm.
+- **Tisk:** každý kroužek naplocho, stěna 8 mm, pouze soustředné perimetry, 100 % výplň. Vytisknout 12 kroužků (2 rezervní), ⌀101 ± 0,1 zkontrolovat.
+- **Vnitřek:** utěsnit tenkou vrstvou epoxidu, aby voda nevnikla do mezer v tisku.
+- **Vruby:** žádné tištěné závity ani ostré rohy.
 - **Před použitím:**
-  1. tlaková zkouška kroužku;
-  2. 10 cyklů mrznutí a tání nasycených vzorků a pak tahová zkouška;
-  3. creep kroužku 7 dní.
+  1. 10 cyklů mrznutí a tání nasycených vzorků materiálu a pak tahová zkouška;
+  2. sestava kroužků v mrazáku s Al náhradou: kroužky musí i při −10 °C volně klouzat.
 
 ## 8. Čidla a zapojení na CR1000 (E7-V05, `src/sensors.py`)
 
 | měření | doporučeno | alternativy |
 |---|---|---|
-| síla B (2× 20 kN) | **HBM C9C/20kN** – ⌀26 × 13 mm, velmi tuhý, provoz −30 … +85 °C | Burster 8402, HBM C10, Futek LTH500 |
-| posun (4×) | **RDP DCTH400** – DC-LVDT ±10 mm, výstup ±5 V, −40 … +80 °C | Micro-Epsilon DTA-10D, Solartron AX/10/S, HBM WA-L |
-| tlak (6×, A) | **TML PDA-PA 200 kPa** | Kyowa BEC-A (jen 1 buňka), TE EPL (stěna) |
-| teplota (≈ 24×) | **Campbell 109SS** – ⌀1,6 mm, ±0,38 °C při 0 °C | Campbell 107 (vzduch, rám) |
+| posun A (2×) | **RDP DCTH400** – DC-LVDT ±10 mm, výstup ±5 V, −40 … +80 °C | Micro-Epsilon DTA-10D, Solartron AX/10/S, HBM WA-L |
+| posun B (6×, volné jádro) | **RDP DCTH200** s volným (unguided) jádrem, ±5 mm [ověřit u RDP] | Micro-Epsilon DTA-5G8, Solartron AX/5/F |
+| tlak (A 6×, B 3× volitelně) | **TML PDA-PA 200 kPa** | Kyowa BEC-A (jen 1 buňka), TE EPL (stěna) |
+| teplota (≈ 20×) | **Campbell 109SS** – ⌀1,6 mm, ±0,38 °C při 0 °C | Campbell 107 (vzduch, stojan) |
 
-**Nevhodné kvůli mrazu:** TE DC-EC/HCD, Interface LBM, AML DBBSM a Burster 8438 (kompenzace nebo provoz jen od 0 °C či výš). HBM S2M existuje jen do 1 kN.
+**Nevhodné kvůli mrazu:** TE DC-EC/HCD (provoz od 0 °C), laserové snímače optoNCDT (provoz od 0 °C, námraza na okénku).
 
 | svorky CR1000 | připojeno | poznámka |
 |---|---|---|
-| DIFF1–2 + VX1 | 2 siloměry (LC-T, LC-B, varianta B) | BrFull, ratiometricky s reverzací |
-| SE7–10 | 4 LVDT | ±5000 mV, vlastní zdroj ±15 V |
-| DIFF6 + VX3 (2000 mV) + C1/C2 | multiplexer AM16/32B č. 1 (4×16) | 6 tlakových můstků |
-| SE13 + VX2 + C3/C4 | multiplexer AM16/32B č. 2 (2×32) | ≈ 24 termistorů |
+| SE1–2 | LVDT-A1, A2 | ±5000 mV, vlastní zdroj ±15 V |
+| SE3–5 | LVDT S1–S3 (B, povrch) | ±5000 mV |
+| SE6–8 | LVDT E1–E3 (B, kotvy) | ±5000 mV |
+| DIFF6 + VX3 (2000 mV) + C1/C2 | multiplexer AM16/32B č. 1 (4×16) | 9 tlakových můstků (A 6, B 3) |
+| SE13 + VX2 + C3/C4 | multiplexer AM16/32B č. 2 (2×32) | ≈ 20 termistorů |
+| SE9–10, SE14–16 | rezerva | |
 
-- **Rozlišení:** síla ≈ 0,3 kPa (B), posun ≈ 1,3 µm. Absolutní přesnost LVDT ±50 µm → kalibrovat mikrometrem.
+- **Rozlišení:** posun ≈ 1,3 µm (A) a ≈ 0,7 µm (B). Absolutní linearita LVDT → kalibrovat mikrometrem.
 - **CR1000:** se už nevyrábí (nástupce CR1000X / CR1000Xe). Stávající stačí, ale musí zůstat mimo mrazák.
 
 ## 9. 3D modely pro Onshape (`3d/`)
@@ -167,11 +194,11 @@ Podmínky:
 | soubor | obsah |
 |---|---|
 | `E7_variant_A.step` | varianta A – lehký rám 40×40 (sloupy 410, příčka s ložiskem), vícekroužková cela, nenasycený písek, tlakové snímače PV1/PH1/PB1/PW1–3, G10, nosná deska s tyčí, 3 + 1 ocelové kotouče, 2× LVDT na bocích (±y) s Invarovými sloupky, termistory včetně Tw |
-| `E7_variant_B.step` | varianta B – rám (sloupy 330), cela s Al objímkou, 2× HBM C9C, Al distanční trubka, šroub M24 s ručním kolem, LVDT, termistory |
+| `E7_variant_B.step` | varianta B – základová deska, vícekroužková cela, nenasycený písek, horní deska PETG-CF, kotvy E1–E3 s Invarovými tyčkami a PTFE trubičkami, 6× LVDT s volným jádrem, 3 Invarové sloupky, Al můstek, termistory |
 | `E7_multiring_cell.step` | samotná vícekroužková cela |
 | `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku (stěny mrazáku průhledné, ≈ rozměry) |
 
-Náhledy jsou `3d/*.png`. Řez variantou A ukazuje `E7_variant_A_section.png`.
+Náhledy jsou `3d/*.png`. Řezy ukazují `E7_variant_A_section.png` a `E7_variant_B_section.png`.
 
 **Import do Onshape:**
 1. *Create → Import*, nebo v otevřeném dokumentu tlačítko *Import*.
@@ -208,7 +235,9 @@ Náhledy jsou `3d/*.png`. Řez variantou A ukazuje `E7_variant_A_section.png`.
 1. **Program regulátoru:** „Set A“ (rampy 192 h mezi −10 a +10 °C) lze použít přímo. Pro jasné kroky zvážit výdrže na −10 °C a +10 °C.
 2. **Směr promrzání:** izolace stěn a G10 pod podstavcem vedou k promrzání hlavně shora. Termostatované koncové desky (Jin et al. 2019) jsou možné rozšíření.
 3. **Písek:** zrnitost (d50) a cílová vlhkost / stupeň nasycení určí velikost tlakových disků a rozsah snímačů (200 kPa).
-4. **Přitížení:** stačí 5–25 kPa (závaží)? Pro vyšší přitížení je připravená varianta s pružinou.
-5. **Rozměry mrazáku a vany:** prosím změřit. Výška sestavy A je ≈ 530 mm.
+4. **Přitížení A:** stačí 5–25 kPa (závaží)? Pro vyšší přitížení je připravená varianta s pružinou.
+5. **Varianta B – uzavřený, nebo otevřený systém?** Návrh je uzavřený (bez přítoku vody). Přívod vody zespodu přes porézní kámen (Mariottova láhev) lze doplnit, zdvih pak bude větší a LVDT ±5 mm může být málo.
+6. **Kotvy:** stačí 3 hloubky (25/50/75 mm), nebo chcete hustší profil (např. 5 kotev po 15 mm s menšími kotoučky)?
+7. **Rozměry mrazáku a vany:** prosím změřit. Nejvyšší bod (vodicí tyč A) je ≈ 590 mm nad podlahou mrazáku.
 
 > Výkresy jsou NÁVRH. Profilové hodnoty, hmotnosti závaží a údaje o čidlech jsou katalogové odhady. Ověřit u dodavatele a nechat zkontrolovat konstruktérem.

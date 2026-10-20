@@ -8,33 +8,30 @@ Specs from manufacturer / distributor pages found by web search (README §7);
 
 # tag: (what it measures, recommended model, short spec, CR1000 connection)
 PICK = {
-    "LC-T": ("heave force, rig B top", "HBM C9C/20kN",
-             "⌀26×13 mm, 1 mV/V, nom. −10…+70 °C, IP67", "DIFF1, BrFull, VX1"),
-    "LC-B": ("force at base, rig B", "HBM C9C/20kN",
-             "same as LC-T", "DIFF2, BrFull, VX1"),
-    "LVDT": ("heave / settlement (2 per rig)", "RDP DCTH400",
-             "DC-LVDT ±10 mm, ±5 V out, −40…+80 °C", "SE7–10, VoltSE ±5 V"),
+    "LVDT": ("rig A: check that the sample does not move", "RDP DCTH400",
+             "DC-LVDT ±10 mm, spring plunger, ±5 V out, −40…+80 °C", "SE1–2, VoltSE ±5 V"),
+    "LVDT-B": ("rig B: surface S1–S3 and anchors E1–E3", "RDP DCTH200, free core [U]",
+               "DC-LVDT ±5 mm, unguided core (no spring force), ±5 V out", "SE3–8, VoltSE ±5 V"),
     "T": ("soil, cell wall, piston, pedestal", "Campbell 109SS",
           "⌀1.6 mm sheath, ±0.38 °C at 0 °C", "MUX-2 → SE13, VX2"),
-    "PC": ("stress inside the sand", "TML PDA-PA 200 kPa on ⌀20×2 disc",
+    "PC": ("stress inside the sand (A)", "TML PDA-PA 200 kPa on ⌀20×2 disc",
            "⌀6.5×1 mm, 0.8 mV/V, 350 Ω, comp. −10…+60 °C", "MUX-1 (4×16), BrFull, VX3 2 V"),
     "PW": ("stress on wall / base", "TML PDA-PA 200 kPa (flush)",
            "same, in ⌀8 holder flush with the surface", "MUX-1 (4×16), BrFull, VX3 2 V"),
-    "TX": ("load cell, frame, air", "Campbell 109SS / 107",
+    "TX": ("frame, Invar stand, air", "Campbell 109SS / 107",
            "107: ⌀7.6 mm, ±0.2 °C (0–50 °C)", "MUX-2 → SE13, VX2"),
 }
 
 # (category, maker + model, key specs, verdict)
 OPTIONS = [
-    ("LC 20 kN", "HBM C9C/20kN", "⌀26×13 mm, 1 mV/V, nom. −10…+70, op. −30…+85 °C", "PICK"),
-    ("LC 20 kN", "Burster 8402 20 kN", "1.5 mV/V, ≤ 50 µm deflection, op. −30…+100 °C, IP54", "alternative"),
-    ("LC 20 kN", "HBM C10 25 kN", "class 0.02–0.05, height 36 mm [U]", "alternative"),
-    ("LC 20 kN", "Futek LTH500 (≈22 kN)", "donut, 0.05 mm, op. −50…+93 °C", "alternative"),
-    ("LC 20 kN", "Interface LBM", "comp. only +21…+77 °C", "not suitable"),
-    ("LVDT ±10", "RDP DCTH400", "±5 V / 0–10 V out, −40…+80 °C, ±0.25 % FS", "PICK"),
+    ("LVDT ±10", "RDP DCTH400", "±5 V / 0–10 V out, −40…+80 °C, ±0.25 % FS", "PICK (A)"),
     ("LVDT ±10", "Micro-Epsilon DTA-10D + MSC7401", "0–5 V / 4–20 mA, −20…+80 °C", "alternative"),
     ("LVDT ±10", "Solartron AX/10/S + OD5", "±5 V out, needs 230 V conditioner", "alternative"),
     ("LVDT ±10", "HBM WA-L 20 mm", "passive, needs carrier amplifier", "alternative"),
+    ("LVDT free", "RDP DCTH200 unguided [U]", "±5 mm, no spring, core on ⌀3 rod; rig B", "PICK (B)"),
+    ("LVDT free", "Micro-Epsilon DTA-5G8 + MSC7401 [U]", "±5 mm, free core, 0–5 V, −20…+80 °C", "alternative"),
+    ("LVDT free", "Solartron AX/5/F (free core) + OD5 [U]", "±5 mm, ±5 V via conditioner", "alternative"),
+    ("laser", "Micro-Epsilon optoNCDT 1420", "non-contact, but op. 0…+50 °C, frost on window", "not suitable"),
     ("LVDT ±10", "TE DC-EC 500", "operating only 0…+70 °C", "not suitable"),
     ("p cell", "TML PDA-PA 200 kPa", "⌀6.5×1 mm, 0.8 mV/V, comp. −10…+60, op. −20…+70 °C", "PICK"),
     ("p cell", "Kyowa BEC-A 200/500 kPa", "⌀30 mm, for model tests; t, temp. [U]", "one cell only"),
@@ -49,13 +46,14 @@ OPTIONS = [
 
 # CR1000 terminal → use
 CHANNELS = [
-    ("DIFF1–2", "LC-T, LC-B (rig B)", "BrFull, reversal; VX1 2500 mV"),
-    ("SE7–SE10", "LVDT-A1, A2, B1, B2", "VoltSE ±5000 mV, averaging; own ±15 V supply"),
-    ("DIFF6 (SE11/12)", "MUX-1 AM16/32B, 4×16", "6 pressure bridges (PV1, PH1, PB1, PW1–3), BrFull"),
+    ("SE1–SE2", "LVDT-A1, A2 (rig A)", "VoltSE ±5000 mV, averaging; own ±15 V supply"),
+    ("SE3–SE5", "LVDT S1–S3 (rig B surface)", "VoltSE ±5000 mV"),
+    ("SE6–SE8", "LVDT E1–E3 (rig B anchors)", "VoltSE ±5000 mV"),
+    ("DIFF6 (SE11/12)", "MUX-1 AM16/32B, 4×16", "9 pressure bridges (A: PV1, PH1, PB1, PW1–3; B: PW1–3)"),
     ("VX3", "MUX-1 excitation", "2000 mV (TML: < 2 V recommended)"),
     ("C1, C2", "MUX-1 reset, clock", ""),
-    ("SE13", "MUX-2 AM16/32B, 2×32", "≈ 24 thermistors (Therm109), VX2"),
+    ("SE13", "MUX-2 AM16/32B, 2×32", "≈ 20 thermistors (Therm109), VX2"),
     ("C3, C4", "MUX-2 reset, clock", ""),
     ("12V, G", "both multiplexers", ""),
-    ("SE14–16", "spare", ""),
+    ("SE9–10, SE14–16", "spare", ""),
 ]

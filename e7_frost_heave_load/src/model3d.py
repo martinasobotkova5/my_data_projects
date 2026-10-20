@@ -27,8 +27,6 @@ BALL_C = Z_TGT + 6.0
 Z_LC = Z_TGT + 12.0                  # 237
 R_IN, R_OUT = p.D_CELL_IN / 2, p.D_CELL_OUT / 2
 X_COL = p.COL_SPAN / 2
-BEAM_H = 80.0
-Z_BEAM = p.FRAME_H
 WALL_TH = [(10, 0), (30, 72), (50, 144), (70, 216), (90, 288)]
 
 # multi-ring cell (variant A option): rings slide on 3 guide rods
@@ -96,20 +94,6 @@ def radial(ang, r0, r1, z, d):
     return c.rotate((0, 0, 0), (0, 0, 1), ang)
 
 
-def frame(asm, prefix="", z_beam=None):
-    Z_BEAM = z_beam or p.FRAME_H
-    hb, hd = p.BASE_W / 2, p.BASE_D / 2
-    asm.add(box(-hb, hb, -hd, hd, -p.BASE_T, 0), name=prefix + "base plate Al 6082", color=C["al"])
-    for i, (x, y) in enumerate(((-hb + 20, -hd + 20), (hb - 20, -hd + 20), (0, hd - 20))):
-        asm.add(cyl(16, 18, -p.BASE_T - 18, x, y), name=f"{prefix}levelling foot {i + 1}", color=C["steel"])
-    for s in (-1, 1):
-        asm.add(box(s * X_COL - 20, s * X_COL + 20, -40, 40, 0, Z_BEAM),
-                name=f"{prefix}column 40x80 {'L' if s < 0 else 'R'}", color=C["profile"])
-    beam = box(-X_COL - 20, X_COL + 20, -40, 40, Z_BEAM, Z_BEAM + BEAM_H)
-    beam = beam.cut(cyl(30, BEAM_H, Z_BEAM))
-    asm.add(beam, name=prefix + "cross-beam 80x80", color=C["profile"])
-
-
 def multiring_cell(asm, prefix="", with_sample=False):
     """Multi-ring cell: base ring with flange, 10 rings h 10 with lugs, PTFE washers,
     3 guide rods, greased latex membrane, thermistor bosses on the rings."""
@@ -171,36 +155,10 @@ def cell_stack(asm, variant, prefix="", multiring=False):
     ped = cyl(150, p.PEDESTAL_H, Z_PED).cut(cyl(99.6, 10, Z_S0 - 10))
     asm.add(ped, name=prefix + "pedestal Al", color=C["al"])
     asm.add(cyl(99.5, 10, Z_S0 - 10), name=prefix + "porous stone bottom", color=C["stone"])
-    if multiring:
-        multiring_cell(asm, prefix)
-        _piston_and_sensors(asm, prefix, with_wall_probes=False, sand=True)
-        embedded_cells(asm, prefix)
-        base_cells(asm, prefix)
-        return
-    # cell with foot and bosses
-    cell = tube(p.D_CELL_OUT, p.D_CELL_IN, TUBE_TOP - Z_S0, Z_S0)
-    cell = cell.union(tube(p.CELL_FOOT_D, p.D_CELL_IN, p.CELL_FOOT_T, Z_S0))
-    for d, ang in WALL_TH:
-        z = Z_S1 - d
-        b = box(R_OUT - 2, R_OUT + 8, -6, 6, z - 6, z + 6).rotate((0, 0, 0), (0, 0, 1), ang)
-        cell = cell.union(b)
-        cell = cell.cut(radial(ang, R_IN - 1, R_OUT + 9, z, 1.7))
-    asm.add(cell, name=prefix + "cell PETG-CF", color=C["petg"])
-    asm.add(tube(p.D_CELL_IN, p.D_SAMPLE, TUBE_TOP - Z_S0, Z_S0), name=prefix + "PTFE liner", color=C["ptfe"])
-    r_ins_in = R_OUT
-    if variant == "B":
-        sleeve = tube(R_OUT * 2 + 10, R_OUT * 2, TUBE_TOP - Z_S0 - 12, Z_S0 + p.CELL_FOOT_T + 4)
-        for d, ang in WALL_TH:
-            sleeve = sleeve.cut(box(R_OUT - 1, R_OUT + 8, -8, 8, Z_S1 - d - 8, Z_S1 - d + 8)
-                                .rotate((0, 0, 0), (0, 0, 1), ang))
-        asm.add(sleeve, name=prefix + "Al sleeve (hoop)", color=C["al"])
-        r_ins_in = R_OUT + 5
-    ins = tube(2 * (r_ins_in + 25), 2 * r_ins_in, TUBE_TOP - Z_S0 - p.CELL_FOOT_T, Z_S0 + p.CELL_FOOT_T)
-    for d, ang in WALL_TH:
-        ins = ins.cut(box(R_OUT - 1, R_OUT + 9, -7, 7, Z_S1 - d - 7, Z_S1 - d + 7)
-                      .rotate((0, 0, 0), (0, 0, 1), ang))
-    asm.add(ins, name=prefix + "insulation Kaiflex 25", color=C["ins"])
-    _piston_and_sensors(asm, prefix, with_wall_probes=True)
+    multiring_cell(asm, prefix)
+    _piston_and_sensors(asm, prefix, with_wall_probes=False, sand=True)
+    embedded_cells(asm, prefix)
+    base_cells(asm, prefix)
 
 
 def embedded_cells(asm, prefix=""):
@@ -295,18 +253,55 @@ def variant_a(asm, prefix=""):
 
 
 def variant_b(asm, prefix=""):
-    frame(asm, prefix)
-    asm.add(cyl(60, H_BOT - 13, 0), name=prefix + "steel seat (bottom)", color=C["steel"])
-    asm.add(cyl(26, 13, H_BOT - 13), name=prefix + "LC-B HBM C9C 20 kN", color=C["sensor"])
-    cell_stack(asm, "B", prefix)
-    asm.add(cyl(26, 13, Z_LC), name=prefix + "LC-T HBM C9C 20 kN", color=C["sensor"])
-    asm.add(cyl(40, Z_BEAM - 20 - (Z_LC + 13), Z_LC + 13), name=prefix + "Al spacer (thermally matched)",
-            color=C["al"])
-    asm.add(cyl(24, BEAM_H + 70, Z_BEAM - 20), name=prefix + "screw M24x1.5", color=C["steel"])
-    asm.add(cyl(40, 15, Z_BEAM + BEAM_H), name=prefix + "lock nut", color=C["steel"])
-    asm.add(cyl(90, 7, Z_BEAM + BEAM_H + 43), name=prefix + "handwheel", color=C["steel"])
-    for nm, z in (("TLC-T", Z_LC + 6), ("TLC-B", H_BOT - 6)):
-        asm.add(radial(90, 14, 40, z, 1.6), name=prefix + nm + " 109SS", color=C["temp"])
+    """Variant B: same sand sample in the multi-ring cell, no load; surface + anchor LVDTs on an Invar stand."""
+    hb, hd = p.BASE_W / 2, p.BASE_D / 2
+    asm.add(box(-hb, hb, -hd, hd, -p.BASE_T, 0), name=prefix + "base plate Al 6082", color=C["al"])
+    for i, (x, y) in enumerate(((-hb + 20, -hd + 20), (hb - 20, -hd + 20), (0, hd - 20))):
+        asm.add(cyl(16, 18, -p.BASE_T - 18, x, y), name=f"{prefix}levelling foot {i + 1}", color=C["steel"])
+    asm.add(cyl(60, H_BOT, 0), name=prefix + "Al spacer (bottom)", color=C["al"])
+    asm.add(cyl(150, G10_T, H_BOT), name=prefix + "G10 thermal break", color=C["g10"])
+    ped = cyl(150, p.PEDESTAL_H, Z_PED).cut(cyl(99.6, 10, Z_S0 - 10))
+    asm.add(ped, name=prefix + "pedestal Al", color=C["al"])
+    asm.add(cyl(99.5, 10, Z_S0 - 10), name=prefix + "porous stone bottom", color=C["stone"])
+    multiring_cell(asm, prefix)
+    z_tp = Z_S1 + p.TOP_PLATE_T
+    sand = cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0)
+    plate = cyl(p.TOP_PLATE_D, p.TOP_PLATE_T, Z_S1)
+    for t, d, r, ang in p.ANCHORS:
+        x, y = r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
+        plate = plate.cut(cyl(p.PLATE_HOLE_D, p.TOP_PLATE_T, Z_S1, x, y))
+    asm.add(sand, name=prefix + "unsaturated sand D100x100", color=C["sand"])
+    asm.add(plate, name=prefix + "top plate PETG-CF D99x6", color=C["petg"])
+    asm.add(radial(0, 5, 45, Z_S1 + p.TOP_PLATE_T / 2, 1.6), name=prefix + "Ttop 109SS (in top plate)",
+            color=C["temp"])
+    asm.add(radial(180, 10, 74, Z_PED + 15, 1.6), name=prefix + "Tbot 109SS", color=C["temp"])
+    bd, bl = p.LVDT_B_BODY
+    z_body = p.Z_BRIDGE - 35.0
+    for t, r, ang in p.SURF_LVDT:
+        x, y = r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
+        asm.add(cyl(5, 3, z_tp, x, y), name=f"{prefix}{t} rod seat", color=C["steel"])
+        asm.add(cyl(3, z_body + 20 - z_tp - 3, z_tp + 3, x, y), name=f"{prefix}{t} core rod D3", color=C["steel"])
+        asm.add(tube(bd, 4, bl, z_body).translate((x, y, 0)), name=f"{prefix}{t} LVDT DCTH200 free core",
+                color=C["sensor"])
+    for t, d, r, ang in p.ANCHORS:
+        x, y = r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
+        z = Z_S1 - d
+        asm.add(cyl(p.ANCHOR_D, p.ANCHOR_T, z - p.ANCHOR_T / 2, x, y), name=f"{prefix}{t} anchor D16 stainless",
+                color=C["steel"])
+        asm.add(tube(p.SLEEVE_D, p.ROD_D + 0.5, z_tp + 4 - (z + 2), z + 2).translate((x, y, 0)),
+                name=f"{prefix}{t} PTFE sleeve D4", color=C["ptfe"])
+        asm.add(cyl(p.ROD_D, z_body + 20 - z, z, x, y), name=f"{prefix}{t} Invar rod D2", color=C["invar"])
+        asm.add(tube(bd, 4, bl, z_body).translate((x, y, 0)), name=f"{prefix}{t} LVDT DCTH200 free core",
+                color=C["sensor"])
+    for i, ang in enumerate(p.STAND_ANG, 1):
+        x, y = p.STAND_R * math.cos(math.radians(ang)), p.STAND_R * math.sin(math.radians(ang))
+        asm.add(cyl(p.STAND_POST_D, p.Z_BRIDGE, 0, x, y), name=f"{prefix}Invar post {i}", color=C["invar"])
+    bridge = cyl(p.BRIDGE_D, p.BRIDGE_T, p.Z_BRIDGE)
+    for t, r, ang in p.SURF_LVDT + [(a[0], a[2], a[3]) for a in p.ANCHORS]:
+        bridge = bridge.cut(cyl(bd + 0.5, p.BRIDGE_T, p.Z_BRIDGE, r * math.cos(math.radians(ang)),
+                                r * math.sin(math.radians(ang))))
+    asm.add(bridge, name=prefix + "Al bridge D220x10 (LVDT clamps)", color=C["al"])
+    asm.add(radial(180, p.STAND_R - 6, p.STAND_R + 20, 230, 1.6), name=prefix + "Tstand 109SS", color=C["temp"])
 
 
 def freezer_layout():
@@ -334,7 +329,7 @@ if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     a = cq.Assembly(name="E7 variant A - dead weight <= 25 kPa, unsaturated sand")
     variant_a(a)
-    b = cq.Assembly(name="E7 variant B - constant height")
+    b = cq.Assembly(name="E7 variant B - no load, heave and layer strain")
     variant_b(b)
     mr = cq.Assembly(name="E7 multi-ring cell")
     multiring_cell(mr, with_sample=False)

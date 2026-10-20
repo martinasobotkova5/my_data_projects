@@ -55,49 +55,6 @@ def frame(v, extend=None, z_beam=None, beam_h=None):
         v.line([(-extend, zz), (extend, zz)], lw=0.3, c="#888")
 
 
-def cell_stack(v, bottom_lc):
-    if bottom_lc:
-        v.rect(-30, 0, 30, H_BOT, fc="#f2d7a6", lw=THICK)
-        v.text(0, H_BOT / 2, "LC-B", fontsize=FS_SMALL - 1, ha="center", va="center")
-    else:
-        v.rect(-30, 0, 30, H_BOT, fc=METAL, hatch="////")
-    v.rect(-75, Z_G10, 75, Z_PED, fc=G10, lw=THIN, hatch="----")
-    v.rect(-75, Z_PED, 75, Z_S0, fc=METAL, hatch="////")
-    v.rect(-49.75, Z_S0 - p.POROUS_T, 49.75, Z_S0, fc="#bfc5b0", lw=THIN, hatch="....")
-    # cell (PETG-CF) with foot, liner, bosses, insulation
-    for s in (-1, 1):
-        v.rect(s * R_IN, Z_S0, s * R_OUT, TUBE_TOP, fc=PETG, hatch="\\\\\\\\")
-        v.rect(s * R_OUT, Z_S0, s * R_FOOT, Z_S0 + p.CELL_FOOT_T, fc=PETG, hatch="\\\\\\\\")
-        v.rect(s * (R_IN - p.LINER), Z_S0, s * R_IN, TUBE_TOP, fc="white", lw=0.4)
-        v.rect(s * R_OUT, Z_S0 + p.CELL_FOOT_T, s * R_INS, TUBE_TOP, fc=INSUL, lw=THIN, hatch="oo")
-    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc=FROZEN, lw=THIN)
-    import random
-    rnd = random.Random(5)
-    for _ in range(160):
-        v.circle(rnd.uniform(-48, 48), rnd.uniform(Z_S0 + 2, Z_S1 - 2), rnd.uniform(0.4, 1.3),
-                 fc="#b9a888", ec="none", lw=0, z_=2.1)
-    # piston with porous stone, target plate, ball
-    v.rect(-49.75, Z_S1, 49.75, Z_S1 + p.POROUS_T, fc="#bfc5b0", lw=THIN, hatch="....")
-    v.rect(-49.75, Z_S1 + p.POROUS_T, 49.75, Z_PT, fc=METAL, hatch="////")
-    v.rect(-70, Z_PT, 70, Z_PT + TARGET_T, fc=METAL, lw=THIN)
-    v.circle(0, Z_BALL + 6, 6, fc=STEEL, lw=THIN)
-    # thermistors through bosses (revolved)
-    for d, ang in WALL_TH:
-        s = 1 if math.cos(math.radians(ang)) >= 0 else -1
-        z = Z_S1 - d
-        v.rect(s * R_OUT, z - 5, s * (R_OUT + 6), z + 5, fc=PETG, lw=THIN)
-        v.line([(s * R_INS, z), (s * 9, z)], lw=THICK, c=RED)
-        v.circle(s * 9, z, 1.4, fc=RED, lw=0)
-    v.line([(0, Z_PED + 5), (-60, Z_PED + 5)], lw=THICK, c=RED)
-    v.line([(0, Z_PT - 5), (40, Z_PT - 5)], lw=THICK, c=RED)
-    # LVDT on an Invar reference frame (behind the section plane)
-    for s in (-1, 1):
-        v.rect(s * 92 - 5, 0, s * 92 + 5, Z_BALL + 60, fc=INVAR, lw=THIN, ls="--", alpha=0.35)
-        v.rect(s * 62 - 6, Z_BALL + 20, s * 62 + 6, Z_BALL + 60, fc="white", lw=THIN)
-        v.line([(s * 62, Z_BALL + 20), (s * 62, Z_PT + TARGET_T)], lw=THICK)
-    v.rect(-97, Z_BALL + 60, 97, Z_BALL + 68, fc=INVAR, lw=THIN, ls="--", alpha=0.35)
-
-
 def parts_list(sh, items, y0=276):
     y = y0
     for i, it in enumerate(items, 1):
@@ -108,152 +65,145 @@ def parts_list(sh, items, y0=276):
     return y
 
 
-COMMON_PARTS = [
-    "base plate Al 6082, 300×250×25, 3 levelling feet",
-    "columns 2× Al profile 40×80 (strong axis), h 420",
-    "cross-beam Al profile 80×80, l 320, core-bolted",
-    "G10/GFRP disc ⌀150×10 – thermal break, stiff",
-    "pedestal Al ⌀150×30 with porous stone ⌀99.5×10",
-    "cell PETG-CF ⌀117/101, foot ⌀150 (E7-V03), not bolted",
-    "PTFE liner 0.5 mm + silicone grease (side friction)",
-    "sample ⌀100 × 100",
-    "piston Al ⌀99.5×40 (gap ≥ 0.3), porous stone below",
-    "LVDT target plate Al ⌀140×5 on the piston",
-    "steel ball ⌀12 in conical seats (no moment)",
-    "insulation Kaiflex 25 around the cell",
-    "thermistors ⌀1.6 in printed bosses, 5 depths",
-    "2× LVDT ±10 mm on Invar reference frame (behind)",
-]
-
-
 def sheet_cell(pdf):
-    sh = Sheet("Sample cell – PETG-CF, 3D printed", "E7-V03", "1 : 1", 3, TOTAL,
-               "print upright; hoop direction = layer direction; foot rests on the pedestal, not bolted")
-    v = View(sh, 118, 118, 1.0)
-    h = TUBE_TOP - Z_S0
-    for s in (-1, 1):
-        v.rect(s * R_IN, 0, s * R_OUT, h, fc=PETG, hatch="\\\\\\\\")
-        v.rect(s * R_OUT, 0, s * R_FOOT, p.CELL_FOOT_T, fc=PETG, hatch="\\\\\\\\")
-        v.poly([(s * R_OUT, p.CELL_FOOT_T), (s * (R_OUT + 4), p.CELL_FOOT_T), (s * R_OUT, p.CELL_FOOT_T + 4)],
-               fc=PETG, lw=THIN)
-        v.rect(s * (R_IN - p.LINER), 0, s * R_IN, h, fc="white", lw=0.4)
-    for d, ang in WALL_TH:
-        s = 1 if math.cos(math.radians(ang)) >= 0 else -1
-        z = p.H_SAMPLE - d
-        v.rect(s * R_OUT, z - 6, s * (R_OUT + 8), z + 6, fc=PETG, lw=THIN)
-        v.rect(s * R_IN, z - 0.85, s * (R_OUT + 8), z + 0.85, fc="white", lw=THIN)
-        v.text(s * (R_OUT + 10), z, f"T{d} ({ang}°)", fontsize=FS_SMALL, va="center",
-               ha="left" if s > 0 else "right")
-    for s in (-1, 1):
-        v.rect(s * R_OUT, p.CELL_FOOT_T + 4, s * (R_OUT + 5), h - 4, fc="none", ec=INK, lw=THIN, ls="--")
-    v.note(R_OUT + 5, 40, "variant B: Al sleeve ⌀117/127, slotted\nfor the bosses, carries the hoop load", 85, 110, ha="left")
-    v.axis_line([(0, -5), (0, h + 8)])
-    v.dim_h(-R_IN, R_IN, h, h + 8, "⌀101 H9 (printed, then reamed)")
-    v.dim_h(-R_OUT, R_OUT, h, h + 18, "⌀117")
-    v.dim_h(-R_FOOT, R_FOOT, 0, -8, "⌀150 foot", side="below")
-    v.dim_v(0, h, R_OUT, R_FOOT + 22, f"{h:g}")
-    v.dim_v(0, p.CELL_FOOT_T, R_FOOT, R_FOOT + 6, f"{p.CELL_FOOT_T:g}")
-    v.note(-R_IN + 0.25, 60, "PTFE film 0.5 mm, overlap seam\nat 180°, silicone grease", -93, 140, ha="left")
-    v.note(R_OUT + 6, p.H_SAMPLE - 30, "boss 12×12×8, ⌀1.7 hole,\nheat-set insert 1/4\"-28", 85, 30, ha="left")
-    v.note(-R_OUT - 2, p.CELL_FOOT_T + 2, "fillet R4 (no notch)", -93, -18, ha="left")
-    f = View(sh, 150, 18, 0.5, "VIEW F – multi-ring cell (variant A)  1 : 2", (150, 76))
-    zz = 0.0
-    for i in range(9):
-        for s_ in (-1, 1):
-            f.rect(s_ * R_IN, zz, s_ * R_OUT, zz + 10, fc=PETG, hatch="\\\\\\\\")
-            f.rect(s_ * R_IN, zz + 10, s_ * R_OUT, zz + 11, fc="white", lw=THIN)
-        zz += 11
+    sh = Sheet("Multi-ring cell – PETG-CF, 3D printed (both variants)", "E7-V03", "1 : 1", 3, TOTAL,
+               "print each ring flat; hoop direction = layer direction; rings slide on 3 guide rods")
+    v = View(sh, 125, 120, 1.0)
+    RL, RG = 63.0, 5.0                 # guide-rod radius and diameter
+    # base ring with flange
     for s_ in (-1, 1):
-        f.rect(s_ * (R_IN - 0.6), 0, s_ * R_IN, zz, fc="#e0b080", lw=0.3)
-    f.axis_line([(0, -4), (0, zz + 6)])
-    f.note(-R_IN, 40, "greased latex\nmembrane", -150, 70, ha="left")
-    f.note(R_OUT, 10.5, "PTFE washer 1 mm", 75, 0, ha="left")
-    f.note(R_OUT, 60, "ring 10 mm PETG-CF", 75, 50, ha="left")
+        v.rect(s_ * R_IN, 0, s_ * R_FOOT, 8, fc=PETG, hatch="\\\\\\\\")
+    zz = 9.0
+    for k in range(10):
+        for s_ in (-1, 1):
+            v.rect(s_ * R_IN, zz, s_ * R_OUT, zz + 10, fc=PETG, hatch="\\\\\\\\")
+            v.rect(s_ * (R_IN + 0.5), zz - 1, s_ * (RL - 6), zz, fc="white", lw=0.3)
+        v.rect(R_OUT, zz, RL + 7, zz + 10, fc=PETG, hatch="\\\\\\\\")       # lug (right, section through it)
+        v.rect(RL - 2.8, zz, RL + 2.8, zz + 10, fc="white", lw=0.3)
+        zz += 11
+    top = zz - 1
+    v.rect(RL - RG / 2, 0, RL + RG / 2, top + 12, fc=STEEL, lw=THIN)
+    for s_ in (-1, 1):
+        v.rect(s_ * (R_IN - 0.6), 0, s_ * R_IN, top, fc="#e0b080", lw=0.3)
+    # thermistor boss (left)
+    zb = 9 + 11 * 4 + 5
+    v.rect(-R_OUT - 8, zb - 5 - 0, -R_OUT, zb + 5, fc=PETG, lw=THIN)
+    v.rect(-R_OUT - 8, zb - 0.85, -R_IN, zb + 0.85, fc="white", lw=THIN)
+    v.line([(-R_OUT - 14, zb), (-40, zb)], lw=THICK, c=RED)
+    v.axis_line([(0, -5), (0, top + 15)])
+    v.dim_h(-R_IN, R_IN, top, top + 10, "⌀101 (printed ⌀101.0, sanded)")
+    v.dim_h(-R_OUT, R_OUT, top, top + 20, "⌀117")
+    v.dim_h(-R_FOOT, R_FOOT, 0, -8, "⌀150 base ring", side="below")
+    v.dim_v(0, top, -R_FOOT, -R_FOOT - 10, f"{top:g}")
+    v.dim_v(9, 19, RL + 7, RL + 18, "10")
+    v.note(R_OUT, 9.5 + 11, "PTFE washer 1 mm\n⌀103/114", 95, 20, ha="left")
+    v.note(RL + 7, 70, "lug 14×14, hole ⌀5.6\non guide rod ⌀5 (r 63)", 95, 70, ha="left")
+    v.note(RL, top + 8, "guide rod ⌀5 stainless,\nPTFE-coated", 95, top + 15, ha="left")
+    v.note(-R_IN + 0.3, 30, "latex membrane 0.3,\nsilicone grease both sides", -98, 12, ha="left")
+    v.note(-R_OUT - 6, zb + 3, "boss 8×10, ⌀1.7 hole\nfor 109SS (T1…T5)", -98, zb + 30, ha="left")
+    v.note(-R_IN - 1, 9 + 11 * 1 + 5, "PW holder ⌀8 flush\n(rings 2, 4, 6)", -98, -12, ha="left")
+    f = View(sh, 205, 56, 0.42, "VIEW F – ring from above  1 : 2.4", (205, 96))
+    f.circle(0, 0, R_OUT, fc=PETG, lw=THIN)
+    f.circle(0, 0, R_IN, fc="white", lw=THIN)
+    for ang in (90, 210, 330):
+        c, s2 = math.cos(math.radians(ang)), math.sin(math.radians(ang))
+        f.circle(RL * c, RL * s2, 7, fc=PETG, lw=THIN)
+        f.circle(RL * c, RL * s2, 2.5, fc=STEEL, lw=THIN)
+    for ang in (0, 60, 120, 180, 240):
+        c, s2 = math.cos(math.radians(ang)), math.sin(math.radians(ang))
+        f.line([(R_OUT * c, R_OUT * s2), ((R_OUT + 8) * c, (R_OUT + 8) * s2)], lw=2.2, c=PETG)
+        f.line([(R_IN * c, R_IN * s2), ((R_OUT + 14) * c, (R_OUT + 14) * s2)], lw=0.6, c=RED)
+    for tag_, d, ang in p.PWALL:
+        c, s2 = math.cos(math.radians(ang)), math.sin(math.radians(ang))
+        f.circle((R_IN + 4) * c, (R_IN + 4) * s2, 4, fc=PCOL, lw=THIN)
+    sh.text(205, 8 + 14, "grey = guide rods 90/210/330°, red = thermistors 0–240°,\nblue = wall pressure holders 30/150/270°",
+            fontsize=FS_SMALL - 0.5, ha="center", va="top")
     sh.heading(255, 276, "Material check – PETG-CF")
-    rows = [["hoop stress, A 200 kPa", "1.3 MPa", "> 30", "> 9"],
-            ["hoop stress, B 1 MPa", "6.3 MPa", "6–9", "1.9–2.6"],
-            ["hoop stress, B 2 MPa", "12.6 MPa", "3–4", "1.0–1.3"],
-            ["hoop, B 2 MPa + Al sleeve 5 mm", "≈ 1 MPa*", "> 40", "> 12"],
-            ["axial (Z), friction μ 0.5, 1 MPa", "5.8 MPa", "2.6–5", "< 1.6"],
-            ["axial (Z), PTFE μ 0.05, 1 MPa", "0.6 MPa", "> 25", "> 7"]]
-    table(sh, 255, 272, ["load case", "stress", "SF short", "SF long"], rows, [62, 22, 22, 22], row_h=4.6)
-    sh.text(255, 234,
+    rows = [["A: 25 kPa surcharge, K0 = 1", "0.16 MPa", "> 250", "> 75"],
+            ["B: ice on the wall 200 kPa (upper est.)", "1.3 MPa", "32–44", "9–13"],
+            ["extreme 1 MPa", "6.3 MPa", "6–9", "1.9–2.6"]]
+    table(sh, 255, 272, ["load case (hoop, per ring)", "stress", "SF short", "SF long"], rows, [62, 22, 22, 22],
+          row_h=4.6)
+    sh.text(255, 252,
             "Assumed strength (data-sheet range, verify): XY 40–55 MPa, Z 15–30 MPa,\n"
-            "E 3–6 GPa; long-term limit ≈ 30 % (creep, layer bond). Details: vypocty.md §4.\n"
+            "E 3–6 GPa; long-term limit ≈ 30 % (creep, layer bond). Details: vypocty.md §5.\n"
             "\n"
-            "Verdict: suitable for variant A; for B (design 2 MPa) only with the\n"
-            "Al sleeve shown dashed (*it carries ≈ 90 % of the hoop load: 70 GPa×5 mm\n"
-            "vs. ≈ 4 GPa×8 mm), the PETG-CF then acts as a liner.\n"
-            "Conditions for both:\n"
-            "• the wall is ≥ 8 mm and printed with concentric perimeters only\n"
-            "  (100 % infill, no zig-zag), so the hoop stress runs along the filament;\n"
-            "• friction is kept low (PTFE liner) and the cell is not clamped at the foot,\n"
-            "  so friction pushes the wall instead of pulling the layers apart;\n"
-            "• the inside is sealed (thin epoxy coat) so water cannot enter print voids\n"
-            "  and split layers when it freezes;\n"
-            "• there are no printed threads or sharp notches (CF lowers toughness at\n"
-            "  −10 °C) – heat-set inserts and fillets instead.\n"
-            "Variant A: a multi-ring cell (view F) is the literature standard against\n"
-            "wall friction – printed rings 10 mm + PTFE washers + greased latex.\n"
+            "Verdict: suitable for both variants (no surcharge in B, ≤ 25 kPa in A).\n"
+            "Each ring carries its own hoop stress along the filament; axial load from wall\n"
+            "friction is not transferred – the rings slide on the PTFE washers and the\n"
+            "greased latex membrane takes the shear.\n"
+            "Conditions:\n"
+            "• wall 8 mm, concentric perimeters only, 100 % infill;\n"
+            "• no printed threads or sharp notches (CF lowers toughness at −10 °C);\n"
+            "• inside sealed with a thin epoxy coat (no water in print voids);\n"
+            "• ring stack free on the guide rods – not clamped from above.\n"
             "\n"
             "Print settings (starting point)\n"
             "hardened nozzle 0.6 mm, layer 0.2 mm, 250–260 °C, bed 80 °C, slow outer\n"
             "walls, filament dried 4 h at 65 °C, enclosure, part cooling ≤ 30 %.\n"
+            "Print 12 rings (2 spare), check ⌀101 ± 0.1 with a bore gauge.\n"
             "\n"
             "Qualification before use\n"
-            "1  ring burst test: printed ring 20 mm high, internal water pressure to\n"
-            "   failure (target ≥ 3× design pressure);\n"
-            "2  10 freeze–thaw cycles −10/+10 °C of water-saturated coupons, then\n"
+            "1  10 freeze–thaw cycles −10/+10 °C of water-saturated coupons, then\n"
             "   tensile test XY and Z vs. dry control;\n"
-            "3  creep: ring under 1 MPa for 7 days at +10 °C, hoop strain gauge.",
+            "2  ring stack in the freezer with an Al dummy: rings must still slide\n"
+            "   freely at −10 °C (washer clearance, grease stiffening).",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V03_cell_PETG-CF.png"))
 
 
 def sheet_frame(pdf):
-    sh = Sheet("Frame – aluminium profiles", "E7-V04", "1 : 5", 4, TOTAL,
-               "one frame for both variants; core-bolted joints, no angle brackets in the load path")
-    k = 0.2
-    v = View(sh, 70, 80, k, "FRONT VIEW  1 : 5", (70, 200))
-    frame(v)
-    v.rect(-R_INS, Z_S0, R_INS, TUBE_TOP, fc="none", lw=THIN, ls="--")
+    sh = Sheet("Frame A (aluminium profiles) and Invar stand B", "E7-V04", "1 : 4", 4, TOTAL,
+               "frame A only guides the weights; stand B is only a displacement reference – neither carries load")
+    k = 0.25
+    zb = p.FRAME_H_A
+    v = View(sh, 80, 70, k, "A – FRONT VIEW  1 : 4", (80, 210))
+    frame(v, z_beam=zb, beam_h=p.BEAM_H_A)
+    v.rect(-R_INS, Z_S0, R_INS, Z_S0 + 119, fc="none", lw=THIN, ls="--")
+    v.rect(-p.DW_D / 2, Z_BALL + 22, p.DW_D / 2, Z_BALL + 158, fc="none", lw=THIN, ls="--")
     v.dim_h(-p.BASE_W / 2, p.BASE_W / 2, -p.BASE_T, -p.BASE_T - 60, f"{p.BASE_W:g}", side="below")
-    v.dim_h(-X_COL, X_COL, Z_BEAM + BEAM_H, Z_BEAM + BEAM_H + 40, f"{p.COL_SPAN:g}")
-    v.dim_v(0, Z_BEAM, -X_COL - 20, -X_COL - 60, f"{Z_BEAM:g}")
-    v.dim_v(-p.BASE_T, Z_BEAM + BEAM_H, 150, 200, f"{Z_BEAM + BEAM_H + p.BASE_T:g}")
-    s = View(sh, 175, 80, k, "SIDE VIEW  1 : 5", (175, 200))
-    s.rect(-p.BASE_D / 2, -p.BASE_T, p.BASE_D / 2, 0, fc=METAL, hatch="////")
-    s.rect(-40, 0, 40, Z_BEAM, fc="#d9dde1", lw=THICK)
-    s.rect(-40, Z_BEAM, 40, Z_BEAM + BEAM_H, fc="#d9dde1", lw=THICK)
-    s.rect(-R_INS, Z_S0, R_INS, TUBE_TOP, fc="none", lw=THIN, ls="--")
-    s.dim_h(-p.BASE_D / 2, p.BASE_D / 2, -p.BASE_T, -p.BASE_T - 60, f"{p.BASE_D:g}", side="below")
-    s.dim_h(-40, 40, Z_BEAM + BEAM_H, Z_BEAM + BEAM_H + 40, "80")
-    rows = [["1", "base plate Al 6082 T6", f"{p.BASE_W:g} × {p.BASE_D:g} × 25", "1"],
-            ["2", "profile 40×80 (B) / 40×40 (A) column", f"l = {p.FRAME_H:g} (B) / {p.FRAME_H_A:g} (A)", "2"],
-            ["3", "profile 80×80 (cross-beam)", f"l = {p.COL_SPAN + 40:g}", "1"],
-            ["4", "core bolt M12 into tapped profile end", "", "8"],
-            ["5", "socket screw M10 base → column end", "", "4"],
-            ["6", "levelling foot M12, steel", "", "3"],
-            ["7", "Invar rod ⌀10 + Invar/Al bridge (LVDT)", "l = 300", "2 + 1"],
-            ["8", "linear ball bushing ⌀16 (A) / nut M24×1.5 (B)", "in cross-beam", "1"],
-            ["9", "end caps, T-slot covers", "", "–"]]
+    v.dim_h(-X_COL, X_COL, zb + p.BEAM_H_A, zb + p.BEAM_H_A + 40, f"{p.COL_SPAN:g}")
+    v.dim_v(0, zb, -X_COL - 20, -X_COL - 60, f"{zb:g}")
+    v.dim_v(-p.BASE_T, zb + p.BEAM_H_A, 150, 200, f"{zb + p.BEAM_H_A + p.BASE_T:g}")
+    b = View(sh, 190, 70, k, "B – FRONT VIEW  1 : 4", (190, 210))
+    hb = p.BASE_W / 2
+    b.rect(-hb, -p.BASE_T, hb, 0, fc=METAL, hatch="////")
+    for xf in (-hb + 20, hb - 20):
+        b.rect(xf - 8, -p.BASE_T - 18, xf + 8, -p.BASE_T, fc=STEEL, lw=THIN)
+    for x in (-p.STAND_R, p.STAND_R * math.cos(math.radians(60))):
+        b.rect(x - 6, 0, x + 6, p.Z_BRIDGE, fc=INVAR, lw=THIN, alpha=0.8)
+    b.rect(-p.BRIDGE_D / 2, p.Z_BRIDGE, p.BRIDGE_D / 2, p.Z_BRIDGE + p.BRIDGE_T, fc=METAL, lw=THIN, hatch="////")
+    b.rect(-R_INS, Z_S0, R_INS, Z_S0 + 119, fc="none", lw=THIN, ls="--")
+    for x in (-42, -22, 6, 22, 42):
+        b.rect(x - 5, Z_BODY0, x + 5, Z_BODY0 + BODY_L, fc=SENS, lw=THIN)
+    b.dim_h(-p.BASE_W / 2, p.BASE_W / 2, -p.BASE_T, -p.BASE_T - 60, f"{p.BASE_W:g}", side="below")
+    b.dim_v(0, p.Z_BRIDGE, -hb, -hb - 40, f"{p.Z_BRIDGE:g}")
+    b.dim_v(-p.BASE_T, Z_BODY0 + BODY_L, 150, 200, f"{Z_BODY0 + BODY_L + p.BASE_T:g}")
+    b.dim_h(-p.BRIDGE_D / 2, p.BRIDGE_D / 2, p.Z_BRIDGE + p.BRIDGE_T, Z_BODY0 + BODY_L + 30, f"⌀{p.BRIDGE_D:g}")
+    rows = [["1", "base plate Al 6082 T6 (A and B)", f"{p.BASE_W:g} × {p.BASE_D:g} × 25", "2"],
+            ["2", "A: profile 40×40 column", f"l = {p.FRAME_H_A:g}", "2"],
+            ["3", "A: profile 40×40 cross-bar", f"l = {p.COL_SPAN + 40:g}", "1"],
+            ["4", "A: linear ball bushing ⌀16 in cross-bar", "", "1"],
+            ["5", "A: Invar post ⌀10 + clamp arm (LVDT)", f"l ≈ 300", "2"],
+            ["6", f"B: Invar post ⌀{p.STAND_POST_D:g}, M6 both ends", f"l = {p.Z_BRIDGE:g}", "3"],
+            ["7", f"B: Al bridge ⌀{p.BRIDGE_D:g}×{p.BRIDGE_T:g}, 6 LVDT clamps", "", "1"],
+            ["8", "core bolt M8 / socket screw M8", "", "8"],
+            ["9", "levelling foot M12, steel", "", "6"]]
     sh.heading(255, 276, "Bill of materials")
     table(sh, 255, 272, ["#", "part", "size", "qty"], rows, [8, 80, 30, 12], row_h=4.6)
     sh.text(255, 222,
-            "Profile values used in vypocty.md §2 are typical catalogue values\n"
-            "(series 8): 40×80 A ≈ 1050 mm², 80×80 I ≈ 1.4·10⁶ mm⁴ – check against the\n"
-            "chosen supplier.\n"
+            "Frame A: carries nothing except the guide of the weight rod (bushing)\n"
+            "and the LVDT posts; the surcharge goes straight down through the sample.\n"
             "\n"
-            "Stiffness at 15.7 kN (2 MPa): cross-beam 0.036 mm, columns 0.035 mm,\n"
-            "load cell ≈ 0.05 mm, joints 0.02–0.15 mm. Joints dominate → core bolts\n"
-            "into tapped profile ends, torque-controlled, no angle brackets; optionally\n"
-            "2 steel tie rods M12 next to the cell.\n"
+            "Stand B: three Invar posts screwed into the base plate at r 100\n"
+            "(60/180/300°, outside the insulation), bridge on top with split clamps\n"
+            "for 5 LVDTs (+1 spare). The bridge is lifted off to fill the cell.\n"
+            "Reference error of the stand ≈ 50 µm per 20 K (Al pedestal vs. Invar)\n"
+            "→ blank run with an Al dummy sample (vypocty.md §4).\n"
             "\n"
-            f"Fit in the chest freezer: frame {p.BASE_W:g} × {p.BASE_D:g}, height "
-            f"{p.FRAME_H + 80 + p.BASE_T:g} mm incl. base;\n"
-            f"variant B; variant A uses a light 40×40 frame, columns {p.FRAME_H_A:g} mm\n"
-            "(it only guides the weights);\n"
-            "two rigs side by side on the tray – layout and heights on E7-V06.",
+            f"Heights incl. base plate: A {zb + p.BEAM_H_A + p.BASE_T:g} mm (+ guide rod), "
+            f"B {Z_BODY0 + BODY_L + p.BASE_T:g} mm;\n"
+            "two rigs side by side on the tray – layout on E7-V06.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V04_frame.png"))
 
@@ -276,16 +226,12 @@ def tag(v, x, z, tx, tz, text, color=INK, ha=None):
 
 
 def simple_rig(v, variant):
-    """Simplified elevation of one rig (A: dead-weight surcharge, B: restrained)."""
-    zb = p.FRAME_H_A if variant == "A" else Z_BEAM
-    frame(v, z_beam=zb, beam_h=p.BEAM_H_A if variant == "A" else None)
-    sand = variant == "A"
+    """Simplified elevation of rig A (dead-weight surcharge); rig B is drawn by rig_b()."""
+    zb = p.FRAME_H_A
+    frame(v, z_beam=zb, beam_h=p.BEAM_H_A)
+    sand = True
     light = dict(lw=THIN)
-    # bottom: spacer (A) or load cell (B)
-    if variant == "B":
-        v.rect(-30, 0, 30, H_BOT, fc=SENS, **light)
-    else:
-        v.rect(-30, 0, 30, H_BOT, fc=METAL, **light)
+    v.rect(-30, 0, 30, H_BOT, fc=METAL, **light)
     v.rect(-75, Z_G10, 75, Z_PED, fc=G10, **light)
     v.rect(-75, Z_PED, 75, Z_S0, fc=METAL, **light)
     # cell, insulation, sample
@@ -317,30 +263,19 @@ def simple_rig(v, variant):
             v.line([(s_ * p.LVDT_R, z_lc + 5), (s_ * p.LVDT_R, Z_PT + TARGET_T)], lw=THICK)
             v.line([(s_ * (p.LVDT_R + 8), 0), (s_ * (p.LVDT_R + 8), z_lc + 50), (s_ * p.LVDT_R, z_lc + 50)],
                    lw=THIN, ls=(0, (4, 2)), c=INVAR)
-    else:
-        for s_ in (-1, 1):
-            v.rect(s_ * 62 - 6, z_lc + 5, s_ * 62 + 6, z_lc + 45, fc=SENS, **light)
-            v.line([(s_ * 62, z_lc + 5), (s_ * 62, Z_PT + TARGET_T)], lw=THICK)
-        v.line([(-75, 0), (-75, z_lc + 50), (75, z_lc + 50), (75, 0)], lw=THIN, ls=(0, (4, 2)), c=INVAR)
-    if variant == "A":
-        zg = Z_BALL + 12
-        v.rect(-p.DW_G10_D / 2, zg, p.DW_G10_D / 2, zg + p.DW_G10_T, fc=G10, **light)
-        zc = zg + p.DW_G10_T
-        v.rect(-p.DW_D / 2, zc, p.DW_D / 2, zc + p.DW_CARRIER_T, fc=STEEL, **light)
-        z = zc + p.DW_CARRIER_T
-        for t in (p.DW_FULL_T,) * 3 + (p.DW_HALF_T,):
-            v.rect(-p.DW_D / 2, z, p.DW_D / 2, z + t, fc="#8a8f96", lw=THIN, hatch="////")
-            z += t
-        v.rect(-p.DW_D / 2 - 10, zc, p.DW_D / 2 + 10, z + 10, fc="none", lw=THIN, ls=(0, (3, 2)))
-        v.rect(-p.DW_ROD_D / 2, zc + p.DW_CARRIER_T, p.DW_ROD_D / 2, zc + p.DW_CARRIER_T + p.DW_ROD_L,
-               fc=STEEL, lw=THIN)
-        v.rect(-14, zb, 14, zb + p.BEAM_H_A, fc="white", lw=THIN, hatch="xx")
-        return z_lc, (zg, zc, z), zb
-    v.rect(-28, z_lc, 28, z_lc + 40, fc=SENS, **light)
-    v.rect(-18, z_lc + 40, 18, Z_BEAM, fc=METAL, **light)
-    v.rect(-10, Z_BEAM - 15, 10, Z_BEAM + BEAM_H + 35, fc=STEEL, lw=THIN)
-    v.rect(-45, Z_BEAM + BEAM_H + 35, 45, Z_BEAM + BEAM_H + 42, fc=STEEL, lw=THIN)
-    return z_lc, None, None
+    zg = Z_BALL + 12
+    v.rect(-p.DW_G10_D / 2, zg, p.DW_G10_D / 2, zg + p.DW_G10_T, fc=G10, **light)
+    zc = zg + p.DW_G10_T
+    v.rect(-p.DW_D / 2, zc, p.DW_D / 2, zc + p.DW_CARRIER_T, fc=STEEL, **light)
+    z = zc + p.DW_CARRIER_T
+    for t in (p.DW_FULL_T,) * 3 + (p.DW_HALF_T,):
+        v.rect(-p.DW_D / 2, z, p.DW_D / 2, z + t, fc="#8a8f96", lw=THIN, hatch="////")
+        z += t
+    v.rect(-p.DW_D / 2 - 10, zc, p.DW_D / 2 + 10, z + 10, fc="none", lw=THIN, ls=(0, (3, 2)))
+    v.rect(-p.DW_ROD_D / 2, zc + p.DW_CARRIER_T, p.DW_ROD_D / 2, zc + p.DW_CARRIER_T + p.DW_ROD_L,
+           fc=STEEL, lw=THIN)
+    v.rect(-14, zb, 14, zb + p.BEAM_H_A, fc="white", lw=THIN, hatch="xx")
+    return z_lc, (zg, zc, z), zb
 
 
 PCOL = "#1f7a8c"     # pressure sensors
@@ -416,10 +351,6 @@ def temp_points(v, variant, z_lc):
     v.text(-X_COL - 26, 120, "Tframe", fontsize=FS_SMALL, color=TCOL, va="center", ha="right", weight="bold")
     v.circle(-X_COL - 60, 260, 2.0, fc=TCOL, lw=0)
     v.text(-X_COL - 60, 268, "Tair", fontsize=FS_SMALL, color=TCOL, ha="center", weight="bold")
-    lcs = [] if variant == "A" else [("TLC-T", 30, z_lc + 20), ("TLC-B", 30, 20)]
-    for name, x, z in lcs:
-        v.circle(x, z, 2.0, fc=TCOL, lw=0)
-        v.text(x + 5, z, name, fontsize=FS_SMALL - 0.5, color=TCOL, va="center", weight="bold")
 
 
 def legend(sh, rows, y0=276):
@@ -485,47 +416,196 @@ def sheet_a_simple(pdf):
     sh.save(pdf, os.path.join(OUT, "E7-V01_variant_A_scheme.png"))
 
 
+# --- variant B: same sample, no load, displacement + layer strain --------------------
+Z_TP = Z_S1 + p.TOP_PLATE_T                    # top of the light top plate
+Z_BR = p.Z_BRIDGE
+BODY_D, BODY_L = p.LVDT_B_BODY
+Z_BODY0 = Z_BR - 35.0                          # LVDT body bottom (clamped in the bridge)
+# x positions in the revolved section (true positions on the plan view)
+X_S = {"S1": 42.0, "S2": -42.0}
+X_E = {"E1": 22.0, "E2": -22.0, "E3": 6.0}
+
+
+def ring_stack(v, z0=Z_S0, light=True):
+    for s_ in (-1, 1):
+        v.rect(s_ * R_IN, z0, s_ * R_OUT, z0 + 8, fc=PETG, lw=THIN)
+        for k in range(10):
+            zz = z0 + 9 + 11 * k
+            v.rect(s_ * R_IN, zz, s_ * R_OUT, zz + 10, fc=PETG, lw=0.4)
+
+
+def rig_b(v):
+    """Simplified elevation of rig B: no frame, Invar stand + bridge with 5 free-core LVDTs."""
+    hb = p.BASE_W / 2
+    v.rect(-hb, -p.BASE_T, hb, 0, fc=METAL, hatch="////")
+    for xf in (-hb + 20, hb - 20):
+        v.rect(xf - 8, -p.BASE_T - 18, xf + 8, -p.BASE_T, fc=STEEL, lw=THIN)
+    light = dict(lw=THIN)
+    v.rect(-30, 0, 30, H_BOT, fc=METAL, **light)
+    v.rect(-75, Z_G10, 75, Z_PED, fc=G10, **light)
+    v.rect(-75, Z_PED, 75, Z_S0, fc=METAL, **light)
+    for s_ in (-1, 1):
+        v.rect(s_ * R_OUT, Z_S0 + 8, s_ * R_INS, Z_S0 + 119, fc=INSUL, lw=0.3)
+    ring_stack(v)
+    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", **light)
+    v.rect(-49.75, Z_S0 - 4, 49.75, Z_S0, fc="#bfc5b0", lw=0.3)
+    v.rect(-p.TOP_PLATE_D / 2, Z_S1, p.TOP_PLATE_D / 2, Z_TP, fc=PETG, **light)
+    # Invar posts (one in the section plane, two revolved) and the bridge
+    v.rect(-p.STAND_R - 6, 0, -p.STAND_R + 6, Z_BR, fc=INVAR, lw=THIN, alpha=0.8)
+    v.rect(p.STAND_R - 6, 0, p.STAND_R + 6, Z_BR, fc=INVAR, lw=THIN, ls="--", alpha=0.35)
+    v.rect(-p.BRIDGE_D / 2, Z_BR, p.BRIDGE_D / 2, Z_BR + p.BRIDGE_T, fc=METAL, lw=THIN, hatch="////")
+    # surface LVDTs on the top plate
+    for t, x in X_S.items():
+        v.rect(x - 2, Z_TP, x + 2, Z_TP + 3, fc=STEEL, lw=0.3)
+        v.line([(x, Z_TP + 3), (x, Z_BODY0 + 20)], lw=THICK, c=STEEL)
+        v.rect(x - 6, Z_BODY0, x + 6, Z_BODY0 + BODY_L, fc=SENS, **light)
+    # anchors with Invar rods in PTFE sleeves
+    for (t, d, r, ang) in p.ANCHORS:
+        x = X_E[t]
+        z = Z_S1 - d
+        v.rect(x - p.ANCHOR_D / 2, z - p.ANCHOR_T / 2, x + p.ANCHOR_D / 2, z + p.ANCHOR_T / 2, fc="#555", lw=THIN, z=4)
+        v.rect(x - p.SLEEVE_D / 2, z + 2, x + p.SLEEVE_D / 2, Z_TP + 4, fc="white", lw=0.3, z=4)
+        v.line([(x, z), (x, Z_BODY0 + 20)], lw=1.0, c=INVAR, z=5)
+        v.rect(x - 6, Z_BODY0, x + 6, Z_BODY0 + BODY_L, fc=SENS, **light)
+        v.text(x + (p.ANCHOR_D / 2 + 1) * (1 if x > 0 else -1), z, t, fontsize=FS_SMALL - 0.5, va="center",
+               ha="left" if x > 0 else "right", color="#333", weight="bold", zorder=6)
+    for name, x, z in (("Ttop", -35, Z_S1 + 3), ("Tbot", 30, Z_PED + 15), ("Tstand", -p.STAND_R, 228)):
+        v.circle(x, z, 2.0, fc=TCOL, lw=0, z_=6)
+        v.text(x + (5 if name != "Ttop" else -5), z, name, fontsize=FS_SMALL, color=TCOL, va="center", weight="bold", zorder=6,
+               ha="right" if name == "Ttop" else "left", bbox=dict(fc="white", ec="none", pad=0.2))
+    for i, (d, ang) in enumerate(WALL_TH, 1):
+        s_ = 1 if i % 2 else -1
+        z = Z_S1 - d - 2
+        v.line([(s_ * R_INS, z), (s_ * 40, z)], lw=0.8, c=TCOL)
+        v.circle(s_ * 40, z, 1.6, fc=TCOL, lw=0)
+        v.text(s_ * (R_INS + 3), z, f"T{i}", fontsize=FS_SMALL, color=TCOL, va="center",
+               ha="left" if s_ > 0 else "right", weight="bold")
+    v.circle(-p.STAND_R - 45, 230, 2.0, fc=TCOL, lw=0)
+    v.text(-p.STAND_R - 45, 236, "Tair", fontsize=FS_SMALL, color=TCOL, ha="center", weight="bold")
+
+
+def plate_plan(v):
+    """Plan of the top plate: true positions of S1–S3, E1–E3 and the Invar posts."""
+    v.circle(0, 0, R_INS, fc=INSUL, lw=THIN)
+    v.circle(0, 0, R_OUT, fc=PETG, lw=THIN)
+    v.circle(0, 0, p.TOP_PLATE_D / 2, fc="#eef0f2", lw=THIN)
+    for t, r, ang in p.SURF_LVDT:
+        x, y = r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
+        v.circle(x, y, 4, fc=SENS, lw=THIN)
+        v.text(x * 1.35, y * 1.35, t, fontsize=FS_SMALL - 0.5, ha="center", va="center", color=SENS_TXT, weight="bold")
+    for t, d, r, ang in p.ANCHORS:
+        x, y = r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
+        v.circle(x, y, p.PLATE_HOLE_D / 2, fc="white", lw=THIN)
+        v.circle(x, y, 1.0, fc=INVAR, lw=0)
+        v.text(x * 0.45, y * 0.45, t, fontsize=FS_SMALL - 0.5, ha="center", va="center", color="#333", weight="bold")
+    for ang in p.STAND_ANG:
+        v.circle(p.STAND_R * math.cos(math.radians(ang)), p.STAND_R * math.sin(math.radians(ang)),
+                 p.STAND_POST_D / 2, fc=INVAR, lw=THIN)
+    v.circle(0, 0, p.BRIDGE_D / 2, fc="none", ec=INK, lw=THIN, ls="--")
+
+
+def anchor_detail(sh, ox, oy, k):
+    """Enlarged section: multi-ring cell, sand, top plate, anchors with rods and sleeves."""
+    v = View(sh, ox, oy, k)
+    v.rect(-R_IN - 1, Z_S0 - 12, R_IN + 1, Z_S0, fc=METAL, lw=THIN)
+    ring_stack(v)
+    for s_ in (-1, 1):
+        v.rect(s_ * (R_IN - 0.6), Z_S0, s_ * R_IN, Z_S1 + 18, fc="#d9a066", lw=0)
+    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
+    import random
+    rnd = random.Random(2)
+    for _ in range(260):
+        v.circle(rnd.uniform(-48, 48), rnd.uniform(Z_S0 + 1, Z_S1 - 1), 0.35, fc="#b39a6b", ec="none", lw=0, z_=2.1)
+    v.rect(-p.TOP_PLATE_D / 2, Z_S1, p.TOP_PLATE_D / 2, Z_TP, fc=PETG, lw=THIN)
+    for t, x in X_S.items():
+        v.rect(x - 2, Z_TP, x + 2, Z_TP + 3, fc=STEEL, lw=0.3)
+        v.line([(x, Z_TP + 3), (x, Z_TP + 16)], lw=THICK, c=STEEL)
+        v.text(x, Z_TP + 17, t, fontsize=FS_SMALL - 0.5, ha="center", va="bottom", color=SENS_TXT, weight="bold")
+    for t, d, r, ang in p.ANCHORS:
+        x = X_E[t]
+        z = Z_S1 - d
+        v.rect(x - p.ANCHOR_D / 2, z - p.ANCHOR_T / 2, x + p.ANCHOR_D / 2, z + p.ANCHOR_T / 2, fc="#555", lw=THIN, z=4)
+        v.rect(x - p.SLEEVE_D / 2, z + 2, x + p.SLEEVE_D / 2, Z_TP + 4, fc="white", lw=0.3, z=4)
+        v.line([(x, z), (x, Z_TP + 16)], lw=0.9, c=INVAR, z=5)
+        v.text(x, Z_TP + 17, t, fontsize=FS_SMALL - 0.5, ha="center", va="bottom", color="#333", weight="bold")
+        v.line([(x + p.ANCHOR_D / 2, z), (R_IN + 2, z)], lw=0.3, c="#777", ls=":")
+    for i, (d, ang) in enumerate(WALL_TH, 1):
+        s_ = 1 if i % 2 else -1
+        z = Z_S1 - d - 2
+        v.line([(s_ * R_OUT, z), (s_ * 40, z)], lw=0.7, c=TCOL)
+        v.circle(s_ * 40, z, 1.2, fc=TCOL, lw=0)
+        v.text(s_ * (R_OUT + 2), z, f"T{i}", fontsize=FS_SMALL - 0.5, color=TCOL, va="center",
+               ha="left" if s_ > 0 else "right")
+    for tag_, d, ang in p.PWALL:
+        z = Z_S1 - d
+        v.rect(-R_IN - 3, z - p.PWALL_D / 2, -R_IN + 0.5, z + p.PWALL_D / 2, fc=PCOL, lw=THIN, z=4)
+    zt = Z_S1
+    for _, d, _, _ in p.ANCHORS:
+        v.dim_v(Z_S1 - d, zt, R_OUT, R_OUT + 12, f"{(zt and 25):g}")
+        zt = Z_S1 - d
+    v.dim_v(Z_S0, zt, R_OUT, R_OUT + 12, "25")
+    v.dim_v(Z_S0, Z_S1, R_OUT, R_OUT + 24, "100")
+    v.dim_h(-p.D_SAMPLE / 2, p.D_SAMPLE / 2, Z_S0 - 12, Z_S0 - 18, "⌀100 unsaturated sand", side="below")
+
+
 def sheet_b_simple(pdf):
-    sh = Sheet("Variant B – constant height (simplified)", "E7-V02", "≈ 1 : 3", 2, TOTAL,
-               "schematic, proportions to scale; sensors in orange (force, displacement) and red (temperature)")
-    v = View(sh, 110, 68, 1 / 3)
-    z_lc, _, _ = simple_rig(v, "B")
-    temp_points(v, "B", z_lc)
-    tag(v, 0, z_lc + 20, 140, z_lc + 50, "LC-T  load cell 20 kN (top)", SENS_TXT)
-    tag(v, 0, 20, 140, -20, "LC-B  load cell 20 kN (base)", SENS_TXT)
-    tag(v, 62, z_lc + 25, 140, z_lc + 10, "LVDT-1, -2  ±10 mm", SENS_TXT)
-    tag(v, 0, Z_BEAM - 30, 140, Z_BEAM + 30, "Al spacer + screw M24×1.5\n(set height, then lock)", INK)
-    tag(v, -75, 60, -150, 200, "Invar reference", INVAR)
-    tag(v, -R_IN - 4, Z_S0 + 50, -150, 160, "cell PETG-CF + PTFE liner\n+ Al sleeve", INK)
-    tag(v, -R_INS + 5, Z_S0 + 20, -150, 100, "insulation 25", INK)
-    tag(v, -60, Z_G10 + 5, -150, 40, "G10 thermal break", INK)
-    rows = [["LC-T", "heave force, top", sn.PICK["LC-T"][1], sn.PICK["LC-T"][3]],
-            ["LC-B", "force at base", sn.PICK["LC-B"][1], sn.PICK["LC-B"][3]],
-            ["LVDT-1,2", "residual movement", sn.PICK["LVDT"][1], sn.PICK["LVDT"][3]],
-            ["T1…T5", "soil, r 9 mm", sn.PICK["T"][1], sn.PICK["T"][3]],
-            ["Ttop, Tbot", "piston, pedestal", sn.PICK["T"][1], "(same)"],
-            ["TLC-T/B, Tframe, Tair", "load cells, frame, air", sn.PICK["TX"][1], sn.PICK["TX"][3]]]
+    sh = Sheet("Variant B – same sample, no load: heave, settlement, layer strain", "E7-V02", "≈ 1 : 2", 2,
+               TOTAL, "schematic; orange = displacement, red = temperature, violet = Invar reference; "
+               "sensors revolved into section (true positions on the plan)")
+    v = View(sh, 112, 66, 0.48)
+    rig_b(v)
+    tag(v, 42, Z_BODY0 + 60, 150, Z_BR + 60, "S1–S3  surface LVDT, free core\n(3× → mean heave + tilt)", SENS_TXT)
+    tag(v, -22, Z_BODY0 + 60, -150, Z_BR + 60, "E1–E3  anchor LVDT, free core", SENS_TXT)
+    tag(v, p.BRIDGE_D / 2 - 10, Z_BR + 5, 150, Z_BR + 20, "Al bridge ⌀220×10 (LVDT clamps)", INK)
+    tag(v, -p.STAND_R, 60, -150, 120, "3 Invar posts ⌀12\nfrom the base plate", INVAR)
+    tag(v, 30, Z_S1 + 3, 150, Z_S1 + 25, "top plate PETG-CF ⌀99×6\n≈ 65 g ≈ 0.08 kPa", INK)
+    tag(v, 22, Z_S1 - 25, 150, Z_S1 - 10, "anchor ⌀16×1.5 + Invar rod ⌀2\nin PTFE sleeve ⌀4", INK)
+    tag(v, R_OUT, Z_S0 + 40, 150, Z_S0 + 20, "multi-ring cell PETG-CF\n+ greased latex (as A)", INK)
+    tag(v, -60, Z_G10 + 5, -150, 30, "G10 thermal break", INK)
+    tag(v, 0, -12, 60, -40, "base plate Al 260×200×25 – no frame, no load", INK)
+    rows = [["S1…S3", "surface heave / settlement", sn.PICK["LVDT-B"][1], "SE3–5"],
+            ["E1…E3", "anchor displ. at 25/50/75", sn.PICK["LVDT-B"][1], "SE6–8"],
+            ["PW1…PW3", "lateral stress (optional)", sn.PICK["PW"][1], sn.PICK["PW"][3]],
+            ["T1…T5", "soil, r 40 mm", sn.PICK["T"][1], sn.PICK["T"][3]],
+            ["Ttop, Tbot", "top plate, pedestal", sn.PICK["T"][1], "(same)"],
+            ["Tstand, Tair", "Invar stand, air", sn.PICK["TX"][1], sn.PICK["TX"][3]]]
     y = legend(sh, rows)
     sh.text(255, y - 4,
-            "How it works\n"
-            "The screw holds the piston at constant height; the soil pushes against it\n"
-            "while freezing. LC-T measures that force, LC-B the force arriving at the\n"
-            "base – the difference is the friction on the cell wall. The LVDTs show how\n"
-            "much the frame still gives (report the stiffness with the pressure).\n"
-            "Run a blank test with an Al dummy to remove the effect of the frame\n"
-            "shrinking in the cold (vypocty.md §3).",
+            "What is measured in each freeze–thaw cycle\n"
+            "• surface: heave during freezing, settlement during thawing, residual after the cycle\n"
+            "  (mean of S1–S3; their difference = tilt of the top plate)\n"
+            "• 4 layers of 25 mm: Δh₁ = S̄ − E1, Δh₂ = E1 − E2, Δh₃ = E2 − E3, Δh₄ = E3 (base fixed)\n"
+            "  strain εᵢ = Δhᵢ / 25 mm, resolution ≈ 4·10⁻⁵ (vypocty.md §3)\n"
+            "• frost depth from T1–T5 (0 °C isotherm) → strain vs. frozen / unfrozen layer\n"
+            "• after the last cycle: height (caliper), mass, water content of 5 slices × 20 mm\n"
+            "\n"
+            "No load: free-core LVDTs push nothing; the plate adds 0.08 kPa only.\n"
+            "Reference error ≈ 50 µm per 20 K → blank run with Al dummy (vypocty.md §4).",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.text(300, 153, "DETAIL – anchors and top plate  ≈ 1 : 1.6", fontsize=FS + 0.5, weight="bold", ha="center")
+    anchor_detail(sh, 300, 18, 0.62)
+    sh.text(378, 153, "PLAN – top plate  1 : 3.6", fontsize=FS + 0.5, weight="bold", ha="center")
+    pv = View(sh, 378, 105, 0.28)
+    plate_plan(pv)
+    sh.text(378, 66, "orange S = surface LVDT (r 40)\nE = anchor rod hole (r 25)\nviolet = Invar posts (r 100)",
+            fontsize=FS_SMALL - 0.5, ha="center", va="top", linespacing=1.4)
     sh.save(pdf, os.path.join(OUT, "E7-V02_variant_B_scheme.png"))
 
 
 def rig_plan(v, cx, cy, variant):
     hb, hd = p.BASE_W / 2, p.BASE_D / 2
     v.rect(cx - hb, cy - hd, cx + hb, cy + hd, fc=METAL, lw=THIN, z=2)
-    for s_ in (-1, 1):
-        v.rect(cx + s_ * X_COL - 20, cy - 40, cx + s_ * X_COL + 20, cy + 40, fc="#d9dde1", lw=THIN, z=2.1)
+    if variant == "A":
+        for s_ in (-1, 1):
+            v.rect(cx + s_ * X_COL - 20, cy - 20, cx + s_ * X_COL + 20, cy + 20, fc="#d9dde1", lw=THIN, z=2.1)
+    else:
+        v.circle(cx, cy, p.BRIDGE_D / 2, fc="none", ec=INK, lw=THIN, ls="--", z_=2.5)
+        for ang in p.STAND_ANG:
+            v.circle(cx + p.STAND_R * math.cos(math.radians(ang)), cy + p.STAND_R * math.sin(math.radians(ang)),
+                     p.STAND_POST_D / 2, fc=INVAR, lw=THIN, z_=2.6)
     v.circle(cx, cy, R_INS, fc=INSUL, lw=THIN, z_=2.2)
     v.circle(cx, cy, R_OUT, fc=PETG, lw=THIN, z_=2.3)
-    v.circle(cx, cy, p.D_SAMPLE / 2, fc=FROZEN, lw=THIN, z_=2.4)
+    v.circle(cx, cy, p.D_SAMPLE / 2, fc="#e9dcb8", lw=THIN, z_=2.4)
     v.text(cx, cy, variant, fontsize=FS + 2, weight="bold", ha="center", va="center", zorder=5)
 
 
@@ -559,20 +639,25 @@ def sheet_layout(pdf):
     e.rect(50, 20, 580, 60, fc="none", lw=THIN, z=1.3)
     e.rect(620, 0, 885, 230, fc="none", lw=THIN, ls="--", z=1.2)
     zb = 60 + 18 + p.BASE_T
-    for cx, var, hcol in ((185, "B", p.FRAME_H), (445, "A", p.FRAME_H_A)):
+    for cx, var in ((185, "B"), (445, "A")):
         e.rect(cx - p.BASE_W / 2, zb - p.BASE_T, cx + p.BASE_W / 2, zb, fc=METAL, lw=THIN, z=2)
-        for s_ in (-1, 1):
-            e.rect(cx + s_ * X_COL - 20, zb, cx + s_ * X_COL + 20, zb + hcol, fc="#d9dde1", lw=THIN, z=2)
-        bh = p.BEAM_H_A if var == "A" else BEAM_H
-        e.rect(cx - X_COL - 20, zb + hcol, cx + X_COL + 20, zb + hcol + bh, fc="#d9dde1", lw=THIN, z=2)
-        if var == "B":
-            e.rect(cx - 45, zb + hcol + bh + 35, cx + 45, zb + hcol + bh + 42, fc=STEEL, lw=THIN, z=3)
-        else:
+        if var == "A":
+            hcol = p.FRAME_H_A
+            for s_ in (-1, 1):
+                e.rect(cx + s_ * X_COL - 20, zb, cx + s_ * X_COL + 20, zb + hcol, fc="#d9dde1", lw=THIN, z=2)
+            e.rect(cx - X_COL - 20, zb + hcol, cx + X_COL + 20, zb + hcol + p.BEAM_H_A, fc="#d9dde1", lw=THIN, z=2)
             e.rect(cx - p.DW_D / 2, zb + 257, cx + p.DW_D / 2, zb + 383, fc="#8a8f96", lw=THIN, z=3)
             e.rect(cx - 8, zb + 257, cx + 8, zb + 257 + p.DW_ROD_L, fc=STEEL, lw=THIN, z=3.1)
-        e.rect(cx - R_INS, zb + Z_S0, cx + R_INS, zb + TUBE_TOP, fc=INSUL, lw=THIN, z=2.1)
+        else:
+            for x in (-p.STAND_R, p.STAND_R / 2):
+                e.rect(cx + x - 6, zb, cx + x + 6, zb + p.Z_BRIDGE, fc=INVAR, lw=THIN, z=2)
+            e.rect(cx - p.BRIDGE_D / 2, zb + p.Z_BRIDGE, cx + p.BRIDGE_D / 2, zb + p.Z_BRIDGE + p.BRIDGE_T,
+                   fc=METAL, lw=THIN, z=2)
+            for x in (-42, -22, 6, 22, 42):
+                e.rect(cx + x - 5, zb + Z_BODY0, cx + x + 5, zb + Z_BODY0 + BODY_L, fc=SENS, lw=THIN, z=3)
+        e.rect(cx - R_INS, zb + Z_S0, cx + R_INS, zb + Z_S0 + 119, fc=INSUL, lw=THIN, z=2.1)
         e.text(cx, zb + 120, var, fontsize=FS + 2, weight="bold", ha="center", va="center", zorder=5)
-    top = max(zb + p.FRAME_H + BEAM_H + 42, zb + 257 + p.DW_ROD_L, zb + p.FRAME_H_A + p.BEAM_H_A)
+    top = max(zb + 257 + p.DW_ROD_L, zb + p.FRAME_H_A + p.BEAM_H_A)
     e.dim_v(0, top, 445 + 75, 640, f"{top:.0f}")
     e.dim_v(0, p.FRZ_H, p.FRZ_L, p.FRZ_L + 25, f"≈ {p.FRZ_H:g}")
     # logger box outside
@@ -588,16 +673,17 @@ def sheet_layout(pdf):
     sh.heading(255, 278, "Fit check")
     rows = [["base plates 2 × 260 × 200", "520 × 200", "tray ≈ 530 × 340", "OK (tight)"],
             ["rig A (weights)", "20 kg steel discs ⌀150", "nothing outside frame", "OK"],
+            ["rig B (stand)", f"{zb + Z_BODY0 + BODY_L:.0f} mm high", "no load, no frame", "OK"],
             ["highest point", f"{top:.0f} mm", "inside ≈ 650", "OK, measure"],
             ["logger", "outside, 0…+40 °C", "CR1000 −25…+50 °C", "keep warm & dry"]]
     table(sh, 255, 274, ["item", "size", "limit", "status"], rows, [48, 32, 38, 32], row_h=5.0)
-    sh.text(255, 246,
+    sh.text(255, 236,
             "Notes\n"
             "• Both rigs share the freezer program (Set A) and the CR1000; each rig has\n"
-            "  its own Tair sensor at sample mid-height and its own load cell temperatures.\n"
-            "• Both rigs are set from above with a screw and handwheel; the free end of\n"
-            "  the freezer stays empty (room for the cable bundle or a third rig).\n"
-            "• Run the blank test with Al dummies in both rigs before the first soil run.\n"
+            "  its own Tair sensor at sample mid-height.\n"
+            "• Same sand, same multi-ring cell, same thermistors in A and B – the only\n"
+            "  difference is the load (A ≤ 25 kPa dead weight, B none).\n"
+            "• Run the blank test with Al dummies in both rigs before the first sand run.\n"
             "• Dimensions marked ≈ are estimates from the photos (E6) – please measure.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V06_freezer_layout.png"))
@@ -613,24 +699,25 @@ def sheet_sensors(pdf):
     y = table(sh, 240, 274, ["terminal", "connected to", "measurement"], [list(c) for c in sn.CHANNELS],
               [24, 40, 106], row_h=4.6)
     sh.text(240, y - 4,
-            "Channel count (2 rigs): 3 load cells, 4 LVDTs, 6 pressure bridges, ≈ 24 thermistors.\n"
+            "Channel count (2 rigs): 8 LVDTs (A 2, B 6), 9 pressure bridges, ≈ 20 thermistors.\n"
+            "No load cells: A is loaded by dead weight, B is not loaded at all.\n"
             "16 SE / 8 DIFF on the CR1000 → two AM16/32B: bridges (4×16), thermistors (2×32).\n"
             "\n"
-            "Resolution with the CR1000 (13-bit ADC)\n"
-            "• LC-T/B 1 mV/V: 2.5 mV FS → ≈ 2.6 N ≈ 0.3 kPa\n"
-            "• LVDT ±5 V over ±10 mm: ≈ 1.3 µm (0.7 µm with reversal);\n"
-            "  absolute linearity ±0.25 % FS ≈ ±50 µm → calibrate with a micrometer\n"
+            "Resolution with the CR1000 (13-bit ADC, ±5000 mV range)\n"
+            "• LVDT ±10 mm (A): ≈ 1.3 µm; LVDT ±5 mm (B): ≈ 0.7 µm\n"
+            "  → layer strain over 25 mm ≈ 4·10⁻⁵ (B)\n"
+            "• absolute linearity ±0.25 % FS → calibrate each LVDT with a micrometer\n"
             "• 109SS: ±0.38 °C at 0 °C; ice-point offset check improves it\n"
             "\n"
             "Notes\n"
+            "• Rig B uses LVDTs with a FREE (unguided) core – no spring force on the\n"
+            "  sample; the core rides on the anchor rod / plate rod. Check the free-core\n"
+            "  version and the core length with RDP before ordering [U].\n"
+            "• DC-LVDTs need their own ±15 V (or 24 V) supply, logger only reads ±5 V.\n"
             "• CR1000 is discontinued (successor CR1000X / CR1000Xe, 24-bit); the\n"
             "  existing one is fine for these resolutions.\n"
             "• Logger outside the freezer (CR1000 −25…+50 °C).\n"
-            "• No load cell found with compensation to −20/−30 °C as standard:\n"
-            "  Interface SSM −15 °C, HBM −10 °C (op. −30 °C) – log TLC and\n"
-            "  correct; Interface/Lorenz offer extended ranges on request.\n"
-            "• 4WFBS modules are for quarter bridges – not needed here.\n"
-            "• Pressure cells: calibrate in the same sand under dead weight (25–200 kPa)\n"
+            "• Pressure cells: calibrate in the same sand under dead weight (5–25 kPa)\n"
             "  at +10 and −10 °C; correct zero(T) with the neighbouring thermistor.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V05_sensors_CR1000.png"))
