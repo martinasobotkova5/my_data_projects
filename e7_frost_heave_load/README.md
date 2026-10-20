@@ -141,7 +141,18 @@ Rám jsem zmenšil, aby se obě sestavy vešly vedle sebe na vanu (≈ 530 × 34
 |---|---|
 | `E7_variant_A.step` | varianta A – rám, cela, vzorek, páka se závažím, siloměr Interface SSM, 2× LVDT DCTH400, Invarová reference, termistory 109SS |
 | `E7_variant_B.step` | varianta B – rám, cela s Al objímkou, 2× HBM C9C, Al distanční trubka, šroub M24 s ručním kolem, LVDT, termistory |
-| `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku (stěny mrazáku průhledné, ≈ rozměry) |
+| `E7_variant_A_multiring.step` | varianta A s vícekroužkovou celou (doporučeno pro konstantní zatížení) |
+| `E7_multiring_cell.step` | samotná vícekroužková cela – viz níže |
+| `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku, A s vícekroužkovou celou (stěny mrazáku průhledné, ≈ rozměry) |
+
+**Vícekroužková cela:**
+- **Kroužky:** spodní kroužek s patkou ⌀150 × 8, nad ním 10 kroužků PETG-CF ⌀117/101 × 10 mm.
+- **Podložky:** mezi kroužky PTFE podložky 1 mm.
+- **Vedení:** kroužky mají 3 oka, kterými volně kloužou po 3 vodicích tyčích ⌀5 s PTFE povlakem (r 63, po 120°). Tyče jsou zasazené ve spodním kroužku.
+- **Membrána:** uvnitř namazaná latexová membrána 0,3 mm.
+- **Termistory:** 5 nálitků na kroužcích nejblíže hloubkám 10–90 mm (skutečná výška = střed kroužku), pod úhly 0/60/120/180/240°, tedy 30° od ok.
+- **Izolace:** Kaiflex 18 mm. Vnější poloměr 89 mm se ještě vejde mezi sloupy (r 90).
+- **Princip:** zemina se při zdvihu posouvá s kroužky, takže tření o stěnu se téměř nepřenáší.
 
 **Import do Onshape:**
 1. Na stránce dokumentů *Create → Import*, nebo v otevřeném dokumentu tlačítko *Import*.

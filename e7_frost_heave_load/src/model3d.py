@@ -31,6 +31,32 @@ BEAM_H = 80.0
 Z_BEAM = p.FRAME_H
 WALL_TH = [(10, 0), (30, 72), (50, 144), (70, 216), (90, 288)]
 
+# multi-ring cell (variant A option): rings slide on 3 guide rods
+MR_FOOT_T = 8.0          # base ring with flange ⌀150
+MR_RING_H = 10.0
+MR_WASHER = 1.0          # PTFE washer between rings
+MR_N = 10
+MR_LATEX = 0.3           # greased latex membrane
+MR_ID = p.D_SAMPLE + 2 * MR_LATEX + 0.4     # 101.0 incl. clearance
+MR_LUG_R = 63.0          # guide rods ⌀5 at r 63, 3× 120°
+MR_INS_IN, MR_INS_T = 71.0, 18.0   # clears the lugs (r 70) and the columns (r 90)
+MR_PROBE_ANG = (0, 60, 120, 180, 240)   # 30° away from the guide-rod lugs (90/210/330)
+
+
+def mr_ring_z(k):
+    """Bottom z of ring k (0 = lowest moving ring)."""
+    return Z_S0 + MR_FOOT_T + MR_WASHER + k * (MR_RING_H + MR_WASHER)
+
+
+def mr_probe_positions():
+    """Thermistor heights: centre of the ring nearest to each target depth."""
+    out = []
+    for (d, _), ang in zip(WALL_TH, MR_PROBE_ANG):
+        z_t = Z_S1 - d
+        k = min(range(MR_N), key=lambda i: abs(mr_ring_z(i) + MR_RING_H / 2 - z_t))
+        out.append((k, mr_ring_z(k) + MR_RING_H / 2, ang))
+    return out
+
 C = {
     "al": cq.Color(0.78, 0.80, 0.82),
     "profile": cq.Color(0.70, 0.72, 0.75),
@@ -81,11 +107,59 @@ def frame(asm, prefix=""):
     asm.add(beam, name=prefix + "cross-beam 80x80", color=C["profile"])
 
 
-def cell_stack(asm, variant, prefix=""):
+def multiring_cell(asm, prefix="", with_sample=False):
+    """Multi-ring cell: base ring with flange, 10 rings h 10 with lugs, PTFE washers,
+    3 guide rods, greased latex membrane, thermistor bosses on the rings."""
+    foot = tube(p.CELL_FOOT_D, MR_ID, MR_FOOT_T, Z_S0)
+    for ang in (90, 210, 330):
+        foot = foot.cut(cyl(5.2, MR_FOOT_T, Z_S0, MR_LUG_R * math.cos(math.radians(ang)),
+                            MR_LUG_R * math.sin(math.radians(ang))))
+    asm.add(foot, name=prefix + "multi-ring base ring PETG-CF", color=C["petg"])
+    probes = {k: (z, ang) for k, z, ang in mr_probe_positions()}
+    for k in range(MR_N):
+        z0 = mr_ring_z(k)
+        ring = tube(p.D_CELL_OUT, MR_ID, MR_RING_H, z0)
+        for ang in (90, 210, 330):
+            lug = (cq.Workplane("XY").workplane(offset=z0).center(MR_LUG_R, 0).rect(14, 14).extrude(MR_RING_H)
+                   .union(cq.Workplane("XY").workplane(offset=z0).center((R_OUT + MR_LUG_R) / 2 - 1, 0)
+                          .rect(MR_LUG_R - R_OUT + 2, 14).extrude(MR_RING_H))
+                   .rotate((0, 0, 0), (0, 0, 1), ang))
+            ring = ring.union(lug)
+            ring = ring.cut(cyl(5.6, MR_RING_H, z0, MR_LUG_R * math.cos(math.radians(ang)),
+                                MR_LUG_R * math.sin(math.radians(ang))))
+        if k in probes:
+            z, ang = probes[k]
+            ring = ring.union(box(R_OUT - 2, R_OUT + 6, -5, 5, z0, z0 + MR_RING_H)
+                              .rotate((0, 0, 0), (0, 0, 1), ang))
+            ring = ring.cut(radial(ang, MR_ID / 2 - 1, R_OUT + 7, z, 1.7))
+        asm.add(ring, name=f"{prefix}ring {k + 1:02d} PETG-CF", color=C["petg"])
+        asm.add(tube(MR_LUG_R * 2 - 12, MR_ID + 2, MR_WASHER, z0 - MR_WASHER),
+                name=f"{prefix}PTFE washer {k + 1:02d}", color=C["ptfe"])
+    top = mr_ring_z(MR_N) - MR_WASHER
+    for i, ang in enumerate((90, 210, 330), 1):
+        asm.add(cyl(5, top - Z_S0 + 15, Z_S0, MR_LUG_R * math.cos(math.radians(ang)),
+                    MR_LUG_R * math.sin(math.radians(ang))),
+                name=f"{prefix}guide rod {i} (PTFE-coated)", color=C["steel"])
+    asm.add(tube(p.D_SAMPLE + 2 * MR_LATEX, p.D_SAMPLE, top - Z_S0, Z_S0),
+            name=prefix + "latex membrane 0.3 (greased)", color=cq.Color(0.85, 0.62, 0.35))
+    asm.add(tube(2 * (MR_INS_IN + MR_INS_T), 2 * MR_INS_IN, top - Z_S0 - MR_FOOT_T, Z_S0 + MR_FOOT_T),
+            name=prefix + "insulation Kaiflex 18", color=C["ins"])
+    if with_sample:
+        asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0), name=prefix + "soil sample D100x100", color=C["soil"])
+    for i, (k, z, ang) in enumerate(mr_probe_positions(), 1):
+        asm.add(radial(ang, 9, MR_INS_IN + MR_INS_T + 15, z, 1.6), name=f"{prefix}T{i} 109SS", color=C["temp"])
+    return top
+
+
+def cell_stack(asm, variant, prefix="", multiring=False):
     asm.add(cyl(150, G10_T, H_BOT), name=prefix + "G10 thermal break", color=C["g10"])
     ped = cyl(150, p.PEDESTAL_H, Z_PED).cut(cyl(99.6, 10, Z_S0 - 10))
     asm.add(ped, name=prefix + "pedestal Al", color=C["al"])
     asm.add(cyl(99.5, 10, Z_S0 - 10), name=prefix + "porous stone bottom", color=C["stone"])
+    if multiring:
+        multiring_cell(asm, prefix)
+        _piston_and_sensors(asm, prefix, with_wall_probes=False)
+        return
     # cell with foot and bosses
     cell = tube(p.D_CELL_OUT, p.D_CELL_IN, TUBE_TOP - Z_S0, Z_S0)
     cell = cell.union(tube(p.CELL_FOOT_D, p.D_CELL_IN, p.CELL_FOOT_T, Z_S0))
@@ -109,6 +183,10 @@ def cell_stack(asm, variant, prefix=""):
         ins = ins.cut(box(R_OUT - 1, R_OUT + 9, -7, 7, Z_S1 - d - 7, Z_S1 - d + 7)
                       .rotate((0, 0, 0), (0, 0, 1), ang))
     asm.add(ins, name=prefix + "insulation Kaiflex 25", color=C["ins"])
+    _piston_and_sensors(asm, prefix, with_wall_probes=True)
+
+
+def _piston_and_sensors(asm, prefix, with_wall_probes):
     asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0), name=prefix + "soil sample D100x100", color=C["soil"])
     asm.add(cyl(99.5, 10, Z_S1), name=prefix + "porous stone top", color=C["stone"])
     asm.add(cyl(99.5, Z_PT - Z_S1 - 10, Z_S1 + 10), name=prefix + "piston Al", color=C["al"])
@@ -116,8 +194,9 @@ def cell_stack(asm, variant, prefix=""):
     asm.add(cq.Workplane("XY").sphere(6).translate((0, 0, BALL_C)), name=prefix + "steel ball D12",
             color=C["steel"])
     # thermistor probes (Campbell 109SS, D1.6)
-    for i, (d, ang) in enumerate(WALL_TH, 1):
-        asm.add(radial(ang, 9, R_OUT + 40, Z_S1 - d, 1.6), name=f"{prefix}T{i} 109SS", color=C["temp"])
+    if with_wall_probes:
+        for i, (d, ang) in enumerate(WALL_TH, 1):
+            asm.add(radial(ang, 9, R_OUT + 40, Z_S1 - d, 1.6), name=f"{prefix}T{i} 109SS", color=C["temp"])
     asm.add(radial(180, 10, 74, Z_PED + 15, 1.6), name=prefix + "Tbot 109SS", color=C["temp"])
     asm.add(radial(0, 10, 49, Z_PT - 8, 1.6), name=prefix + "Ttop 109SS", color=C["temp"])
     # Invar reference with 2 LVDTs (RDP DCTH400)
@@ -132,10 +211,10 @@ def cell_stack(asm, variant, prefix=""):
     asm.add(bridge, name=prefix + "Invar/Al LVDT bridge", color=C["invar"])
 
 
-def variant_a(asm, prefix=""):
+def variant_a(asm, prefix="", multiring=False):
     frame(asm, prefix)
     asm.add(cyl(60, H_BOT, 0), name=prefix + "Al spacer (bottom)", color=C["al"])
-    cell_stack(asm, "A", prefix)
+    cell_stack(asm, "A", prefix, multiring=multiring)
     asm.add(box(-25.5, 25.5, -9.5, 9.5, Z_LC, Z_LC + 64), name=prefix + "LC-A Interface SSM 2 kN",
             color=C["sensor"])
     z_lev = Z_BEAM + BEAM_H + 15
@@ -173,7 +252,7 @@ def freezer_layout():
     z0 = z_tray + 40 + 18 + p.BASE_T        # base plate top on feet on the tray
     sub_b, sub_a = cq.Assembly(name="rig B"), cq.Assembly(name="rig A")
     variant_b(sub_b)
-    variant_a(sub_a)
+    variant_a(sub_a, multiring=True)
     # chest freezer inside (origin at inner floor corner), tray and mat
     asm.add(box(0, p.FRZ_L, 0, p.FRZ_W, -5, 0), name="freezer floor (inside ≈ 900x550)", color=C["freezer"])
     walls = box(-10, p.FRZ_L + 10, -10, p.FRZ_W + 10, 0, p.FRZ_H).cut(box(0, p.FRZ_L, 0, p.FRZ_W, 0, p.FRZ_H))
@@ -195,7 +274,12 @@ if __name__ == "__main__":
     b = cq.Assembly(name="E7 variant B - constant height")
     variant_b(b)
     lay = freezer_layout()
-    for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (lay, "E7_freezer_layout")):
+    amr = cq.Assembly(name="E7 variant A - multi-ring cell")
+    variant_a(amr, multiring=True)
+    mr = cq.Assembly(name="E7 multi-ring cell")
+    multiring_cell(mr, with_sample=False)
+    for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (amr, "E7_variant_A_multiring"),
+                    (mr, "E7_multiring_cell"), (lay, "E7_freezer_layout")):
         asm.save(os.path.join(OUT, fn + ".step"))
         cq.exporters.export(asm.toCompound(), os.path.join(OUT, fn + ".stl"), tolerance=0.2, angularTolerance=0.3)
         print(fn, "ok", len(asm.children) if hasattr(asm, "children") else "")

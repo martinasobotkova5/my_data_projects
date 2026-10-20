@@ -56,5 +56,9 @@ if __name__ == "__main__":
     b = cq.Assembly(); m.variant_b(b)
     render(a, os.path.join(m.OUT, "E7_variant_A.png"), title="E7 variant A – constant load")
     render(b, os.path.join(m.OUT, "E7_variant_B.png"), title="E7 variant B – constant height")
+    amr = cq.Assembly(); m.variant_a(amr, multiring=True)
+    render(amr, os.path.join(m.OUT, "E7_variant_A_multiring.png"), title="E7 variant A – multi-ring cell")
+    mr = cq.Assembly(); m.multiring_cell(mr)
+    render(mr, os.path.join(m.OUT, "E7_multiring_cell.png"), elev=18, azim=-50, title="E7 multi-ring cell")
     render(m.freezer_layout(), os.path.join(m.OUT, "E7_freezer_layout.png"), elev=35, azim=-70,
            title="E7 – both rigs in the chest freezer")
