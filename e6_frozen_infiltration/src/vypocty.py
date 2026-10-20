@@ -64,16 +64,16 @@ row("1 Pa ≙", "0,10", "mm v. sl.", "0,1 mm ≙ 1 Pa = 0,01 % FS snímače 0–
 row("typická přesnost 0–10 kPa (0,1 % FS)", "10", "Pa", "≙ 1 mm v. sl., ne 0,1 mm")
 row("váha 0,01 g na Mariottově láhvi", "0,01", "ml", f"≙ {0.01 / a_disk * 10:.4f} mm přes disk")
 
-print("\n## 4. Tepelná bilance: na kolik vody stačí „chlad“ zeminy při −3 °C\n")
+print(f"\n## 4. Tepelná bilance: na kolik vody stačí „chlad“ zeminy při {p.T_INIT:g} °C\n")
 print("| veličina | hodnota | jednotka | poznámka |\n|---|---|---|---|")
 v_m3 = v_soil * 1e-6
 cold = p.C_FROZEN * abs(p.T_INIT) * v_m3
 m_refreeze = cold / p.L_F * 1000                      # g
-row("citelný chlad vzorku −3 → 0 °C", f"{cold / 1000:.1f}", "kJ", "C = 1,9 MJ m⁻³ K⁻¹")
+row(f"citelný chlad vzorku {p.T_INIT:g} → 0 °C", f"{cold / 1000:.1f}", "kJ", "C = 1,9 MJ m⁻³ K⁻¹")
 row("tolik vody může znovu zamrznout", f"{m_refreeze:.0f}", "ml", f"= {m_refreeze / pv_tot * 100:.0f} % PV, = {m_refreeze / a_disk * 10:.0f} mm přes disk")
 row("doba přítoku tohoto objemu", f"{m_refreeze / q_ml_h[1]:.1f}–{m_refreeze / q_ml_h[0]:.1f}", "h", "pak je vzorek izotermní při 0 °C s ledem")
 ice = (p.THETA_TOT - p.THETA_UNFROZEN) * v_soil
-row("led ve vzorku při −3 °C", f"{ice:.0f}", "ml")
+row(f"led ve vzorku při {p.T_INIT:g} °C", f"{ice:.0f}", "ml")
 row("teplo na roztátí veškerého ledu", f"{ice * 0.917 * p.L_F / 1e6:.0f}", "kJ",
     "≫ citelný chlad → fáze „0 °C s ledem“ trvá dny, řídí ji okrajové toky tepla")
 row("citelné teplo vody +0,5 °C na 1 ml", f"{4.19 * 0.5:.1f}", "J", f"vs. {p.L_F / 1000:.0f} J/ml latentní – zanedbatelné")
@@ -112,7 +112,7 @@ print("\n## 7. Měření teploty s přesností 0,01 °C\n")
 print("Termistor NTC 10 kΩ v polovičním můstku s referenčním odporem "
       f"{tm.R_REF / 1000:.0f} kΩ, buzení {tm.V_EX} V jen po dobu měření.\n")
 print("| T [°C] | R_NTC [kΩ] | poměr X | citlivost dX/dT [1/K] | 0,01 K ≙ [µV] | samoohřev [mK] |\n|---|---|---|---|---|---|")
-for T in (-8, -3, 0, 5, 20):
+for T in (-10, -5, 0, 5, 20):
     rt, x, dx, pw, dt = tm.half_bridge(T)
     print(f"| {T} | {rt / 1000:.2f} | {x:.4f} | {dx:.5f} | {abs(dx) * 0.01 * tm.V_EX * 1e6:.0f} | {dt * 1000:.1f} |")
 print("\n**Rozpočet nejistoty (standardní nejistoty, mK)**\n")
@@ -132,3 +132,13 @@ for lab, ins, it, ib in tm.BENCH_INSULATION:
         ua, t0, tmelt = tm.warming(20.0, ins, it, ib, t_init)
         print(f"| {lab} | {t_init} | {ua:.3f} | {t0:.1f} | {tmelt:.0f} |")
 print("\nCitelné teplo přítoku: voda 20 °C nese 84 J/ml, voda 0,5 °C jen 2 J/ml → Mariottovu láhev držet v ledové lázni.")
+
+print("\n**Se započtením infiltrace** (zpětné zamrzání vody uvolní 334 J/ml; 3,2–8,0 ml/h):\n")
+print("| izolace | start [°C] | tepelný příkon [W] | ohřev na 0 °C [h] |\n|---|---|---|---|")
+v_soil_m3 = math.pi * (p.D_COL / 2000) ** 2 * p.H_SOIL / 1000
+for lab, ins, it, ib in tm.BENCH_INSULATION:
+    ua = tm.ua_column(ins, it, ib)
+    cold = p.C_FROZEN * abs(p.T_INIT) * v_soil_m3
+    q_lo = ua * (20 - p.T_INIT / 2) + q_ml_h[0] / 3600 * p.L_F / 1000
+    q_hi = ua * (20 - p.T_INIT / 2) + q_ml_h[1] / 3600 * p.L_F / 1000
+    print(f"| {lab} | {p.T_INIT:g} | {q_lo:.2f}–{q_hi:.2f} | {cold / q_hi / 3600:.1f}–{cold / q_lo / 3600:.1f} |")

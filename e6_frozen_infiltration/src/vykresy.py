@@ -488,7 +488,7 @@ def sheet_v04(pdf):
             "drainage volume is grooves 1.1 mL + bore 0.1 mL (< 1 fraction) instead of the 120 cm³\n"
             "air space of a hollow funnel. The membrane lets the bottom be held at a set suction\n"
             "h_b = 0 … −30 cm (overflow cup height, E6-V06); h_b = 0 reproduces a seepage face.\n"
-            "The Cu coil keeps the cone at −3 °C while freezing and at +0.3 °C during outflow.",
+            "The Cu coil keeps the cone at −10 °C while freezing and at +0.3 °C during outflow.",
             fontsize=FS_SMALL, va="top", linespacing=1.5)
     sh.save(pdf, os.path.join(OUT, "E6-V04_cone_outlet.png"))
 
@@ -670,7 +670,7 @@ def sheet_v06(pdf):
             ["top", "h₀ = −2 cm", "set by Mariotte air inlet; PT logs real h₀"],
             ["bottom", "h_b = 0…−30 cm", "set by overflow-cup lip; h_b = 0 →\nseepage face (original design)"],
             ["sides", "≈ adiabatic", "insulation box 60–100 mm; HF2 checks"],
-            ["cone", "T_b", "−3 °C freezing, +0.3 °C during outflow"]]
+            ["cone", "T_b", "−10 °C freezing, +0.3 °C during outflow"]]
     table(sh, 250, 272, ["item", "setting", "note"], rows, [18, 36, 100], row_h=7.5)
     sh.text(250, 205, "Balances\n"
             "water:   in (balance) − out (fractions) = ΔS; ΔS checked by TDR (liquid)\n"
@@ -710,14 +710,14 @@ def sheet_v07(pdf):
     ax.axvspan(-24, 0, color="#dde8f4", lw=0)
     ax.text(-27, 21, "pack", ha="center", fontsize=FS_SMALL - 1)
     ax.text(-12, 21, "in freezer: freeze + hold", ha="center", fontsize=FS_SMALL - 1)
-    ax.plot([-30, -24, -24, -6, -6, 0], [20, 20, -10, -10, -3, -3], c="#557", lw=1.2, label="freezer set-point")
+    ax.plot([-30, -24, -24, 0], [20, 20, -10, -10], c="#557", lw=1.2, label="freezer set-point −10 °C")
     ax.axvline(0, c=INK, lw=0.8)
     ax.text(0.5, 21, "transfer ≤ 10 min → infiltration on bench (lab 20 °C)", fontsize=FS_SMALL - 1)
     for (lab, ins, it, ib), col in zip(tm.BENCH_INSULATION, ["#c44", "#d08a4a", "#2b62a3"]):
-        for t_init, ls in ((-3, "-"), (-10, "--")):
+        for t_init, ls in ((-10, "-"), (-3, ":")):
             pts, _, _ = bench_curve(t_init, ins, it, ib)
             ax.plot([q[0] for q in pts], [q[1] for q in pts], c=col, lw=1.1, ls=ls,
-                    label=f"{lab}, start {t_init} °C")
+                    label=f"{lab}, start {t_init} °C" + ("" if t_init == -10 else " (for comparison)"))
     ax.axhline(0, c="#888", lw=0.5, ls=":")
     ax.set_xlim(-30, 60)
     ax.set_ylim(-11, 23)
@@ -732,7 +732,7 @@ def sheet_v07(pdf):
             fontsize=FS_SMALL, va="top")
     rows = [["1", "lab", "pack Ø100×100 in 10 mm lifts to θ ≈ 0.30 with background water;\nmount holder on cone, all probes in, V3 closed, flush V4", "probes read, TDR ok"],
             ["2", "freezer", "freezer −10 °C, sides + cone insulated → freezing from the top\nthrough the Al plate; logger running through the collar", "front passes T90"],
-            ["3", "freezer", "hold at start temperature (−3 or −10 °C) ≥ 24 h", "all T within ±0.05 K"],
+            ["3", "freezer", "hold at −10 °C ≥ 24 h (controller: constant −10 °C,\nnot the ±10 °C cycle program)", "all T within ±0.05 K"],
             ["4", "prep", "ice-water bath for Mariotte bottle and contact sand; collector rack\non ice; insulation box open on the bench next to the freezer", "Tsup ≤ 0.5 °C"],
             ["5", "transfer", "lift column + cone + stand as one unit, cables stay connected;\nclose box; write transfer start / end time", "≤ 10 min"],
             ["6", "bench", "dry pre-cooled sand + AMDI; open V1 and V3; collect 2–5 mL\nfractions in septum vials on ice", "Tdisc logged"],
@@ -822,7 +822,7 @@ def sheet_v12(pdf):
             "\n"
             "What it means\n"
             "• Use the thickest practical box (≥ 60 mm) and start colder (−10 °C)\n"
-            "  if the frozen phase is the target; −3 °C gives ≈ 1 h before 0 °C.\n"
+            "  (−10 °C chosen: ≈ 3 h before 0 °C with a 60 mm box; −3 °C would give ≈ 1 h).\n"
             "• The run always continues into thawing soil: the probes record when\n"
             "  and where the ice disappears (0 °C plateau ends).\n"
             "• Supply water, sand and the AMDI disc at 0–0.5 °C, otherwise the\n"
@@ -920,7 +920,7 @@ def sheet_v08(pdf):
     # outside: logger, controller, ice point, lab air
     box(sh, 200, 178, 44, 40, "", fc="#f1eff7")
     sh.text(222, 214, "logger box", fontsize=FS_SMALL, ha="center", weight="bold")
-    sh.text(222, 196, "CR3000 (28 SE ch.)\nR_ref 30 kΩ 0.01 %\n2 ppm/K, on Al block\nLlog, Rchk",
+    sh.text(222, 196, "CR3000 (28 SE ch.)\nR_ref 40 kΩ 0.01 %\n2 ppm/K, on Al block\nLlog, Rchk",
             fontsize=FS_SMALL - 1, ha="center", va="center")
     ax.plot([70, 70, 200], [235 + 6, 246, 246], c="#6a3d9a", lw=1.0)
     ax.plot([95, 95], [216.6, 241], c="#6a3d9a", lw=1.0)
@@ -929,7 +929,7 @@ def sheet_v08(pdf):
     sh.text(150, 248, "shielded PTFE cables, no connectors on the cold side", fontsize=FS_SMALL - 0.5,
             ha="center", color="#6a3d9a")
     box(sh, 200, 130, 44, 26, "", fc="#fbeee3")
-    sh.text(222, 143, "controller C\nrelay → compressor\nset-point −3 / +0.5 °C\n(own Pt100, not logged)",
+    sh.text(222, 143, "controller C\nrelay → compressor\nset-point −10 °C\n(own probe, not logged)",
             fontsize=FS_SMALL - 1, ha="center", va="center")
     ax.plot([124, 124, 196, 196, 200], [207, 212, 212, 143, 143], c="#a05a20", lw=0.8, ls="--")
     box(sh, 200, 84, 44, 34, "", fc="white")
@@ -1006,7 +1006,7 @@ def sheet_v09(pdf):
     c.text(-8, 0, "2 m cable:\nlead R ≈ 0.4 Ω\n≙ 0.3 mK", fontsize=FS_SMALL - 0.5, ha="right", va="center")
     # sensitivity + budget tables
     rows = []
-    for T in (-8, -3, 0, 5, 20):
+    for T in (-10, -5, 0, 5, 20):
         rt, x, dx, pw, dt = tm.half_bridge(T)
         rows.append([f"{T}", f"{rt / 1000:.1f}", f"{x:.4f}", f"{abs(dx) * 0.01 * tm.V_EX * 1e6:.0f}", f"{dt * 1000:.1f}"])
     sh.heading(30, 128, "Bridge sensitivity")
@@ -1020,7 +1020,7 @@ def sheet_v09(pdf):
     sh.text(252, 162,
             "1  Assemble probes with their final cables; connect to the run logger.\n"
             "2  Stirred bath (ethanol–water), reference SPRT/Pt100 with certificate.\n"
-            "3  Points: −8, −5, −3, −2, −1, 0 (ice point), +1, +3, +5, +10, +20 °C;\n"
+            "3  Points: −12, −10, −8, −5, −3, −1, 0 (ice point), +1, +5, +10, +20 °C;\n"
             "   ≥ 20 min per point, 10 readings averaged, probes within 20 mm of ref.\n"
             "4  Fit Steinhart–Hart per probe: 1/T = a + b ln R + c (ln R)³;\n"
             "   accept if all residuals < 2 mK.\n"

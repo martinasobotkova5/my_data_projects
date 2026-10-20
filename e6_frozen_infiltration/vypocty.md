@@ -46,15 +46,15 @@ Generováno skriptem `src/vypocty.py` z `src/params.py`.
 | typická přesnost 0–10 kPa (0,1 % FS) | 10 | Pa | ≙ 1 mm v. sl., ne 0,1 mm |
 | váha 0,01 g na Mariottově láhvi | 0,01 | ml | ≙ 0.0063 mm přes disk |
 
-## 4. Tepelná bilance: na kolik vody stačí „chlad“ zeminy při −3 °C
+## 4. Tepelná bilance: na kolik vody stačí „chlad“ zeminy při -10 °C
 
 | veličina | hodnota | jednotka | poznámka |
 |---|---|---|---|
-| citelný chlad vzorku −3 → 0 °C | 4.5 | kJ | C = 1,9 MJ m⁻³ K⁻¹ |
-| tolik vody může znovu zamrznout | 13 | ml | = 6 % PV, = 8 mm přes disk |
-| doba přítoku tohoto objemu | 1.7–4.2 | h | pak je vzorek izotermní při 0 °C s ledem |
-| led ve vzorku při −3 °C | 181 | ml |  |
-| teplo na roztátí veškerého ledu | 55 | kJ | ≫ citelný chlad → fáze „0 °C s ledem“ trvá dny, řídí ji okrajové toky tepla |
+| citelný chlad vzorku -10 → 0 °C | 14.9 | kJ | C = 1,9 MJ m⁻³ K⁻¹ |
+| tolik vody může znovu zamrznout | 45 | ml | = 19 % PV, = 28 mm přes disk |
+| doba přítoku tohoto objemu | 5.6–14.0 | h | pak je vzorek izotermní při 0 °C s ledem |
+| led ve vzorku při -10 °C | 196 | ml |  |
+| teplo na roztátí veškerého ledu | 60 | kJ | ≫ citelný chlad → fáze „0 °C s ledem“ trvá dny, řídí ji okrajové toky tepla |
 | citelné teplo vody +0,5 °C na 1 ml | 2.1 | J | vs. 334 J/ml latentní – zanedbatelné |
 
 ## 5. Spodní okrajová podmínka
@@ -82,15 +82,15 @@ Generováno skriptem `src/vypocty.py` z `src/params.py`.
 
 ## 7. Měření teploty s přesností 0,01 °C
 
-Termistor NTC 10 kΩ v polovičním můstku s referenčním odporem 30 kΩ, buzení 0.5 V jen po dobu měření.
+Termistor NTC 10 kΩ v polovičním můstku s referenčním odporem 40 kΩ, buzení 0.5 V jen po dobu měření.
 
 | T [°C] | R_NTC [kΩ] | poměr X | citlivost dX/dT [1/K] | 0,01 K ≙ [µV] | samoohřev [mK] |
 |---|---|---|---|---|---|
-| -8 | 52.60 | 0.6368 | -0.01308 | 65 | 1.3 |
-| -3 | 39.85 | 0.5705 | -0.01335 | 67 | 1.4 |
-| 0 | 33.90 | 0.5305 | -0.01328 | 66 | 1.4 |
-| 5 | 26.09 | 0.4652 | -0.01279 | 64 | 1.4 |
-| 20 | 12.55 | 0.2950 | -0.00963 | 48 | 1.2 |
+| -10 | 58.95 | 0.5958 | -0.01383 | 69 | 1.0 |
+| -5 | 44.47 | 0.5265 | -0.01379 | 69 | 1.0 |
+| 0 | 33.90 | 0.4587 | -0.01324 | 66 | 1.0 |
+| 5 | 26.09 | 0.3948 | -0.01228 | 61 | 1.0 |
+| 20 | 12.55 | 0.2389 | -0.00841 | 42 | 0.8 |
 
 **Rozpočet nejistoty (standardní nejistoty, mK)**
 
@@ -114,11 +114,19 @@ Soustředěný (lumped) odhad, jen vedení izolací; skutečné časy budou krat
 
 | izolace | start [°C] | UA [W/K] | ohřev na 0 °C [h] | led roztaje [h] |
 |---|---|---|---|---|
-| Kaiflex 30 (as drawn) | -3 | 0.097 | 0.6 | 8 |
-| Kaiflex 30 (as drawn) | -10 | 0.097 | 1.7 | 8 |
-| PU/XPS box 60 | -3 | 0.054 | 1.1 | 14 |
-| PU/XPS box 60 | -10 | 0.054 | 3.1 | 14 |
-| PU/XPS box 100 | -3 | 0.038 | 1.5 | 20 |
-| PU/XPS box 100 | -10 | 0.038 | 4.4 | 20 |
+| Kaiflex 30 (as drawn) | -3 | 0.097 | 0.6 | 9 |
+| Kaiflex 30 (as drawn) | -10 | 0.097 | 1.7 | 9 |
+| PU/XPS box 60 | -3 | 0.054 | 1.1 | 15 |
+| PU/XPS box 60 | -10 | 0.054 | 3.1 | 15 |
+| PU/XPS box 100 | -3 | 0.038 | 1.5 | 22 |
+| PU/XPS box 100 | -10 | 0.038 | 4.4 | 22 |
 
 Citelné teplo přítoku: voda 20 °C nese 84 J/ml, voda 0,5 °C jen 2 J/ml → Mariottovu láhev držet v ledové lázni.
+
+**Se započtením infiltrace** (zpětné zamrzání vody uvolní 334 J/ml; 3,2–8,0 ml/h):
+
+| izolace | start [°C] | tepelný příkon [W] | ohřev na 0 °C [h] |
+|---|---|---|---|
+| Kaiflex 30 (as drawn) | -10 | 2.71–3.15 | 1.3–1.5 |
+| PU/XPS box 60 | -10 | 1.64–2.09 | 2.0–2.5 |
+| PU/XPS box 100 | -10 | 1.24–1.68 | 2.5–3.4 |

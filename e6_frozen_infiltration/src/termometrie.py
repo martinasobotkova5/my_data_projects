@@ -10,10 +10,10 @@ import params as p
 # --- NTC thermistor (10 kΩ at 25 °C, glass bead) ---------------------------
 R25 = 10_000.0
 BETA = 3977.0                # typical 10k NTC; real coefficients come from calibration
-R_REF = 30_000.0             # half-bridge reference ≈ R_T at −3 … 0 °C, 0.01 %, ≤ 2 ppm/K
+R_REF = 40_000.0             # half-bridge reference ≈ R_T in the middle of −10 … +5 °C, 0.01 %, ≤ 2 ppm/K
 V_EX = 0.5                   # excitation, switched on only for the measurement (≈ 50 ms)
 DISSIPATION = 1.5e-3         # W/K, sheathed probe in moist soil (conservative)
-T_RANGE = (-8.0, 25.0)
+T_RANGE = (-12.0, 25.0)
 
 
 def r_ntc(t_c):
@@ -48,7 +48,7 @@ CHANNELS = (
        ("L1", "lab air at freezer, shielded", "out", "external load"),
        ("Llog", "logger enclosure, at R_ref", "out", "R_ref temperature"),
        ("ICE", "ice-point Dewar (spare probe)", "out", "daily 0.000 °C check"),
-       ("Rchk", "fixed 30 kΩ resistor (no NTC)", "out", "logger drift check")]
+       ("Rchk", "fixed 40 kΩ resistor (no NTC)", "out", "logger drift check")]
 )
 
 # --- uncertainty budget (standard uncertainties, mK) --------------------------

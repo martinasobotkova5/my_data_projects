@@ -17,6 +17,8 @@ Regenerace po změně parametru: `cd src && python vykresy.py && python vypocty.
 
 ## 1. Shrnutí
 
+> Části 1–4 vznikly pro původní variantu s infiltrací v klimakomoře při −3 °C. Platný postup (zmrazit v mrazáku na −10 °C, infiltrovat na stole) je v částech 6 a 7.
+
 Čísla v původním schématu sedí (plochy, 4,94 : 1, 0,475 mm, 785 cm³). Koncept „minidisk nahoře, frakční sběrač dole“ je proveditelný. Do první stavby je ale potřeba vyřešit pět věcí:
 
 1. **Zamrzání vody mimo zeminu.** Pokud je komora během infiltrace pod 0 °C, zamrzne zásobník, disk, hadička i výtok. Láhev značené vody „0,0 °C“ uvnitř komory při −3 °C neudržíte. Infiltrační fáze proto musí běžet se vzduchem komory kolem +0,5 °C a s temperovaným dnem.
@@ -169,16 +171,22 @@ Doporučuji proto infiltraci nechat **v mrazáku**, s regulátorem nastaveným n
 
 Vzorek se zmrazí v truhlicovém mrazáku, pak se vyndá a infiltrace běží na laboratorním stole. Důsledky a úpravy:
 
-- **Doba zmrzlého stavu je omezená.** Soustředěný odhad (`vypocty.md` §8) pro laboratoř 20 °C:
+- **Teplota zmrazení: −10 °C (potvrzeno).** Regulátor mrazáku nastavit na konstantních −10 °C, ne na současný program s cykly ±10 °C po 192 h.
+- **Doba zmrzlého stavu je omezená.** Soustředěný odhad (`vypocty.md` §8), laboratoř 20 °C, start −10 °C:
 
-  | izolace | start −3 °C: na 0 °C | start −10 °C: na 0 °C | led roztaje |
+  | izolace | na 0 °C bez infiltrace | na 0 °C s infiltrací 3–8 ml/h | led roztaje |
   |---|---|---|---|
-  | Kaiflex 30 mm | 0,6 h | 1,7 h | ≈ 8 h |
-  | box PU/XPS 60 mm | 1,1 h | 3,1 h | ≈ 14 h |
-  | box PU/XPS 100 mm | 1,5 h | 4,4 h | ≈ 20 h |
+  | Kaiflex 30 mm | 1,7 h | 1,3–1,5 h | ≈ 9 h |
+  | box PU/XPS 60 mm | 3,1 h | 2,0–2,5 h | ≈ 15 h |
+  | box PU/XPS 100 mm | 4,4 h | 2,5–3,4 h | ≈ 22 h |
 
-  Skutečné časy budou kratší: nezaizolovaná hlava AMDI, nožky, kabely a teplo vody. Průnik značky (44–111 h) proto vždy zahrne i tání a tok rozmrzlou zeminou. Teploty ukážou, kdy a kde led zmizí (konec plata 0 °C).
-- **Izolace:** pro infiltraci použít dvoudílný izolační box ≥ 60 mm. Pokud má být delší zmrzlá fáze, zmrazit na −10 °C.
+  Skutečné časy budou kratší (nezaizolovaná hlava AMDI, nožky, kabely). Průnik značky (44–111 h) proto vždy zahrne i tání a tok rozmrzlou zeminou. Teploty ukážou, kdy a kde led zmizí (konec plata 0 °C). Pro srovnání: při −3 °C by vzorek dosáhl 0 °C už za 0,6–1,5 h.
+- **Co −10 °C mění:**
+  - **Chlad vzorku:** chlad vzorku je ≈ 15 kJ místo 4,5 kJ. Zpětně tedy zamrzne až ≈ 45 ml infiltrující vody (19 % PV, ≈ 28 mm přes disk). To je víc ledu u povrchu a pod diskem a vyšší riziko, že se kontaktní písek a disk ucpou ledem. Proto je důležitý Tdisc a voda 0–0,5 °C.
+  - **Nezamrzlá voda** je menší (odhad θ_u ≈ 0,05 místo 0,07), takže zmrzlá zemina je méně propustná a první fáze infiltrace bude pomalejší (Watanabe et al. 2013; Demand et al. 2019).
+  - **Izotopy:** při rychlejším mrznutí bývá efektivní frakcionace led–voda menší než rovnovážná (Lehmann & Siegenthaler 1991). Neznačený δ¹⁸O to ukáže.
+  - **Termistory:** kalibrační body rozšířeny na −12 … +20 °C a referenční odpor zvýšen na 40 kΩ (střed rozsahu). Citlivost zůstává ≈ 69 µV na 0,01 K, samoohřev ≈ 1 mK (E6-V09).
+- **Izolace:** pro infiltraci použít dvoudílný izolační box ≥ 60 mm.
 - **Teplota vody:** Mariottova láhev, kontaktní písek i disk na 0–0,5 °C (ledová lázeň). Voda 20 °C by nejdřív roztála stopu pod diskem.
 - **Teploty bez přerušení:** logger stojí na vozíku mezi mrazákem a stolem a kabely (≥ 3 m) se nikdy neodpojují. Záznam teplot je tak spojitý od zmrazení po konec infiltrace. Kalibrace zůstává platná, protože se nemění řetězec.
 - **Přenos:** kolona + kužel + stojan jako jeden celek, ≤ 10 min. Zapsat čas začátku a konce.
@@ -188,7 +196,7 @@ Vzorek se zmrazí v truhlicovém mrazáku, pak se vyndá a infiltrace běží na
 
 ## 8. Otevřené otázky
 
-1. **Typ zeminy a cílová vlhkost při zmrazení.** Na nich závisí nezamrzlá voda i to, zda vůbec něco proteče (Stadler 2000). Ve výpočtech předpokládám θ = 0,30 a θ_u(−3 °C) = 0,07.
+1. **Typ zeminy a cílová vlhkost při zmrazení.** Na nich závisí nezamrzlá voda i to, zda vůbec něco proteče (Stadler 2000). Ve výpočtech předpokládám θ = 0,30 a θ_u(−10 °C) = 0,05.
 2. **Nastavení h_b.** Navrhuji začít na −5 cm. h_b = 0 jako srovnávací běh s původním „volným“ výtokem?
 3. **Má zůstat scénář „celý vzorek pod 0 °C po celou dobu“?** Pak by odtok byl možný jen po tání. Navržený protokol místo toho drží dno těsně nad 0 °C.
 4. **Kryostat:** je k dispozici, nebo ho počítat do rozpočtu? Bez něj kužel neudržíte nad 0 °C při současném mrznutí shora.

@@ -60,8 +60,8 @@ LVDT = [("LVDT-0", 0, 0.0), ("LVDT-1", 90, 38.0), ("LVDT-2", 270, 38.0)]
 # --- materiálové a provozní předpoklady pro bilance ------------------------
 POROSITY = 0.45
 THETA_TOT = 0.30       # celkový obsah vody (kapalná + led) před zmrazením
-THETA_UNFROZEN = 0.07  # nezamrzlá voda při −3 °C (prachovitá hlína, odhad)
-T_INIT = -3.0
+THETA_UNFROZEN = 0.05  # nezamrzlá voda při −10 °C (prachovitá hlína, odhad)
+T_INIT = -10.0         # teplota zmrazení v mrazáku (potvrzeno)
 C_FROZEN = 1.9e6       # objemová tepelná kapacita zmrzlé zeminy [J m-3 K-1]
 L_F = 334e3            # skupenské teplo tání [J kg-1]
 RHO_W = 1000.0
