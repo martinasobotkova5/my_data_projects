@@ -105,3 +105,30 @@ for lab in (200, 500):
     row(f"značka δ²H = +{lab} ‰ vs. pozadí −70 ‰", f"{20 / (lab + 70) * 100:.0f}", "% signálu",
         "posun δ²H frakcionací vyjádřený v podílu značky")
 row("přesnost OA-ICOS δ²H", "0,5", "‰", f"≙ {0.5 / 270 * 100:.2f}–{0.5 / 570 * 100:.2f} % podílu značky")
+
+import termometrie as tm
+
+print("\n## 7. Měření teploty s přesností 0,01 °C\n")
+print("Termistor NTC 10 kΩ v polovičním můstku s referenčním odporem "
+      f"{tm.R_REF / 1000:.0f} kΩ, buzení {tm.V_EX} V jen po dobu měření.\n")
+print("| T [°C] | R_NTC [kΩ] | poměr X | citlivost dX/dT [1/K] | 0,01 K ≙ [µV] | samoohřev [mK] |\n|---|---|---|---|---|---|")
+for T in (-8, -3, 0, 5, 20):
+    rt, x, dx, pw, dt = tm.half_bridge(T)
+    print(f"| {T} | {rt / 1000:.2f} | {x:.4f} | {dx:.5f} | {abs(dx) * 0.01 * tm.V_EX * 1e6:.0f} | {dt * 1000:.1f} |")
+print("\n**Rozpočet nejistoty (standardní nejistoty, mK)**\n")
+print("| složka | u [mK] |\n|---|---|")
+for name, u in tm.BUDGET:
+    print(f"| {name} | {u} |")
+u, U = tm.combined()
+print(f"| **kombinovaná u_c** | **{u:.1f}** |")
+print(f"| **rozšířená U (k = 2)** | **{U:.1f}** |")
+print("\nPodmínka: kalibrovat celý řetězec (čidlo + kabel + stejný logger a R_ref), ne jen čidlo.\n")
+
+ua, t_cold, t_melt = tm.warming()
+print("## 8. Kolona mimo mrazák (laboratoř 20 °C, izolace 30 mm)\n")
+print("| veličina | hodnota | jednotka | poznámka |\n|---|---|---|---|")
+row("tepelná propustnost izolace UA", f"{ua:.3f}", "W/K", "plášť + víko + kužel")
+row("tepelný zisk při 20 °C", f"{ua * 20:.1f}", "W")
+row("ohřev −3 → 0 °C", f"{t_cold:.1f}", "h", "jen citelný chlad, bez infiltrace")
+row("roztátí veškerého ledu", f"{t_melt:.0f}", "h", "průnik značky trvá 44–111 h")
+row("citelné teplo přítoku vody 20 °C", "84", "J/ml", "1 ml roztaví 0,25 g ledu u disku")

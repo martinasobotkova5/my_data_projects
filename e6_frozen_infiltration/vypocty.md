@@ -79,3 +79,41 @@ Generováno skriptem `src/vypocty.py` z `src/params.py`.
 | značka δ²H = +200 ‰ vs. pozadí −70 ‰ | 7 | % signálu | posun δ²H frakcionací vyjádřený v podílu značky |
 | značka δ²H = +500 ‰ vs. pozadí −70 ‰ | 4 | % signálu | posun δ²H frakcionací vyjádřený v podílu značky |
 | přesnost OA-ICOS δ²H | 0,5 | ‰ | ≙ 0.19–0.09 % podílu značky |
+
+## 7. Měření teploty s přesností 0,01 °C
+
+Termistor NTC 10 kΩ v polovičním můstku s referenčním odporem 30 kΩ, buzení 0.5 V jen po dobu měření.
+
+| T [°C] | R_NTC [kΩ] | poměr X | citlivost dX/dT [1/K] | 0,01 K ≙ [µV] | samoohřev [mK] |
+|---|---|---|---|---|---|
+| -8 | 52.60 | 0.6368 | -0.01308 | 65 | 1.3 |
+| -3 | 39.85 | 0.5705 | -0.01335 | 67 | 1.4 |
+| 0 | 33.90 | 0.5305 | -0.01328 | 66 | 1.4 |
+| 5 | 26.09 | 0.4652 | -0.01279 | 64 | 1.4 |
+| 20 | 12.55 | 0.2950 | -0.00963 | 48 | 1.2 |
+
+**Rozpočet nejistoty (standardní nejistoty, mK)**
+
+| složka | u [mK] |
+|---|---|
+| reference thermometer (SPRT / Pt100, cert. U = 5 mK, k = 2) | 2.5 |
+| bath inhomogeneity and stability | 2.0 |
+| Steinhart–Hart fit residual | 1.0 |
+| R_ref drift / tempco (2 ppm/K × 15 K, same logger as in calibration) | 0.6 |
+| logger resolution and noise (24 bit, averaged) | 0.3 |
+| self-heating difference bath vs. soil | 1.0 |
+| sensor drift between calibrations (checked at ice point) | 2.0 |
+| **kombinovaná u_c** | **4.1** |
+| **rozšířená U (k = 2)** | **8.2** |
+
+Podmínka: kalibrovat celý řetězec (čidlo + kabel + stejný logger a R_ref), ne jen čidlo.
+
+## 8. Kolona mimo mrazák (laboratoř 20 °C, izolace 30 mm)
+
+| veličina | hodnota | jednotka | poznámka |
+|---|---|---|---|
+| tepelná propustnost izolace UA | 0.097 | W/K | plášť + víko + kužel |
+| tepelný zisk při 20 °C | 1.9 | W |  |
+| ohřev −3 → 0 °C | 0.6 | h | jen citelný chlad, bez infiltrace |
+| roztátí veškerého ledu | 8 | h | průnik značky trvá 44–111 h |
+| citelné teplo přítoku vody 20 °C | 84 | J/ml | 1 ml roztaví 0,25 g ledu u disku |

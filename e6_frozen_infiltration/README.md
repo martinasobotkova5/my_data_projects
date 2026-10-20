@@ -4,11 +4,12 @@ Revize dvou původních schémat: řez minidiskem na koloně ⌀100 × 100 a ses
 
 | soubor | obsah |
 |---|---|
-| `vykresy/E6_drawings.pdf` | 7 listů A3, anglicky (PNG po listech ve stejné složce) |
+| `vykresy/E6_drawings.pdf` | 9 listů A3, anglicky (PNG po listech ve stejné složce) |
 | `vypocty.md` | kontrolní a návrhové výpočty (generované) |
 | `src/params.py` | všechny rozměry a předpoklady na jednom místě |
 | `src/vykresy.py`, `src/drafting.py` | generátor výkresů (matplotlib) |
 | `src/vypocty.py` | generátor `vypocty.md` |
+| `src/termometrie.py` | kanály teploty, můstek NTC, rozpočet nejistoty, ohřev kolony mimo mrazák |
 
 Regenerace po změně parametru: `cd src && python vykresy.py && python vypocty.py > ../vypocty.md`
 
@@ -104,6 +105,8 @@ Ověřeno vyhledáním; DOI uvádím jen tam, kde se je podařilo potvrdit.
 | E6-V05 | Detail disk–zemina 2 : 1, úpravy hlavy AMDI |
 | E6-V06 | Hydraulické a tepelné schéma, ventily, okrajové podmínky, bilance |
 | E6-V07 | Protokol běhu: průběh teplot a kroky s kritérii go/no-go |
+| E6-V08 | Měření teploty v truhlicovém mrazáku: rozmístění 20 kanálů uvnitř a vně, límec s průchodkami |
+| E6-V09 | Termistorová sonda ⌀1,6, uložení ve stěně, polomůstek, kalibrace, rozpočet nejistoty |
 
 Klíčová rozhodnutí:
 - Vzorek zůstává **⌀100 × 100 mm (vnitřní)**.
@@ -111,13 +114,38 @@ Klíčová rozhodnutí:
 - Plovoucí izolační prstenec na mezikruží nese desky tepelného toku a termistorové jehly. Hlava i prstenec mají vůli 2 mm a volně se pohybují se zdvihem.
 - Zemina se zmrazuje shora dolů a pak se celá ustálí na −3 °C. Infiltrace běží při vzduchu +0,5 °C a kuželu +0,3 °C. Jde o scénář „tání sněhu na zmrzlou půdu“, kdy se dno rozmrazí jen v tenké vrstvě.
 
-## 5. Otevřené otázky
+## 5. Varianta: zmrazení v mrazáku a měření teploty (doplněno)
+
+Postup podle upřesnění: vzorek se zmrazí v mrazáku. Pak začne infiltrace minidiskem AMDI:
+- Kubát J.-F., Zanna F., Mildner M., Sněhota M. (2025): *Low-cost autonomous 3D-printed mini disk infiltrometer.* J. Hydrol. 663A, 134212. doi:10.1016/j.jhydrol.2025.134212.
+- Preprint SSRN: doi:10.2139/ssrn.5280249.
+- Repozitář: https://github.com/kubatjanf/AMDI. Disk ⌀45 × 3 mm ze spékané nerezi, ~150 ml vody, čidlo TMS-4 v Mariottově komoře.
+
+**Infiltrace mimo mrazák.** Pokud se vzorek po zmrazení vyndá do laboratoře (20 °C), získá i přes izolaci 30 mm zhruba 1,9 W tepla. To znamená:
+- Na 0 °C se ohřeje asi za 0,6 h.
+- Veškerý led roztaje asi za 8 h, a to bez započtení tepla z infiltrující vody.
+- Průnik značky přitom trvá 44–111 h, takže by většina běhu proběhla v rozmrzlé zemině.
+
+Doporučuji proto infiltraci nechat **v mrazáku**, s regulátorem nastaveným na +0,5 °C (výpočty v `vypocty.md`, část 8). Mrazák tak slouží zároveň jako klimakomora. Truhlicový typ se otevírá shora, což vyhovuje disku nahoře.
+
+**Měření teploty** (E6-V08, E6-V09, `vypocty.md` část 7):
+- **Čidla:** NTC 10 kΩ ve skleněné perličce v nerezové trubičce ⌀1,6 mm (= 1/16″). Těsní se do standardního HPLC šroubení na nalepeném nálitku stěny.
+- **Zapojení:** poloviční můstek s referenčním odporem 30 kΩ (0,01 %, 2 ppm/K) na stávajícím CR3000. Buzení 0,5 V jen po dobu měření, samoohřev ≈ 1,4 mK.
+- **Rozlišení:** 0,01 K odpovídá ≈ 66 µV.
+- **Nejistota:** rozšířená nejistota U ≈ 8 mK (k = 2) splní požadavek 0,01 °C. Podmínkou je kalibrace celého řetězce (sonda + kabel + stejný logger) v míchané lázni proti referenčnímu teploměru v 11 bodech od −8 do +20 °C a fit Steinhart–Hart. Nulový bod se kontroluje v Dewarově nádobě s ledem před a po každém běhu.
+- **Uvnitř mrazáku (16 kanálů):** 6 sond ve stěně kolony, 2 jehly v plovoucím prstenci, rozhraní disk/písek, kužel, voda v Mariottově láhvi, odtok, 3 stíněná čidla vzduchu v různých výškách, referenční cela s čistou vodou (její plato 0 °C při mrznutí kontroluje celý řetězec přímo na místě).
+- **Vně (4 kanály):** vzduch v laboratoři, teplota u referenčních odporů v boxu loggeru, sonda v ledové lázni, pevný odpor 30 kΩ pro kontrolu driftu loggeru.
+- **Kabely:** vedou přes límec (XPS 50 mm) vložený mezi tělo a víko mrazáku. Stěny truhly **nevrtat**, vedou v nich chladivo. Na studené straně nesmí být konektory. Ventilátor a lahve s vodou tlumí cyklování kompresoru.
+
+## 6. Otevřené otázky
 
 1. **Typ zeminy a cílová vlhkost při zmrazení.** Na nich závisí nezamrzlá voda i to, zda vůbec něco proteče (Stadler 2000). Ve výpočtech předpokládám θ = 0,30 a θ_u(−3 °C) = 0,07.
 2. **Nastavení h_b.** Navrhuji začít na −5 cm. h_b = 0 jako srovnávací běh s původním „volným“ výtokem?
 3. **Má zůstat scénář „celý vzorek pod 0 °C po celou dobu“?** Pak by odtok byl možný jen po tání. Navržený protokol místo toho drží dno těsně nad 0 °C.
 4. **Kryostat:** je k dispozici, nebo ho počítat do rozpočtu? Bez něj kužel neudržíte nad 0 °C při současném mrznutí shora.
 5. **Frakční sběrač:** konkrétní typ (ISCO Foxy, Gilson…) a zda snese +4 °C. Podle toho upravím rozměry boxu.
-6. **Hlava AMDI:** navrhuji nízkoprofilovou variantu s externí Mariottovou láhví. Pokud chcete zachovat originální integrovaný zásobník, dá se to, ale s doplňováním během běhu a vyšším zatížením disku.
+6. **Mrazák „Kesa“:** značku ani typ se nepodařilo dohledat. Výkres E6-V08 předpokládá truhlicový mrazák s externím regulátorem. Prosím o přesný typ a vnitřní rozměry, upravím podle nich.
+7. **Infiltrace v mrazáku, nebo mimo něj?** Podle výpočtu doporučuji v mrazáku (viz bod 5).
+8. **Hlava AMDI:** navrhuji nízkoprofilovou variantu s externí Mariottovou láhví. Pokud chcete zachovat originální integrovaný zásobník, dá se to, ale s doplňováním během běhu a vyšším zatížením disku.
 
 > Výkresy jsou NÁVRH generovaný ze `src/params.py`. Před výrobou je musí zkontrolovat konstruktér. Ověřit je potřeba hlavně uložení kužele, rozměry šroubení a skutečné rozměry čidel.

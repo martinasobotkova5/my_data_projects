@@ -6,11 +6,12 @@ from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.patches import Circle, FancyBboxPatch, Rectangle
 
 import params as p
+import termometrie as tm
 from drafting import (BLUE, FROZEN, FS, FS_SMALL, INK, INSUL, METAL, PLASTIC, RED,
                       THICK, THIN, WATER, Sheet, View, table)
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "vykresy")
-TOTAL = 7
+TOTAL = 9
 BROWN = "#7a5a2a"
 FOAM = "#e7dcc6"
 
@@ -715,11 +716,209 @@ def sheet_v07(pdf):
     sh.save(pdf, os.path.join(OUT, "E6-V07_protocol.png"))
 
 
+# ---------------------------------------------------------------------------
+def shield(sh, x, y, name):
+    """Air sensor in a small radiation shield (stacked plates)."""
+    for k in range(3):
+        sh.ax.add_patch(Rectangle((x - 4, y + k * 1.6), 8, 0.9, fc="white", ec=INK, lw=THIN, zorder=4))
+    sh.ax.add_patch(Circle((x, y + 1.6), 0.9, fc=INK, ec="none", zorder=5))
+    sh.text(x + 5.5, y + 1.6, name, fontsize=FS_SMALL, va="center", weight="bold")
+
+
+def sheet_v08(pdf):
+    sh = Sheet("Thermometry – chest freezer layout", "E6-V08", "–", 8, TOTAL,
+               "temperature channels inside and outside the freezer; not to scale")
+    ax = sh.ax
+    # freezer body (walls hatched), collar, lid
+    ax.add_patch(Rectangle((30, 62), 160, 150, fc=INSUL, ec=INK, lw=THICK, hatch="oo", zorder=1))
+    ax.add_patch(Rectangle((38, 70), 144, 142, fc="#f5f9fc", ec=INK, lw=THIN, zorder=1.2))
+    ax.add_patch(Rectangle((150, 70), 32, 34, fc=INSUL, ec=INK, lw=THIN, hatch="oo", zorder=1.3))
+    sh.text(166, 96, "compressor\nstep", fontsize=FS_SMALL - 0.5, ha="center", va="center", zorder=2)
+    ax.add_patch(Rectangle((30, 212), 160, 14, fc="#e8dcc2", ec=INK, lw=THICK, hatch="////", zorder=1))
+    ax.add_patch(Rectangle((28, 226), 164, 9, fc="white", ec=INK, lw=THICK, zorder=1))
+    sh.text(110, 230.5, "original lid (hinged on the collar)", fontsize=FS_SMALL, ha="center", va="center")
+    for i, (gx, lab) in enumerate([(70, "G1"), (95, "G2"), (120, "G3"), (145, "G4")]):
+        ax.add_patch(Circle((gx, 219), 2.4, fc="white", ec=INK, lw=THIN, zorder=3))
+        sh.text(gx + 3.2, 221.5, lab, fontsize=FS_SMALL - 0.5)
+    sh.text(32, 240, "collar: XPS 50 mm + plywood skin, between body and lid; cable glands G1–G4 in the collar",
+            fontsize=FS_SMALL)
+    # drain port
+    ax.add_patch(Rectangle((38, 74), 4, 4, fc="white", ec=INK, lw=THIN, zorder=3))
+    sh.text(26, 76, "drain\nport", fontsize=FS_SMALL - 0.5, ha="right", va="center")
+
+    # column on stand
+    cx = 105
+    ax.add_patch(Rectangle((cx - 16, 128), 32, 46, fc=INSUL, ec=INK, lw=THIN, hatch="oo", zorder=2))
+    ax.add_patch(Rectangle((cx - 9, 130), 18, 40, fc=FROZEN, ec=INK, lw=THIN, zorder=2.2))
+    ax.add_patch(Rectangle((cx - 5, 170), 10, 5, fc=PLASTIC, ec=INK, lw=THIN, zorder=2.3))
+    from matplotlib.patches import Polygon
+    ax.add_patch(Polygon([(cx - 12, 128), (cx + 12, 128), (cx + 2, 114), (cx - 2, 114)], closed=True,
+                         fc=METAL, ec=INK, lw=THIN, zorder=2))
+    for xl in (cx - 14, cx + 14):
+        ax.plot([xl, xl], [128, 70], c=INK, lw=THICK, zorder=1.5)
+    ax.plot([cx - 16, cx + 16], [128, 128], c=INK, lw=THICK, zorder=2.4)
+    sh.text(cx, 150, "column\n(E6-V01)", fontsize=FS_SMALL - 0.5, ha="center", va="center", zorder=3)
+    for k, yy in enumerate((166, 160, 152, 144, 138, 133)):
+        ax.add_patch(Circle((cx - 7.5 + (k % 2) * 15, yy), 0.9, fc=INK, ec="none", zorder=3))
+    # Mariotte bottle
+    ax.add_patch(Rectangle((48, 136), 18, 40, fc="white", ec=INK, lw=THIN, zorder=2))
+    ax.add_patch(Rectangle((48, 136), 18, 26, fc=WATER, ec="none", zorder=2.1))
+    ax.add_patch(Rectangle((45, 130), 24, 6, fc="#eee", ec=INK, lw=THIN, zorder=2))
+    sh.text(57, 133, "balance", fontsize=FS_SMALL - 1, ha="center", va="center", zorder=3)
+    ax.add_patch(Rectangle((45, 70), 24, 60, fc="none", ec="#888", lw=THIN, ls="--", zorder=1.4))
+    sh.text(57, 100, "shelf", fontsize=FS_SMALL - 1, ha="center", va="center", color="#666")
+    pipe(sh, [(66, 142), (80, 142), (80, 178), (cx - 2, 178), (cx - 2, 175)])
+    ax.add_patch(Circle((57, 145), 0.9, fc=INK, ec="none", zorder=3))
+    # outflow → collector inside
+    pipe(sh, [(cx, 114), (cx, 108), (130, 108), (130, 100)])
+    ax.add_patch(Rectangle((112, 72), 34, 20, fc="#eef3e9", ec="#4a7", lw=THIN, zorder=2))
+    for i in range(5):
+        ax.add_patch(Rectangle((114.5 + i * 6.2, 74), 4.5, 8, fc="white", ec=INK, lw=THIN, zorder=3))
+    ax.add_patch(Rectangle((127, 96), 6, 4, fc=WATER, ec=INK, lw=THIN, zorder=3))
+    sh.text(129, 89, "fraction collector", fontsize=FS_SMALL - 1, ha="center", zorder=4)
+    ax.add_patch(Circle((cx + 1.5, 111), 0.9, fc=INK, ec="none", zorder=3))
+    # reference cell, thermal mass, fan
+    ax.add_patch(Rectangle((80, 72), 8, 14, fc=WATER, ec=INK, lw=THIN, zorder=2))
+    ax.add_patch(Circle((84, 79), 0.9, fc=INK, ec="none", zorder=3))
+    sh.text(84, 88, "Tcell", fontsize=FS_SMALL, ha="center", weight="bold")
+    for i in range(3):
+        ax.add_patch(Rectangle((153 + i * 9, 104), 7, 22, fc="#d9e7f3", ec=INK, lw=THIN, zorder=2))
+    sh.text(166, 128, "water bottles\n(thermal mass)", fontsize=FS_SMALL - 1, ha="center", va="bottom")
+    ax.add_patch(Circle((168, 196), 6, fc="white", ec=INK, lw=THIN, zorder=2))
+    ax.plot([162, 174], [196, 196], c=INK, lw=THIN, zorder=3)
+    ax.plot([168, 168], [190, 202], c=INK, lw=THIN, zorder=3)
+    sh.text(168, 186, "fan 12 V\n(mixing)", fontsize=FS_SMALL - 1, ha="center", va="top")
+    shield(sh, 140, 74 + 30, "A1")
+    shield(sh, 135, 150, "A2")
+    shield(sh, 140, 200, "A3")
+    ax.add_patch(Rectangle((120, 202), 8, 5, fc="white", ec=INK, lw=THIN, zorder=3))
+    sh.text(124, 209, "C", fontsize=FS_SMALL, ha="center", weight="bold")
+    # cable bundles to glands
+    ax.plot([cx + 16, cx + 22, 70, 70], [160, 205, 205, 216.6], c="#6a3d9a", lw=1.0, zorder=2.5)
+    ax.plot([140, 140, 95, 95], [203, 208, 208, 216.6], c="#6a3d9a", lw=1.0, zorder=2.5)
+    pipe(sh, [(cx + 4, 175), (cx + 4, 190), (120, 190), (120, 216.6)], c=BLUE, lw=1.0)
+    ax.plot([168, 168, 145, 145], [202, 210, 210, 216.6], c="#555", lw=1.0, zorder=2.5)
+
+    # outside: logger, controller, ice point, lab air
+    box(sh, 200, 178, 44, 40, "", fc="#f1eff7")
+    sh.text(222, 214, "logger box", fontsize=FS_SMALL, ha="center", weight="bold")
+    sh.text(222, 196, "CR3000 (28 SE ch.)\nR_ref 30 kΩ 0.01 %\n2 ppm/K, on Al block\nLlog, Rchk",
+            fontsize=FS_SMALL - 1, ha="center", va="center")
+    ax.plot([70, 70, 200], [235 + 6, 246, 246], c="#6a3d9a", lw=1.0)
+    ax.plot([95, 95], [216.6, 241], c="#6a3d9a", lw=1.0)
+    ax.plot([70, 70], [221.4, 241], c="#6a3d9a", lw=1.0)
+    ax.plot([200, 200], [246, 218], c="#6a3d9a", lw=1.0)
+    sh.text(150, 248, "shielded PTFE cables, no connectors on the cold side", fontsize=FS_SMALL - 0.5,
+            ha="center", color="#6a3d9a")
+    box(sh, 200, 130, 44, 26, "", fc="#fbeee3")
+    sh.text(222, 143, "controller C\nrelay → compressor\nset-point −3 / +0.5 °C\n(own Pt100, not logged)",
+            fontsize=FS_SMALL - 1, ha="center", va="center")
+    ax.plot([124, 124, 196, 196, 200], [207, 212, 212, 143, 143], c="#a05a20", lw=0.8, ls="--")
+    box(sh, 200, 84, 44, 34, "", fc="white")
+    ax.add_patch(Rectangle((210, 88), 24, 22, fc="#e8f1f8", ec=INK, lw=THIN, hatch="..", zorder=3))
+    sh.text(222, 113, "ICE: ice-point Dewar", fontsize=FS_SMALL - 0.5, ha="center")
+    sh.text(222, 99, "crushed ice +\npure water", fontsize=FS_SMALL - 1, ha="center", va="center", zorder=4)
+    shield(sh, 212, 66, "L1")
+    sh.text(212, 62, "lab air", fontsize=FS_SMALL - 1, ha="center", va="top")
+
+    rows = [[c[0], c[1], c[2]] for c in tm.CHANNELS]
+    sh.heading(252, 278, "Temperature channels")
+    table(sh, 252, 274, ["ID", "location", "in/out"], rows, [16, 120, 16], row_h=4.3)
+    sh.text(252, 180, "Rules\n"
+            "• Never drill the freezer walls (refrigerant lines inside); use the collar.\n"
+            "• One logger, one R_ref, one set of cables for calibration and runs.\n"
+            "• Logger stays outside at room temperature; log Llog next to R_ref.\n"
+            "• Excitation 0.5 V for ~50 ms per reading → self-heating ≈ 1.4 mK.\n"
+            "• Check ICE (0.000 °C) before and after each run; drift > 3 mK → recalibrate.\n"
+            "• Tcell shows the 0 °C freezing plateau of pure water during freezing:\n"
+            "  an in-situ check of the whole chain at the most important temperature.\n"
+            "• Fan + water bottles damp the compressor cycling (typ. ±2 K → < ±0.3 K\n"
+            "  at A2); the column insulation damps it further.",
+            fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.save(pdf, os.path.join(OUT, "E6-V08_thermometry_layout.png"))
+
+
+def sheet_v09(pdf):
+    sh = Sheet("Thermistor probe, circuit and calibration", "E6-V09", "2 : 1 / 1 : 1", 9, TOTAL,
+               "probe ⌀1.6 = 1/16\" so it seals in a standard HPLC compression fitting")
+    v = View(sh, 35, 240, 2.0, "PROBE P1 (wall probe, tip at r 9)  2 : 1", (115, 276))
+    L = 60.0
+    v.rect(0, -0.8, L, 0.8, fc="#d5d8dc", lw=THICK)
+    v.rect(0.3, -0.5, 9, 0.5, fc="#b8a37a", lw=THIN)
+    v.circle(1.6, 0, 0.45, fc=INK, lw=0)
+    v.rect(9, -0.5, L, 0.5, fc="#efe6d2", lw=THIN, hatch="....")
+    v.rect(L, -1.4, L + 8, 1.4, fc="#9aa3ab", lw=THIN)
+    v.rect(L + 8, -0.9, L + 22, 0.9, fc="#6a3d9a", lw=THIN)
+    v.dim_h(0, L, -0.8, -8, "60 (sheath AISI 316, ⌀1.6 × 0.2)", side="below")
+    v.dim_h(0, 9, 0.8, 5, "9")
+    v.note(1.6, 0, "NTC 10 kΩ glass bead ⌀0.8", 4, 14, ha="left")
+    v.note(5, 0.3, "thermally conductive epoxy", 26, 14, ha="left")
+    v.note(30, 0.3, "potting epoxy (low-T grade)", 48, 9, ha="left")
+    v.note(L + 4, -1.4, "crimp sleeve + heat-shrink", L + 4, -12, ha="left")
+    v.note(L + 18, 0.9, "PTFE 2 × 0.25 mm² + shield", L + 14, 7, ha="left")
+    # installation sketch
+    w = View(sh, 85, 168, 1.0, "INSTALLATION (section, 1 : 1)", (85, 200))
+    w.rect(-5, -12, 0, 12, fc="#dfeef5", hatch="\\\\\\\\")
+    w.rect(0, -6, 10, 6, fc="#dfeef5", lw=THIN)
+    w.rect(10, -4, 20, 4, fc=METAL, lw=THIN)
+    w.rect(-5 - 41, -12, -5, 12, fc=FROZEN, lw=THIN)
+    w.line([(-5 - 41, 0), (20, 0)], lw=1.6, c="#444")
+    w.line([(20, 0), (60, 0)], lw=1.0, c="#6a3d9a")
+    w.rect(20, -12, 50, 12, fc=INSUL, lw=THIN, hatch="oo", z=1)
+    w.circle(-46, 0, 1.2, fc=INK, lw=0)
+    w.note(-2.5, 10, "PMMA wall 5, hole ⌀1.7", -30, 22, ha="left")
+    w.note(5, 6, "PMMA boss 12×12×10 bonded, 1/4\"-28", 8, 18, ha="left")
+    w.note(15, 4, "1/16\" fitting + PTFE ferrule", 30, 13, ha="left")
+    w.note(-46, 0, "tip at r 9 (soil)", -46, -18, ha="left")
+    w.note(35, -12, "Kaiflex 30", 52, -18)
+    # circuit
+    c = View(sh, 255, 214, 1.0, "HALF-BRIDGE (ratiometric)", (305, 276))
+    c.line([(0, 40), (0, 30)], lw=1.0)
+    c.text(0, 42, "Vx 0.5 V (switched)", fontsize=FS_SMALL, ha="center", va="bottom")
+    c.rect(-4, 14, 4, 30, fc="white", lw=THIN)
+    c.text(6, 22, f"R_ref {tm.R_REF / 1000:.0f} kΩ\n0.01 %, 2 ppm/K", fontsize=FS_SMALL, va="center")
+    c.line([(0, 14), (0, 8), (40, 8)], lw=1.0)
+    c.text(42, 8, "SE input → V", fontsize=FS_SMALL, va="center")
+    c.rect(-4, -10, 4, 6, fc="#e6d3a3", lw=THIN)
+    c.text(6, -2, "NTC (in freezer)\nX = V / Vx\nR_T = R_ref · X / (1 − X)", fontsize=FS_SMALL, va="center")
+    c.line([(0, 8), (0, 6)], lw=1.0)
+    c.line([(0, -10), (0, -16)], lw=1.0)
+    c.line([(-5, -16), (5, -16)], lw=1.0)
+    c.text(0, -19, "AG", fontsize=FS_SMALL, ha="center", va="top")
+    c.text(-8, 0, "2 m cable:\nlead R ≈ 0.4 Ω\n≙ 0.3 mK", fontsize=FS_SMALL - 0.5, ha="right", va="center")
+    # sensitivity + budget tables
+    rows = []
+    for T in (-8, -3, 0, 5, 20):
+        rt, x, dx, pw, dt = tm.half_bridge(T)
+        rows.append([f"{T}", f"{rt / 1000:.1f}", f"{x:.4f}", f"{abs(dx) * 0.01 * tm.V_EX * 1e6:.0f}", f"{dt * 1000:.1f}"])
+    sh.heading(30, 128, "Bridge sensitivity")
+    table(sh, 30, 124, ["T °C", "R_T kΩ", "X", "0.01 K ≙ µV", "self-heat mK"], rows, [16, 18, 18, 24, 24], row_h=4.4)
+    u, U = tm.combined()
+    brows = [[n, f"{x:.1f}"] for n, x in tm.BUDGET] + [["combined standard uncertainty u_c", f"{u:.1f}"],
+                                                       ["expanded uncertainty U (k = 2)", f"{U:.1f}"]]
+    sh.heading(140, 128, "Uncertainty budget (mK)")
+    table(sh, 140, 124, ["component", "u"], brows, [92, 12], row_h=4.4)
+    sh.heading(252, 166, "Calibration procedure")
+    sh.text(252, 162,
+            "1  Assemble probes with their final cables; connect to the run logger.\n"
+            "2  Stirred bath (ethanol–water), reference SPRT/Pt100 with certificate.\n"
+            "3  Points: −8, −5, −3, −2, −1, 0 (ice point), +1, +3, +5, +10, +20 °C;\n"
+            "   ≥ 20 min per point, 10 readings averaged, probes within 20 mm of ref.\n"
+            "4  Fit Steinhart–Hart per probe: 1/T = a + b ln R + c (ln R)³;\n"
+            "   accept if all residuals < 2 mK.\n"
+            "5  Ice-point check of every probe before and after each run.\n"
+            "6  Recalibrate every 6 months or when ICE drift > 3 mK.\n"
+            "7  Store coefficients with probe ID in the data repository.",
+            fontsize=FS_SMALL, va="top", linespacing=1.5)
+    sh.save(pdf, os.path.join(OUT, "E6-V09_thermistor_probe.png"))
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
         if f.endswith((".png", ".pdf")):
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E6_drawings.pdf")) as pdf:
-        for fn in (sheet_v01, sheet_v02, sheet_v03, sheet_v04, sheet_v05, sheet_v06, sheet_v07):
+        for fn in (sheet_v01, sheet_v02, sheet_v03, sheet_v04, sheet_v05, sheet_v06, sheet_v07,
+                   sheet_v08, sheet_v09):
             fn(pdf)
