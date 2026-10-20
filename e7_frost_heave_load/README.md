@@ -6,6 +6,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v tištěné cele z PETG-CF, v rámu z Al pr
 |---|---|
 | `vykresy/E7_drawings.pdf` | 6 listů A3, anglicky (PNG po listech ve stejné složce) |
 | `src/sensors.py` | výběr čidel a plán kanálů CR1000 |
+| `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, obě v mrazáku (+ STL a PNG náhledy) |
 | `vypocty.md` | síly, tuhost rámu, teplotní artefakt, napětí v cele, siloměry |
 | `src/params.py` | všechny rozměry a předpoklady |
 | `src/vykresy.py`, `src/vypocty.py` | generátory |
@@ -134,7 +135,27 @@ Rám jsem zmenšil, aby se obě sestavy vešly vedle sebe na vanu (≈ 530 × 34
 - CR1000 se už nevyrábí (nástupce CR1000X / CR1000Xe s 24bitovým převodníkem). Stávající stačí. Musí ale zůstat mimo mrazák, protože pracuje v rozsahu −25 … +50 °C.
 - Žádný siloměr jsem nenašel se standardní kompenzací do −20/−30 °C. Logovat teplotu siloměrů (TLC) a korigovat, případně poptat rozšířený rozsah (Interface, Lorenz).
 
-## 8. Doporučení a otevřené otázky
+## 8. 3D modely pro Onshape (`3d/`)
+
+| soubor | obsah |
+|---|---|
+| `E7_variant_A.step` | varianta A – rám, cela, vzorek, páka se závažím, siloměr Interface SSM, 2× LVDT DCTH400, Invarová reference, termistory 109SS |
+| `E7_variant_B.step` | varianta B – rám, cela s Al objímkou, 2× HBM C9C, Al distanční trubka, šroub M24 s ručním kolem, LVDT, termistory |
+| `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku (stěny mrazáku průhledné, ≈ rozměry) |
+
+**Import do Onshape:**
+1. Na stránce dokumentů *Create → Import*, nebo v otevřeném dokumentu tlačítko *Import*.
+2. Vybrat soubor `.step`.
+3. Sestava se načte po jednotlivých dílech s názvy (např. „LC-T HBM C9C 20 kN“, „cell PETG-CF“) a barvami.
+4. Jednotky jsou mm, osa z míří nahoru, z = 0 je horní líc základové desky.
+
+**Zjednodušení modelu:**
+- Drážky profilů, závity, kabely a spojovací materiál nejsou modelované.
+- Čidla mají obalové rozměry podle katalogů. Interface SSM je kvádr ≈ 51 × 19 × 64 mm [U], přesný tvar doplnit z modelu výrobce. Interface, HBM i RDP nabízejí ke stažení CAD modely svých čidel, ty lze v Onshape vložit místo zjednodušených těles.
+
+Generuje `src/model3d.py` z `src/params.py`, náhledy `src/render3d.py`.
+
+## 9. Doporučení a otevřené otázky
 
 1. **Program regulátoru:** „Set A“ (24 h +10 °C, pak lineární rampy 192 h mezi −10 a +10 °C) lze použít přímo. Teplota se ale mění pomalu a stále, takže čelo promrzání postupuje pomalu. Pro jasné kroky zvážit výdrže na −10 °C a +10 °C.
 2. **Směr promrzání:** v mrazáku promrzá vzorek ze všech stran. Izolace stěn a mezikus G10 pod podstavcem vedou k promrzání hlavně shora přes Al píst. Literatura doporučuje termostatované koncové desky a mrazák jen jako ochranné prostředí (Jin et al. 2019). Je to možné rozšíření.
