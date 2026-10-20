@@ -67,3 +67,16 @@ L_F = 334e3            # skupenské teplo tání [J kg-1]
 RHO_W = 1000.0
 Q_DISK_MM_H = (2.0, 5.0)  # rychlost infiltrace vztažená na plochu disku
 FRACTION_ML = (2.0, 5.0)
+
+# --- skutečná sestava podle fotek (≈ odhad z fotek, ZMĚŘIT) ----------------
+FRZ_L, FRZ_W, FRZ_H = 900.0, 550.0, 650.0   # vnitřek truhlicového mrazáku
+FROST = 15.0                                 # námraza na stěnách (fotka 1)
+MAT_T = 20.0                                 # černá izolační podložka pod vanou
+TRAY_L, TRAY_W, TRAY_H = 530.0, 340.0, 40.0  # nerezová vana
+HOLDER_WALL = 4.0                            # tištěný držák PETG, ⌀100 vnitřní
+HOLDER_FLANGE_D, HOLDER_FLANGE_T = 160.0, 10.0
+AL_D, AL_T = 112.0, 20.0                     # Al deska na povrchu vzorku
+AL_HOLE_NOW, AL_RECESS_NOW = 26.0, 60.0      # současný otvor / vybrání (fotka 5)
+AL_HOLE_NEW = 64.0                           # návrh: otvor pro tělo AMDI (ověřit ⌀ těla)
+AMDI_BODY_D = 60.0                           # ≈ vnější ⌀ těla AMDI (ověřit)
+STAND_H = 150.0                              # stojan pod kuželem (výška nožek)

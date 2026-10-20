@@ -4,7 +4,7 @@ Revize dvou původních schémat: řez minidiskem na koloně ⌀100 × 100 a ses
 
 | soubor | obsah |
 |---|---|
-| `vykresy/E6_drawings.pdf` | 9 listů A3, anglicky (PNG po listech ve stejné složce) |
+| `vykresy/E6_drawings.pdf` | 11 listů A3, anglicky (PNG po listech ve stejné složce) |
 | `vypocty.md` | kontrolní a návrhové výpočty (generované) |
 | `src/params.py` | všechny rozměry a předpoklady na jednom místě |
 | `src/vykresy.py`, `src/drafting.py` | generátor výkresů (matplotlib) |
@@ -107,6 +107,8 @@ Ověřeno vyhledáním; DOI uvádím jen tam, kde se je podařilo potvrdit.
 | E6-V07 | Protokol běhu: průběh teplot a kroky s kritérii go/no-go |
 | E6-V08 | Měření teploty v truhlicovém mrazáku: rozmístění 20 kanálů uvnitř a vně, límec s průchodkami |
 | E6-V09 | Termistorová sonda ⌀1,6, uložení ve stěně, polomůstek, kalibrace, rozpočet nejistoty |
+| E6-V10 | Skutečná sestava podle fotek: půdorys a řez mrazákem 1 : 5, zjištění a změny |
+| E6-V11 | Tištěný držák vzorku 1 : 1: kam umístit teploměry, TDR a desky tepelného toku |
 
 Klíčová rozhodnutí:
 - Vzorek zůstává **⌀100 × 100 mm (vnitřní)**.
@@ -137,7 +139,32 @@ Doporučuji proto infiltraci nechat **v mrazáku**, s regulátorem nastaveným n
 - **Vně (4 kanály):** vzduch v laboratoři, teplota u referenčních odporů v boxu loggeru, sonda v ledové lázni, pevný odpor 30 kΩ pro kontrolu driftu loggeru.
 - **Kabely:** vedou přes límec (XPS 50 mm) vložený mezi tělo a víko mrazáku. Stěny truhly **nevrtat**, vedou v nich chladivo. Na studené straně nesmí být konektory. Ventilátor a lahve s vodou tlumí cyklování kompresoru.
 
-## 6. Otevřené otázky
+## 6. Skutečná sestava podle fotek (E6-V10, E6-V11)
+
+**Co je na fotkách vidět:**
+- Truhlicový mrazák s programovatelným regulátorem. Program „Set A“: 24 h při +10 °C, pak kroky po 192 h střídavě −10 / +10 °C, lineárně. Hodiny regulátoru ukazují 29.02.2000.
+- Silná námraza na stěnách. Kabely vedou pod těsněním víka.
+- Nerezová vana ≈ 530 × 340 mm na černé izolační podložce.
+- Vzorek v průhledném tištěném držáku z PETG (⌀100 uvnitř, široká horní příruba) stojí přímo na vaně, takže nemá odtok.
+- Na vzorku leží hliníková deska ≈ ⌀112 × 20 mm se středovým otvorem ≈ ⌀26 a vybráním ≈ ⌀60.
+- Dva termistory jsou zapíchnuté svisle shora do písku.
+- Dvě desky tepelného toku jsou přilepené páskou: jedna na Al desce, druhá na vaně.
+
+**Navržené změny (červeně ve výkresech):**
+- **Odtok:** vzorek postavit na kónický odtok se stojanem ≈ 150 mm. Frakční sběrač stojí vedle na vaně, přepadová miska nastavuje h_b.
+- **Izolace:** kolem držáku izolační rukáv 30 mm.
+- **Al deska:** otvor rozšířit na ⌀64, aby disk AMDI dosáhl na zeminu. Deska tak zůstane jako chladná prstencová horní hranice.
+- **Kabely:** vést přes límec s průchodkami, ne pod víkem. Mrazák před během odmrazit a nastavit hodiny regulátoru.
+- **Teploměry:** svislé sondy shora nahradit vodorovnými sondami ve stěně v hloubkách 10–90 mm. Do držáku natisknout nálitky pro šroubení 1/16″. Dále:
+  - jehly 2 a 6 mm přes Al desku,
+  - Tplate ve vývrtu Al desky,
+  - Tdisc na kontaktu disku s pískem,
+  - Tcone ve dně,
+  - HF1 pod Al deskou,
+  - HF2 na plášti držáku (kontrola bočních ztrát),
+  - vzduch A1–A3 a referenční cela s čistou vodou.
+
+## 7. Otevřené otázky
 
 1. **Typ zeminy a cílová vlhkost při zmrazení.** Na nich závisí nezamrzlá voda i to, zda vůbec něco proteče (Stadler 2000). Ve výpočtech předpokládám θ = 0,30 a θ_u(−3 °C) = 0,07.
 2. **Nastavení h_b.** Navrhuji začít na −5 cm. h_b = 0 jako srovnávací běh s původním „volným“ výtokem?
@@ -145,7 +172,8 @@ Doporučuji proto infiltraci nechat **v mrazáku**, s regulátorem nastaveným n
 4. **Kryostat:** je k dispozici, nebo ho počítat do rozpočtu? Bez něj kužel neudržíte nad 0 °C při současném mrznutí shora.
 5. **Frakční sběrač:** konkrétní typ (ISCO Foxy, Gilson…) a zda snese +4 °C. Podle toho upravím rozměry boxu.
 6. **Mrazák „Kesa“:** značku ani typ se nepodařilo dohledat. Výkres E6-V08 předpokládá truhlicový mrazák s externím regulátorem. Prosím o přesný typ a vnitřní rozměry, upravím podle nich.
-7. **Infiltrace v mrazáku, nebo mimo něj?** Podle výpočtu doporučuji v mrazáku (viz bod 5).
-8. **Hlava AMDI:** navrhuji nízkoprofilovou variantu s externí Mariottovou láhví. Pokud chcete zachovat originální integrovaný zásobník, dá se to, ale s doplňováním během běhu a vyšším zatížením disku.
+7. **Rozměry ze sestavy:** změřit vnitřek mrazáku, vanu, držák (stěna, výška, příruba), Al desku (⌀, tloušťka, otvor) a vnější ⌀ těla AMDI. Kde je čidlo regulátoru? Co je černý kabel a modrá hadička (TDR?)?
+8. **Infiltrace v mrazáku, nebo mimo něj?** Podle výpočtu doporučuji v mrazáku (viz bod 5).
+9. **Hlava AMDI:** navrhuji nízkoprofilovou variantu s externí Mariottovou láhví. Pokud chcete zachovat originální integrovaný zásobník, dá se to, ale s doplňováním během běhu a vyšším zatížením disku.
 
 > Výkresy jsou NÁVRH generovaný ze `src/params.py`. Před výrobou je musí zkontrolovat konstruktér. Ověřit je potřeba hlavně uložení kužele, rozměry šroubení a skutečné rozměry čidel.

@@ -186,7 +186,8 @@ class View:
         k.setdefault("va", "center")
         k.setdefault("ha", "left" if b[0] >= a[0] else "right")
         pad = 0.8 if k["ha"] == "left" else -0.8
-        self.ax.text(b[0] + pad, b[1], s, color=INK, zorder=8, **k)
+        k.setdefault("color", INK)
+        self.ax.text(b[0] + pad, b[1], s, zorder=8, **k)
 
     def break_line(self, x0, x1, z):
         """Zlomová čára (přerušení) vodorovně v z."""

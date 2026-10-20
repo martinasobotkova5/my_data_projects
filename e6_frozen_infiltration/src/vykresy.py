@@ -11,7 +11,7 @@ from drafting import (BLUE, FROZEN, FS, FS_SMALL, INK, INSUL, METAL, PLASTIC, RE
                       THICK, THIN, WATER, Sheet, View, table)
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "vykresy")
-TOTAL = 9
+TOTAL = 11
 BROWN = "#7a5a2a"
 FOAM = "#e7dcc6"
 
@@ -913,6 +913,253 @@ def sheet_v09(pdf):
     sh.save(pdf, os.path.join(OUT, "E6-V09_thermistor_probe.png"))
 
 
+# ---------------------------------------------------------------------------
+# As-built (from photos) and realistic sensor placement
+PROP = RED          # proposed items
+SEEN = "#333333"    # items seen in the photos
+
+
+def sheet_v10(pdf):
+    sh = Sheet("As-built chest freezer – realistic layout", "E6-V10", "1 : 5", 10, TOTAL,
+               "dimensions marked ≈ are estimated from photos and must be measured")
+    k = 0.2
+    # ---------------- plan ----------------
+    v = View(sh, 35, 165, k, None)
+    v.text(15, 520, "PLAN (lid open)  1 : 5   inside ≈ 900 × 550 × 650", fontsize=FS + 1, weight="bold", va="top")
+    v.rect(-p.FROST, -p.FROST, p.FRZ_L + p.FROST, p.FRZ_W + p.FROST, fc="#eef3f7", lw=THICK, z=1)
+    v.rect(0, 0, p.FRZ_L, p.FRZ_W, fc="#f8fafb", lw=THIN, z=1.1)
+    v.text(620, 20, "frost ≈ 15 mm on walls (photo 1)", fontsize=FS_SMALL - 0.5,
+           ha="left", va="bottom", color="#557")
+    v.rect(25, 70, 610, 480, fc="#3a3a3a", lw=0, z=1.2)
+    v.rect(50, 105, 50 + p.TRAY_L, 105 + p.TRAY_W, fc="#d6d9dc", lw=THIN, z=1.3)
+    v.rect(620, 15, 885, 535, fc="none", lw=THIN, z=1.3, ls="--")
+    v.text(752, 275, "floor step\n(compressor)\n≈, if present", fontsize=FS_SMALL - 1, ha="center", va="center")
+    cx, cy = 190, 300
+    v.circle(cx, cy, p.HOLDER_FLANGE_D / 2, fc="#e9eef0", lw=THIN, z_=2)
+    v.circle(cx, cy, p.AL_D / 2, fc=METAL, lw=THIN, z_=2.1)
+    v.circle(cx, cy, p.AL_HOLE_NEW / 2, fc=PLASTIC, ec=PROP, lw=THIN, z_=2.2)
+    v.circle(cx, cy, R_DISK, fc="#8d99a6", lw=THIN, z_=2.3)
+    v.rect(380, 300, 530, 440, fc="#eee", lw=THIN, z=2)
+    v.circle(455, 370, 50, fc=WATER, lw=THIN, z_=2.1)
+    v.rect(320, 120, 570, 280, fc="#eef3e9", ec=PROP, lw=THIN, z=2)
+    v.text(445, 200, "fraction collector\n(compact, ≤ 170 high)", fontsize=FS_SMALL - 1, ha="center", va="center", color=PROP)
+    v.text(455, 305, "Mariotte bottle on\nbalance + platform", fontsize=FS_SMALL - 1.5, ha="center", va="bottom", color=PROP, zorder=7)
+    v.circle(95, 150, 20, fc=WATER, ec=PROP, lw=THIN, z_=2)
+    v.rect(70, 300, 80, 310, fc=RED, lw=0, z=2)
+    v.text(75, 318, "HF on tray\n(photo 2)", fontsize=FS_SMALL - 1.5, ha="center", va="bottom")
+    for name, x, y in (("A1", 280, 150), ("A2", 300, 420), ("A3", 520, 510)):
+        v.circle(x, y, 9, fc="white", ec=PROP, lw=THIN, z_=3)
+        v.text(x + 13, y, name, fontsize=FS_SMALL, va="center", color=PROP, weight="bold")
+    v.circle(720, 120, 9, fc="white", ec=SEEN, lw=THIN, z_=3)
+    v.text(735, 120, "C ? (controller probe –\nlocation to confirm)", fontsize=FS_SMALL - 1, va="center")
+    v.text(95, 150, "Tcell", fontsize=FS_SMALL - 1, ha="center", va="center", color=PROP)
+    v.rect(0, p.FRZ_W + p.FROST, p.FRZ_L, p.FRZ_W + p.FROST + 25, fc="#f3e3e1", ec=PROP, lw=THIN, z=1)
+    for gx in (150, 260, 370, 480):
+        v.circle(gx, p.FRZ_W + p.FROST + 12.5, 7, fc="white", ec=PROP, lw=THIN, z_=3)
+    v.text(560, p.FRZ_W + p.FROST + 12.5, "cable collar with glands (instead of cables under the lid)",
+           fontsize=FS_SMALL - 1, va="center", color=PROP)
+    v.dim_v(0, p.FRZ_W, 0, -35, "≈ 550")
+    v.dim_h(50, 50 + p.TRAY_L, 105, 85, "tray ≈ 530 × 340", side="below")
+    v.axis_line([(-20, cy), (p.FRZ_L + 20, cy)])
+    v.text(-28, cy, "B", fontsize=FS + 1, weight="bold", ha="center", va="center")
+    v.text(p.FRZ_L + 28, cy, "B", fontsize=FS + 1, weight="bold", ha="center", va="center")
+
+    # ---------------- section ----------------
+    s = View(sh, 35, 17, k, None)
+    s.text(15, 640, "SECTION B–B  1 : 5", fontsize=FS + 1, weight="bold", va="top")
+    s.rect(-p.FROST, -p.FROST, p.FRZ_L + p.FROST, p.FRZ_H, fc="#eef3f7", lw=THICK, z=1)
+    s.rect(0, 0, p.FRZ_L, p.FRZ_H, fc="#f8fafb", lw=THIN, z=1.1)
+    s.rect(620, 0, 885, 230, fc="none", lw=THIN, ls="--", z=1.2)
+    s.rect(25, 0, 610, p.MAT_T, fc="#3a3a3a", lw=0, z=1.3)
+    z_t = p.MAT_T
+    s.line([(50, z_t + p.TRAY_H), (50, z_t), (50 + p.TRAY_L, z_t), (50 + p.TRAY_L, z_t + p.TRAY_H)], lw=THICK, c="#666")
+    z_leg = z_t + 1
+    z_m = z_leg + p.STAND_H + p.NOZZLE_L + p.CONE_H + p.CONE_RIM_T
+    for xl in (cx - 60, cx + 60):
+        s.line([(xl, z_leg), (xl, z_leg + p.STAND_H + p.NOZZLE_L)], lw=THICK, c=PROP)
+    s.poly([(cx - CR, z_m), (cx + CR, z_m), (cx + CR, z_m - CT), (cx + p.CONE_R_TOP, z_m - CT),
+            (cx + p.CONE_R_TIP, z_m - CT - p.CONE_H), (cx - p.CONE_R_TIP, z_m - CT - p.CONE_H),
+            (cx - p.CONE_R_TOP, z_m - CT), (cx - CR, z_m - CT)], fc=METAL, ec=PROP, lw=THIN)
+    s.rect(cx - 84, z_m + 6, cx + 84, z_m + 90, fc=INSUL, ec=PROP, lw=THIN, ls="--")
+    s.rect(cx - 50, z_m, cx + 50, z_m + 100, fc=FROZEN, lw=THIN)
+    s.rect(cx - 80, z_m + 90, cx + 80, z_m + 100, fc="#e9eef0", lw=THIN)
+    s.rect(cx - 56, z_m + 100, cx - 32, z_m + 120, fc=METAL, lw=THIN)
+    s.rect(cx + 32, z_m + 100, cx + 56, z_m + 120, fc=METAL, lw=THIN)
+    s.rect(cx - 30, z_m + 102, cx + 30, z_m + 128, fc=PLASTIC, lw=THIN)
+    s.rect(cx - 20, z_m + 128, cx + 20, 600, fc="none", lw=THIN, ls=(0, (3, 2)))
+    s.text(cx + 24, 560, "original AMDI Mariotte tube (≈):\ncheck lid clearance", fontsize=FS_SMALL - 1.5, va="center")
+    # Mariotte bottle on platform, air inlet 20 mm below disc
+    z_disc = z_m + 102
+    s.rect(390, z_t, 520, z_t + 200, fc="none", ec=PROP, lw=THIN)
+    s.rect(380, z_t + 200, 530, z_t + 230, fc="#eee", lw=THIN)
+    s.rect(405, z_t + 230, 505, z_t + 430, fc="white", lw=THIN)
+    s.rect(405, z_t + 230, 505, z_t + 360, fc=WATER, lw=0)
+    s.line([(455, z_t + 470), (455, z_disc - 20)], lw=THIN)
+    s.line([(370, z_disc), (540, z_disc)], lw=THIN, ls="--", c=PROP)
+    s.line([(440, z_disc - 20), (470, z_disc - 20)], lw=THIN, c=PROP)
+    s.text(545, z_disc - 8, "h₀ = −2 cm: air-inlet tip\n20 mm below disc", fontsize=FS_SMALL - 1, va="center", color=PROP)
+    pipe(sh, [s.p(405, z_t + 240), s.p(300, z_t + 240), s.p(300, z_disc + 40), s.p(cx - 10, z_disc + 40),
+              s.p(cx - 10, z_disc + 26)], lw=0.9)
+    # outflow → overflow cup → collector (behind section)
+    s.rect(320, z_t + 1, 570, z_t + 170, fc="none", ec=PROP, lw=THIN, ls="--")
+    z_cup = z_m - 50
+    pipe(sh, [s.p(cx, z_leg + p.STAND_H), s.p(cx, z_leg + p.STAND_H - 15), s.p(340, z_leg + p.STAND_H - 15),
+              s.p(340, z_cup)], lw=0.9)
+    s.rect(330, z_cup - 8, 352, z_cup, fc=WATER, lw=THIN)
+    s.line([(300, z_m), (360, z_m)], lw=THIN, ls="--", c=PROP)
+    s.dim_v(z_cup, z_m, 360, 375, "h_b")
+    s.text(445, z_t + 60, "collector (behind)", fontsize=FS_SMALL - 1, ha="center", color=PROP)
+    # sensors
+    for name, x, z in (("A1", 280, 80), ("A2", 300, z_m + 50), ("A3", 520, 600)):
+        s.circle(x, z, 9, fc="white", ec=PROP, lw=THIN, z_=3)
+        s.text(x + 13, z, name, fontsize=FS_SMALL, va="center", color=PROP, weight="bold")
+    s.rect(80, z_t + 1, 110, z_t + 60, fc=WATER, ec=PROP, lw=THIN)
+    s.text(95, z_t + 70, "Tcell", fontsize=FS_SMALL - 1, ha="center", color=PROP)
+    s.rect(0, p.FRZ_H, p.FRZ_L, p.FRZ_H + 50, fc="#f3e3e1", ec=PROP, lw=THIN, ls="--")
+    s.text(p.FRZ_L / 2, p.FRZ_H + 25, "collar 50 mm (proposed) – lid on top", fontsize=FS_SMALL - 1,
+           ha="center", va="center", color=PROP)
+    s.dim_v(0, p.FRZ_H, 0, -35, "≈ 650")
+    s.dim_v(0, z_m, cx - 84, cx - 110, f"{z_m:.0f}")
+    s.text(cx + 60, z_m + 160, "sample ⌀100×100\n(detail E6-V11)", fontsize=FS_SMALL - 1, va="center")
+
+    sh.heading(232, 278, "Seen in the photos")
+    sh.text(232, 274,
+            "1  Chest freezer, programmable controller (program Set A: 24 h +10 °C, then\n"
+            "   192 h steps −10 / +10 °C, linear). Controller clock shows 29.02.2000.\n"
+            "2  Heavy frost on the walls; cables run under the lid seal.\n"
+            "3  Stainless tray ≈ 530 × 340 on a black insulation mat.\n"
+            "4  Sample in a clear printed PETG holder, ⌀100 inside, wide top flange.\n"
+            "   It stands directly on the tray (no outlet).\n"
+            "5  Al plate ≈ ⌀112 × 20 on top, centre hole ≈ ⌀26, recess ≈ ⌀60.\n"
+            "6  Two thermistor wires pushed vertically into the sand from the top.\n"
+            "7  Two heat-flux sensors taped with duct tape: on the Al plate, on the tray.\n"
+            "8  Black cable + blue tube enter the holder at the side (TDR? – confirm).",
+            fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.heading(232, 196, "Changes (red)")
+    sh.text(232, 192,
+            "A  Raise the sample on the cone outlet + stand ≈ 150 mm; the collector sits\n"
+            "   beside it on the tray, overflow cup sets h_b (default −5 cm).\n"
+            "B  Side insulation sleeve 30 mm around the holder (no radial freezing).\n"
+            "C  Al plate: open the hole to ⌀64 so the AMDI disc reaches the soil and\n"
+            "   the plate stays as a cold annular top boundary.\n"
+            "D  Cable collar with glands → lid seals, less frost, less sublimation.\n"
+            "E  Defrost before each run; set the controller clock (time base for data).\n"
+            "F  Mariotte bottle on balance + platform; air inlet 20 mm below the disc.\n"
+            "G  Temperature sensors as in E6-V11 (+ A1–A3, Tcell, controller probe C).",
+            fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.save(pdf, os.path.join(OUT, "E6-V10_asbuilt_freezer.png"))
+
+
+def sheet_v11(pdf):
+    sh = Sheet("Sample holder – temperature positions", "E6-V11", "1 : 1", 11, TOTAL,
+               "black = as in the photos, red = proposed; ⌀ of AMDI body and holder wall to be measured")
+    v = View(sh, 125, 92, 1.0)
+    # cone (proposed) and legs
+    draw_cone(v, detail=False)
+    for s_ in (-1, 1):
+        v.line([(s_ * 60, Z_NOZ), (s_ * 60, Z_NOZ - 10)], lw=THICK, c=PROP)
+        v.line([(s_ * 60, Z_CONE0), (s_ * 60, Z_NOZ)], lw=THICK, c=PROP)
+    v.break_line(-70, 70, Z_NOZ - 10)
+    hw = p.HOLDER_WALL
+    # holder (seen) + foot flange (proposed)
+    for s_ in (-1, 1):
+        v.rect(s_ * R, 0, s_ * (R + hw), Z_TOP, fc="#e9eef0", hatch="////")
+        v.rect(s_ * (R + hw), Z_TOP - p.HOLDER_FLANGE_T, s_ * p.HOLDER_FLANGE_D / 2, Z_TOP, fc="#e9eef0", hatch="////")
+        v.rect(s_ * (R + hw), 0, s_ * 70, 6, fc="#e9eef0", ec=PROP, lw=THIN, hatch="////")
+        v.rect(s_ * (R + hw), 6, s_ * (R + hw + 30), Z_TOP - p.HOLDER_FLANGE_T, fc=INSUL, ec=PROP, lw=THIN,
+               hatch="oo", ls="--")
+    v.rect(-R, 0, R, Z_TOP, fc=FROZEN, lw=THIN)
+    soil_texture(v, -R, R, 0, Z_TOP, n=200)
+    # Al plate (seen; hole opened to ⌀64 = proposed), contact sand, disc, AMDI body
+    rh = p.AL_HOLE_NEW / 2
+    for s_ in (-1, 1):
+        v.rect(s_ * rh, Z_TOP, s_ * p.AL_D / 2, Z_TOP + p.AL_T, fc=METAL, hatch="\\\\\\\\")
+        v.line([(s_ * p.AL_HOLE_NOW / 2, Z_TOP + p.AL_T), (s_ * p.AL_HOLE_NOW / 2, Z_TOP)], lw=THIN, ls=(0, (2, 2)))
+    v.rect(-R_SAND, Z_TOP, R_SAND, Z_HEAD, fc="#e8d8a0", lw=THIN, hatch="....")
+    v.rect(-p.AMDI_BODY_D / 2, Z_HEAD, p.AMDI_BODY_D / 2, Z_HEAD + 30, fc=PLASTIC, hatch="////")
+    v.rect(-R_DISK, Z_HEAD, R_DISK, Z_HEAD + p.T_DISK, fc="#8d99a6", lw=THIN, hatch="xxxx")
+    v.rect(-12, Z_HEAD + 30, 12, Z_HEAD + 46, fc="white", lw=THIN, ls=(0, (3, 2)))
+    v.break_line(-16, 16, Z_HEAD + 46)
+    # existing vertical probes from the top (to be replaced)
+    for xx in (-15, 18):
+        v.line([(xx, Z_TOP + 40), (xx, Z_TOP - 25)], lw=1.0, c="#999", ls=(0, (3, 2)))
+    v.note(18, Z_TOP + 30, "existing probes pushed in from the top\n(depth unknown) → replace by wall probes",
+           60, Z_TOP + 58, ha="left")
+    # wall thermistors (proposed) through printed bosses
+    for d, ang in p.THERMISTORS:
+        sg = 1 if math.cos(math.radians(ang)) > 0.01 else -1
+        z = dz(d)
+        v.rect(sg * (R + hw), z - 4, sg * (R + hw + 6), z + 4, fc="#e9eef0", ec=PROP, lw=THIN)
+        v.line([(sg * (R + hw + 30), z), (sg * p.TH_R, z)], lw=THICK, c=PROP)
+        v.circle(sg * p.TH_R, z, 1.3, fc=PROP, lw=0)
+        v.text(sg * (R + hw + 33), z, f"T{d}", fontsize=FS_SMALL, va="center", color=PROP,
+               ha="left" if sg > 0 else "right")
+    # surface needles through the Al plate, plate thermistor, Tdisc
+    for d_, xx in ((2, 40), (6, -40)):
+        v.line([(xx, Z_TOP + p.AL_T + 8), (xx, dz(d_))], lw=THICK, c=PROP)
+        v.circle(xx, dz(d_), 0.9, fc=PROP, lw=0)
+    v.line([(p.AL_D / 2 + 8, Z_TOP + 10), (44, Z_TOP + 10)], lw=THICK, c=PROP)
+    v.circle(44, Z_TOP + 10, 1.0, fc=PROP, lw=0)
+    v.line([(-7, Z_HEAD + 0.3), (-7, Z_HEAD + 20)], lw=THICK, c=PROP)
+    v.circle(-7, Z_HEAD + 0.3, 0.7, fc=PROP, lw=0)
+    # heat flux
+    v.rect(-50, Z_TOP, -40, Z_TOP + 0.8, fc=RED, lw=0)
+    v.rect(R + hw, 45, R + hw + 0.8, 55, fc=RED, lw=0)
+    # TDR (proposed)
+    for name, d, yoff, L, ins in p.TDR:
+        if yoff:
+            continue
+        z = dz(d)
+        v.line([(-R, z + 3), (-R + L, z + 3)], lw=1.4, c=BROWN)
+        v.line([(-R, z + 3), (-R + ins, z + 3)], lw=2.8, c="#555")
+        v.text(-R + L + 1, z + 5, name, fontsize=FS_SMALL - 0.5, color=BROWN)
+    v.axis_line([(0, Z_NOZ - 14), (0, Z_HEAD + 52)])
+
+    N = v.note
+    N(-p.AMDI_BODY_D / 2 + 3, Z_HEAD + 20, "AMDI body (≈ ⌀60, measure)", -95, Z_HEAD + 52, ha="left")
+    N(-50, Z_TOP + 15, "Al plate ⌀112×20 (photos); hole ⌀26 → ⌀64", -95, Z_TOP + 44, ha="left")
+    N(-45, Z_TOP + 0.4, "HF1: heat-flux sensor under the plate", -95, Z_TOP + 36, ha="left")
+    N(-7, Z_HEAD + 0.3, "Tdisc", -95, Z_TOP + 28, ha="left", color=PROP)
+    N(44, Z_TOP + 10, "Tplate: bore ⌀1.7 in Al plate", 60, Z_TOP + 44, ha="left", color=PROP)
+    N(40, dz(2), "T2r / T6r needles through plate", 60, Z_TOP + 36, ha="left", color=PROP)
+    N(R + hw + 0.4, 50, "HF2: radial loss check", 95, 40, ha="left", color=PROP)
+    N(R + hw + 15, 20, "insulation sleeve 30 (proposed)", 95, 22, ha="left", color=PROP)
+    N(-62, 3, "printed foot flange, 4× M5 to cone", -95, -12, ha="left", color=PROP)
+    N(-60, -40, "legs ≈ 150 to tray", -95, -40, ha="left", color=PROP)
+    N(-20, TH_CONE_Z, "Tcone (bottom boundary)", -95, -26, ha="left", color=PROP)
+    v.dim_v(0, Z_TOP, -R, -R - 50, "100")
+    v.dim_h(-R, R, 0, -4, "⌀100 (holder, inside)", side="below")
+    v.dim_h(-p.HOLDER_FLANGE_D / 2, p.HOLDER_FLANGE_D / 2, Z_TOP, Z_TOP + 30, "flange ≈ ⌀160")
+
+    rows = []
+    for d, ang in p.THERMISTORS:
+        rows.append([f"T{d}", f"wall probe, r 9, depth {d}", f"{ang}°", "1/16\" fitting in printed boss", "new"])
+    rows += [["T2r", "needle, r 40, depth 2", "0°", "through Al plate", "new"],
+             ["T6r", "needle, r 40, depth 6", "180°", "through Al plate", "new"],
+             ["Tdisc", "disc / sand contact, r 7", "–", "glued to AMDI disc rim", "new"],
+             ["Tplate", "Al plate, r 44, mid-thickness", "0°", "radial bore ⌀1.7 × 12", "new"],
+             ["Tcone", "cone, 4.5 below membrane", "180°", "radial bore", "new"],
+             ["HF1", "under Al plate, r 45", "180°", "move from top of plate", "seen → moved"],
+             ["HF2", "holder outer wall, z 50", "0°", "under insulation sleeve", "seen → moved"],
+             ["(top)", "2 vertical probes from top", "–", "remove", "seen"]]
+    sh.heading(232, 278, "Temperature positions")
+    table(sh, 232, 274, ["ID", "position", "angle", "mounting", "status"], rows, [14, 52, 13, 50, 22], row_h=4.4)
+    sh.text(232, 196,
+            "Why these positions\n"
+            "• Horizontal probes keep a defined depth and do not open vertical\n"
+            "  paths for water along the probe under the disc.\n"
+            "• Tips at r 9 lie under the disc (⌀45), where the infiltration front is;\n"
+            "  the helix at 60° keeps probe shadows from stacking.\n"
+            "• Tplate + HF1 give the top heat input, Tcone the bottom, HF2 tells\n"
+            "  whether the side insulation keeps the flow 1-D.\n"
+            "• Freezer air A1–A3 and Tcell: see E6-V10; electronics and calibration:\n"
+            "  E6-V09 (NTC 10 kΩ, ±0.01 °C after chain calibration).\n"
+            "• Print the holder with 12×12 mm bosses at the probe heights (PETG,\n"
+            "  100 % infill around the bosses), thread 1/4\"-28 after printing.",
+            fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.save(pdf, os.path.join(OUT, "E6-V11_holder_sensors.png"))
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
@@ -920,5 +1167,5 @@ if __name__ == "__main__":
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E6_drawings.pdf")) as pdf:
         for fn in (sheet_v01, sheet_v02, sheet_v03, sheet_v04, sheet_v05, sheet_v06, sheet_v07,
-                   sheet_v08, sheet_v09):
+                   sheet_v08, sheet_v09, sheet_v10, sheet_v11):
             fn(pdf)
