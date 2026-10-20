@@ -39,9 +39,10 @@ X_COL = p.COL_SPAN / 2
 WALL_TH = [(10, 0), (30, 72), (50, 144), (70, 216), (90, 288)]   # depth below sample top, angle
 
 
-def frame(v, extend=None, z_beam=None):
+def frame(v, extend=None, z_beam=None, beam_h=None):
     extend = extend or X_COL + 20
     Z_BEAM = z_beam or p.FRAME_H
+    BEAM_H = beam_h or 80.0
     hb = p.BASE_W / 2
     v.rect(-hb, -p.BASE_T, hb, 0, fc=METAL, hatch="////")
     for xf in (-hb + 20, hb - 20):
@@ -50,7 +51,7 @@ def frame(v, extend=None, z_beam=None):
         v.rect(s * (X_COL - COL_W / 2), 0, s * (X_COL + COL_W / 2), Z_BEAM, fc="#d9dde1", lw=THICK)
         v.line([(s * X_COL, 0), (s * X_COL, Z_BEAM)], lw=0.3, c="#888")
     v.rect(-extend, Z_BEAM, extend, Z_BEAM + BEAM_H, fc="#d9dde1", lw=THICK)
-    for zz in (Z_BEAM + 20, Z_BEAM + 60):
+    for zz in (Z_BEAM + BEAM_H / 4, Z_BEAM + 3 * BEAM_H / 4):
         v.line([(-extend, zz), (extend, zz)], lw=0.3, c="#888")
 
 
@@ -228,13 +229,13 @@ def sheet_frame(pdf):
     s.dim_h(-p.BASE_D / 2, p.BASE_D / 2, -p.BASE_T, -p.BASE_T - 60, f"{p.BASE_D:g}", side="below")
     s.dim_h(-40, 40, Z_BEAM + BEAM_H, Z_BEAM + BEAM_H + 40, "80")
     rows = [["1", "base plate Al 6082 T6", f"{p.BASE_W:g} × {p.BASE_D:g} × 25", "1"],
-            ["2", "profile 40×80 (column)", f"l = {p.FRAME_H:g} (B) / {p.FRAME_H_A:g} (A)", "2"],
+            ["2", "profile 40×80 (B) / 40×40 (A) column", f"l = {p.FRAME_H:g} (B) / {p.FRAME_H_A:g} (A)", "2"],
             ["3", "profile 80×80 (cross-beam)", f"l = {p.COL_SPAN + 40:g}", "1"],
             ["4", "core bolt M12 into tapped profile end", "", "8"],
             ["5", "socket screw M10 base → column end", "", "4"],
             ["6", "levelling foot M12, steel", "", "3"],
             ["7", "Invar rod ⌀10 + Invar/Al bridge (LVDT)", "l = 300", "2 + 1"],
-            ["8", "nut M20×1.5 (A) / M24×1.5 (B)", "in cross-beam", "1"],
+            ["8", "linear ball bushing ⌀16 (A) / nut M24×1.5 (B)", "in cross-beam", "1"],
             ["9", "end caps, T-slot covers", "", "–"]]
     sh.heading(255, 276, "Bill of materials")
     table(sh, 255, 272, ["#", "part", "size", "qty"], rows, [8, 80, 30, 12], row_h=4.6)
@@ -250,7 +251,8 @@ def sheet_frame(pdf):
             "\n"
             f"Fit in the chest freezer: frame {p.BASE_W:g} × {p.BASE_D:g}, height "
             f"{p.FRAME_H + 80 + p.BASE_T:g} mm incl. base;\n"
-            f"variant B; variant A has {p.FRAME_H_A:g} mm columns (spring);\n"
+            f"variant B; variant A uses a light 40×40 frame, columns {p.FRAME_H_A:g} mm\n"
+            "(it only guides the weights);\n"
             "two rigs side by side on the tray – layout and heights on E7-V06.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V04_frame.png"))
@@ -274,9 +276,9 @@ def tag(v, x, z, tx, tz, text, color=INK, ha=None):
 
 
 def simple_rig(v, variant):
-    """Simplified elevation of one rig (A: spring surcharge, B: restrained)."""
+    """Simplified elevation of one rig (A: dead-weight surcharge, B: restrained)."""
     zb = p.FRAME_H_A if variant == "A" else Z_BEAM
-    frame(v, z_beam=zb)
+    frame(v, z_beam=zb, beam_h=p.BEAM_H_A if variant == "A" else None)
     sand = variant == "A"
     light = dict(lw=THIN)
     # bottom: spacer (A) or load cell (B)
@@ -308,30 +310,32 @@ def simple_rig(v, variant):
     v.circle(0, Z_BALL + 6, 6, fc=STEEL, lw=THIN)
     z_lc = Z_BALL + 12
     # LVDTs on an Invar reference (dashed)
-    for s_ in (-1, 1):
-        v.rect(s_ * 62 - 6, z_lc + 5, s_ * 62 + 6, z_lc + 45, fc=SENS, **light)
-        v.line([(s_ * 62, z_lc + 5), (s_ * 62, Z_PT + TARGET_T)], lw=THICK)
-    v.line([(-75, 0), (-75, z_lc + 50), (75, z_lc + 50), (75, 0)], lw=THIN, ls=(0, (4, 2)), c=INVAR)
+    if sand:      # variant A: LVDTs at ±y on tabs of the target plate (revolved, behind the weights)
+        v.rect(-p.LVDT_R - 6, Z_PT, p.LVDT_R + 6, Z_PT + TARGET_T, fc=METAL, lw=0.3)
+        for s_ in (-1, 1):
+            v.rect(s_ * p.LVDT_R - 6, z_lc + 5, s_ * p.LVDT_R + 6, z_lc + 45, fc=SENS, lw=THIN, ls="--")
+            v.line([(s_ * p.LVDT_R, z_lc + 5), (s_ * p.LVDT_R, Z_PT + TARGET_T)], lw=THICK)
+            v.line([(s_ * (p.LVDT_R + 8), 0), (s_ * (p.LVDT_R + 8), z_lc + 50), (s_ * p.LVDT_R, z_lc + 50)],
+                   lw=THIN, ls=(0, (4, 2)), c=INVAR)
+    else:
+        for s_ in (-1, 1):
+            v.rect(s_ * 62 - 6, z_lc + 5, s_ * 62 + 6, z_lc + 45, fc=SENS, **light)
+            v.line([(s_ * 62, z_lc + 5), (s_ * 62, Z_PT + TARGET_T)], lw=THICK)
+        v.line([(-75, 0), (-75, z_lc + 50), (75, z_lc + 50), (75, 0)], lw=THIN, ls=(0, (4, 2)), c=INVAR)
     if variant == "A":
-        v.rect(-18, z_lc, 18, z_lc + 64, fc=SENS, **light)
-        zp = z_lc + 64
-        v.rect(-30, zp, 30, zp + 8, fc=METAL, **light)
-        k_ = p.SPRINGS[0]
-        comp = p.SURCHARGE_A_KPA * math.pi * 2500 / 1000 / k_[1]
-        top = zp + 8 + p.SPRING_L0 - comp
-        n = 8
-        pts = [(0, zp + 8)]
-        for i in range(n):
-            zz = zp + 8 + (top - zp - 8) * (i + 0.5) / n
-            pts.append(((-1) ** i * p.SPRING_D / 2, zz))
-        pts.append((0, top))
-        v.line(pts, lw=1.3, c="#2b6cb0")
-        v.rect(-p.SPRING_D / 2 - 4, zp + 8, p.SPRING_D / 2 + 4, top + 8, fc="none", lw=THIN, ls=(0, (3, 2)))
-        v.rect(-30, top, 30, top + 8, fc=METAL, **light)
-        v.rect(-10, top + 8, 10, zb + BEAM_H + 35, fc=STEEL, lw=THIN)
-        v.rect(-20, zb + BEAM_H, 20, zb + BEAM_H + 12, fc=STEEL, lw=THIN)
-        v.rect(-45, zb + BEAM_H + 35, 45, zb + BEAM_H + 42, fc=STEEL, lw=THIN)
-        return z_lc, (zp, top), zb
+        zg = Z_BALL + 12
+        v.rect(-p.DW_G10_D / 2, zg, p.DW_G10_D / 2, zg + p.DW_G10_T, fc=G10, **light)
+        zc = zg + p.DW_G10_T
+        v.rect(-p.DW_D / 2, zc, p.DW_D / 2, zc + p.DW_CARRIER_T, fc=STEEL, **light)
+        z = zc + p.DW_CARRIER_T
+        for t in (p.DW_FULL_T,) * 3 + (p.DW_HALF_T,):
+            v.rect(-p.DW_D / 2, z, p.DW_D / 2, z + t, fc="#8a8f96", lw=THIN, hatch="////")
+            z += t
+        v.rect(-p.DW_D / 2 - 10, zc, p.DW_D / 2 + 10, z + 10, fc="none", lw=THIN, ls=(0, (3, 2)))
+        v.rect(-p.DW_ROD_D / 2, zc + p.DW_CARRIER_T, p.DW_ROD_D / 2, zc + p.DW_CARRIER_T + p.DW_ROD_L,
+               fc=STEEL, lw=THIN)
+        v.rect(-14, zb, 14, zb + p.BEAM_H_A, fc="white", lw=THIN, hatch="xx")
+        return z_lc, (zg, zc, z), zb
     v.rect(-28, z_lc, 28, z_lc + 40, fc=SENS, **light)
     v.rect(-18, z_lc + 40, 18, Z_BEAM, fc=METAL, **light)
     v.rect(-10, Z_BEAM - 15, 10, Z_BEAM + BEAM_H + 35, fc=STEEL, lw=THIN)
@@ -412,7 +416,7 @@ def temp_points(v, variant, z_lc):
     v.text(-X_COL - 26, 120, "Tframe", fontsize=FS_SMALL, color=TCOL, va="center", ha="right", weight="bold")
     v.circle(-X_COL - 60, 260, 2.0, fc=TCOL, lw=0)
     v.text(-X_COL - 60, 268, "Tair", fontsize=FS_SMALL, color=TCOL, ha="center", weight="bold")
-    lcs = [("TLC", 20, z_lc + 20)] if variant == "A" else [("TLC-T", 30, z_lc + 20), ("TLC-B", 30, 20)]
+    lcs = [] if variant == "A" else [("TLC-T", 30, z_lc + 20), ("TLC-B", 30, 20)]
     for name, x, z in lcs:
         v.circle(x, z, 2.0, fc=TCOL, lw=0)
         v.text(x + 5, z, name, fontsize=FS_SMALL - 0.5, color=TCOL, va="center", weight="bold")
@@ -425,45 +429,55 @@ def legend(sh, rows, y0=276):
 
 
 def sheet_a_simple(pdf):
-    sh = Sheet("Variant A – unsaturated sand, spring surcharge, internal pressures", "E7-V01", "≈ 1 : 3", 1,
-               TOTAL, "schematic; orange = force / displacement, blue = pressure, red = temperature, "
-               "dark blue = spring; cells revolved into section")
+    sh = Sheet("Variant A – unsaturated sand, dead-weight surcharge ≤ 25 kPa", "E7-V01", "≈ 1 : 3", 1,
+               TOTAL, "schematic; orange = displacement, blue = pressure, red = temperature; "
+               "cells and LVDTs revolved into section")
     v = View(sh, 105, 68, 1 / 3)
-    z_lc, (zp, top), zb = simple_rig(v, "A")
+    z_lc, (zg, zc, ztop), zb = simple_rig(v, "A")
     temp_points(v, "A", z_lc)
-    tag(v, 0, z_lc + 32, 120, z_lc + 20, "LC-A  load cell 2 kN", SENS_TXT)
-    tag(v, 62, z_lc + 25, 120, z_lc - 25, "LVDT-1, -2  ±10 mm", SENS_TXT)
-    tag(v, p.SPRING_D / 2, (zp + top) / 2 + 4, 120, (zp + top) / 2 + 30,
-        f"die spring ⌀{p.SPRING_D:g}×{p.SPRING_L0:g} (ISO 10243)\nin guide tube", "#2b6cb0")
-    tag(v, 0, zb + 40, 120, zb + 75, "screw M20×1.5 + lock nut\n(sets the spring force)", INK)
-    tag(v, -75, 60, -150, 200, "Invar reference", INVAR)
+    v.circle(60, (zc + ztop) / 2, 2.0, fc=TCOL, lw=0)
+    v.text(64, (zc + ztop) / 2, "Tw", fontsize=FS_SMALL, color=TCOL, va="center", weight="bold",
+           bbox=dict(fc="white", ec="none", pad=0.3))
+    tag(v, 0, (zc + ztop) / 2 + 15, 135, ztop + 25,
+        f"steel discs ⌀{p.DW_D:g}: 3 × {p.DW_FULL_T:g} + 1 × {p.DW_HALF_T:g} mm\n"
+        f"= 20 kg incl. piston → 25 kPa", INK)
+    tag(v, -60, zc + 5, -150, zc + 40, "carrier plate ⌀150 + guide rod ⌀16", INK)
+    tag(v, 0, zb + 20, 135, zb + 55, "linear ball bushing in light\ncross-bar 40×40 (guide only)", INK)
+    tag(v, -20, zg + 5, -150, zg - 10, "G10 thermal break ⌀60×10", INK)
+    tag(v, p.DW_D / 2 + 10, ztop - 20, 135, ztop - 45, "insulation wrap 10 (optional)", INK)
+    tag(v, p.LVDT_R, z_lc + 25, 135, z_lc - 30, "LVDT-1, -2 at ±y (on target tabs)", SENS_TXT)
+    tag(v, -(p.LVDT_R + 8), 60, -150, 200, "Invar reference", INVAR)
     tag(v, -R_IN - 4, Z_S0 + 50, -150, 160, "multi-ring cell PETG-CF\n+ greased latex membrane", INK)
     tag(v, -R_INS + 5, Z_S0 + 20, -150, 100, "insulation 18", INK)
     tag(v, -60, Z_G10 + 5, -150, 40, "G10 thermal break", INK)
-    tag(v, 0, -12, 60, -45, f"frame: Al profiles, columns {p.FRAME_H_A:g}", INK)
-    rows = [["LC-A", "spring force", sn.PICK["LC-A"][1], sn.PICK["LC-A"][3]],
-            ["PV1 / PH1", "vert. / radial stress", sn.PICK["PC"][1], sn.PICK["PC"][3]],
+    tag(v, 0, -12, 60, -45, f"light frame: Al 40×40, columns {p.FRAME_H_A:g}", INK)
+    rows = [["PV1 / PH1", "vert. / radial stress", sn.PICK["PC"][1], sn.PICK["PC"][3]],
             ["PB1", "vertical stress at base", sn.PICK["PW"][1], sn.PICK["PW"][3]],
             ["PW1…PW3", "lateral stress on wall", sn.PICK["PW"][1], sn.PICK["PW"][3]],
             ["LVDT-1,2", "check: no movement", sn.PICK["LVDT"][1], sn.PICK["LVDT"][3]],
             ["T1…T5", "soil, r 9 mm", sn.PICK["T"][1], sn.PICK["T"][3]],
-            ["Ttop, Tbot", "piston, pedestal", sn.PICK["T"][1], "(same)"],
-            ["TLC, Tframe, Tair", "load cell, frame, air", sn.PICK["TX"][1], sn.PICK["TX"][3]]]
+            ["Ttop, Tbot, Tw", "piston, pedestal, weights", sn.PICK["T"][1], "(same)"],
+            ["Tframe, Tair", "frame, air", sn.PICK["TX"][1], sn.PICK["TX"][3]]]
     y = legend(sh, rows)
     A_ = math.pi * 2500
-    srows = []
-    for name, k_, (lo, hi) in p.SPRINGS:
-        srows.append([f"{name}, {k_:g} N/mm", f"{lo}–{hi}", f"{lo * A_ / 1000:.0f}–{hi * A_ / 1000:.0f}",
-                      f"{lo * A_ / 1000 / k_:.1f}–{hi * A_ / 1000 / k_:.1f}", f"{k_ * 0.1 / A_ * 1000:.2f}"])
-    y = table(sh, 255, y - 4, ["spring", "σ kPa", "F N", "compr. mm", "Δσ/0.1 mm"], srows,
-              [40, 22, 26, 26, 26], row_h=4.8)
+    disc = lambda t: math.pi / 4 * ((p.DW_D / 1000) ** 2 - (p.DW_HOLE / 1000) ** 2) * t / 1000 * p.RHO_STEEL
+    m_fixed = (p.PISTON_ASSY_KG + math.pi / 4 * (p.DW_D / 1000) ** 2 * p.DW_CARRIER_T / 1000 * p.RHO_STEEL
+               + math.pi / 4 * (p.DW_ROD_D / 1000) ** 2 * p.DW_ROD_L / 1000 * p.RHO_STEEL)
+    mrows = []
+    for s_ in p.SURCHARGES_KPA:
+        m = s_ * A_ / 1000 / 9.81
+        rest = m - m_fixed
+        n_f = int(rest // disc(p.DW_FULL_T)); rest -= n_f * disc(p.DW_FULL_T)
+        n_h = int(rest // disc(p.DW_HALF_T)); rest -= n_h * disc(p.DW_HALF_T)
+        mrows.append([f"{s_}", f"{m:.1f}", f"{n_f}", f"{n_h}", f"{rest:.2f}"])
+    y = table(sh, 255, y - 4, ["σ kPa", "total kg", "full discs", "half discs", "trim kg"], mrows,
+              [22, 26, 26, 26, 26], row_h=4.6)
     sh.text(255, y - 3,
             "How it works\n"
-            "Turn the screw until LC-A shows the target force (50 kPa = 393 N), lock the nut.\n"
-            "The spring is soft against the sand: 0.1 mm movement changes σ by 0.25 kPa,\n"
-            "the 0.18 mm shrinkage of the Al frame in the cold by < 0.5 kPa (light spring).\n"
-            "Embedded discs (PV1, PH1), the base sensor (PB1) and the wall sensors (PW)\n"
-            "measure the stress rise caused by ice in the pores of the unsaturated sand.",
+            f"Gravity gives an exactly constant surcharge; fixed part ≈ {m_fixed:.1f} kg ≈ "
+            f"{m_fixed * 9.81 / A_ * 1000:.1f} kPa (piston, carrier, rod).\n"
+            "No load cell, no adjustment; the frame only guides the rod and carries the LVDTs.\n"
+            "Weights lag the freezer air by ≈ 0.6 K at the 0.1 K/h ramp (vypocty.md §7).",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.text(330, 143, "DETAIL – sand, pressure sensors, thermistors  ≈ 1 : 1.6", fontsize=FS + 0.5,
             weight="bold", ha="center")
@@ -549,12 +563,17 @@ def sheet_layout(pdf):
         e.rect(cx - p.BASE_W / 2, zb - p.BASE_T, cx + p.BASE_W / 2, zb, fc=METAL, lw=THIN, z=2)
         for s_ in (-1, 1):
             e.rect(cx + s_ * X_COL - 20, zb, cx + s_ * X_COL + 20, zb + hcol, fc="#d9dde1", lw=THIN, z=2)
-        e.rect(cx - X_COL - 20, zb + hcol, cx + X_COL + 20, zb + hcol + BEAM_H, fc="#d9dde1", lw=THIN, z=2)
-        e.rect(cx - 45, zb + hcol + BEAM_H + 35, cx + 45, zb + hcol + BEAM_H + 42, fc=STEEL, lw=THIN, z=3)
+        bh = p.BEAM_H_A if var == "A" else BEAM_H
+        e.rect(cx - X_COL - 20, zb + hcol, cx + X_COL + 20, zb + hcol + bh, fc="#d9dde1", lw=THIN, z=2)
+        if var == "B":
+            e.rect(cx - 45, zb + hcol + bh + 35, cx + 45, zb + hcol + bh + 42, fc=STEEL, lw=THIN, z=3)
+        else:
+            e.rect(cx - p.DW_D / 2, zb + 257, cx + p.DW_D / 2, zb + 383, fc="#8a8f96", lw=THIN, z=3)
+            e.rect(cx - 8, zb + 257, cx + 8, zb + 257 + p.DW_ROD_L, fc=STEEL, lw=THIN, z=3.1)
         e.rect(cx - R_INS, zb + Z_S0, cx + R_INS, zb + TUBE_TOP, fc=INSUL, lw=THIN, z=2.1)
         e.text(cx, zb + 120, var, fontsize=FS + 2, weight="bold", ha="center", va="center", zorder=5)
-    top = zb + p.FRAME_H_A + BEAM_H + 42
-    e.dim_v(0, top, 445 + 45, 640, f"{top:.0f}")
+    top = max(zb + p.FRAME_H + BEAM_H + 42, zb + 257 + p.DW_ROD_L, zb + p.FRAME_H_A + p.BEAM_H_A)
+    e.dim_v(0, top, 445 + 75, 640, f"{top:.0f}")
     e.dim_v(0, p.FRZ_H, p.FRZ_L, p.FRZ_L + 25, f"≈ {p.FRZ_H:g}")
     # logger box outside
     box_ = dict(boxstyle="round,pad=0,rounding_size=1.5")
@@ -568,7 +587,7 @@ def sheet_layout(pdf):
             fontsize=FS_SMALL - 1, color="#6a3d9a", ha="center", va="bottom")
     sh.heading(255, 278, "Fit check")
     rows = [["base plates 2 × 260 × 200", "520 × 200", "tray ≈ 530 × 340", "OK (tight)"],
-            ["rig A (spring)", "nothing outside the frame", "–", "OK"],
+            ["rig A (weights)", "20 kg steel discs ⌀150", "nothing outside frame", "OK"],
             ["highest point", f"{top:.0f} mm", "inside ≈ 650", "OK, measure"],
             ["logger", "outside, 0…+40 °C", "CR1000 −25…+50 °C", "keep warm & dry"]]
     table(sh, 255, 274, ["item", "size", "limit", "status"], rows, [48, 32, 38, 32], row_h=5.0)
@@ -598,7 +617,6 @@ def sheet_sensors(pdf):
             "16 SE / 8 DIFF on the CR1000 → two AM16/32B: bridges (4×16), thermistors (2×32).\n"
             "\n"
             "Resolution with the CR1000 (13-bit ADC)\n"
-            "• LC-A 2 mV/V, 2.5 V: 5 mV FS → ≈ 0.3 N ≈ 0.04 kPa\n"
             "• LC-T/B 1 mV/V: 2.5 mV FS → ≈ 2.6 N ≈ 0.3 kPa\n"
             "• LVDT ±5 V over ±10 mm: ≈ 1.3 µm (0.7 µm with reversal);\n"
             "  absolute linearity ±0.25 % FS ≈ ±50 µm → calibrate with a micrometer\n"

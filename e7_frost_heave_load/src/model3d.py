@@ -243,6 +243,19 @@ def _piston_and_sensors(asm, prefix, with_wall_probes, sand=False):
     asm.add(radial(180, 10, 74, Z_PED + 15, 1.6), name=prefix + "Tbot 109SS", color=C["temp"])
     asm.add(radial(0, 10, 49, Z_PT - 8, 1.6), name=prefix + "Ttop 109SS", color=C["temp"])
     # Invar reference with 2 LVDTs (RDP DCTH400)
+    if sand:      # variant A: weights above → LVDTs at ±y on tabs of the target plate
+        for s in (-1, 1):
+            asm.add(box(-10, 10, s * 60, s * (p.LVDT_R + 6), Z_PT, Z_PT + 5) if s > 0 else
+                    box(-10, 10, s * (p.LVDT_R + 6), s * 60, Z_PT, Z_PT + 5),
+                    name=f"{prefix}target tab {'+y' if s > 0 else '-y'}", color=C["al"])
+            n = 1 if s < 0 else 2
+            asm.add(cyl(19, 60, Z_LC, 0, s * p.LVDT_R), name=f"{prefix}LVDT-{n} DCTH400", color=C["sensor"])
+            asm.add(cyl(4, Z_LC - Z_TGT, Z_TGT, 0, s * p.LVDT_R), name=f"{prefix}LVDT-{n} plunger", color=C["steel"])
+            asm.add(cyl(10, Z_LC + 60, 0, 25, s * p.LVDT_R), name=f"{prefix}Invar post {n}", color=C["invar"])
+            arm = box(0, 25, s * p.LVDT_R - 6, s * p.LVDT_R + 6, Z_LC + 50, Z_LC + 60) if s > 0 else \
+                box(0, 25, s * p.LVDT_R - 6, s * p.LVDT_R + 6, Z_LC + 50, Z_LC + 60)
+            asm.add(arm, name=f"{prefix}LVDT clamp arm {n}", color=C["invar"])
+        return
     for s in (-1, 1):
         asm.add(cyl(10, 300, 0, s * 62, -75), name=f"{prefix}Invar rod {'L' if s < 0 else 'R'}", color=C["invar"])
         asm.add(cyl(19, 60, Z_LC, s * 62, 0), name=f"{prefix}LVDT-{1 if s < 0 else 2} DCTH400", color=C["sensor"])
@@ -255,34 +268,30 @@ def _piston_and_sensors(asm, prefix, with_wall_probes, sand=False):
 
 
 def variant_a(asm, prefix=""):
-    """Variant A: unsaturated sand in the multi-ring cell, pressure sensors, surcharge by a die spring."""
+    """Variant A: unsaturated sand in the multi-ring cell, pressure sensors, dead-weight surcharge ≤ 25 kPa."""
     zb = p.FRAME_H_A
-    frame(asm, prefix, z_beam=zb)
+    hb, hd = p.BASE_W / 2, p.BASE_D / 2
+    asm.add(box(-hb, hb, -hd, hd, -p.BASE_T, 0), name=prefix + "base plate Al 6082", color=C["al"])
+    for i, (x, y) in enumerate(((-hb + 20, -hd + 20), (hb - 20, -hd + 20), (0, hd - 20))):
+        asm.add(cyl(16, 18, -p.BASE_T - 18, x, y), name=f"{prefix}levelling foot {i + 1}", color=C["steel"])
+    for s in (-1, 1):
+        asm.add(box(s * X_COL - 20, s * X_COL + 20, -20, 20, 0, zb),
+                name=f"{prefix}column 40x40 {'L' if s < 0 else 'R'}", color=C["profile"])
+    bar = box(-X_COL - 20, X_COL + 20, -20, 20, zb, zb + p.BEAM_H_A).cut(cyl(28, p.BEAM_H_A, zb))
+    asm.add(bar, name=prefix + "cross-bar 40x40 (guide only)", color=C["profile"])
+    asm.add(tube(28, p.DW_ROD_D + 0.1, p.BEAM_H_A, zb), name=prefix + "linear ball bushing D16", color=C["steel"])
     asm.add(cyl(60, H_BOT, 0), name=prefix + "Al spacer (bottom)", color=C["al"])
     cell_stack(asm, "A", prefix, multiring=True)
-    asm.add(box(-25.5, 25.5, -9.5, 9.5, Z_LC, Z_LC + 64), name=prefix + "LC-A Interface SSM 2 kN",
-            color=C["sensor"])
-    zp = Z_LC + 64
-    asm.add(cyl(50, 8, zp), name=prefix + "lower spring plate", color=C["al"])
-    k = p.SPRINGS[0][1]
-    comp = p.SURCHARGE_A_KPA * math.pi * 2500 / 1000 / k
-    h = p.SPRING_L0 - comp
-    wire = 4.0
-    helix = cq.Wire.makeHelix(pitch=h / 6, height=h, radius=p.SPRING_D / 2 - wire / 2)
-    profile = cq.Workplane("XZ").center(p.SPRING_D / 2 - wire / 2, 0).circle(wire / 2)
-    try:
-        spring = profile.sweep(cq.Workplane("XY").add(helix), isFrenet=True).translate((0, 0, zp + 8))
-    except Exception:
-        spring = tube(p.SPRING_D, p.SPRING_D - 2 * wire, h, zp + 8)
-    asm.add(spring, name=prefix + f"die spring D{p.SPRING_D:g}x{p.SPRING_L0:g} ISO 10243", color=cq.Color(0.17, 0.42, 0.69))
-    asm.add(tube(p.SPRING_D + 10, p.SPRING_D + 4, h - 4, zp + 10), name=prefix + "spring guide tube (cut-away)",
-            color=cq.Color(0.8, 0.8, 0.8, 0.3))
-    top = zp + 8 + h
-    asm.add(cyl(50, 8, top), name=prefix + "upper spring plate", color=C["al"])
-    asm.add(cyl(20, zb + BEAM_H + 35 - (top + 8), top + 8), name=prefix + "screw M20x1.5", color=C["steel"])
-    asm.add(cyl(36, 12, zb + BEAM_H), name=prefix + "lock nut", color=C["steel"])
-    asm.add(cyl(90, 7, zb + BEAM_H + 35), name=prefix + "handwheel", color=C["steel"])
-    asm.add(radial(90, 14, 40, Z_LC + 30, 1.6), name=prefix + "TLC 109SS", color=C["temp"])
+    zg = Z_LC
+    asm.add(cyl(p.DW_G10_D, p.DW_G10_T, zg), name=prefix + "G10 thermal break D60x10", color=C["g10"])
+    zc = zg + p.DW_G10_T
+    asm.add(cyl(p.DW_D, p.DW_CARRIER_T, zc), name=prefix + "carrier plate steel D150x10", color=C["steel"])
+    asm.add(cyl(p.DW_ROD_D, p.DW_ROD_L, zc + p.DW_CARRIER_T), name=prefix + "guide rod D16", color=C["steel"])
+    z = zc + p.DW_CARRIER_T
+    for i, t in enumerate((p.DW_FULL_T,) * 3 + (p.DW_HALF_T,), 1):
+        asm.add(tube(p.DW_D, p.DW_HOLE, t - 0.5, z), name=f"{prefix}steel disc {i} D150x{t:g}", color=C["weight"])
+        z += t
+    asm.add(radial(0, 30, 75, (zc + z) / 2, 1.6), name=prefix + "Tw 109SS (weights)", color=C["temp"])
 
 
 def variant_b(asm, prefix=""):
@@ -323,7 +332,7 @@ def freezer_layout():
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    a = cq.Assembly(name="E7 variant A - spring surcharge, unsaturated sand")
+    a = cq.Assembly(name="E7 variant A - dead weight <= 25 kPa, unsaturated sand")
     variant_a(a)
     b = cq.Assembly(name="E7 variant B - constant height")
     variant_b(b)

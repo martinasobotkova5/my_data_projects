@@ -39,7 +39,7 @@ BEAM_PROFILE = "80x80"  # příčník
 PEDESTAL_H = 30.0       # Al podstavec pod celou (varianta B: na spodním siloměru)
 
 # --- zatížení -------------------------------------------------------------------
-SURCHARGES_KPA = (25, 50, 100, 200)   # varianta A – konstantní přitížení pružinou
+SURCHARGES_KPA = (5, 10, 15, 20, 25)   # varianta A – přitížení závažím (max. 25 kPa)
 B_MAX_KPA = 2000.0                    # varianta B – návrhový max. tlak (literatura: silty 0,2–2 MPa)
 SEATING_KPA = 5.0                     # varianta B – dosedací předpětí
 
@@ -68,7 +68,7 @@ INS = 25.0              # izolace kolem cely
 
 # --- varianta A: nenasycený písek, tlaky uvnitř vzorku -----------------------------
 SAND = dict(name="unsaturated sand", d50=0.3, Sr=(0.3, 0.5), theta=(0.10, 0.18))
-SURCHARGE_A_KPA = 50.0       # výchozí přitížení (rozsah 25–200)
+SURCHARGE_A_KPA = 25.0       # výchozí = maximální přitížení závažím
 # vložené tlakové buňky: (tag, měří, hloubka pod povrchem [mm], r [mm], úhel [°])
 #   "v" = leží vodorovně → svislé napětí; "h" = stojí svisle, čelem k ose → radiální napětí
 PCELLS = [("PV1", "v", 40.0, 0.0, 0.0),        # na ose, svislé napětí
@@ -81,9 +81,14 @@ PBASE = [("PB1", 25.0, 120.0)]               # (tag, r, úhel)
 PWALL = [("PW1", 20.0, 30.0), ("PW2", 42.0, 150.0), ("PW3", 64.0, 270.0)]
 PWALL_D = 8.0                                # PDA-PA v pouzdře ⌀8 (vejde se do kroužku 10 mm)
 
-# --- varianta A: přitížení předepnutou pružinou ------------------------------------
-FRAME_H_A = 380.0            # vyšší sloupy kvůli pružinovému pouzdru
-SPRING_D, SPRING_L0 = 32.0, 64.0     # lisovací pružina ISO 10243 ⌀32 × 64 (vnější ⌀, volná délka)
-SPRING_MAX_DEFL = 0.35       # dovolené stlačení ≈ 35 % L0 (podle řady pružiny, ověřit v katalogu)
-SPRINGS = [("light", 20.0, (25, 50)),     # tuhost N/mm, rozsah přitížení kPa
-           ("heavy", 80.0, (100, 200))]
+# --- varianta A: přitížení závažím (zatěžovací deska + ocelové kotouče) -------------
+FRAME_H_A = 410.0            # lehký rám 40×40 – nese jen vedení závaží a nic nezatěžuje
+BEAM_H_A = 40.0              # příčka 40×40 s lineárním ložiskem pro vodicí tyč
+RHO_STEEL = 7850.0
+DW_D, DW_HOLE = 150.0, 18.0  # ocelové kotouče ⌀150 se středovým otvorem
+DW_FULL_T, DW_HALF_T = 36.0, 18.0   # ≈ 4,9 kg a ≈ 2,5 kg
+DW_CARRIER_T = 10.0          # nosná deska ⌀150 × 10 s pevnou vodicí tyčí
+DW_ROD_D, DW_ROD_L = 16.0, 230.0
+DW_G10_D, DW_G10_T = 60.0, 10.0     # tepelný mezikus pod nosnou deskou
+PISTON_ASSY_KG = 1.0         # píst + porézní kámen + terčík + kulička (≈, zvážit)
+LVDT_R = 95.0                # LVDT na bocích (±y), terčík má výstupky do r 100

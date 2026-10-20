@@ -61,7 +61,7 @@ if __name__ == "__main__":
     import cadquery as cq
     a = cq.Assembly(); m.variant_a(a)
     b = cq.Assembly(); m.variant_b(b)
-    render(a, os.path.join(m.OUT, "E7_variant_A.png"), title="E7 variant A – spring surcharge, unsaturated sand")
+    render(a, os.path.join(m.OUT, "E7_variant_A.png"), title="E7 variant A – dead weight ≤ 25 kPa, unsaturated sand")
     half = cq.Workplane("XY").box(2000, 1000, 2000, centered=(True, False, True)).val()
     render(a, os.path.join(m.OUT, "E7_variant_A_section.png"), elev=15, azim=75,
            title="E7 variant A – section: sand, pressure cells, thermistors", cut=half)

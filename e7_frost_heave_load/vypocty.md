@@ -6,12 +6,13 @@ Generováno skriptem `src/vypocty.py` z `src/params.py`. Hodnoty ≈ jsou odhady
 
 Plocha vzorku ⌀100: 7854 mm² = 78.54 cm².
 
-| napětí [kPa] | síla [N] | stlačení pružiny [mm] | poznámka |
+| napětí [kPa] | síla [N] | hmotnost celkem [kg] | poznámka |
 |---|---|---|---|
-| 25 | 196 | 9.8 (k = 20 N/mm) | varianta A |
-| 50 | 393 | 19.6 (k = 20 N/mm) | varianta A |
-| 100 | 785 | 9.8 (k = 80 N/mm) | varianta A |
-| 200 | 1571 | 19.6 (k = 80 N/mm) | varianta A |
+| 5 | 39 | 4.0 | varianta A (závaží) |
+| 10 | 79 | 8.0 | varianta A (závaží) |
+| 15 | 118 | 12.0 | varianta A (závaží) |
+| 20 | 157 | 16.0 | varianta A (závaží) |
+| 25 | 196 | 20.0 | varianta A (závaží) |
 | 500 | 3927 | – | varianta B (tlak ze zdvihu) |
 | 1000 | 7854 | – | varianta B (tlak ze zdvihu) |
 | 2000 | 15708 | – | varianta B (tlak ze zdvihu) |
@@ -72,16 +73,25 @@ Zmrznutí vody v pórech na místě: 9 % × θ 0.3 × 100 mm ≈ **2.7 mm**. Ote
 | B: nahoře | kompresní (kanystr/sloupek), vysoká tuhost | 20 kN | 7.9 N = 0.039 %FS | 8.0 N ≈ 1.0 kPa |
 | B: dole pod podstavcem | kompresní, stejný typ | 20 kN | 7.9 N = 0.039 %FS | 8.0 N ≈ 1.0 kPa |
 
-## 7. Varianta A – přitížení předepnutou pružinou
+## 7. Varianta A – přitížení závažím (max. 25 kPa)
 
-Pružina ⌀32 × 64 mm (ISO 10243) mezi siloměrem a stavěcím šroubem. Dovolené stlačení ≈ 35 % L0 = 22.4 mm.
+Kotouč ⌀150/18 × 36 mm = 4.92 kg, poloviční × 18 mm = 2.46 kg. Pevná část: píst se vším ≈ 1 kg + nosná deska 1.39 kg + vodicí tyč 0.36 kg = **2.75 kg ≈ 3.4 kPa** (nejmenší přitížení).
 
-| pružina | k [N/mm] | přitížení [kPa] | síla [N] | stlačení [mm] | Δσ při posunu 0,1 mm [kPa] | Δσ od smrštění rámu [kPa] |
-|---|---|---|---|---|---|---|
-| light | 20 | 25 | 196 | 9.8 | 0.25 | 0.45 |
-| light | 20 | 50 | 393 | 19.6 | 0.25 | 0.45 |
-| heavy | 80 | 100 | 785 | 9.8 | 1.02 | 1.79 |
-| heavy | 80 | 200 | 1571 | 19.6 | 1.02 | 1.79 |
+| přitížení [kPa] | celkem [kg] | plné kotouče | poloviční | doladit [kg] | výška kotoučů [mm] |
+|---|---|---|---|---|---|
+| 5 | 4.0 | 0 | 0 | 1.25 | 0 |
+| 10 | 8.0 | 1 | 0 | 0.33 | 36 |
+| 15 | 12.0 | 1 | 1 | 1.88 | 54 |
+| 20 | 16.0 | 2 | 1 | 0.96 | 90 |
+| 25 | 20.0 | 3 | 1 | 0.04 | 126 |
 
-Smrštění Al sloupů 380 mm při 20 K = 0.176 mm. Pružina ho převede jen na malou změnu síly (poslední sloupec), na rozdíl od tuhého rámu varianty B. Stlačení musí zůstat pod dovoleným – pro 200 kPa vychází těsně, proto „heavy“ pružina 80 N/mm.
+Doladění tenkými kotouči / podložkami; celkovou hmotnost všeho, co leží na vzorku, zvážit.
+
+| tepelná setrvačnost závaží (25 kPa) | hodnota | poznámka |
+|---|---|---|
+| tepelná kapacita závaží | 8.7 kJ/K | vzorek ≈ 1.6 kJ/K |
+| časová konstanta (volná konvekce h ≈ 5 W m⁻² K⁻¹) | 5.5 h | bez izolace kotoučů |
+| zpoždění teploty závaží při rampě programu | 0.57 K | rampa 0.10 K/h (Set A) |
+
+Závaží za vzduchem v mrazáku zaostává jen o desetiny kelvinu, protože program mění teplotu pomalu. Mezikus G10 ⌀60 × 10 pod nosnou deskou omezí tok tepla ze závaží do vzorku; teplotu závaží logovat (Tw).
 

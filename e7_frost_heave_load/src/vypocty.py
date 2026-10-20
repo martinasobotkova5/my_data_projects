@@ -21,12 +21,11 @@ print("Generováno skriptem `src/vypocty.py` z `src/params.py`. Hodnoty ≈ jsou
 # 1 ---------------------------------------------------------------------------
 print("## 1. Zatížení a síly\n")
 print(f"Plocha vzorku ⌀{p.D_SAMPLE:g}: {A:.0f} mm² = {A / 100:.2f} cm².\n")
-head("napětí [kPa]", "síla [N]", "stlačení pružiny [mm]", "poznámka")
+head("napětí [kPa]", "síla [N]", "hmotnost celkem [kg]", "poznámka")
 for s in p.SURCHARGES_KPA + (500, 1000, 2000):
     f = s * A / 1000
-    note = "varianta A" if s in p.SURCHARGES_KPA else "varianta B (tlak ze zdvihu)"
-    k_ = p.SPRINGS[0][1] if s <= 50 else p.SPRINGS[1][1]
-    row(s, f"{f:.0f}", f"{f / k_:.1f} (k = {k_:g} N/mm)" if s in p.SURCHARGES_KPA else "–", note)
+    note = "varianta A (závaží)" if s in p.SURCHARGES_KPA else "varianta B (tlak ze zdvihu)"
+    row(s, f"{f:.0f}", f"{f / 9.81:.1f}" if s in p.SURCHARGES_KPA else "–", note)
 
 # 2 ---------------------------------------------------------------------------
 print("\n## 2. Tuhost rámu (varianta B, konstantní výška)\n")
@@ -115,16 +114,40 @@ for use, typ, fs in (("A: v sérii s pružinou", "S-snímač tah/tlak, C3, kompe
         f"{drift:.1f} N ≈ {drift / A * 1000:.1f} kPa")
 
 # 7 ---------------------------------------------------------------------------
-print("\n## 7. Varianta A – přitížení předepnutou pružinou\n")
-print(f"Pružina ⌀{p.SPRING_D:g} × {p.SPRING_L0:g} mm (ISO 10243) mezi siloměrem a stavěcím šroubem. "
-      f"Dovolené stlačení ≈ {p.SPRING_MAX_DEFL * 100:.0f} % L0 = {p.SPRING_MAX_DEFL * p.SPRING_L0:.1f} mm.\n")
-head("pružina", "k [N/mm]", "přitížení [kPa]", "síla [N]", "stlačení [mm]", "Δσ při posunu 0,1 mm [kPa]",
-     "Δσ od smrštění rámu [kPa]")
-d_fr = p.ALPHA_AL * p.FRAME_H_A * (p.T_WARM - p.T_COLD)
-for name, k, (lo, hi) in p.SPRINGS:
-    for s in (lo, hi):
-        f = s * A / 1000
-        row(name, f"{k:g}", s, f"{f:.0f}", f"{f / k:.1f}", f"{k * 0.1 / A * 1000:.2f}", f"{k * d_fr / A * 1000:.2f}")
-print(f"\nSmrštění Al sloupů {p.FRAME_H_A:g} mm při 20 K = {d_fr:.3f} mm. Pružina ho převede jen na malou "
-      "změnu síly (poslední sloupec), na rozdíl od tuhého rámu varianty B. Stlačení musí zůstat pod dovoleným "
-      "– pro 200 kPa vychází těsně, proto „heavy“ pružina 80 N/mm.\n")
+print("\n## 7. Varianta A – přitížení závažím (max. 25 kPa)\n")
+
+
+def disc_kg(t):
+    return math.pi / 4 * ((p.DW_D / 1000) ** 2 - (p.DW_HOLE / 1000) ** 2) * t / 1000 * p.RHO_STEEL
+
+
+m_full, m_half = disc_kg(p.DW_FULL_T), disc_kg(p.DW_HALF_T)
+m_carrier = math.pi / 4 * (p.DW_D / 1000) ** 2 * p.DW_CARRIER_T / 1000 * p.RHO_STEEL
+m_rod = math.pi / 4 * (p.DW_ROD_D / 1000) ** 2 * p.DW_ROD_L / 1000 * p.RHO_STEEL
+m_fixed = p.PISTON_ASSY_KG + m_carrier + m_rod
+print(f"Kotouč ⌀{p.DW_D:g}/{p.DW_HOLE:g} × {p.DW_FULL_T:g} mm = {m_full:.2f} kg, poloviční × {p.DW_HALF_T:g} mm = "
+      f"{m_half:.2f} kg. Pevná část: píst se vším ≈ {p.PISTON_ASSY_KG:g} kg + nosná deska {m_carrier:.2f} kg "
+      f"+ vodicí tyč {m_rod:.2f} kg = **{m_fixed:.2f} kg ≈ {m_fixed * 9.81 / A * 1000:.1f} kPa** (nejmenší přitížení).\n")
+head("přitížení [kPa]", "celkem [kg]", "plné kotouče", "poloviční", "doladit [kg]", "výška kotoučů [mm]")
+for s in p.SURCHARGES_KPA:
+    m = s * A / 1000 / 9.81
+    rest = m - m_fixed
+    n_f = int(rest // m_full)
+    rest -= n_f * m_full
+    n_h = int(rest // m_half)
+    rest -= n_h * m_half
+    row(s, f"{m:.1f}", n_f, n_h, f"{rest:.2f}", f"{n_f * p.DW_FULL_T + n_h * p.DW_HALF_T:g}")
+print("\nDoladění tenkými kotouči / podložkami; celkovou hmotnost všeho, co leží na vzorku, zvážit.\n")
+m25 = 25 * A / 1000 / 9.81
+c_w = (m25 - p.PISTON_ASSY_KG) * 460
+c_s = 2.0e6 * math.pi / 4 * 0.1 ** 2 * 0.1
+area = math.pi * p.DW_D / 1000 * 0.15 + math.pi / 4 * (p.DW_D / 1000) ** 2
+ua = 5.0 * area
+tau = c_w / ua / 3600
+rate = (p.T_WARM - p.T_COLD) / p.STEP_H
+head("tepelná setrvačnost závaží (25 kPa)", "hodnota", "poznámka")
+row("tepelná kapacita závaží", f"{c_w / 1000:.1f} kJ/K", f"vzorek ≈ {c_s / 1000:.1f} kJ/K")
+row("časová konstanta (volná konvekce h ≈ 5 W m⁻² K⁻¹)", f"{tau:.1f} h", "bez izolace kotoučů")
+row("zpoždění teploty závaží při rampě programu", f"{rate * tau:.2f} K", f"rampa {rate:.2f} K/h (Set A)")
+print("\nZávaží za vzduchem v mrazáku zaostává jen o desetiny kelvinu, protože program mění teplotu pomalu. "
+      "Mezikus G10 ⌀60 × 10 pod nosnou deskou omezí tok tepla ze závaží do vzorku; teplotu závaží logovat (Tw).\n")

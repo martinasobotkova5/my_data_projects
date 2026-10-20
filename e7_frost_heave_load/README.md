@@ -1,12 +1,12 @@
 # E7: zatěžovací zkoušky zeminy při mrznutí a tání
 
-Vzorek ⌀100 × 100 mm (vnitřní) v tištěné cele z PETG-CF, v rámu z Al profilů, v truhlicovém mrazáku z E6 s programovatelným regulátorem. Obě sestavy jsou **bez páky**: varianta A má přitížení předepnutou pružinou, varianta B pevné omezení šroubem.
+Vzorek ⌀100 × 100 mm (vnitřní) v tištěné cele z PETG-CF, v rámu z Al profilů, v truhlicovém mrazáku z E6 s programovatelným regulátorem. Obě sestavy jsou **bez páky**: varianta A má přitížení **závažím** (ocelové kotouče, max. 25 kPa), varianta B pevné omezení šroubem.
 
 | soubor | obsah |
 |---|---|
 | `vykresy/E7_drawings.pdf` | 6 listů A3, anglicky (PNG po listech ve stejné složce) |
 | `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, vícekroužková cela, obě v mrazáku (+ STL a PNG náhledy) |
-| `vypocty.md` | síly, pružiny, tuhost rámu, teplotní artefakt, napětí v cele, siloměry |
+| `vypocty.md` | síly, závaží a jejich tepelná setrvačnost, tuhost rámu, teplotní artefakt, napětí v cele, siloměry |
 | `src/params.py` | všechny rozměry a předpoklady |
 | `src/sensors.py` | výběr čidel a plán kanálů CR1000 |
 | `src/vykresy.py`, `src/vypocty.py`, `src/model3d.py`, `src/render3d.py` | generátory |
@@ -20,41 +20,50 @@ Regenerace: `cd src && python vykresy.py && python vypocty.py > ../vypocty.md &&
 | | **A – nenasycený písek, konstantní přitížení** (E7-V01) | **B – konstantní výška** (E7-V02) |
 |---|---|---|
 | vzorek | nenasycený písek (Sr ≈ 0,3–0,5) | zemina podle zadání |
-| co se drží | svislé napětí 25 / 50 / 100 / 200 kPa (výchozí 50 kPa) | výška vzorku (píst opřený o rám) |
-| zatížení | **předepnutá pružina** ISO 10243 ⌀32 × 64 + šroub M20 × 1,5 | jemný šroub M24 × 1,5, dosedací předpětí 5 kPa |
+| co se drží | svislé napětí 5 / 10 / 15 / 20 / 25 kPa (výchozí 25 kPa) | výška vzorku (píst opřený o rám) |
+| zatížení | **závaží** – ocelové kotouče ⌀150 na nosné desce s vodicí tyčí ⌀16 | jemný šroub M24 × 1,5, dosedací předpětí 5 kPa |
 | co se měří | tlaky uvnitř písku, u dna a na stěně; LVDT kontrolují, že se vzorek nehýbe | síla z mrazového zdvihu nahoře a dole (rozdíl = tření o stěnu) |
-| siloměr | S-snímač 2 kN (kontrola síly pružiny) | 2× kompresní 20 kN |
+| siloměr | není potřeba (síla = hmotnost závaží) | 2× kompresní 20 kN |
 | cela | vícekroužková + latexová membrána | monolitická + Al objímka 5 mm |
-| sloupy rámu | 380 mm | 330 mm |
+| rám | lehký 40×40, sloupy 410 mm, příčka s lineárním ložiskem | 40×80, sloupy 330 mm, příčník 80×80 |
 
 Obě varianty sdílejí spodní a horní část sestavy:
 - podstavec s porézním kamenem a izolační mezikus G10,
 - píst s porézním kamenem a kuličku v kuželových sedlech,
 - LVDT na Invarovém rámečku a termistory ve stěně.
 
-**Proč pružina:**
-- Pružina je proti písku měkká, takže posun vzorku o 0,1 mm změní napětí jen o 0,25 kPa (pružina 20 N/mm). Smrštění Al rámu v mrazu (0,18 mm) ho změní o < 0,5 kPa.
-- Sestava je kompaktní, bez závaží a nic nepřesahuje mimo rám.
-- Siloměr LC-A loguje skutečnou sílu.
+**Proč závaží:**
+- Gravitace dává přesně konstantní přitížení. Nezávisí na posunu vzorku ani na smrštění rámu v mrazu.
+- Není potřeba siloměr ani dotahování. Rám jen vede tyč a nese LVDT, takže nic nezatěžuje.
+- Do 25 kPa je to 20 kg, tedy 3 plné a 1 poloviční kotouč (výška 126 mm). To se do mrazáku vejde.
 
-## 2. Přitížení pružinou (varianta A, `vypocty.md` §7)
+## 2. Přitížení závažím (varianta A, E7-V01, `vypocty.md` §7)
 
-**Postup:** šroubem dotáhnout, dokud LC-A neukáže cílovou sílu (50 kPa = 393 N), a zajistit pojistnou maticí. Dotahovat znovu jen tehdy, když síla ujede o více než 2 %.
+**Sestava shora dolů:**
+- vodicí tyč ⌀16 v lineárním kuličkovém ložisku v příčce rámu (jen vedení, žádná síla);
+- ocelové kotouče ⌀150 se středovým otvorem ⌀18: plný 36 mm ≈ 4,92 kg, poloviční 18 mm ≈ 2,46 kg;
+- nosná deska ⌀150 × 10 (1,39 kg) s pevně spojenou tyčí ⌀16 × 230 (0,36 kg);
+- tepelný mezikus G10 ⌀60 × 10;
+- kulička v kuželových sedlech a píst s porézním kamenem (≈ 1 kg, zvážit).
 
-| pružina | tuhost | přitížení | stlačení | změna napětí při posunu 0,1 mm | změna od smrštění rámu 0,18 mm |
-|---|---|---|---|---|---|
-| „light“ | 20 N/mm | 25–50 kPa | 9,8–19,6 mm | 0,25 kPa | 0,45 kPa |
-| „heavy“ | 80 N/mm | 100–200 kPa | 9,8–19,6 mm | 1,0 kPa | 1,8 kPa |
+Pevná část (píst, nosná deska, tyč) ≈ 2,75 kg ≈ **3,4 kPa**, to je nejmenší možné přitížení.
 
-Pro 200 kPa je stlačení těsně pod dovoleným (≈ 35 % volné délky). Konkrétní pružiny vybrat z katalogu podle tuhosti a dovoleného zdvihu, např. Lesjöfors, Danly, Meusburger nebo Fibro.
+| přitížení [kPa] | celkem [kg] | plné kotouče | poloviční | doladit [kg] |
+|---|---|---|---|---|
+| 5 | 4,0 | 0 | 0 | 1,25 |
+| 10 | 8,0 | 1 | 0 | 0,33 |
+| 15 | 12,0 | 1 | 1 | 1,88 |
+| 20 | 16,0 | 2 | 1 | 0,96 |
+| 25 | 20,0 | 3 | 1 | 0,04 |
 
-**Jiné způsoby přitížení bez páky:**
+**Postup:** všechno, co leží na vzorku, zvážit na váze (±10 g ≈ ±0,01 kPa) a doladit tenkými kotouči nebo podložkami. Kotouče pokládat na nosnou desku pomalu, bez rázu.
 
-| způsob | výhody | nevýhody |
-|---|---|---|
-| **pružina + šroub (zvoleno)** | kompaktní, bez závaží, malý vliv teploty | sílu kontrolovat siloměrem |
-| závaží přímo na pístu | síla přesně konstantní | 50 kPa = 40 kg na vzorku, velká tepelná hmota nad vzorkem |
-| pneumatický válec (Bellofram) | přesné, nastavitelné | přívod suchého vzduchu do mrazáku, riziko námrazy |
+**Tepelná setrvačnost:**
+- Závaží 20 kg má tepelnou kapacitu ≈ 8,7 kJ/K, vzorek jen ≈ 1,6 kJ/K. Časová konstanta je ≈ 5,5 h.
+- Program regulátoru mění teplotu jen o ≈ 0,1 K/h, takže závaží za vzduchem zaostává jen o ≈ 0,6 K.
+- G10 mezikus omezí tok tepla ze závaží do pístu. Volitelně obalit kotouče izolací 10 mm. Teplotu závaží logovat (Tw).
+
+**Kdy závaží nestačí:** nad ≈ 25 kPa (max. ≈ 50 kPa = 40 kg) roste výška i tepelná hmota. Pro 50–200 kPa je náhradou předepnutá pružina se šroubem a siloměrem (ISO 10243, 20 nebo 80 N/mm), viz historie repozitáře.
 
 ## 3. Tlaky uvnitř vzorku (varianta A)
 
@@ -75,7 +84,7 @@ O kolik tlak při mrznutí vzroste nad přitížení, tolik vytváří led v pó
 
 **Zásady z literatury** (Weiler & Kulhawy 1982; Labuz & Theroux 2005, doi:10.1520/GTJ12089; Talesnick 2005):
 - **Málo malých inkluzí:** poměr průměr/tloušťka ≥ 10 a průměr / d50 ≥ 20 (disk ⌀20 v písku d50 0,3 mm → ≈ 65). Proto jen 2 vložené disky a ostatní snímače v lícu stěny a dna.
-- **Kalibrace v písku:** ve stejném písku a cele, pod známým přitížením 25–200 kPa (nastaveným pružinou a kontrolovaným siloměrem), zatížení i odlehčení, při +10 a −10 °C.
+- **Kalibrace v písku:** ve stejném písku a cele, pod známým přitížením 5–25 kPa (závaží), zatížení i odlehčení, při +10 a −10 °C.
 - **Teplota:** u každého snímače termistor a korekce nuly podle teploty. Zeng et al. (2022, doi:10.6052/1000-0879-21-231) ukázali při cyklech mrznutí a tání teplotní posun a degradaci miniaturních buněk.
 - **Led na membráně:** snímače utěsnit silikonem nebo epoxidem.
 - **Sání v nenasyceném písku:** tenziometry v mrazu zamrznou. Před zmrazením změřit sání (tenziometr nebo filtrační papír) a pak ho odhadovat z teploty (Clapeyron) nebo z obsahu nezamrzlé vody (TDR).
@@ -96,19 +105,19 @@ O kolik tlak při mrznutí vzroste nad přitížení, tolik vytváří led v pó
 
 - **Vážní čidla** jsou stavěná pro plošinu s výstředným zatížením. V osové sestavě mezi pístem a rámem se ohýbají a jsou poddajná.
 - **Kompresní siloměry** jsou tuhé (≈ 0,02–0,1 mm při plném rozsahu). To je pro variantu B zásadní, protože tlak z mrazového zdvihu silně závisí na tuhosti omezení (Ji et al. 2019).
-- **S-snímač 2 kN** ve variantě A dává jemné rozlišení (1 kPa ≈ 7,9 N).
+- **Varianta A** siloměr nepotřebuje, síla je dána hmotností závaží.
 - **Teplota:** běžné siloměry třídy C3 jsou kompenzované v rozsahu −10 … +40 °C, takže −10 °C je na hraně. Logovat teplotu siloměru a korigovat.
 
 ## 6. Rám z Al profilů (E7-V04)
 
-- **Sestava:** základová deska Al 260 × 200 × 25, 2 sloupy 40×80, příčník 80×80 dlouhý 260 mm. Sloupy jsou 380 mm (A) a 330 mm (B).
-- **Výška:** nejvyšší bod (ruční kolo varianty A) je ≈ 605 mm nad podlahou mrazáku, proti odhadovaným ≈ 650 mm vnitřní výšky.
+- **Sestava:** základová deska Al 260 × 200 × 25, 2 sloupy 40×80, příčník 80×80 dlouhý 260 mm. To je rám B. Rám A je lehký: 2 sloupy 40×40 × 410 mm a příčka 40×40 s lineárním ložiskem ⌀16 pro vodicí tyč závaží.
+- **Výška:** nejvyšší bod (vodicí tyč varianty A) je ≈ 530 mm nad podlahou mrazáku, proti odhadovaným ≈ 650 mm vnitřní výšky.
 - **Tuhost varianty B při 15,7 kN:** příčník 0,036 mm, sloupy 0,035 mm, siloměr ≈ 0,05 mm, spoje 0,02–0,15 mm. **Rozhodují spoje.** Proto šrouby do čela profilů a žádné úhelníky v silové cestě.
 - **Teplotní artefakt varianty B:** Al sloupy 330 mm se při změně o 20 K zkrátí o 0,15 mm. S ocelovou vnitřní sestavou by to do zmrzlého vzorku zatlačilo ≈ 160 kPa. Opatření:
   1. Al distanční trubka v silové cestě;
   2. **slepá zkouška** s Al náhradou vzorku;
   3. LVDT na Invarovém rámečku.
-- **Varianta A:** tento problém téměř nemá, protože pružina smrštění rámu převede jen na < 2 kPa.
+- **Varianta A:** tento problém nemá. Rám nenese zatížení, takže jeho smrštění přitížení nemění.
 
 ## 7. Vydrží PETG-CF? (E7-V03, `vypocty.md` §4)
 
@@ -136,7 +145,6 @@ Podmínky:
 
 | měření | doporučeno | alternativy |
 |---|---|---|
-| síla A (2 kN) | **Interface SSM 2 kN** – kompenzace −15 … +65 °C, IP67 | HBM S9M/2kN, HBM U2B, ME KD80s, Lorenz K-25 |
 | síla B (2× 20 kN) | **HBM C9C/20kN** – ⌀26 × 13 mm, velmi tuhý, provoz −30 … +85 °C | Burster 8402, HBM C10, Futek LTH500 |
 | posun (4×) | **RDP DCTH400** – DC-LVDT ±10 mm, výstup ±5 V, −40 … +80 °C | Micro-Epsilon DTA-10D, Solartron AX/10/S, HBM WA-L |
 | tlak (6×, A) | **TML PDA-PA 200 kPa** | Kyowa BEC-A (jen 1 buňka), TE EPL (stěna) |
@@ -146,19 +154,19 @@ Podmínky:
 
 | svorky CR1000 | připojeno | poznámka |
 |---|---|---|
-| DIFF1–3 + VX1 | 3 siloměry | BrFull, ratiometricky s reverzací |
+| DIFF1–2 + VX1 | 2 siloměry (LC-T, LC-B, varianta B) | BrFull, ratiometricky s reverzací |
 | SE7–10 | 4 LVDT | ±5000 mV, vlastní zdroj ±15 V |
 | DIFF6 + VX3 (2000 mV) + C1/C2 | multiplexer AM16/32B č. 1 (4×16) | 6 tlakových můstků |
 | SE13 + VX2 + C3/C4 | multiplexer AM16/32B č. 2 (2×32) | ≈ 24 termistorů |
 
-- **Rozlišení:** síla ≈ 0,04 kPa (A) a ≈ 0,3 kPa (B), posun ≈ 1,3 µm. Absolutní přesnost LVDT ±50 µm → kalibrovat mikrometrem.
+- **Rozlišení:** síla ≈ 0,3 kPa (B), posun ≈ 1,3 µm. Absolutní přesnost LVDT ±50 µm → kalibrovat mikrometrem.
 - **CR1000:** se už nevyrábí (nástupce CR1000X / CR1000Xe). Stávající stačí, ale musí zůstat mimo mrazák.
 
 ## 9. 3D modely pro Onshape (`3d/`)
 
 | soubor | obsah |
 |---|---|
-| `E7_variant_A.step` | varianta A – rám (sloupy 380), vícekroužková cela, nenasycený písek, tlakové snímače PV1/PH1/PB1/PW1–3, pružina se šroubem, siloměr Interface SSM, 2× LVDT, Invarová reference, termistory |
+| `E7_variant_A.step` | varianta A – lehký rám 40×40 (sloupy 410, příčka s ložiskem), vícekroužková cela, nenasycený písek, tlakové snímače PV1/PH1/PB1/PW1–3, G10, nosná deska s tyčí, 3 + 1 ocelové kotouče, 2× LVDT na bocích (±y) s Invarovými sloupky, termistory včetně Tw |
 | `E7_variant_B.step` | varianta B – rám (sloupy 330), cela s Al objímkou, 2× HBM C9C, Al distanční trubka, šroub M24 s ručním kolem, LVDT, termistory |
 | `E7_multiring_cell.step` | samotná vícekroužková cela |
 | `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku (stěny mrazáku průhledné, ≈ rozměry) |
@@ -200,7 +208,7 @@ Náhledy jsou `3d/*.png`. Řez variantou A ukazuje `E7_variant_A_section.png`.
 1. **Program regulátoru:** „Set A“ (rampy 192 h mezi −10 a +10 °C) lze použít přímo. Pro jasné kroky zvážit výdrže na −10 °C a +10 °C.
 2. **Směr promrzání:** izolace stěn a G10 pod podstavcem vedou k promrzání hlavně shora. Termostatované koncové desky (Jin et al. 2019) jsou možné rozšíření.
 3. **Písek:** zrnitost (d50) a cílová vlhkost / stupeň nasycení určí velikost tlakových disků a rozsah snímačů (200 kPa).
-4. **Přitížení:** stačí 25–50 kPa (jedna pružina 20 N/mm), nebo i 100–200 kPa (druhá pružina 80 N/mm)?
-5. **Rozměry mrazáku a vany:** prosím změřit. Výška sestavy A je ≈ 605 mm.
+4. **Přitížení:** stačí 5–25 kPa (závaží)? Pro vyšší přitížení je připravená varianta s pružinou.
+5. **Rozměry mrazáku a vany:** prosím změřit. Výška sestavy A je ≈ 530 mm.
 
-> Výkresy jsou NÁVRH. Profilové hodnoty, pružiny a údaje o čidlech jsou katalogové odhady. Ověřit u dodavatele a nechat zkontrolovat konstruktérem.
+> Výkresy jsou NÁVRH. Profilové hodnoty, hmotnosti závaží a údaje o čidlech jsou katalogové odhady. Ověřit u dodavatele a nechat zkontrolovat konstruktérem.

@@ -8,12 +8,10 @@ Specs from manufacturer / distributor pages found by web search (README §7);
 
 # tag: (what it measures, recommended model, short spec, CR1000 connection)
 PICK = {
-    "LC-A": ("load, rig A (spring)", "Interface SSM 2 kN",
-             "S-type, comp. −15…+65 °C, IP67", "DIFF1, BrFull, VX1"),
     "LC-T": ("heave force, rig B top", "HBM C9C/20kN",
-             "⌀26×13 mm, 1 mV/V, nom. −10…+70 °C, IP67", "DIFF2, BrFull, VX1"),
+             "⌀26×13 mm, 1 mV/V, nom. −10…+70 °C, IP67", "DIFF1, BrFull, VX1"),
     "LC-B": ("force at base, rig B", "HBM C9C/20kN",
-             "same as LC-T", "DIFF3, BrFull, VX1"),
+             "same as LC-T", "DIFF2, BrFull, VX1"),
     "LVDT": ("heave / settlement (2 per rig)", "RDP DCTH400",
              "DC-LVDT ±10 mm, ±5 V out, −40…+80 °C", "SE7–10, VoltSE ±5 V"),
     "T": ("soil, cell wall, piston, pedestal", "Campbell 109SS",
@@ -28,12 +26,6 @@ PICK = {
 
 # (category, maker + model, key specs, verdict)
 OPTIONS = [
-    ("LC 2 kN", "Interface SSM 2 kN", "comp. −15…+65 °C, op. −55…+90 °C, IP67", "PICK"),
-    ("LC 2 kN", "HBM S9M/2kN", "class 0.02, 2 mV/V, 6-wire, IP68, nom. −10…+70 °C", "alternative"),
-    ("LC 2 kN", "HBM U2B 2 kN", "class 0.1, 2 mV/V, IP67, temp. [U]", "alternative"),
-    ("LC 2 kN", "ME KD80s 2 kN", "2 mV/V, 0.2 mm at FS, −10…+70 °C", "alternative"),
-    ("LC 2 kN", "Lorenz K-25", "1–2 mV/V, IP67, ext. range on request", "ask quote"),
-    ("LC 2 kN", "AML DBBSM", "comp. only 0…+70 °C, IP51", "not suitable"),
     ("LC 20 kN", "HBM C9C/20kN", "⌀26×13 mm, 1 mV/V, nom. −10…+70, op. −30…+85 °C", "PICK"),
     ("LC 20 kN", "Burster 8402 20 kN", "1.5 mV/V, ≤ 50 µm deflection, op. −30…+100 °C, IP54", "alternative"),
     ("LC 20 kN", "HBM C10 25 kN", "class 0.02–0.05, height 36 mm [U]", "alternative"),
@@ -57,7 +49,7 @@ OPTIONS = [
 
 # CR1000 terminal → use
 CHANNELS = [
-    ("DIFF1–3", "LC-A, LC-T, LC-B", "BrFull, reversal; VX1 2500 mV"),
+    ("DIFF1–2", "LC-T, LC-B (rig B)", "BrFull, reversal; VX1 2500 mV"),
     ("SE7–SE10", "LVDT-A1, A2, B1, B2", "VoltSE ±5000 mV, averaging; own ±15 V supply"),
     ("DIFF6 (SE11/12)", "MUX-1 AM16/32B, 4×16", "6 pressure bridges (PV1, PH1, PB1, PW1–3), BrFull"),
     ("VX3", "MUX-1 excitation", "2000 mV (TML: < 2 V recommended)"),
