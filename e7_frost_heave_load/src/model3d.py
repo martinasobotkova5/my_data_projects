@@ -303,11 +303,16 @@ def variant_b(asm, prefix=""):
 
 
 def variant_a_min(asm, prefix=""):
-    """Variant A-min: no frame, discs on a threaded rod in the piston, 2 pressure cells, 2 thermistors,
-    point M, 1 LVDT on a post – the minimum version of A."""
-    bw, bd, bt = p.AM_BASE
+    """Variant A-min: fixed steel lid on 3 tie rods (sample cannot move), 2 pressure cells, point M with the
+    lab's own TDR / temperature sensor / optical fibre, 1 LVDT on the lid – the minimum version of A."""
+    bw, bd, _ = p.AM_BASE
+    bt = p.AM_BASE_T2
     zb0 = Z_S0 - p.AM_BOTTOM_T - p.AM_G10_T
-    asm.add(box(-bw / 2, bw / 2, -bd / 2, bd / 2, zb0 - bt, zb0), name=prefix + "Al base plate", color=C["al"])
+    base = box(-bw / 2, bw / 2, -bd / 2, bd / 2, zb0 - bt, zb0)
+    for ang in p.AM_TIE_ANG:
+        base = base.cut(cyl(p.AM_TIE_D + 1, bt, zb0 - bt, p.AM_TIE_R * math.cos(math.radians(ang)),
+                            p.AM_TIE_R * math.sin(math.radians(ang))))
+    asm.add(base, name=prefix + "Al base plate 230x230x20", color=C["al"])
     asm.add(cyl(150, p.AM_G10_T, zb0), name=prefix + "G10 thermal break D150x10", color=C["g10"])
     xb, yb = p.AM_PB[1] * math.cos(math.radians(p.AM_PB[2])), p.AM_PB[1] * math.sin(math.radians(p.AM_PB[2]))
     bottom = cyl(150, p.AM_BOTTOM_T, zb0 + p.AM_G10_T).cut(cyl(8.2, 1.5, Z_S0 - 1.5, xb, yb))
@@ -320,23 +325,30 @@ def variant_a_min(asm, prefix=""):
     asm.add(radial(0, p.PCELL_D / 2, R_OUT + INS_T + 15, Z_S1 - p.AM_PV[1], 2.5), name=prefix + "PV1 cable",
             color=C["pressure"])
     zp = Z_S1 + p.AM_PISTON_H
-    asm.add(cyl(99.5, p.AM_PISTON_H, Z_S1).cut(cyl(16, 20, zp - 20)), name=prefix + "Al piston D99.5x40",
-            color=C["al"])
-    z_rod1 = Z_S1 + 20 + p.AM_ROD_L
-    asm.add(cyl(16, p.AM_ROD_L, Z_S1 + 20), name=prefix + "threaded rod M16", color=C["steel"])
-    z = zp
-    for i, t in enumerate((p.DW_FULL_T,) * 3 + (p.DW_HALF_T, p.AM_TRIM_T), 1):
-        asm.add(tube(p.DW_D, 17, t - 0.5, z), name=f"{prefix}steel disc {i} D150x{t:g}", color=C["weight"])
-        z += t
-    c = (p.AM_BASE[0] / 2 - 15)
-    z_arm = z_rod1 + 80
+    asm.add(cyl(99.5, p.AM_PISTON_H, Z_S1), name=prefix + "Al piston D99.5x40", color=C["al"])
+    zl0 = zp + p.AM_LID_GAP
+    zl1 = zl0 + p.AM_LID_T
+    lid = cyl(p.AM_LID_D, p.AM_LID_T, zl0).cut(cyl(p.AM_SCREW_D, p.AM_LID_T, zl0))
+    for i, ang in enumerate(p.AM_TIE_ANG, 1):
+        x, y = p.AM_TIE_R * math.cos(math.radians(ang)), p.AM_TIE_R * math.sin(math.radians(ang))
+        lid = lid.cut(cyl(p.AM_TIE_D + 1, p.AM_LID_T, zl0, x, y))
+        asm.add(cyl(p.AM_TIE_D, zl1 + 15 - (zb0 - bt - 10), zb0 - bt - 10, x, y), name=f"{prefix}tie rod M10 {i}",
+                color=C["steel"])
+        for zz, where in ((zl1, "top"), (zb0 - bt - 8, "bottom")):
+            asm.add(cyl(17, 8, zz, x, y), name=f"{prefix}nut M10 {i} {where}", color=C["weight"])
+    asm.add(lid, name=prefix + "steel lid D240x15", color=C["steel"])
+    asm.add(cyl(p.AM_SCREW_D, zl1 + 30 - zp, zp), name=prefix + "centre screw M16x1.5", color=C["weight"])
+    asm.add(cyl(26, 10, zl1), name=prefix + "lock nut M16", color=C["weight"])
+    c = bw / 2 - 15
+    r_l = p.AM_LID_D / 2 - 10
+    xl, yl = r_l * math.cos(math.radians(225)), r_l * math.sin(math.radians(225))
+    z_arm = zl1 + 75
     asm.add(cyl(p.AM_POST_D, z_arm + 10 - zb0, zb0, -c, -c), name=prefix + "stainless post D12", color=C["steel"])
-    L = math.hypot(c, c)
-    arm = box(0, L + 6, -6, 6, z_arm, z_arm + 10).rotate((0, 0, 0), (0, 0, 1), 225)
-    asm.add(arm, name=prefix + "LVDT clamp arm", color=C["steel"])
-    asm.add(cyl(19, 60, z_arm - 60), name=prefix + "LVDT RDP DCTH400AG", color=C["sensor"])
-    asm.add(cyl(4, z_arm - 60 - z_rod1, z_rod1), name=prefix + "LVDT plunger", color=C["steel"])
-    asm.add(radial(180, 0, 6, Z_S1 + 60, 1.6).translate((-115, 0, 0)), name=prefix + "Tair 109SS", color=C["temp"])
+    L = math.hypot(c + xl, c + yl)
+    asm.add(box(0, L + 6, -6, 6, z_arm, z_arm + 10).rotate((0, 0, 0), (0, 0, 1), 45).translate((-c, -c, 0)),
+            name=prefix + "LVDT clamp arm", color=C["steel"])
+    asm.add(cyl(19, 60, z_arm - 60, xl, yl), name=prefix + "LVDT RDP DCTH400AG", color=C["sensor"])
+    asm.add(cyl(4, z_arm - 60 - zl1, zl1, xl, yl), name=prefix + "LVDT plunger", color=C["steel"])
 
 
 def freezer_layout():
@@ -368,7 +380,7 @@ if __name__ == "__main__":
     variant_b(b)
     mr = cq.Assembly(name="E7 cell PETG-CF")
     solid_cell(mr)
-    am = cq.Assembly(name="E7 variant A-min - simplified")
+    am = cq.Assembly(name="E7 variant A-min - fixed lid")
     variant_a_min(am)
     lay = freezer_layout()
     for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (mr, "E7_cell"), (am, "E7_variant_A_min"),

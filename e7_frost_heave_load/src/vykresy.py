@@ -655,11 +655,12 @@ def sheet_b_simple(pdf):
 
 # --- variant A-min: maximally simplified A --------------------------------------------
 def sheet_a_min(pdf):
-    sh = Sheet("Variant A-min – simplified: dead weight ≤ 25 kPa, no frame, no multiplexer", "E7-V07",
+    sh = Sheet("Variant A-min – simplified: fixed lid (no movement), no frame, no multiplexer", "E7-V07",
                "≈ 1 : 2.2", 7, TOTAL, "schematic; blue = pressure, red = temperature, magenta = point M "
-               "(TDR + Pt100 + optical); sensors revolved into the section")
-    v = View(sh, 112, 22, 0.45)
-    bw, bd, bt = p.AM_BASE
+               "(existing TDR + temp. sensor + fibre); revolved section")
+    v = View(sh, 112, 40, 0.5)
+    bw, bd, _ = p.AM_BASE
+    bt = p.AM_BASE_T2
     zb0 = Z_S0 - p.AM_BOTTOM_T - p.AM_G10_T          # top of the base plate
     v.rect(-bw / 2, zb0 - bt, bw / 2, zb0, fc=METAL, hatch="////")
     v.rect(-75, zb0, 75, zb0 + p.AM_G10_T, fc=G10, lw=THIN)
@@ -668,86 +669,90 @@ def sheet_a_min(pdf):
         v.rect(s_ * R_OUT, Z_S0 + p.CELL_FOOT_T, s_ * R_INS, TUBE_TOP, fc=INSUL, lw=0.3)
     solid_cell(v)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
-    # pressure sensors
     tg, d = p.AM_PV
     v.rect(-p.PCELL_D / 2, Z_S1 - d - 1, p.PCELL_D / 2, Z_S1 - d + 1, fc=PCOL, lw=THIN, z=4)
     tg_b, rb, _ = p.AM_PB
     v.rect(rb - 4, Z_S0 - 1.5, rb + 4, Z_S0, fc=PCOL, lw=THIN, z=4)
-    # thermistors
     for tg_t, d, ang in p.AM_TEMPS:
         s_ = 1 if math.cos(math.radians(ang)) >= 0 else -1
-        v.line([(s_ * R_INS, Z_S1 - d), (s_ * p.T_TIP_R, Z_S1 - d)], lw=0.8, c=TCOL)
+        v.line([(s_ * R_INS, Z_S1 - d), (s_ * p.T_TIP_R, Z_S1 - d)], lw=0.8, c=TCOL, ls=(0, (3, 2)))
         v.circle(s_ * p.T_TIP_R, Z_S1 - d, 2.0, fc=TCOL, lw=0)
-        v.text(s_ * (R_INS + 3), Z_S1 - d, tg_t, fontsize=FS_SMALL, color=TCOL, va="center", weight="bold",
+        v.text(s_ * (p.AM_TIE_R + 9), Z_S1 - d, tg_t + " (opt.)", fontsize=FS_SMALL, color=TCOL, va="center",
                ha="left" if s_ > 0 else "right")
     m_section(v, labels=True)
-    # piston, threaded rod, discs
+    # piston, lid, tie rods, centre screw
     zp = Z_S1 + p.AM_PISTON_H
     v.rect(-49.75, Z_S1, 49.75, zp, fc=METAL, lw=THIN, hatch="////")
-    z_rod0, z_rod1 = Z_S1 + 20, Z_S1 + 20 + p.AM_ROD_L
-    z = zp
-    for t in (p.DW_FULL_T,) * 3 + (p.DW_HALF_T, p.AM_TRIM_T):
-        v.rect(-p.DW_D / 2, z, p.DW_D / 2, z + t, fc="#8a8f96", lw=THIN, hatch="////")
-        z += t
-    z_disc = z
-    v.rect(-8, z_rod0, 8, z_rod1, fc=STEEL, lw=THIN, z=3.5)
-    # one LVDT on the axis, stainless post on the base plate
-    xpost = -math.hypot(bw / 2 - 15, bw / 2 - 15)        # post in the corner of the plate (revolved)
-    z_arm = z_rod1 + 80
+    zl0 = zp + p.AM_LID_GAP
+    zl1 = zl0 + p.AM_LID_T
+    v.rect(-p.AM_LID_D / 2, zl0, p.AM_LID_D / 2, zl1, fc=STEEL, lw=THICK, hatch="xx")
+    for s_ in (-1, 1):
+        v.rect(s_ * p.AM_TIE_R - p.AM_TIE_D / 2, zb0 - bt, s_ * p.AM_TIE_R + p.AM_TIE_D / 2, zl1 + 12,
+               fc=STEEL, lw=THIN, ls="--" if s_ > 0 else "-")
+        for zz in (zl1, zb0 - bt - 8):
+            v.rect(s_ * p.AM_TIE_R - 9, zz, s_ * p.AM_TIE_R + 9, zz + 8, fc="#6f757b", lw=THIN)
+    v.rect(-p.AM_SCREW_D / 2, zp, p.AM_SCREW_D / 2, zl1 + 30, fc="#6f757b", lw=THIN, z=3.5)
+    v.rect(-14, zl1, 14, zl1 + 10, fc="#555", lw=THIN, z=3.6)
+    # LVDT on the lid, post in the corner of the base plate
+    xpost = -math.hypot(bw / 2 - 15, bw / 2 - 15)
+    x_l = -p.AM_LID_D / 2 + 10                      # LVDT at 225° (towards the post), clear of the tie rods
+    z_arm = zl1 + 75
     v.rect(xpost - p.AM_POST_D / 2, zb0, xpost + p.AM_POST_D / 2, z_arm + 10, fc=STEEL, lw=THIN)
-    v.rect(xpost - 6, z_arm, 8, z_arm + 10, fc=STEEL, lw=THIN)
-    v.rect(-6, z_rod1 + 15, 6, z_arm, fc=SENS, lw=THIN)
-    v.line([(0, z_rod1), (0, z_rod1 + 15)], lw=THICK)
-    v.circle(-p.DW_D / 2 - 40, Z_S1 + 60, 2.0, fc=TCOL, lw=0)
-    v.text(-p.DW_D / 2 - 40, Z_S1 + 67, "Tair", fontsize=FS_SMALL, color=TCOL, ha="center", weight="bold")
+    v.rect(xpost - 6, z_arm, x_l + 8, z_arm + 10, fc=STEEL, lw=THIN)
+    v.rect(x_l - 6, zl1 + 15, x_l + 6, z_arm, fc=SENS, lw=THIN)
+    v.line([(x_l, zl1), (x_l, zl1 + 15)], lw=THICK)
+    v.circle(-p.AM_LID_D / 2 - 30, Z_S1 + 45, 2.0, fc=TCOL, lw=0)
+    v.text(-p.AM_LID_D / 2 - 30, Z_S1 + 52, "Tair (opt.)", fontsize=FS_SMALL, color=TCOL, ha="center")
     v.text(0, (Z_S0 + Z_S1) / 2 - 22, "unsaturated\nsand ⌀100×100", fontsize=FS_SMALL - 0.5, ha="center", va="center")
-    # labels
-    tag(v, 0, z_arm - 30, 140, z_arm - 10, "LVDT  RDP DCTH400AG on the axis\n(check only: sample must not move)", SENS_TXT)
-    tag(v, xpost, z_arm - 60, -125, z_arm - 40, "stainless post ⌀12\nin the base plate", INK)
-    tag(v, 0, z_rod1 - 20, 140, z_rod1 - 50, "threaded rod M16 in the piston\n(carries the discs, no frame)", INK)
-    tag(v, 50, (zp + z_disc) / 2, 140, (zp + z_disc) / 2 - 20,
-        f"steel discs ⌀150: 3 × 36 + 18 + 9 mm\n+ piston + rod = 20 kg → 25 kPa", INK)
-    tag(v, 40, Z_S1 + 20, 140, Z_S1 + 25, "Al piston ⌀99.5 × 40, guided by the cell", INK)
-    tag(v, 0, Z_S1 - 30, 140, Z_S1 - 15, "PV1  TML PDA-PA on ⌀20 disc (depth 30)", PCOL)
-    tag(v, rb, Z_S0 - 1, 140, Z_S0 + 25, "PB1  TML PDA-PA flush in the Al bottom", PCOL)
-    tag(v, -25, Z_S1 - p.M_DEPTH, 140, Z_S1 - 50,
-        "M: TDR 3 rods ⌀1.6×40 + Pt100 1/10 DIN\n+ optical (fluorescent) – one point", "#d33682")
-    tag(v, -R_IN - 4, Z_S0 + 50, -125, Z_S0 + 55, "cell PETG-CF solid print\n+ PTFE liner + grease", INK)
-    tag(v, -R_INS + 5, Z_S0 + 95, -125, Z_S0 + 95, "Kaiflex 25", INK)
-    tag(v, -60, zb0 + 5, -125, zb0 - 5, "G10 ⌀150×10 thermal break", INK)
-    tag(v, 30, zb0 + 17, 140, zb0 + 2, "Al bottom ⌀150×15 (no porous stone)", INK)
-    tag(v, 60, zb0 - 5, 140, zb0 - 25, f"Al base plate {bw:g}×{bd:g}×{bt:g} on the tray", INK)
-    v.dim_v(zb0 - bt, z_arm + 10, 118, 128, f"{z_arm + 10 - zb0 + bt:.0f}")
-    # table: sensors with types and prices
-    sh.heading(255, 276, "Sensors – type, quantity, price (EUR excl. VAT, ≈)")
+    # labels (right)
+    tag(v, x_l, z_arm - 20, 150, z_arm + 15, "LVDT  RDP DCTH400AG on the lid\n(proves the lid does not move)", SENS_TXT)
+    tag(v, 0, zl1 + 25, 150, zl1 + 40, "centre screw M16×1.5 + lock nut\n(seat the piston at 5 kPa, then lock)", INK)
+    tag(v, 60, zl0 + 7, 150, zl0 - 5, f"steel lid ⌀{p.AM_LID_D:g}×{p.AM_LID_T:g}", INK)
+    tag(v, p.AM_TIE_R, Z_S1 + 20, 150, Z_S1 + 25, "3 tie rods M10 stainless (45/165/285°)", INK)
+    tag(v, 40, Z_S1 + 25, 150, Z_S1 + 5, "Al piston ⌀99.5 × 40", INK)
+    tag(v, 0, Z_S1 - 30, 150, Z_S1 - 25, "PV1  TML PDA-PA on ⌀20 disc (depth 30)", PCOL)
+    tag(v, -25, Z_S1 - p.M_DEPTH, 150, Z_S1 - 55,
+        "M: existing TDR (rods ≤ 40) + temp. sensor\n+ optical fibre – one point, depth 54", "#d33682")
+    tag(v, rb, Z_S0 - 1, 150, Z_S0 + 5, "PB1  TML PDA-PA flush in the Al bottom", PCOL)
+    tag(v, 30, zb0 + 17, 150, zb0 - 18, "Al bottom ⌀150×15 + G10 ⌀150×10", INK)
+    tag(v, 60, zb0 - 10, 150, zb0 - 45, f"Al base plate {bw:g}×{bd:g}×{bt:g}", INK)
+    # labels (left)
+    tag(v, xpost, z_arm - 60, -128, z_arm - 40, "stainless post ⌀12", INK)
+    tag(v, -R_IN - 4, Z_S0 + 50, -128, Z_S0 + 40, "cell PETG-CF solid print\n+ PTFE liner + grease", INK)
+    tag(v, -R_INS + 5, Z_S0 + 75, -128, Z_S0 + 70, "Kaiflex 25", INK)
+    v.dim_v(zb0 - bt, zl1, 125, 135, f"{zl1 - zb0 + bt:.0f}")
+    # table
+    sh.heading(255, 276, "To buy – type, quantity, price (EUR excl. VAT, ≈)")
     rows = []
     for tg_, what, typ, n, a, b, src, ch in sn.A_MIN_SENSORS:
         price = f"{n * a:,}" if a == b else f"{n * a:,}–{n * b:,}"
         rows.append([tg_ or "  +", typ, str(n), price.replace(",", " ") + (" *" if src == "web" else ""), ch])
-    y = table(sh, 255, 272, ["tag", "type", "pcs", "EUR", "CR1000"], rows, [16, 70, 7, 22, 40], row_h=4.4)
-    hi = sum(r[3] * r[5] for r in sn.A_MIN_SENSORS)
+    y = table(sh, 255, 272, ["tag", "type", "pcs", "EUR", "CR1000"], rows, [18, 66, 7, 22, 42], row_h=4.6)
     lo = sum(r[3] * r[4] for r in sn.A_MIN_SENSORS)
+    hi = sum(r[3] * r[5] for r in sn.A_MIN_SENSORS)
     mlo = sum(a for _, a, b in sn.A_MIN_MECH)
     mhi = sum(b for _, a, b in sn.A_MIN_MECH)
     sh.text(255, y - 3,
-            f"sensors ≈ {lo:,}–{hi:,} EUR, mechanics ≈ {mlo}–{mhi} EUR → total ≈ {lo + mlo:,}–{hi + mhi:,} EUR\n"
-            "* price found at a dealer (2026, see README); others = estimates, prices are not published → ask for quotes.\n"
-            "CR1000 already available – not counted. TDR200 + optical converter ≈ 75 % of the sensor cost.".replace(",", " "),
+            (f"sensors ≈ {lo:,}–{hi:,} EUR, mechanics ≈ {mlo}–{mhi} EUR → total ≈ {lo + mlo:,}–{hi + mhi:,} EUR\n").replace(",", " ")
+            + "* price found at a dealer (Oct 2026, see README); others = estimates → ask for quotes.\n"
+            "Already available (no cost): TDR, temperature sensor and optical fibre at point M, CR1000.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.text(255, y - 21,
-            "CR1000 wiring – no multiplexer\n"
-            "DIFF1 PV1, DIFF2 PB1 (BrFull, VX1 2000 mV) · DIFF3+4 Pt100 via 4WPB100 (BrHalf4W, VX2)\n"
-            "SE9 LVDT (±5 V) · SE10 optical converter (±5 V) · SE11–13 T1, T2, Tair (Therm109, VX3)\n"
-            "C1–C3 TDR200 (SDM), 12 V · SE14–16 spare\n"
+    sh.heading(255, y - 20, "Existing sensors at point M")
+    y2 = table(sh, 255, y - 24, ["tag", "type", "connection"], [[a, c, d] for a, b, c, d in sn.A_MIN_OWN],
+               [18, 90, 47], row_h=4.6)
+    sh.text(255, y2 - 3,
+            "Fixed lid (vypocty.md §9)\n"
+            "• piston seated by the centre screw at 5 kPa, locked → the sample cannot heave;\n"
+            "  freezing pressure is read by PV1 (in the sand) and PB1 (at the bottom)\n"
+            "• at 1 MPa: tie rods +49 µm, lid 60 µm → piston moves ≈ 0.1 mm (≈ 20 µm at 200 kPa)\n"
+            "• stainless tie rods and the inner stack shrink almost equally (Δ ≈ 16 µm per 20 K)\n"
             "\n"
-            "Removed compared with variant A (E7-V01)\n"
-            "• frame (2 columns + cross-bar + bushing), carrier plate, guide rod, ball, target plate\n"
-            "• G10 above the piston, porous stones, Al pedestal (→ one Al bottom disc)\n"
-            "• Invar posts, 2nd LVDT; pressure cells 6 → 2 (PV1, PB1); thermistors 10 → 3\n"
-            "• both AM16/32B multiplexers\n"
-            "Kept: same sand and cell, dead weight 5–25 kPa, point M (TDR + Pt100 + optical).\n"
-            "No frame: the piston is guided by the cell – tilt ≤ 1.1°, extra friction ≈ 0.4 kPa\n"
-            "(vypocty.md §9). Put the discs on slowly and centred.",
+            "CR1000 wiring – no multiplexer\n"
+            "DIFF1 PV1, DIFF2 PB1 (BrFull, VX1) · SE9 LVDT · SE11–13 T1, T2, Tair (optional)\n"
+            "point M: per the existing devices (TDR on SDM C1–C3, temperature / fibre own reader)\n"
+            "\n"
+            "Removed vs. variant A: frame, weights, carrier, ball, Invar posts, 2nd LVDT,\n"
+            "4 of 6 pressure cells, porous stones, pedestal, both multiplexers.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V07_variant_A_min.png"))
 

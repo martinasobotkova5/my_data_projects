@@ -70,7 +70,7 @@ if __name__ == "__main__":
            title="E7 variant B – section: anchors E1–E3, surface LVDTs, thermistors", cut=half)
     am = cq.Assembly(); m.variant_a_min(am)
     render(am, os.path.join(m.OUT, "E7_variant_A_min.png"), elev=18, azim=-60,
-           title="E7 variant A-min – no frame, discs on the piston rod, 1 LVDT")
+           title="E7 variant A-min – fixed lid on 3 tie rods, 1 LVDT")
     render(am, os.path.join(m.OUT, "E7_variant_A_min_section.png"), elev=15, azim=75, cut=half,
            title="E7 variant A-min – section: PV1, PB1, T1/T2, point M")
     mr = cq.Assembly(); m.solid_cell(mr)

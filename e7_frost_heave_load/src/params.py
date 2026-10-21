@@ -134,3 +134,14 @@ AM_POST_D = 12.0                        # nerezový sloupek pro 1 LVDT
 AM_TEMPS = [("T1", 20.0, 0.0), ("T2", 80.0, 180.0)]      # termistory v písku (tag, hloubka, úhel)
 AM_PV = ("PV1", 30.0)                   # svislé napětí na ose (tag, hloubka) – nad bodem M
 AM_PB = ("PB1", 25.0, 288.0)            # na dně (tag, r, úhel)
+
+# --- A-min: pevné (nehybné) omezení místo závaží --------------------------------------
+# víko = ocelová deska přitažená 3 táhly k základové desce, píst dosednutý středovým šroubem
+AM_TIE_R, AM_TIE_D = 97.0, 10.0          # táhla M10 nerez A4-70, r 97 (vně izolace r 83,5)
+AM_TIE_ANG = (45.0, 165.0, 285.0)        # mimo bod M (108°), termistory (0/180°) a PB1 (288° je pod dnem)
+AM_LID_D, AM_LID_T = 240.0, 15.0         # ocelové víko ⌀230 × 15
+AM_SCREW_D = 16.0                        # středový šroub M16 × 1,5 s pojistnou maticí
+AM_LID_GAP = 15.0                        # mezera píst – víko (šroub)
+AM_BASE_T2 = 20.0                        # základová deska Al tl. 20 (nese táhla)
+AM_P_DESIGN_KPA = 1000.0                 # návrhový tlak z mrznutí při zamezeném zdvihu (horní mez)
+AM_SEATING_KPA = 5.0                     # dosedací předpětí při dotažení
