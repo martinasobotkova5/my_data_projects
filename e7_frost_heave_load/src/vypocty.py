@@ -212,9 +212,9 @@ print("\nOmezení je tedy prakticky nehybné: i při 1 MPa se píst posune o ≈
       "stovkách kPa o desítky µm. Skutečný posun ukazuje LVDT na víku.\n")
 dT = p.T_WARM - p.T_COLD
 rods = L_rod * 16e-6
-stack = (p.AM_G10_T * p.ALPHA_G10 + (p.AM_BOTTOM_T + p.AM_PISTON_H) * p.ALPHA_AL + p.AM_LID_GAP * 16e-6
+stack = (p.AM_G10_T * p.ALPHA_G10 + p.AM_BOTTOM_T * p.ALPHA_PETG + p.AM_PISTON_H * p.ALPHA_AL + p.AM_LID_GAP * 16e-6
          + p.H_SAMPLE * 10e-6 + p.AM_BASE_T2 * 0)
-print("**Teplotní roztažnost** (táhla nerez vs. vnitřní sestava: G10 + Al dno + písek + Al píst + šroub):\n")
+print("**Teplotní roztažnost** (táhla nerez vs. vnitřní sestava: tištěné dno 26 + písek + Al píst + šroub):\n")
 head("", f"změna při {dT:g} K [µm]")
 row("táhla nerez", f"{rods * dT * 1000:.0f}")
 row("vnitřní sestava", f"{stack * dT * 1000:.0f}")
@@ -243,28 +243,28 @@ print("Bez ceny (už máte): TDR, teplotní čidlo a optické vlákno v bodě M,
 
 # 10 --------------------------------------------------------------------------
 print("## 10. Varianta A-rám – nehybné omezení v rámu z Al profilů\n")
-print("Stejné jako A-min, jen místo víka na táhlech drží píst rám: 2 sloupy 40×80 a příčník 80×80, "
+print("Stejné jako A-min (tištěná cela ⌀160 podle výkresu Column_one_body), jen místo víka na táhlech drží píst rám: 2 sloupy 40×80 a příčník 80×80, "
       "v příčníku šroub M16 × 1,5, mezi šroubem a pístem Al sloupek ⌀40 a vložka POM-C.\n")
 F = p.AM_P_DESIGN_KPA * A / 1000
 beam = p.PROFILES["80x80"]
 col = p.PROFILES["40x80"]
 d_beam = F * p.COL_SPAN ** 3 / (48 * p.E_AL * beam["I"])
 d_col = F * p.AF_COL_H / (p.E_AL * 2 * col["A"])
-d_sp = F * (p.AF_SPACER_D and (50 / (p.E_AL * math.pi / 4 * p.AF_SPACER_D ** 2)
+d_sp = F * (p.AF_SPACER_D and (p.AF_SPACER_L / (p.E_AL * math.pi / 4 * p.AF_SPACER_D ** 2)
                                + p.AF_POM_T / (3000 * math.pi / 4 * p.AF_SPACER_D ** 2)))
 d_joint = (0.01, 0.08)
 tot = (d_beam + d_col + d_sp + d_joint[0], d_beam + d_col + d_sp + d_joint[1])
 head(f"při {p.AM_P_DESIGN_KPA:g} kPa (F = {F / 1000:.2f} kN)", "posun [µm]", "poznámka")
 row("průhyb příčníku 80×80, rozpětí 220", f"{d_beam * 1000:.0f}", "prostý nosník")
-row("protažení 2 sloupů 40×80 × 250", f"{d_col * 1000:.0f}", "")
-row("stlačení Al sloupku 50 + POM 15", f"{d_sp * 1000:.0f}", "POM E ≈ 3 GPa")
+row(f"protažení 2 sloupů 40×80 × {p.AF_COL_H:g}", f"{d_col * 1000:.0f}", "")
+row(f"stlačení Al sloupku {p.AF_SPACER_L:g} + POM {p.AF_POM_T:g}", f"{d_sp * 1000:.0f}", "POM E ≈ 3 GPa")
 row("spoje profilů (šrouby do čela)", f"{d_joint[0] * 1000:.0f}–{d_joint[1] * 1000:.0f}", "rozhoduje – dotáhnout momentem")
 row("**celkem**", f"**{tot[0] * 1000:.0f}–{tot[1] * 1000:.0f}**", "při 200 kPa pětkrát méně")
 dT = p.T_WARM - p.T_COLD
 cols = p.AF_COL_H * p.ALPHA_AL
-stack_noPOM = (p.AM_G10_T * p.ALPHA_G10 + (p.AM_BOTTOM_T + p.AM_PISTON_H + 65) * p.ALPHA_AL
+stack_noPOM = (p.AM_G10_T * p.ALPHA_G10 + p.AM_BOTTOM_T * p.ALPHA_PETG + (p.AM_PISTON_H + p.AF_SPACER_L + p.AF_POM_T) * p.ALPHA_AL
                + p.AF_SCREW_PROTRUDE * 16e-6 + p.H_SAMPLE * p.ALPHA_SAND_FROZEN)
-stack_POM = (p.AM_G10_T * p.ALPHA_G10 + (p.AM_BOTTOM_T + p.AM_PISTON_H + 50) * p.ALPHA_AL + p.AF_POM_T * p.ALPHA_POM
+stack_POM = (p.AM_G10_T * p.ALPHA_G10 + p.AM_BOTTOM_T * p.ALPHA_PETG + (p.AM_PISTON_H + p.AF_SPACER_L) * p.ALPHA_AL + p.AF_POM_T * p.ALPHA_POM
              + p.AF_SCREW_PROTRUDE * 16e-6 + p.H_SAMPLE * p.ALPHA_SAND_FROZEN)
 k_soil = p.E_FROZEN * A / p.H_SAMPLE / 1000
 k_frame = F / 1000 / ((tot[0] + tot[1]) / 2)
@@ -272,7 +272,8 @@ k_s = 1 / (1 / k_soil + 1 / k_frame)
 print("\n**Teplotní roztažnost** – Al sloupy se při ochlazení zkrátí víc než vnitřní sestava (písek má menší α), "
       "takže by rám vzorek stlačil. Vložka POM-C (α ≈ 110·10⁻⁶) to vyrovná:\n")
 head("", f"sloupy − sestava při {dT:g} K [µm]", "falešný tlak (zmrzlý písek) [kPa]")
-for name, st in (("Al sloupek 65 mm (bez POM)", stack_noPOM), ("Al 50 + POM 15 mm", stack_POM)):
+for name, st in ((f"Al sloupek {p.AF_SPACER_L + p.AF_POM_T:g} mm (bez POM)", stack_noPOM),
+                 (f"Al {p.AF_SPACER_L:g} + POM {p.AF_POM_T:g} mm", stack_POM)):
     mm = (cols - st) * dT
     row(name, f"{mm * 1000:+.0f}", f"{mm * k_s * 1e6 / A:.0f}")
 print(f"\nTuhost rám ≈ {k_frame:.0f} kN/mm, zmrzlý vzorek ≈ {k_soil:.0f} kN/mm (E = {p.E_FROZEN:g} MPa). α zmrzlého písku "
@@ -288,3 +289,16 @@ for what, a_, b_ in sn.A_FRAME_MECH:
 print(f"\nČidla stejná jako A-min ({fm(lo)}–{fm(hi)} €). **Celkem ≈ {fm(lo + mlo)}–{fm(hi + mhi)} € "
       f"(≈ {(lo + mlo) * 25 / 1000:.0f}–{(hi + mhi) * 25 / 1000:.0f} tis. Kč) bez DPH**; TDR, teplotní čidlo, optické "
       "vlákno a CR1000 už máte.\n")
+
+# 11 --------------------------------------------------------------------------
+print("## 11. Tištěná cela A (Column_one_body_version_1) – kontrola\n")
+print(f"Tělo ⌀{p.BODY_D:g} × {p.BODY_H:g}, límec ⌀{p.COLLAR_OD:g} do {p.COLLAR_TOP:g} mm, dutina ⌀{p.CAV_D:g}, dno {p.BODY_BOTTOM:g} mm, "
+      f"písek {p.SAND_TOP - p.BODY_BOTTOM:g} mm, nad ním {p.COLLAR_TOP - p.SAND_TOP:g} mm pro píst. Plášť vytištěný s 10 % výplní "
+      "slouží zároveň jako tepelná izolace.\n")
+head("případ", "200 kPa", "1 MPa", "poznámka")
+for name, f_ in (("obvodové napětí, jen vnitřní stěna 3 mm", lambda q: q * 50 / 3),
+                 ("obvodové napětí, stěna kolem dutiny 5 mm (≈ 8 perimetrů)", lambda q: q * 50 / 5)):
+    row(name, f"{f_(0.2):.1f} MPa", f"{f_(1.0):.1f} MPa", "PETG(-CF) 40–55 MPa krátkodobě, ≈ 12–16 MPa dlouhodobě")
+row("tlak na dno (= tlak v písku)", "0,2 MPa", "1,0 MPa", "10 % gyroid ≈ 1–2 MPa pevnost v tlaku → pod dutinou 100 % výplň")
+print("\nDoporučení pro tisk: kolem dutiny stěnu ≈ 5 mm (≈ 8 perimetrů), pod dutinou (z 0–26) 100 % výplň (modifikátor v PrusaSliceru), "
+      "zbytek pláště 10 % (izolace). Pak cela snese i horní odhad 1 MPa.\n")

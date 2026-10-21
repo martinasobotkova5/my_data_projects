@@ -83,17 +83,16 @@ A_MIN_SENSORS = [
 ]
 # čidla, která laboratoř už má (bod M) – bez ceny
 A_MIN_OWN = [
-    ("TDR", "vlhkost / nezamrzlá voda v bodě M", "existing TDR (rods ≤ 40 mm into the sample)", "per device"),
-    ("TEMP", "teplota v bodě M", "existing temperature sensor", "per device"),
-    ("OPT", "teplota optickým vláknem v bodě M", "existing optical fibre (FBG / DTS)", "own interrogator"),
+    ("TDR", "vlhkost / nezamrzlá voda v bodě M", "Campbell CS645, 3 rods ⌀3.2 × 75, pitch 8.9", "TDR100/200, SDM"),
+    ("Pt100", "teplota v bodě M", "Pt100, 37 mm (25 mm metal), vertical", "4-wire"),
+    ("OF", "teplota optickým vláknem v bodě M", "optical fibre, tip 37.5 from the wall", "own interrogator"),
 ]
 # mechanika (EUR bez DPH, odhad: materiál + zakázková výroba)
 A_MIN_MECH = [
-    ("cela PETG-CF (≈ 0,4 kg filamentu) + epoxid", 30, 60),
-    ("PTFE fólie 0,5 mm + silikonový tuk", 25, 50),
-    ("Kaiflex 25 mm samolepicí, ≈ 0,3 m²", 10, 20),
-    ("G10 kotouč ⌀150 × 10", 25, 50),
-    ("Al deska 230 × 230 × 20, Al dno ⌀150 × 15, Al píst ⌀99,5 × 40 (obrobení)", 150, 300),
+    ("tištěná cela ⌀160 × 160 podle výkresu Column_one_body (slicer ≈ 600 g PETG, 21 h, ≈ 18 €) + epoxid", 25, 50),
+    ("kluzný PTFE sprej + silikonový tuk na vnitřní stěnu", 15, 30),
+        
+    ("Al deska 230 × 230 × 20, Al píst ⌀99,5 × 40 (obrobení)", 150, 300),
     ("ocelové víko ⌀230 × 15 (pálení, 4 otvory, závit M16 × 1,5)", 60, 120),
     ("3 táhla M10 nerez A4 + matice a podložky, šroub M16 × 1,5 + pojistná matice", 25, 50),
     ("nerezový sloupek ⌀12 + objímka LVDT", 15, 40),
@@ -101,14 +100,13 @@ A_MIN_MECH = [
 
 # --- A-rám: mechanika (čidla stejná jako A-min) ---------------------------------------
 A_FRAME_MECH = [
-    ("cela PETG-CF (≈ 0,4 kg filamentu) + epoxid", 30, 60),
-    ("PTFE fólie 0,5 mm + silikonový tuk", 25, 50),
-    ("Kaiflex 25 mm samolepicí, ≈ 0,3 m²", 10, 20),
-    ("G10 kotouč ⌀150 × 10", 25, 50),
-    ("Al profily: 2× 40×80 × 250 + 80×80 × 260 (řezané), krytky", 50, 100),
+    ("tištěná cela ⌀160 × 160 podle výkresu Column_one_body (slicer ≈ 600 g PETG, 21 h, ≈ 18 €) + epoxid", 25, 50),
+    ("kluzný PTFE sprej + silikonový tuk na vnitřní stěnu", 15, 30),
+        
+    ("Al profily: 2× 40×80 × 245 + 80×80 × 260 (řezané), krytky", 50, 100),
     ("4 šrouby do čela M12 + 4 šrouby M10 do desky, vrtání", 20, 50),
-    ("Al deska 260 × 200 × 25, Al dno ⌀150 × 15, Al píst ⌀99,5 × 40, Al sloupek ⌀40 × 50 (obrobení)", 180, 350),
-    ("vložka POM-C ⌀40 × 15", 5, 15),
+    ("Al deska 260 × 200 × 25, Al píst ⌀99,5 × 40, Al sloupek ⌀40 × 51 (obrobení)", 180, 350),
+    ("vložka POM-C ⌀40 × 8", 5, 15),
     ("šroub M16 × 1,5 + pojistná matice, závitové pouzdro v příčníku", 20, 40),
     ("nerezový sloupek ⌀12 + objímka LVDT, terčík na sloupku", 20, 45),
 ]

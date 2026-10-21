@@ -128,19 +128,19 @@ Vzorek je nahoře sevřen ocelovým víkem na 3 táhlech; píst dosedne středov
 | při 1000 kPa (F = 7.85 kN) | hodnota | poznámka |
 |---|---|---|
 | tah v 1 táhle M10 | 2.62 kN | napětí 45 MPa (A4-70: mez kluzu 450 MPa) |
-| protažení táhel (L ≈ 215 mm) | 49 µm |  |
-| průhyb víka ⌀240 × 15 (podepřeno na r 97) | 60 µm | napětí ≈ 71 MPa (S235: 235 MPa) |
-| **celkový posun pístu** | **109 µm** | při 200 kPa pětkrát méně |
+| protažení táhel (L ≈ 216 mm) | 49 µm |  |
+| průhyb víka ⌀240 × 15 (podepřeno na r 92) | 54 µm | napětí ≈ 70 MPa (S235: 235 MPa) |
+| **celkový posun pístu** | **103 µm** | při 200 kPa pětkrát méně |
 
 Omezení je tedy prakticky nehybné: i při 1 MPa se píst posune o ≈ 0,1 mm, při realistických stovkách kPa o desítky µm. Skutečný posun ukazuje LVDT na víku.
 
-**Teplotní roztažnost** (táhla nerez vs. vnitřní sestava: G10 + Al dno + písek + Al píst + šroub):
+**Teplotní roztažnost** (táhla nerez vs. vnitřní sestava: tištěné dno 26 + písek + Al píst + šroub):
 
 |  | změna při 20 K [µm] |
 |---|---|
 | táhla nerez | 69 |
-| vnitřní sestava | 53 |
-| **rozdíl** | **+16** |
+| vnitřní sestava | 67 |
+| **rozdíl** | **+2** |
 
 Táhla a vnitřní sestava se při ochlazení zkracují téměř stejně, takže teplota sama vzorek nestlačí ani neuvolní (na rozdíl od původní varianty B s Al rámem). Zbytek ukáže slepá zkouška s Al náhradou.
 
@@ -155,57 +155,65 @@ Táhla a vnitřní sestava se při ochlazení zkracují téměř stejně, takže
 
 | mechanika | cena |
 |---|---|
-| cela PETG-CF (≈ 0,4 kg filamentu) + epoxid | 30–60 |
-| PTFE fólie 0,5 mm + silikonový tuk | 25–50 |
-| Kaiflex 25 mm samolepicí, ≈ 0,3 m² | 10–20 |
-| G10 kotouč ⌀150 × 10 | 25–50 |
-| Al deska 230 × 230 × 20, Al dno ⌀150 × 15, Al píst ⌀99,5 × 40 (obrobení) | 150–300 |
+| tištěná cela ⌀160 × 160 podle výkresu Column_one_body (slicer ≈ 600 g PETG, 21 h, ≈ 18 €) + epoxid | 25–50 |
+| kluzný PTFE sprej + silikonový tuk na vnitřní stěnu | 15–30 |
+| Al deska 230 × 230 × 20, Al píst ⌀99,5 × 40 (obrobení) | 150–300 |
 | ocelové víko ⌀230 × 15 (pálení, 4 otvory, závit M16 × 1,5) | 60–120 |
 | 3 táhla M10 nerez A4 + matice a podložky, šroub M16 × 1,5 + pojistná matice | 25–50 |
 | nerezový sloupek ⌀12 + objímka LVDT | 15–40 |
 
 | | čidla | mechanika | **celkem** |
 |---|---|---|---|
-| EUR bez DPH | 2 361–3 441 | 340–690 | **2 701–4 131** |
-| Kč bez DPH (≈ 25 Kč/€) | 59–86 tis. | 8–17 tis. | **68–103 tis.** |
+| EUR bez DPH | 2 361–3 441 | 290–590 | **2 651–4 031** |
+| Kč bez DPH (≈ 25 Kč/€) | 59–86 tis. | 7–15 tis. | **66–101 tis.** |
 
 Bez ceny (už máte): TDR, teplotní čidlo a optické vlákno v bodě M, datalogger CR1000. Termistory T1, T2, Tair jsou volitelné.
 
 ## 10. Varianta A-rám – nehybné omezení v rámu z Al profilů
 
-Stejné jako A-min, jen místo víka na táhlech drží píst rám: 2 sloupy 40×80 a příčník 80×80, v příčníku šroub M16 × 1,5, mezi šroubem a pístem Al sloupek ⌀40 a vložka POM-C.
+Stejné jako A-min (tištěná cela ⌀160 podle výkresu Column_one_body), jen místo víka na táhlech drží píst rám: 2 sloupy 40×80 a příčník 80×80, v příčníku šroub M16 × 1,5, mezi šroubem a pístem Al sloupek ⌀40 a vložka POM-C.
 
 | při 1000 kPa (F = 7.85 kN) | posun [µm] | poznámka |
 |---|---|---|
 | průhyb příčníku 80×80, rozpětí 220 | 18 | prostý nosník |
-| protažení 2 sloupů 40×80 × 250 | 13 |  |
-| stlačení Al sloupku 50 + POM 15 | 36 | POM E ≈ 3 GPa |
+| protažení 2 sloupů 40×80 × 245 | 13 |  |
+| stlačení Al sloupku 51 + POM 8 | 21 | POM E ≈ 3 GPa |
 | spoje profilů (šrouby do čela) | 10–80 | rozhoduje – dotáhnout momentem |
-| **celkem** | **77–147** | při 200 kPa pětkrát méně |
+| **celkem** | **62–132** | při 200 kPa pětkrát méně |
 
 **Teplotní roztažnost** – Al sloupy se při ochlazení zkrátí víc než vnitřní sestava (písek má menší α), takže by rám vzorek stlačil. Vložka POM-C (α ≈ 110·10⁻⁶) to vyrovná:
 
 |  | sloupy − sestava při 20 K [µm] | falešný tlak (zmrzlý písek) [kPa] |
 |---|---|---|
-| Al sloupek 65 mm (bez POM) | +27 | 44 |
-| Al 50 + POM 15 mm | +1 | 1 |
+| Al sloupek 59 mm (bez POM) | +14 | 23 |
+| Al 51 + POM 8 mm | -0 | -0 |
 
-Tuhost rám ≈ 70 kN/mm, zmrzlý vzorek ≈ 16 kN/mm (E = 200 MPa). α zmrzlého písku je odhad – zbytek se odečte ze **slepé zkoušky** s Al náhradou vzorku ve stejném programu.
+Tuhost rám ≈ 81 kN/mm, zmrzlý vzorek ≈ 16 kN/mm (E = 200 MPa). α zmrzlého písku je odhad – zbytek se odečte ze **slepé zkoušky** s Al náhradou vzorku ve stejném programu.
 
 **Mechanika A-rám (EUR bez DPH, odhad)**
 
 | položka | cena |
 |---|---|
-| cela PETG-CF (≈ 0,4 kg filamentu) + epoxid | 30–60 |
-| PTFE fólie 0,5 mm + silikonový tuk | 25–50 |
-| Kaiflex 25 mm samolepicí, ≈ 0,3 m² | 10–20 |
-| G10 kotouč ⌀150 × 10 | 25–50 |
-| Al profily: 2× 40×80 × 250 + 80×80 × 260 (řezané), krytky | 50–100 |
+| tištěná cela ⌀160 × 160 podle výkresu Column_one_body (slicer ≈ 600 g PETG, 21 h, ≈ 18 €) + epoxid | 25–50 |
+| kluzný PTFE sprej + silikonový tuk na vnitřní stěnu | 15–30 |
+| Al profily: 2× 40×80 × 245 + 80×80 × 260 (řezané), krytky | 50–100 |
 | 4 šrouby do čela M12 + 4 šrouby M10 do desky, vrtání | 20–50 |
-| Al deska 260 × 200 × 25, Al dno ⌀150 × 15, Al píst ⌀99,5 × 40, Al sloupek ⌀40 × 50 (obrobení) | 180–350 |
-| vložka POM-C ⌀40 × 15 | 5–15 |
+| Al deska 260 × 200 × 25, Al píst ⌀99,5 × 40, Al sloupek ⌀40 × 51 (obrobení) | 180–350 |
+| vložka POM-C ⌀40 × 8 | 5–15 |
 | šroub M16 × 1,5 + pojistná matice, závitové pouzdro v příčníku | 20–40 |
 | nerezový sloupek ⌀12 + objímka LVDT, terčík na sloupku | 20–45 |
 
-Čidla stejná jako A-min (2 361–3 441 €). **Celkem ≈ 2 746–4 221 € (≈ 69–106 tis. Kč) bez DPH**; TDR, teplotní čidlo, optické vlákno a CR1000 už máte.
+Čidla stejná jako A-min (2 361–3 441 €). **Celkem ≈ 2 696–4 121 € (≈ 67–103 tis. Kč) bez DPH**; TDR, teplotní čidlo, optické vlákno a CR1000 už máte.
+
+## 11. Tištěná cela A (Column_one_body_version_1) – kontrola
+
+Tělo ⌀160 × 130, límec ⌀106 do 160 mm, dutina ⌀100, dno 26 mm, písek 100 mm, nad ním 34 mm pro píst. Plášť vytištěný s 10 % výplní slouží zároveň jako tepelná izolace.
+
+| případ | 200 kPa | 1 MPa | poznámka |
+|---|---|---|---|
+| obvodové napětí, jen vnitřní stěna 3 mm | 3.3 MPa | 16.7 MPa | PETG(-CF) 40–55 MPa krátkodobě, ≈ 12–16 MPa dlouhodobě |
+| obvodové napětí, stěna kolem dutiny 5 mm (≈ 8 perimetrů) | 2.0 MPa | 10.0 MPa | PETG(-CF) 40–55 MPa krátkodobě, ≈ 12–16 MPa dlouhodobě |
+| tlak na dno (= tlak v písku) | 0,2 MPa | 1,0 MPa | 10 % gyroid ≈ 1–2 MPa pevnost v tlaku → pod dutinou 100 % výplň |
+
+Doporučení pro tisk: kolem dutiny stěnu ≈ 5 mm (≈ 8 perimetrů), pod dutinou (z 0–26) 100 % výplň (modifikátor v PrusaSliceru), zbytek pláště 10 % (izolace). Pak cela snese i horní odhad 1 MPa.
 

@@ -125,19 +125,19 @@ T_TIP_R = 40.0                          # hroty termistorů T1–T5 (obě varian
 # --- varianta A-min: maximálně zjednodušená varianta A ----------------------------------
 # bez rámu: závaží na závitové tyči přímo v pístu, cela vede píst; bez multiplexerů
 AM_BASE = (230.0, 230.0, 10.0)          # Al deska (jen nese sloupek LVDT)
-AM_G10_T = 10.0                         # G10 ⌀150 – tepelný mezikus
-AM_BOTTOM_T = 15.0                      # Al dno ⌀150 s kapsou pro PB1 (místo podstavce + porézního kamene)
+AM_G10_T = 0.0                          # G10 už není – tepelně izoluje tištěné dno 26 mm
+AM_BOTTOM_T = 26.0                      # tištěné dno pod pískem (výkres: 160 − 134)
 AM_PISTON_H = 40.0                      # plný Al píst ⌀99,5 se závitem M16
 AM_ROD_L = 200.0                        # závitová tyč M16 – nosí kotouče
 AM_TRIM_T = 9.0                         # čtvrtkotouč ⌀150 × 9 (≈ 1,2 kg) na doladění
 AM_POST_D = 12.0                        # nerezový sloupek pro 1 LVDT
 AM_TEMPS = [("T1", 20.0, 0.0), ("T2", 80.0, 180.0)]      # termistory v písku (tag, hloubka, úhel)
-AM_PV = ("PV1", 30.0)                   # svislé napětí na ose (tag, hloubka) – nad bodem M
+AM_PV = ("PV1", 75.0)                   # svislé napětí na ose (tag, hloubka) – pod TDR
 AM_PB = ("PB1", 25.0, 288.0)            # na dně (tag, r, úhel)
 
 # --- A-min: pevné (nehybné) omezení místo závaží --------------------------------------
 # víko = ocelová deska přitažená 3 táhly k základové desce, píst dosednutý středovým šroubem
-AM_TIE_R, AM_TIE_D = 97.0, 10.0          # táhla M10 nerez A4-70, r 97 (vně izolace r 83,5)
+AM_TIE_R, AM_TIE_D = 92.0, 10.0          # táhla M10 nerez A4-70, r 92 (vně těla ⌀160)
 AM_TIE_ANG = (45.0, 165.0, 285.0)        # mimo bod M (108°), termistory (0/180°) a PB1 (288° je pod dnem)
 AM_LID_D, AM_LID_T = 240.0, 15.0         # ocelové víko ⌀230 × 15
 AM_SCREW_D = 16.0                        # středový šroub M16 × 1,5 s pojistnou maticí
@@ -148,10 +148,49 @@ AM_SEATING_KPA = 5.0                     # dosedací předpětí při dotažení
 
 # --- A-rám: varianta A s nehybným omezením v rámu z Al profilů ---------------------------
 AF_BASE = (260.0, 200.0, 25.0)          # Al deska 6082 (sloupy do ní šrouby do čela)
-AF_COL_H = 250.0                         # 2 sloupy 40×80, osová vzdálenost COL_SPAN (220)
+AF_COL_H = 245.0                         # 2 sloupy 40×80, osová vzdálenost COL_SPAN (220)
 AF_BEAM_H = 80.0                         # příčník 80×80
 AF_SPACER_D = 40.0                       # distanční sloupek mezi pístem a šroubem
-AF_POM_T = 15.0                          # teplotně kompenzační vložka POM-C ⌀40 × 15
+AF_POM_T = 8.0                           # teplotně kompenzační vložka POM-C ⌀40 × 8
 ALPHA_POM = 110e-6
 ALPHA_SAND_FROZEN = 12e-6                # ≈, písek se zmrzlou vodou (ověřit slepou zkouškou)
 AF_SCREW_PROTRUDE = 20.0                 # šroub M16 × 1,5 vyčnívá pod příčník
+
+# --- cela A jako tištěný kelímek se dnem (PETG-CF, jeden kus) ---------------------------
+CUP_ID, CUP_H = 100.0, 100.0            # vnitřní průměr a vnitřní výška = vzorek
+CUP_WALL = 8.0                          # stěna
+CUP_BOTTOM = 10.0                       # dno (zapuštěný PB1 ⌀8 × 1,5 + kanálek pro kabel)
+CUP_OD = CUP_ID + 2 * CUP_WALL          # 116
+CUP_R_IN = 1.0                          # vnitřní zaoblení dno–stěna (R1, aby písek dosedl)
+ALPHA_PETG = 45e-6
+AF_SPACER_L = AF_COL_H - (AM_G10_T + AM_BOTTOM_T + H_SAMPLE + AM_PISTON_H) - AF_SCREW_PROTRUDE - AF_POM_T   # Al sloupek
+
+# --- tištěná cela A podle modelu "Column_one_body_version_1" (PrusaSlicer, MK4S) --------
+# rozměry ≈ odhad ze screenshotu – POTVRDIT podle STL
+CUP_WALL_IN = 3.0          # vnitřní stěna (perimetry) kolem vzorku ⌀100
+JACKET_OD = 150.0          # vnější plášť ≈ ⌀150, mezi stěnami výplň 10 % = tepelná izolace
+JACKET_WALL = 2.0          # vnější stěna pláště (perimetry)
+JACKET_H = 90.0            # výška pláště od spodku dna (slicer ≈ 89,8 mm)
+CUP_BOTTOM = 5.0           # dno (přepisuje dřívějších 10 mm)
+COLLAR_OD = CUP_ID + 2 * CUP_WALL_IN   # horní límec (vnitřní trubka nad pláštěm) ⌀106
+LEG_D, LEG_H, LEG_R = 10.0, 20.0, 65.0 # 4 nožičky
+LEG_ANG = (0.0, 90.0, 180.0, 270.0)
+PORT_W, PORT_H = 26.0, 14.0            # okénko + radiální kanál pláštěm (bod M)
+AM_PORT_ANG = 270.0                    # kanál nad přední nožičkou
+SUPPORT_D = 2 * (LEG_R - LEG_D / 2) - 2   # G10 podložka mezi nožičkami ⌀118 – nese dno
+
+# --- cela A podle výkresu "Column_one_body_version_1_fillet" (M. Vrána, 23. 6. 2026) -----
+BODY_D, BODY_H = 160.0, 130.0          # vnější tělo ⌀160 × 130 (výplň 10 % = izolace)
+COLLAR_OD, COLLAR_TOP = 106.0, 160.0   # límec ⌀106 (stěna 3), horní hrana 160 nad spodkem
+CAV_D = 100.0                          # vnitřní dutina ⌀100
+BODY_BOTTOM = 26.0                     # dno pod pískem (160 − 134)
+SAND_TOP = BODY_BOTTOM + 100.0         # 126 – písek 100 mm; nad ním 34–35 mm pro píst
+CAV_FILLET = 5.0                       # zaoblení dna dutiny (na výkrese ⌀10)
+PORT_W, PORT_Z0, PORT_Z1 = 13.0, 67.5, 94.5   # boční kanál: šířka 13, výška 67,5–94,5 nad spodkem
+PORT_ANG = 270.0                       # kanál „dole“ na půdorysu
+# bod M podle náčrtu
+TDR_CS645 = dict(rod_d=3.2, rod_l=75.0, pitch=8.9, head_l=19.0, top_from_collar=66.0)
+OF_TIP_FROM_WALL = 37.5                # optické vlákno – vodorovně v úrovni horní tyčky, hrot 37,5 od stěny
+OF_SIDE = 4.7                          # boční odsazení vlákna od roviny TDR (≈ z půdorysu)
+PT100_L, PT100_METAL, PT100_R = 37.0, 25.0, 15.0   # Pt100 svisle shora, 37 mm (25 mm kov), 15 mm od osy
+AM_PV_DEPTH = 75.0                     # PV1 přesunut pod TDR (tyčky TDR procházejí osou v hl. 32–50)

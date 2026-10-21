@@ -10,7 +10,8 @@ from drafting import (BLUE, FROZEN, FS, FS_SMALL, INK, INSUL, METAL, PLASTIC, RE
                       THICK, THIN, WATER, Sheet, View, table)
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "vykresy")
-TOTAL = 8
+TOTAL = 9
+PT_MM = 72 / 25.4        # points per mm of paper
 PETG = "#cfd8dc"
 G10 = "#c9d9a6"
 INVAR = "#8e7cc3"
@@ -226,6 +227,24 @@ SENS_TXT = "#a05a00"
 TCOL = "#c0392b"      # temperature points
 
 
+def cup_cell(v, insulation=True):
+    """Variant A cell per drawing Column_one_body_version_1: body ⌀160 × 130 (10 % infill = insulation),
+    collar ⌀106 up to 160, cavity ⌀100 from 26 (bottom) up; side port 13 wide at 67.5–94.5 (revolved left)."""
+    zb = Z_S0 - p.BODY_BOTTOM                       # underside of the body
+    rb, rc, ri = p.BODY_D / 2, p.COLLAR_OD / 2, p.CAV_D / 2
+    z_j, z_c = zb + p.BODY_H, zb + p.COLLAR_TOP
+    for s_ in (-1, 1):
+        v.rect(s_ * ri, Z_S0, s_ * rb, z_j, fc=PETG, lw=THIN, hatch="..")
+        v.rect(s_ * ri, z_j, s_ * rc, z_c, fc=PETG, lw=THIN, hatch="..")
+        v.rect(s_ * ri, Z_S0, s_ * (ri + p.CUP_WALL_IN), z_c, fc=PETG, lw=THIN)
+        v.rect(s_ * (rb - 2), zb, s_ * rb, z_j, fc=PETG, lw=0.3)
+    v.rect(-rb, zb, rb, Z_S0, fc=PETG, lw=THIN, hatch="..")
+    v.rect(-rb, zb, rb, zb + 2, fc=PETG, lw=0.3)
+    # side port (revolved to the left)
+    v.rect(-rb - 0.5, zb + p.PORT_Z0, -ri - p.CUP_WALL_IN, zb + p.PORT_Z1, fc="white", lw=THIN)
+    v.rect(-rb, zb, rb, z_j, fc="none", lw=THICK)
+
+
 def solid_cell(v, top=TUBE_TOP, foot=True):
     """Solid 3D-printed PETG-CF cell with foot and PTFE liner (both variants)."""
     for s_ in (-1, 1):
@@ -313,6 +332,26 @@ def m_section(v, side=-1, labels=False, big=False):
     v.circle(side * 25, z, 2.2 if big else 3.5, fc="none", ec="#d33682", lw=0.8, z_=6)
     if labels:
         v.text(side * 25, z - 6, "M", fontsize=FS_SMALL, color="#d33682", ha="center", va="top", weight="bold", zorder=6)
+
+
+def m_section_a(v, labels=False):
+    """Point M of variant A (sketch): CS645 rods horizontal through the axis, optical fibre at the top-rod
+    level (tip 37.5 from the wall), Pt100 vertical from the sand surface 15 mm beside the axis."""
+    t = p.TDR_CS645
+    zb = Z_S0 - p.BODY_BOTTOM
+    z_top = zb + p.COLLAR_TOP - t["top_from_collar"]
+    ri = p.CAV_D / 2
+    for k in range(3):
+        z = z_top - k * t["pitch"]
+        v.line([(-ri, z), (-ri + t["rod_l"], z)], lw=1.3, c="#555", z=5)
+    v.rect(-ri - p.CUP_WALL_IN - t["head_l"], z_top - 2 * t["pitch"] - 4, -ri, z_top + 4, fc=TDRC, lw=THIN, z=5)
+    v.line([(-ri, z_top + 1.8), (-ri + p.OF_TIP_FROM_WALL, z_top + 1.8)], lw=1.1, c=FBGC, z=5.2)
+    v.rect(p.PT100_R - 1.5, Z_S1 - p.PT100_L, p.PT100_R + 1.5, Z_S1 - (p.PT100_L - p.PT100_METAL), fc=PTC, lw=0.5, z=5.2)
+    # Pt100 cable: up to the sand surface, in a groove under the piston, out through a ⌀4 hole in the collar
+    v.line([(p.PT100_R, Z_S1 - (p.PT100_L - p.PT100_METAL)), (p.PT100_R, Z_S1 - 1), (p.CAV_D / 2 + p.CUP_WALL_IN + 4,
+            Z_S1 - 1)], lw=0.9, c="#8a7300", z=5.2)
+    if labels:
+        v.text(-ri + t["rod_l"] + 2, z_top - t["pitch"], "CS645", fontsize=FS_SMALL - 0.5, va="center", color="#333")
 
 
 def m_plan(v):
@@ -654,20 +693,15 @@ def sheet_b_simple(pdf):
 
 
 # --- variant A-min: maximally simplified A --------------------------------------------
-def sheet_a_min(pdf):
-    sh = Sheet("Variant A-min – simplified: fixed lid (no movement), no frame, no multiplexer", "E7-V07",
-               "≈ 1 : 2.2", 7, TOTAL, "schematic; blue = pressure, red = temperature, magenta = point M "
-               "(existing TDR + temp. sensor + fibre); revolved section")
+def _sheet_a_min(pdf):
+    sh = Sheet("Variant A-min – fixed lid on 3 tie rods", "E7-V07",
+               "≈ 1 : 2.2", 7, TOTAL, "blue = pressure, red = temperature, magenta = point M")
     v = View(sh, 112, 40, 0.5)
     bw, bd, _ = p.AM_BASE
     bt = p.AM_BASE_T2
     zb0 = Z_S0 - p.AM_BOTTOM_T - p.AM_G10_T          # top of the base plate
     v.rect(-bw / 2, zb0 - bt, bw / 2, zb0, fc=METAL, hatch="////")
-    v.rect(-75, zb0, 75, zb0 + p.AM_G10_T, fc=G10, lw=THIN)
-    v.rect(-75, zb0 + p.AM_G10_T, 75, Z_S0, fc=METAL, lw=THIN, hatch="////")
-    for s_ in (-1, 1):
-        v.rect(s_ * R_OUT, Z_S0 + p.CELL_FOOT_T, s_ * R_INS, TUBE_TOP, fc=INSUL, lw=0.3)
-    solid_cell(v)
+    cup_cell(v)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
     tg, d = p.AM_PV
     v.rect(-p.PCELL_D / 2, Z_S1 - d - 1, p.PCELL_D / 2, Z_S1 - d + 1, fc=PCOL, lw=THIN, z=4)
@@ -679,7 +713,7 @@ def sheet_a_min(pdf):
         v.circle(s_ * p.T_TIP_R, Z_S1 - d, 2.0, fc=TCOL, lw=0)
         v.text(s_ * (p.AM_TIE_R + 9), Z_S1 - d, tg_t + " (opt.)", fontsize=FS_SMALL, color=TCOL, va="center",
                ha="left" if s_ > 0 else "right")
-    m_section(v, labels=True)
+    m_section_a(v, labels=True)
     # piston, lid, tie rods, centre screw
     zp = Z_S1 + p.AM_PISTON_H
     v.rect(-49.75, Z_S1, 49.75, zp, fc=METAL, lw=THIN, hatch="////")
@@ -701,33 +735,32 @@ def sheet_a_min(pdf):
     v.rect(xpost - 6, z_arm, x_l + 8, z_arm + 10, fc=STEEL, lw=THIN)
     v.rect(x_l - 6, zl1 + 15, x_l + 6, z_arm, fc=SENS, lw=THIN)
     v.line([(x_l, zl1), (x_l, zl1 + 15)], lw=THICK)
-    v.circle(-p.AM_LID_D / 2 - 30, Z_S1 + 45, 2.0, fc=TCOL, lw=0)
-    v.text(-p.AM_LID_D / 2 - 30, Z_S1 + 52, "Tair (opt.)", fontsize=FS_SMALL, color=TCOL, ha="center")
-    v.text(0, (Z_S0 + Z_S1) / 2 - 22, "unsaturated\nsand ⌀100×100", fontsize=FS_SMALL - 0.5, ha="center", va="center")
+    v.circle(-160, Z_S1 + 10, 2.0, fc=TCOL, lw=0)
+    v.text(-160, Z_S1 + 18, "Tair (opt.)", fontsize=FS_SMALL, color=TCOL, ha="center")
+    v.text(-20, Z_S1 - 14, "unsaturated sand ⌀100×100", fontsize=FS_SMALL - 0.5, ha="center", va="center")
     # labels (right)
     tag(v, x_l, z_arm - 20, 150, z_arm + 15, "LVDT  RDP DCTH400AG on the lid\n(proves the lid does not move)", SENS_TXT)
     tag(v, 0, zl1 + 25, 150, zl1 + 40, "centre screw M16×1.5 + lock nut\n(seat the piston at 5 kPa, then lock)", INK)
     tag(v, 60, zl0 + 7, 150, zl0 - 5, f"steel lid ⌀{p.AM_LID_D:g}×{p.AM_LID_T:g}", INK)
     tag(v, p.AM_TIE_R, Z_S1 + 20, 150, Z_S1 + 25, "3 tie rods M10 stainless (45/165/285°)", INK)
     tag(v, 40, Z_S1 + 25, 150, Z_S1 + 5, "Al piston ⌀99.5 × 40", INK)
-    tag(v, 0, Z_S1 - 30, 150, Z_S1 - 25, "PV1  TML PDA-PA on ⌀20 disc (depth 30)", PCOL)
-    tag(v, -25, Z_S1 - p.M_DEPTH, 150, Z_S1 - 55,
-        "M: existing TDR (rods ≤ 40) + temp. sensor\n+ optical fibre – one point, depth 54", "#d33682")
-    tag(v, rb, Z_S0 - 1, 150, Z_S0 + 5, "PB1  TML PDA-PA flush in the Al bottom", PCOL)
-    tag(v, 30, zb0 + 17, 150, zb0 - 18, "Al bottom ⌀150×15 + G10 ⌀150×10", INK)
+    tag(v, 0, Z_S1 - p.AM_PV[1], 150, Z_S1 - 25, "PV1  TML PDA-PA on ⌀20 disc (depth 75)", PCOL)
+    tag(v, -10, Z_S1 - 41, 150, Z_S1 - 55,
+        "M: TDR CS645 + optical fibre + Pt100\n(existing, one point, depth 32–50)", "#d33682")
+    tag(v, rb, Z_S0 - 1, 150, Z_S0 + 5, "PB1  TML PDA-PA flush in the cup bottom", PCOL)
     tag(v, 60, zb0 - 10, 150, zb0 - 45, f"Al base plate {bw:g}×{bd:g}×{bt:g}", INK)
     # labels (left)
     tag(v, xpost, z_arm - 60, -128, z_arm - 40, "stainless post ⌀12", INK)
-    tag(v, -R_IN - 4, Z_S0 + 50, -128, Z_S0 + 40, "cell PETG-CF solid print\n+ PTFE liner + grease", INK)
-    tag(v, -R_INS + 5, Z_S0 + 75, -128, Z_S0 + 70, "Kaiflex 25", INK)
+    tag(v, -R_IN - 4, Z_S0 + 50, -118, Z_S0 + 40, "printed cell ⌀160\n(V09)", INK)
     v.dim_v(zb0 - bt, zl1, 125, 135, f"{zl1 - zb0 + bt:.0f}")
     # table
     sh.heading(255, 276, "To buy – type, quantity, price (EUR excl. VAT, ≈)")
     rows = []
     for tg_, what, typ, n, a, b, src, ch in sn.A_MIN_SENSORS:
         price = f"{n * a:,}" if a == b else f"{n * a:,}–{n * b:,}"
-        rows.append([tg_ or "  +", typ, str(n), price.replace(",", " ") + (" *" if src == "web" else ""), ch])
-    y = table(sh, 255, 272, ["tag", "type", "pcs", "EUR", "CR1000"], rows, [18, 66, 7, 22, 42], row_h=4.6)
+        rows.append([tg_ or "  +", typ, str(n), price.replace(",", " ") + (" *" if src == "web" else ""),
+                     ch.replace(" VoltSE ±5 V", "").replace(" Therm109", "")])
+    y = table(sh, 255, 272, ["tag", "type", "pcs", "EUR", "CR1000"], rows, [20, 60, 8, 23, 44], row_h=5.8)
     lo = sum(r[3] * r[4] for r in sn.A_MIN_SENSORS)
     hi = sum(r[3] * r[5] for r in sn.A_MIN_SENSORS)
     mlo = sum(a for _, a, b in sn.A_MIN_MECH)
@@ -735,17 +768,17 @@ def sheet_a_min(pdf):
     sh.text(255, y - 3,
             (f"sensors ≈ {lo:,}–{hi:,} EUR, mechanics ≈ {mlo}–{mhi} EUR → total ≈ {lo + mlo:,}–{hi + mhi:,} EUR\n").replace(",", " ")
             + "* price found at a dealer (Oct 2026, see README); others = estimates → ask for quotes.\n"
-            "Already available (no cost): TDR, temperature sensor and optical fibre at point M, CR1000.",
+            "Already available (no cost): TDR CS645, Pt100, optical fibre (point M), CR1000.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.heading(255, y - 20, "Existing sensors at point M")
-    y2 = table(sh, 255, y - 24, ["tag", "type", "connection"], [[a, c, d] for a, b, c, d in sn.A_MIN_OWN],
-               [18, 90, 47], row_h=4.6)
+    sh.heading(255, y - 24, "Existing sensors at point M")
+    y2 = table(sh, 255, y - 28, ["tag", "type", "connection"], [[a, c, d] for a, b, c, d in sn.A_MIN_OWN],
+               [20, 88, 47], row_h=5.8)
     sh.text(255, y2 - 3,
             "Fixed lid (vypocty.md §9)\n"
             "• piston seated by the centre screw at 5 kPa, locked → the sample cannot heave;\n"
             "  freezing pressure is read by PV1 (in the sand) and PB1 (at the bottom)\n"
             "• at 1 MPa: tie rods +49 µm, lid 60 µm → piston moves ≈ 0.1 mm (≈ 20 µm at 200 kPa)\n"
-            "• stainless tie rods and the inner stack shrink almost equally (Δ ≈ 16 µm per 20 K)\n"
+            "• stainless tie rods and the inner stack shrink almost equally (Δ ≈ 12 µm per 20 K)\n"
             "\n"
             "CR1000 wiring – no multiplexer\n"
             "DIFF1 PV1, DIFF2 PB1 (BrFull, VX1) · SE9 LVDT · SE11–13 T1, T2, Tair (optional)\n"
@@ -755,6 +788,11 @@ def sheet_a_min(pdf):
             "4 of 6 pressure cells, porous stones, pedestal, both multiplexers.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V07_variant_A_min.png"))
+
+
+def sheet_a_min(pdf):
+    with bigger_fonts():
+        _sheet_a_min(pdf)
 
 
 POMC = "#f4f1e8"
@@ -796,11 +834,7 @@ def _sheet_a_frame(pdf):
     v.rect(-xc - 20, zbeam, xc + 20, zbeam + p.AF_BEAM_H, fc="#d9dde1", lw=THICK)
     for zz in (zbeam + 20, zbeam + 60):
         v.line([(-xc - 20, zz), (xc + 20, zz)], lw=0.3, c="#888")
-    v.rect(-75, zb0, 75, zb0 + p.AM_G10_T, fc=G10, lw=THIN)
-    v.rect(-75, zb0 + p.AM_G10_T, 75, Z_S0, fc=METAL, lw=THIN, hatch="////")
-    for s_ in (-1, 1):
-        v.rect(s_ * R_OUT, Z_S0 + p.CELL_FOOT_T, s_ * R_INS, TUBE_TOP, fc=INSUL, lw=0.3)
-    solid_cell(v)
+    cup_cell(v)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
     tg, d = p.AM_PV
     v.rect(-p.PCELL_D / 2, Z_S1 - d - 1, p.PCELL_D / 2, Z_S1 - d + 1, fc=PCOL, lw=THIN, z=4)
@@ -812,7 +846,7 @@ def _sheet_a_frame(pdf):
         v.circle(s_ * p.T_TIP_R, Z_S1 - d, 2.0, fc=TCOL, lw=0)
         v.text(s_ * (R_INS + 2), Z_S1 - d + 4, tg_t, fontsize=FS_SMALL - 0.5, color=TCOL, va="bottom",
                ha="left" if s_ > 0 else "right")
-    m_section(v, labels=True)
+    m_section_a(v, labels=True)
     zp = Z_S1 + p.AM_PISTON_H
     v.rect(-49.75, Z_S1, 49.75, zp, fc=METAL, lw=THIN, hatch="////")
     r_sp = p.AF_SPACER_D / 2
@@ -833,28 +867,26 @@ def _sheet_a_frame(pdf):
     tag(v, 0, zbeam + p.AF_BEAM_H + 25, 150, zbeam + p.AF_BEAM_H + 45,
         "screw M16×1.5 + lock nut", INK)
     tag(v, 60, zbeam + 50, 150, zbeam + 20, "cross-beam Al 80×80", INK)
-    tag(v, r_sp, z_pom0 + 7, 150, z_pom0 + 22, "POM-C ⌀40×15 (thermal comp.)", INK)
-    tag(v, r_sp, zp + 25, 150, zp + 25, "Al spacer ⌀40×50", INK)
+    tag(v, r_sp, z_pom0 + 7, 150, z_pom0 + 22, f"POM-C ⌀40×{p.AF_POM_T:g} (thermal comp.)", INK)
+    tag(v, r_sp, zp + 25, 150, zp + 25, f"Al spacer ⌀40×{p.AF_SPACER_L:g}", INK)
     tag(v, x_l, zp + 35, 150, zp + 45, "LVDT DCTH400AG on the piston\n(post at −y, behind)", SENS_TXT)
     tag(v, 40, Z_S1 + 25, 150, Z_S1 + 5, "Al piston ⌀99.5 × 40", INK)
-    tag(v, 0, Z_S1 - 30, 150, Z_S1 - 25, "PV1  TML PDA-PA (depth 30)", PCOL)
-    tag(v, -25, Z_S1 - p.M_DEPTH, 150, Z_S1 - 55, "M: existing TDR + temp. + fibre", "#d33682")
+    tag(v, 0, Z_S1 - p.AM_PV[1], 150, Z_S1 - 25, "PV1  TML PDA-PA (depth 75)", PCOL)
+    tag(v, -10, Z_S1 - 41, 150, Z_S1 - 55, "M: CS645 + fibre + Pt100 (depth 32–50)", "#d33682")
     tag(v, rb, Z_S0 - 1, 150, Z_S0 + 2, "PB1  TML PDA-PA, flush", PCOL)
-    tag(v, 30, zb0 + 17, 150, zb0 - 20, "Al bottom ⌀150×15 + G10 ⌀150×10", INK)
     tag(v, 80, zb0 - 12, 150, zb0 - 50, f"Al base plate {bw:g}×{bd:g}×{bt:g}", INK)
     # labels left
-    tag(v, -xc, zbeam - 40, -150, zbeam - 30, "2 columns Al 40×80 × 250", INK)
-    tag(v, -R_IN - 4, Z_S0 + 50, -150, Z_S0 + 40, "cell PETG-CF + PTFE liner", INK)
-    tag(v, -R_INS + 5, Z_S0 + 80, -150, Z_S0 + 75, "Kaiflex 25", INK)
+    tag(v, -xc, zbeam - 40, -150, zbeam - 30, f"columns 40×80 × {p.AF_COL_H:g}", INK)
+    tag(v, -R_IN - 4, Z_S0 + 50, -150, Z_S0 + 40, "printed cell ⌀160\n(V09)", INK)
     v.dim_v(zb0 - bt, zbeam + p.AF_BEAM_H, -xc - 30, -xc - 40, f"{p.AF_COL_H + p.AF_BEAM_H + bt:g}")
     v.dim_h(-xc, xc, zbeam + p.AF_BEAM_H, zbeam + p.AF_BEAM_H + 60, f"{p.COL_SPAN:g}")
     # right panel
     sh.heading(255, 276, "A-frame vs. A-min (tie rods)")
     rows = [["holds the piston", "frame 40×80 + 80×80, screw", "steel lid on 3 tie rods M10"],
             ["piston movement at 1 MPa", "≈ 0.08–0.15 mm", "≈ 0.11 mm"],
-            ["thermal error (20 K)", "≈ 0 with POM-C insert", "≈ 16 µm"],
+            ["thermal error (20 K)", "≈ 0 with POM-C insert", "≈ 12 µm"],
             ["access to the sample", "open sides, screw from top", "lid must be removed"],
-            ["mechanics, EUR (≈)", "≈ 385–780", "≈ 340–690"],
+            ["mechanics, EUR (≈)", "≈ 375–760", "≈ 330–670"],
             ["sensors to buy, EUR (≈)", "2 360–3 440 (same)", "2 360–3 440"]]
     y = table(sh, 255, 272, ["", "A-frame (this sheet)", "A-min (E7-V07)"], rows, [46, 58, 51], row_h=5.8)
     sh.heading(255, y - 9, "To buy (same sensors as A-min)")
@@ -866,7 +898,7 @@ def _sheet_a_frame(pdf):
     y = table(sh, 255, y - 13, ["tag", "type", "pcs", "EUR", "CR1000"], rows, [20, 60, 8, 23, 44], row_h=5.8)
     sh.text(255, y - 3,
             "* price found at a dealer (Oct 2026); others estimated – ask for quotes.\n"
-            "Already available: TDR, temperature sensor, optical fibre (point M), CR1000.\n"
+            "Already available: TDR CS645 + reflectometer, Pt100, optical fibre (point M), CR1000.\n"
             "\n"
             "How it works\n"
             "• turn the screw until PV1 reads ≈ 5 kPa, lock the nut – the piston cannot move up;\n"
@@ -882,6 +914,112 @@ def _sheet_a_frame(pdf):
 def sheet_a_frame(pdf):
     with bigger_fonts():
         _sheet_a_frame(pdf)
+
+
+def _sheet_cup(pdf):
+    sh = Sheet("Cell A – printed body ⌀160 (Column_one_body_version_1)", "E7-V09", "1 : 1.25", 9, TOTAL,
+               "per drawing M. Vrána 23.06.2026 + sensor sketch; z = 0 at the underside")
+    rb, rc, ri, w = p.BODY_D / 2, p.COLLAR_OD / 2, p.CAV_D / 2, p.CUP_WALL_IN
+    H, Hc, tb, zs = p.BODY_H, p.COLLAR_TOP, p.BODY_BOTTOM, p.SAND_TOP
+    t = p.TDR_CS645
+    z_top = Hc - t["top_from_collar"]
+    v = View(sh, 118, 120, 0.8, "SECTION A–A  1 : 1.25 (port and sensors revolved)", (118, 277))
+    # body
+    for s_ in (-1, 1):
+        v.rect(s_ * ri, tb, s_ * rb, H, fc=PETG, lw=THIN, hatch="..")
+        v.rect(s_ * ri, H, s_ * rc, Hc, fc=PETG, lw=THIN)
+        v.rect(s_ * ri, tb, s_ * (ri + w), Hc, fc=PETG, lw=THIN)
+    v.rect(-rb, 0, rb, tb, fc=PETG, lw=THIN, hatch="..")
+    v.rect(-rb, 0, rb, H, fc="none", lw=THICK)
+    v.rect(-rc, H, rc, Hc, fc="none", lw=THICK)
+    v.rect(-rb - 0.3, p.PORT_Z0, -ri, p.PORT_Z1, fc="white", lw=THIN)
+    v.rect(-ri, tb, ri, zs, fc="#efe6cc", lw=0, z=1.5)
+    v.line([(-ri, zs), (ri, zs)], lw=THIN, ls="--", c="#8a7a50")
+    v.axis_line([(0, -6), (0, Hc + 8)])
+    # sensors (light)
+    for k in range(3):
+        z = z_top - k * t["pitch"]
+        v.line([(-ri, z), (-ri + t["rod_l"], z)], lw=1.4, c="#555", z=5)
+    v.rect(-ri - t["head_l"], z_top - 2 * t["pitch"] - 4, -ri, z_top + 4, fc=TDRC, lw=THIN, z=5)
+    v.line([(-ri, z_top + 2), (-ri + p.OF_TIP_FROM_WALL, z_top + 2)], lw=1.2, c=FBGC, z=5.2)
+    v.rect(p.PT100_R - 1.5, zs - p.PT100_L, p.PT100_R + 1.5, zs - (p.PT100_L - p.PT100_METAL), fc=PTC, lw=0.5, z=5.2)
+    v.line([(p.PT100_R, zs - (p.PT100_L - p.PT100_METAL)), (p.PT100_R, zs - 1), (rb, zs - 1)], lw=0.9, c="#8a7300", z=5.2)
+    # holes for the optional thermistors / cables (revolved)
+    for z_, lab in ((zs - p.AM_TEMPS[0][1], "T1"), ):
+        v.rect(ri, z_ - 1, rb, z_ + 1, fc="white", lw=0.4)
+    v.rect(-rb, zs - p.AM_TEMPS[1][1] - 1, -ri, zs - p.AM_TEMPS[1][1] + 1, fc="white", lw=0.4)
+    v.rect(25 - 4.1, tb - 1.6, 25 + 4.1, tb, fc=PCOL, lw=THIN)
+    v.rect(-p.PCELL_D / 2, zs - p.AM_PV[1] - 1, p.PCELL_D / 2, zs - p.AM_PV[1] + 1, fc=PCOL, lw=THIN, z=5)
+    # dimensions
+    v.dim_h(-rb, rb, 0, -10, "⌀160", side="below")
+    v.dim_h(-rc, rc, Hc, Hc + 9, "⌀106")
+    v.dim_h(-ri, ri, Hc, Hc + 18, "⌀100")
+    v.dim_v(0, Hc, -rb, -rb - 34, f"{Hc:g}")
+    v.dim_v(0, H, -rb, -rb - 24, f"{H:g}")
+    v.dim_v(0, p.PORT_Z1, -rb, -rb - 14, f"{p.PORT_Z1:g}")
+    v.dim_v(0, p.PORT_Z0, -rb, -rb - 6, f"{p.PORT_Z0:g}")
+    v.dim_v(0, tb, rb, rb + 8, f"{tb:g}")
+    v.dim_v(zs, Hc, rb, rb + 8, f"{Hc - zs:g}")
+    v.dim_v(tb, zs, rb, rb + 18, "100 sand")
+    v.dim_v(z_top, Hc, rb, rb + 30, f"{t['top_from_collar']:g}")
+    v.dim_h(-ri, -ri + t["rod_l"], tb + 6, tb + 6, f"CS645 rods {t['rod_l']:g} (measured 77)")
+    v.note(-ri + 30, z_top - t["pitch"], f"3 rods ⌀3.2, pitch {t['pitch']:g}", -40, 40, ha="left")
+    v.note(-ri + 20, z_top + 2, f"optical fibre, tip {p.OF_TIP_FROM_WALL:g} from the wall", -40, 150, ha="left")
+    v.note(p.PT100_R + 1.5, zs - 30, f"Pt100 {p.PT100_L:g} (metal {p.PT100_METAL:g}), r {p.PT100_R:g}", 40, 150, ha="left")
+    v.note(-ri - 10, z_top - 4, f"TDR head {t['head_l']:g} in the port", -100, 175, ha="left")
+    v.note(0, zs - p.AM_PV[1], f"PV1 (depth {p.AM_PV[1]:g})", 40, 40, ha="left")
+    v.note(25, tb - 1, "PB1 flush, r 25", 40, 12, ha="left")
+    v.note(ri + 2, Hc - 5, "free 34–35 for the piston", 60, 172, ha="left")
+    # PLAN
+    f = View(sh, 70, 52, 0.42, "PLAN  1 : 2.4", (70, 98))
+    f.circle(0, 0, rb, fc=PETG, lw=THICK)
+    f.circle(0, 0, rc, fc="none", lw=THIN)
+    f.circle(0, 0, ri, fc="#efe6cc", lw=THIN)
+    f.rect(-p.PORT_W / 2, -rb, p.PORT_W / 2, -ri - w, fc="white", lw=THICK)
+    f.line([(0, -rb - 6), (0, ri + 10)], lw=THIN, ls=(0, (8, 2, 2, 2)), c=TDRC)
+    for k in (-1, 0, 1):
+        pass
+    f.rect(-1.6, -ri, 1.6, -ri + t["rod_l"], fc="#777", lw=0.3)
+    f.line([(-p.OF_SIDE, -ri), (-p.OF_SIDE, -ri + p.OF_TIP_FROM_WALL)], lw=1.2, c=FBGC)
+    f.circle(p.PT100_R, 0, 2.2, fc=PTC, lw=THIN)
+    f.circle(0, 0, p.PCELL_D / 2, fc="none", ec=PCOL, lw=THIN, ls="--")
+    f.circle(25 * math.cos(math.radians(288)), 25 * math.sin(math.radians(288)), 4, fc=PCOL, lw=THIN, ls="--")
+    f.text(0, -rb - 10, "port 13 wide (TDR axis)", fontsize=FS_SMALL, ha="center", va="top", color=TDRC)
+    f.text(rb + 6, 0, "T1 0°", fontsize=FS_SMALL, va="center")
+    f.text(-rb - 6, 0, "T2 180°", fontsize=FS_SMALL, va="center", ha="right")
+    f.dim_h(-ri, ri, ri, rb + 6, "⌀100")
+    # notes
+    sh.heading(255, 276, "Sensors at point M (existing)")
+    rows = [["TDR", "Campbell CS645", f"rods 75 (77 meas.), pitch 8.9; top rod {t['top_from_collar']:g} below the collar top"],
+            ["OF", "optical fibre", f"horizontal at the top rod, tip {p.OF_TIP_FROM_WALL:g} from the wall"],
+            ["Pt100", "37 mm (25 metal)", f"vertical from the sand surface, {p.PT100_R:g} from the axis"]]
+    y = table(sh, 255, 272, ["", "sensor", "position"], rows, [16, 36, 103], row_h=5.8)
+    sh.text(255, y - 4,
+            "Depths below the sand surface (z = 126): rods 32 / 41 / 50,\n"
+            "fibre ≈ 31, Pt100 metal 12–37 → all three sense the 30–50 mm layer.\n"
+            "Open (sketch 7.7.26): does the Pt100 measure at the tip or along its length?\n"
+            "\n"
+            "Cable routes (to print or drill)\n"
+            "• TDR head + coax and the fibre: through the side port 13 × 27\n"
+            "• Pt100 cable: groove under the piston, ⌀4 hole at z ≈ 125 (0°)\n"
+            f"• PV1: ⌀3.5 hole at z = {zs - p.AM_PV[1]:g} (90°); PB1: groove in the cavity floor\n"
+            "  + ⌀3.5 hole through the jacket at 288°\n"
+            "• optional T1 (depth 20, 0°), T2 (depth 80, 180°): ⌀2 holes\n"
+            "\n"
+            "Print (PrusaSlicer, MK4S): PETG(-CF), 0.2 mm, ≈ 600 g, 21 h\n"
+            "• jacket 10 % infill = insulation (replaces Kaiflex)\n"
+            "• recommended: 100 % infill under the cavity (z 0–26) – the bottom\n"
+            "  carries the full freezing pressure (10 % gyroid crushes at ≈ 1–2 MPa)\n"
+            "• wall ≈ 5 mm (≈ 8 perimeters) around the cavity: 3 mm alone sees\n"
+            "  ≈ 3 MPa hoop stress at 200 kPa, ≈ 17 MPa at 1 MPa\n"
+            "• epoxy coat + PTFE spray + silicone grease inside the cavity",
+            fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.save(pdf, os.path.join(OUT, "E7-V09_cup_A.png"))
+
+
+def sheet_cup(pdf):
+    with bigger_fonts():
+        _sheet_cup(pdf)
 
 
 def rig_plan(v, cx, cy, variant):
@@ -1024,5 +1162,5 @@ if __name__ == "__main__":
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E7_drawings.pdf")) as pdf:
         for fn in (sheet_a_simple, sheet_b_simple, sheet_cell, sheet_frame, sheet_sensors, sheet_layout,
-                   sheet_a_min, sheet_a_frame):
+                   sheet_a_min, sheet_a_frame, sheet_cup):
             fn(pdf)

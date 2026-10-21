@@ -4,7 +4,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 | soubor | obsah |
 |---|---|
-| `vykresy/E7_drawings.pdf` | 8 listů A3 (V07 = A-min s víkem na táhlech, V08 = A-rám), anglicky (PNG po listech ve stejné složce) |
+| `vykresy/E7_drawings.pdf` | 9 listů A3 (V07 = A-min s víkem na táhlech, V08 = A-rám, V09 = tištěná cela A), anglicky (PNG po listech ve stejné složce) |
 | `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, samotná cela, obě v mrazáku (+ STL a PNG náhledy) |
 | `vypocty.md` | zatížení, očekávané deformace, rozlišení LVDT, teplotní chyba stojanu, napětí v cele, závaží |
 | `src/params.py` | všechny rozměry a předpoklady |
@@ -41,12 +41,11 @@ Stejný písek a stejná tištěná cela jako A. Vzorek je nahoře **pevně sev�
 
 **Sestava (zdola nahoru):**
 1. Al deska 230 × 230 × 20 na vaně mrazáku; nese 3 táhla a sloupek LVDT.
-2. G10 ⌀150 × 10 – tepelný mezikus, aby vzorek promrzal shora.
-3. Al dno ⌀150 × 15 se zapuštěným PB1 (bez porézního kamene, uzavřený systém).
-4. Cela PETG-CF (plný tisk) s PTFE fólií a tukem, Kaiflex 25.
-5. Písek ⌀100 × 100: PV1 na ose v hloubce 30 mm, bod M v hloubce 54 mm (TDR + teplotní čidlo + optické vlákno), volitelně T1 (20 mm) a T2 (80 mm).
-6. Plný Al píst ⌀99,5 × 40.
-7. **Ocelové víko ⌀240 × 15 na 3 nerezových táhlech M10** (r 97, 45/165/285°, vně izolace).
+2. PB1 zapuštěný do tištěného dna cely (dno 26 mm).
+4. **Tištěná cela ⌀160 podle vašeho výkresu** (Column_one_body_version_1, kap. 1c) – plášť s 10 % výplní je zároveň izolace, Kaiflex ani G10 už nejsou potřeba.
+5. Písek ⌀100 × 100: bod M v hloubce 32–50 mm (TDR CS645 + optické vlákno + Pt100), PV1 na ose v hloubce 75 mm (pod TDR), volitelně T1 (20 mm) a T2 (80 mm).
+6. Plný Al píst ⌀99,5 × 40 – zajede do límce cely (34 mm volného místa nad pískem).
+7. **Ocelové víko ⌀240 × 15 na 3 nerezových táhlech M10** (r 92, 45/165/285°, vně těla ⌀160).
 8. **Středový šroub M16 × 1,5 s pojistnou maticí:** dotáhnout, až PV1 ukáže ≈ 5 kPa (dosednutí), a zajistit. Pak se už nic nehýbe.
 9. Jeden LVDT na víku (na sloupku v rohu desky) – dokládá, že se víko opravdu nepohnulo.
 
@@ -70,7 +69,7 @@ Stejný písek a stejná tištěná cela jako A. Vzorek je nahoře **pevně sev�
 
 Bez termistorů T1/T2/Tair je to ≈ 2 200–3 400 €.
 
-**Už máte (bez ceny):** TDR, teplotní čidlo a optické vlákno v bodě M a datalogger CR1000. Bod M je v obou variantách stejný (kap. 4a); otvory v nálitku se upraví podle průměrů vašich čidel.
+**Už máte (bez ceny):** TDR Campbell CS645 s reflektometrem, Pt100 (37 mm) a optické vlákno v bodě M a datalogger CR1000.
 
 - **Rozsah tlakových snímačů:** při zamezeném zdvihu může tlak v písku překročit 200 kPa, proto PDA-PA 500 kPa (rozsah ověřit u TML – řada má 200 kPa až 3 MPa). Rozlišení na CR1000 je i tak ≈ 0,2 kPa.
 - **Ceny jsou orientační.** Výrobci (TML, Campbell) ceny nezveřejňují; „web“ = cena nalezená u prodejce v říjnu 2026. Před objednávkou poptat TML přes Althen Sensors nebo Elkome, Campbell přes Campbell Scientific Europe, RDP přes Elkome.
@@ -85,16 +84,16 @@ Bez termistorů T1/T2/Tair je to ≈ 2 200–3 400 €.
 Stejný vzorek, cela, čidla a bod M jako A-min. Rozdíl je jen v tom, co drží píst: místo víka na táhlech je to **rám z Al profilů**.
 
 **Sestava:**
-- Al deska 260 × 200 × 25 na 3 stavitelných nožkách, 2 sloupy 40×80 × 250 mm (osově 220 mm), příčník 80×80 × 260 mm; spoje šrouby do čela profilů, žádné úhelníky.
-- Uvnitř stejně jako A-min: G10, Al dno s PB1, tištěná cela s PTFE fólií, písek s PV1 a bodem M, Al píst ⌀99,5 × 40.
-- Na pístu Al sloupek ⌀40 × 50 a **vložka POM-C ⌀40 × 15**, nad ní šroub M16 × 1,5 v příčníku s pojistnou maticí a ručním kolem.
-- LVDT stojí na sloupku na straně −y (mimo sloupy rámu) a měří přímo horní okraj pístu.
+- Al deska 260 × 200 × 25 na 3 stavitelných nožkách, 2 sloupy 40×80 × 245 mm (osově 220 mm), příčník 80×80 × 260 mm; spoje šrouby do čela profilů, žádné úhelníky.
+- Uvnitř stejně jako A-min: tištěná cela ⌀160 s PB1 ve dně, písek s bodem M a PV1, Al píst ⌀99,5 × 40.
+- Na pístu Al sloupek ⌀40 × 51 a **vložka POM-C ⌀40 × 8**, nad ní šroub M16 × 1,5 v příčníku s pojistnou maticí a ručním kolem.
+- LVDT stojí na sloupku pod úhlem 300° (mimo sloupy rámu i kanál cely) a měří přímo horní okraj pístu.
 
 **Jak to funguje:** šroubem se píst dotáhne, až PV1 ukáže ≈ 5 kPa, a matice se zajistí. Rám pak píst drží na místě a při mrznutí se měří tlak (PV1, PB1), teplota a nezamrzlá voda (bod M). LVDT ukazuje, že se píst nepohnul.
 
 **Je to nehybné?**
 - Při 1 MPa: příčník 18 µm, sloupy 13 µm, sloupek + POM 36 µm, spoje profilů 10–80 µm → celkem ≈ 0,08–0,15 mm. Při 200 kPa pětkrát méně. Rozhodují spoje – šrouby do čela dotáhnout momentem.
-- **Teplota:** Al sloupy se v mrazu zkrátí víc než vnitřní sestava (písek má menší roztažnost) a bez úpravy by vzorek stlačily falešným tlakem ≈ 44 kPa. Vložka POM-C (roztažnost ≈ 110·10⁻⁶ 1/K) to vyrovná na ≈ 1 µm, tj. ≈ 1 kPa. Odhad roztažnosti zmrzlého písku ověří slepá zkouška s Al náhradou vzorku.
+- **Teplota:** Al sloupy se v mrazu zkrátí víc než vnitřní sestava (písek má menší roztažnost) a bez úpravy by vzorek stlačily falešným tlakem několika desítek kPa. Vložka POM-C 8 mm (roztažnost ≈ 110·10⁻⁶ 1/K) to vyrovná na ≈ 0 µm (`vypocty.md` §10). Odhad roztažnosti zmrzlého písku ověří slepá zkouška s Al náhradou vzorku.
 
 **Srovnání s A-min:**
 
@@ -109,6 +108,29 @@ Stejný vzorek, cela, čidla a bod M jako A-min. Rozdíl je jen v tom, co drží
 | **celkem** | **≈ 2 750–4 220 € (≈ 69–106 tis. Kč)** | **≈ 2 700–4 130 €** |
 
 Čidla ke koupi jsou stejná jako v A-min (2× TML PDA-PA, LVDT RDP DCTH400AG se zdrojem, volitelně 3× 109SS-L); TDR, teplotní čidlo, optické vlákno a CR1000 už máte. Ceny jsou orientační – viz kap. 1a.
+
+## 1c. Tištěná cela A – podle výkresu Column_one_body_version_1 (E7-V09, `vypocty.md` §11)
+
+Podle výkresu M. Vrány (23. 6. 2026) a náčrtu čidel:
+
+- **Tělo** ⌀160 × 130 mm, nahoře **límec** ⌀106 (stěna 3 mm) do výšky 160 mm, **dutina** ⌀100, dno 26 mm (zaoblení dna ⌀10).
+- **Písek** 100 mm (z = 26–126), nad ním 34–35 mm pro píst.
+- **Boční kanál** 13 mm široký ve výšce 67,5–94,5 mm – vede jím TDR a optické vlákno.
+- Plášť s 10 % výplní je zároveň tepelná izolace (tisk PrusaSlicer, MK4S, ≈ 600 g, 21 h).
+
+**Bod M (vaše čidla):**
+- **TDR Campbell CS645** vodorovně kanálem: 3 tyčky ⌀3,2 × 75 mm (naměřeno 77), rozteč 8,9 mm, hlava 19 mm v kanálu; horní tyčka 66 mm pod horní hranou límce, tj. tyčky v hloubce ≈ 32 / 41 / 50 mm pod povrchem písku. Tyčky procházejí osou vzorku.
+- **Optické vlákno** vodorovně v úrovni horní tyčky, hrot 37,5 mm od stěny.
+- **Pt100** svisle shora, 37 mm (25 mm kov), 15 mm od osy – kabel vede drážkou pod pístem a otvorem ⌀4 ve stěně.
+- Všechna tři tedy měří vrstvu 30–50 mm pod povrchem. **Otevřené:** měří Pt100 ve špičce, nebo po celé délce (poznámka 7. 7. 26)?
+
+**Co se kvůli tomu změnilo ve variantě A:** PV1 je přesunutý do hloubky 75 mm (TDR prochází osou v 32–50 mm), G10 a Kaiflex odpadly, táhla jsou na r 92 (vně těla ⌀160), vložka POM-C v rámu je 8 mm.
+
+**Doporučení k tisku (`vypocty.md` §11):**
+- pod dutinou (z 0–26) **100 % výplň** – dno nese celý tlak z mrznutí; 10 % gyroid by se při ≈ 1–2 MPa promáčkl;
+- kolem dutiny stěnu **≈ 5 mm (≈ 8 perimetrů)** – samotná 3mm stěna má při 200 kPa ≈ 3 MPa, při 1 MPa ≈ 17 MPa obvodového napětí;
+- uvnitř epoxid + PTFE sprej + silikonový tuk (tření o stěnu).
+- Otvory: PV1 kabel ⌀3,5 (z = 51, 90°), PB1 drážka ve dně + otvor ⌀3,5 (288°), Pt100 kabel ⌀4 (z ≈ 125, 0°), volitelně T1/T2 ⌀2.
 
 ## 2. Přitížení závažím (varianta A, E7-V01, `vypocty.md` §7)
 
@@ -307,8 +329,8 @@ Podmínky:
 | `E7_variant_A.step` | varianta A – lehký rám 40×40 (sloupy 410, příčka s ložiskem), tištěná cela s PTFE fólií, nenasycený písek, tlakové snímače PV1/PH1/PB1/PW1–3, G10, nosná deska s tyčí, 3 + 1 ocelové kotouče, 2× LVDT na bocích (±y) s Invarovými sloupky, termistory včetně Tw |
 | `E7_variant_A_min.step` | zjednodušená varianta A-min – deska, G10, Al dno, cela, písek, PV1/PB1, T1/T2, bod M, píst, ocelové víko na 3 táhlech M10, středový šroub M16, 1 LVDT na sloupku |
 | `E7_variant_A_frame.step` | varianta A-rám – deska, 2 sloupy 40×80, příčník 80×80, šroub M16 × 1,5, Al sloupek + vložka POM-C, cela, písek, PV1/PB1, bod M, LVDT |
+| `E7_cell.step` | tištěná cela A ⌀160 (Column_one_body_version_1) s kanálem, CS645, vláknem a Pt100 |
 | `E7_variant_B.step` | varianta B – základová deska, stejná tištěná cela, nenasycený písek, horní deska PETG-CF, kotvy E1–E3 s Invarovými tyčkami a PTFE trubičkami, 6× LVDT s volným jádrem, 3 Invarové sloupky, Al můstek, termistory |
-| `E7_cell.step` | samotná cela PETG-CF s nálitky, PTFE fólií, izolací, termistory, snímači PW a bodem M (TDR, Pt100, FBG) |
 | `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku (stěny mrazáku průhledné, ≈ rozměry) |
 
 Náhledy jsou `3d/*.png`. Řezy ukazují `E7_variant_A_section.png` a `E7_variant_B_section.png`.

@@ -76,9 +76,9 @@ if __name__ == "__main__":
     af = cq.Assembly(); m.variant_a_frame(af)
     render(af, os.path.join(m.OUT, "E7_variant_A_frame.png"), elev=18, azim=-60,
            title="E7 variant A-frame – fixed piston in an Al profile frame")
-    mr = cq.Assembly(); m.solid_cell(mr)
+    mr = cq.Assembly(); m.body_a(mr)
     far = cq.Workplane("XY").box(10, 10, 10).translate((5000, 0, 0)).val()   # no cut, just see-through insulation
     render(mr, os.path.join(m.OUT, "E7_cell.png"), elev=20, azim=100, cut=far,
-           title="E7 cell – PETG-CF, solid print; point M (TDR + Pt100 + FBG) in front")
+           title="E7 cell A – body D160, port with CS645, fibre, Pt100")
     render(m.freezer_layout(), os.path.join(m.OUT, "E7_freezer_layout.png"), elev=35, azim=-70,
            title="E7 – both rigs in the chest freezer")
