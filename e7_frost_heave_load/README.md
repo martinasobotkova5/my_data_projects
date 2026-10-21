@@ -43,7 +43,7 @@ Stejný písek a stejná tištěná cela jako A. Vzorek je nahoře **pevně sev�
 1. Al deska 230 × 230 × 20 na vaně mrazáku; nese 3 táhla a sloupek LVDT.
 2. PB1 zapuštěný do tištěného dna cely (dno 26 mm).
 4. **Tištěná cela ⌀160 podle vašeho výkresu** (Column_one_body_version_1, kap. 1c) – plášť s 10 % výplní je zároveň izolace, Kaiflex ani G10 už nejsou potřeba.
-5. Písek ⌀100 × 100: bod M v hloubce 32–50 mm (TDR CS645 + optické vlákno + Pt100), PV1 na ose v hloubce 75 mm (pod TDR), volitelně T1 (20 mm) a T2 (80 mm).
+5. Písek ⌀100 × 100: bod M v hloubce 36–54 mm (TDR CS645 + optické vlákno + Pt100), PV1 na ose v hloubce 75 mm (pod TDR), volitelně T1 (20 mm) a T2 (80 mm).
 6. Plný Al píst ⌀99,5 × 40 – zajede do límce cely (34 mm volného místa nad pískem).
 7. **Ocelové víko ⌀240 × 15 na 3 nerezových táhlech M10** (r 92, 45/165/285°, vně těla ⌀160).
 8. **Středový šroub M16 × 1,5 s pojistnou maticí:** dotáhnout, až PV1 ukáže ≈ 5 kPa (dosednutí), a zajistit. Pak se už nic nehýbe.
@@ -119,12 +119,12 @@ Podle výkresu M. Vrány (23. 6. 2026) a náčrtu čidel:
 - Plášť s 10 % výplní je zároveň tepelná izolace (tisk PrusaSlicer, MK4S, ≈ 600 g, 21 h).
 
 **Bod M (vaše čidla):**
-- **TDR Campbell CS645** vodorovně kanálem: 3 tyčky ⌀3,2 × 75 mm (naměřeno 77), rozteč 8,9 mm, hlava 19 mm v kanálu; horní tyčka 66 mm pod horní hranou límce, tj. tyčky v hloubce ≈ 32 / 41 / 50 mm pod povrchem písku. Tyčky procházejí osou vzorku.
+- **TDR Campbell CS645** vodorovně kanálem: 3 tyčky ⌀3,2 × 75 mm (naměřeno 77), rozteč 8,9 mm, hlava 19 mm v kanálu; hlava vyplňuje kanál (horní hrana ≈ 66 mm pod límcem), tyčky jsou symetricky uprostřed kanálu, tj. v hloubce ≈ 36 / 45 / 54 mm pod povrchem písku. Tyčky procházejí osou vzorku.
 - **Optické vlákno** vodorovně v úrovni horní tyčky, hrot 37,5 mm od stěny.
 - **Pt100** svisle shora, 37 mm (25 mm kov), 15 mm od osy – kabel vede drážkou pod pístem a otvorem ⌀4 ve stěně.
-- Všechna tři tedy měří vrstvu 30–50 mm pod povrchem. **Otevřené:** měří Pt100 ve špičce, nebo po celé délce (poznámka 7. 7. 26)?
+- Všechna tři tedy měří vrstvu 35–55 mm pod povrchem. **Otevřené:** měří Pt100 ve špičce, nebo po celé délce (poznámka 7. 7. 26)?
 
-**Co se kvůli tomu změnilo ve variantě A:** PV1 je přesunutý do hloubky 75 mm (TDR prochází osou v 32–50 mm), G10 a Kaiflex odpadly, táhla jsou na r 92 (vně těla ⌀160), vložka POM-C v rámu je 8 mm.
+**Co se kvůli tomu změnilo ve variantě A:** PV1 je přesunutý do hloubky 75 mm (TDR prochází osou v 36–54 mm), G10 a Kaiflex odpadly, táhla jsou na r 92 (vně těla ⌀160), vložka POM-C v rámu je 8 mm.
 
 **Doporučení k tisku (`vypocty.md` §11):**
 - pod dutinou (z 0–26) **100 % výplň** – dno nese celý tlak z mrznutí; 10 % gyroid by se při ≈ 1–2 MPa promáčkl;
@@ -228,7 +228,7 @@ Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely,
 
 **Sestava (aktualizováno – stejná tištěná cela ⌀160 a bod M jako varianta A):**
 - **Cela:** tištěné tělo ⌀160 podle výkresu Column_one_body_version_1 (kap. 1c, E7-V09) stojí přímo na Al desce 260 × 200 × 20; tištěné dno 26 mm izoluje, G10 ani podstavec nejsou potřeba.
-- **Bod M:** stejně jako v A – TDR CS645 kanálem (tyčky v hloubce 32 / 41 / 50 mm), optické vlákno v úrovni horní tyčky, Pt100 svisle 15 mm od osy; jeho kabel vede otvorem ⌀6 v horní desce.
+- **Bod M:** stejně jako v A – TDR CS645 kanálem (tyčky v hloubce 36 / 45 / 54 mm), optické vlákno v úrovni horní tyčky, Pt100 svisle 15 mm od osy; jeho kabel vede otvorem ⌀6 v horní desce.
 - **Horní deska** PETG-CF ⌀99 × 6 (≈ 65 g, 0,08 kPa) leží na písku uvnitř límce – jen terč pro LVDT.
 - **3 povrchová LVDT S1–S3** (r 40, úhly 0/120/240°) → průměrný zdvih/sednutí + náklon.
 - **3 kotvy E1–E3** v hloubce 25 / 50 / 75 mm (r 25, úhly 150/30/210°): nerezový kotouček ⌀16, Invarová tyčka ⌀2 v PTFE trubičce, nahoře LVDT. Úhly jsou zvolené tak, aby kotvy a tyčky byly ≥ 14 mm od tyček TDR, vlákna a Pt100 (zkontrolováno v 3D).

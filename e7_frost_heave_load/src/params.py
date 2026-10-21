@@ -189,7 +189,9 @@ CAV_FILLET = 5.0                       # zaoblení dna dutiny (na výkrese ⌀10
 PORT_W, PORT_Z0, PORT_Z1 = 13.0, 67.5, 94.5   # boční kanál: šířka 13, výška 67,5–94,5 nad spodkem
 PORT_ANG = 270.0                       # kanál „dole“ na půdorysu
 # bod M podle náčrtu
-TDR_CS645 = dict(rod_d=3.2, rod_l=75.0, pitch=8.9, head_l=19.0, top_from_collar=66.0)
+TDR_CS645 = dict(rod_d=3.2, rod_l=75.0, pitch=8.9, head_l=19.0)
+# hlava CS645 vyplňuje kanál (z 67,5–94,5, horní hrana 65,5 pod límcem ≈ „66“ z náčrtu), tyčky symetricky ve středu kanálu
+TDR_CS645["top_from_collar"] = COLLAR_TOP - ((PORT_Z0 + PORT_Z1) / 2 + TDR_CS645["pitch"])
 OF_TIP_FROM_WALL = 37.5                # optické vlákno – vodorovně v úrovni horní tyčky, hrot 37,5 od stěny
 OF_SIDE = 4.7                          # boční odsazení vlákna od roviny TDR (≈ z půdorysu)
 PT100_L, PT100_METAL, PT100_R = 37.0, 25.0, 15.0   # Pt100 svisle shora, 37 mm (25 mm kov), 15 mm od osy

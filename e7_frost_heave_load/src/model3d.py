@@ -324,7 +324,7 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True):
         asm.add(cyl(8, 1.5, Z_S0 - 1.5, xb, yb), name=prefix + "PB1 TML PDA-PA (flush)", color=C["pressure"])
     asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0), name=prefix + "unsaturated sand D100x100", color=C["sand"])
     # point M
-    asm.add(box(ri - 0.5, ri + t["head_l"] - 0.5, -6, 6, z_top - 2 * t["pitch"] - 4, z_top + 4)
+    asm.add(box(ri + p.CUP_WALL_IN, ri + p.CUP_WALL_IN + t["head_l"], -6, 6, zb + p.PORT_Z0 + 0.5, zb + p.PORT_Z1 - 0.5)
             .rotate((0, 0, 0), (0, 0, 1), a), name=prefix + "M TDR CS645 head", color=C["tdr"])
     for k in range(3):
         asm.add(radial_off(a, ri - t["rod_l"], ri, z_top - k * t["pitch"], t["rod_d"]),

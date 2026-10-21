@@ -344,7 +344,7 @@ def m_section_a(v, labels=False, cable_up=False):
     for k in range(3):
         z = z_top - k * t["pitch"]
         v.line([(-ri, z), (-ri + t["rod_l"], z)], lw=1.3, c="#555", z=5)
-    v.rect(-ri - p.CUP_WALL_IN - t["head_l"], z_top - 2 * t["pitch"] - 4, -ri, z_top + 4, fc=TDRC, lw=THIN, z=5)
+    v.rect(-ri - p.CUP_WALL_IN - t["head_l"], zb + p.PORT_Z0 + 0.5, -ri, zb + p.PORT_Z1 - 0.5, fc=TDRC, lw=THIN, z=5)
     v.line([(-ri, z_top + 1.8), (-ri + p.OF_TIP_FROM_WALL, z_top + 1.8)], lw=1.1, c=FBGC, z=5.2)
     v.rect(p.PT100_R - 1.5, Z_S1 - p.PT100_L, p.PT100_R + 1.5, Z_S1 - (p.PT100_L - p.PT100_METAL), fc=PTC, lw=0.5, z=5.2)
     # Pt100 cable: up to the sand surface, in a groove under the piston, out through a ⌀4 hole in the collar
@@ -660,7 +660,7 @@ def _sheet_b_simple(pdf):
     tag(v, -p.STAND_R, zb + 40, -150, zb + 60, "3 Invar posts ⌀12", INVAR)
     tag(v, 30, Z_S1 + 3, 150, Z_S1 + 45, "top plate PETG-CF ⌀99×6\n≈ 65 g ≈ 0.08 kPa", INK)
     tag(v, X_E["E2"], Z_S1 - 50, 150, Z_S1 + 5, "anchor ⌀16 + Invar rod ⌀2\nin PTFE sleeve", INK)
-    tag(v, -10, Z_S1 - 41, 150, Z_S1 - 40, "M: CS645 + fibre + Pt100\n(as in A, depth 32–50)", "#d33682")
+    tag(v, -10, Z_S1 - 45, 150, Z_S1 - 40, "M: CS645 + fibre + Pt100\n(as in A, depth 36–54)", "#d33682")
     tag(v, p.BODY_D / 2 - 5, Z_S0 + 15, 150, Z_S0 - 15, "printed cell ⌀160 (V09)", INK)
     tag(v, 0, zb - 12, 150, zb - 45, "Al base plate 260×200×20", INK)
     rows = [["S1…S3", "surface heave", sn.PICK["LVDT-B"][1], "SE3–5"],
@@ -750,8 +750,8 @@ def _sheet_a_min(pdf):
     tag(v, p.AM_TIE_R, Z_S1 + 20, 150, Z_S1 + 25, "3 tie rods M10 stainless (45/165/285°)", INK)
     tag(v, 40, Z_S1 + 25, 150, Z_S1 + 5, "Al piston ⌀99.5 × 40", INK)
     tag(v, 0, Z_S1 - p.AM_PV[1], 150, Z_S1 - 25, "PV1  TML PDA-PA on ⌀20 disc (depth 75)", PCOL)
-    tag(v, -10, Z_S1 - 41, 150, Z_S1 - 55,
-        "M: TDR CS645 + optical fibre + Pt100\n(existing, one point, depth 32–50)", "#d33682")
+    tag(v, -10, Z_S1 - 45, 150, Z_S1 - 55,
+        "M: TDR CS645 + optical fibre + Pt100\n(existing, one point, depth 36–54)", "#d33682")
     tag(v, rb, Z_S0 - 1, 150, Z_S0 + 5, "PB1  TML PDA-PA flush in the cup bottom", PCOL)
     tag(v, 60, zb0 - 10, 150, zb0 - 45, f"Al base plate {bw:g}×{bd:g}×{bt:g}", INK)
     # labels (left)
@@ -877,7 +877,7 @@ def _sheet_a_frame(pdf):
     tag(v, x_l, zp + 35, 150, zp + 45, "LVDT DCTH400AG on the piston\n(post at −y, behind)", SENS_TXT)
     tag(v, 40, Z_S1 + 25, 150, Z_S1 + 5, "Al piston ⌀99.5 × 40", INK)
     tag(v, 0, Z_S1 - p.AM_PV[1], 150, Z_S1 - 25, "PV1  TML PDA-PA (depth 75)", PCOL)
-    tag(v, -10, Z_S1 - 41, 150, Z_S1 - 55, "M: CS645 + fibre + Pt100 (depth 32–50)", "#d33682")
+    tag(v, -10, Z_S1 - 45, 150, Z_S1 - 55, "M: CS645 + fibre + Pt100 (depth 36–54)", "#d33682")
     tag(v, rb, Z_S0 - 1, 150, Z_S0 + 2, "PB1  TML PDA-PA, flush", PCOL)
     tag(v, 80, zb0 - 12, 150, zb0 - 50, f"Al base plate {bw:g}×{bd:g}×{bt:g}", INK)
     # labels left
@@ -945,7 +945,7 @@ def _sheet_cup(pdf):
     for k in range(3):
         z = z_top - k * t["pitch"]
         v.line([(-ri, z), (-ri + t["rod_l"], z)], lw=1.4, c="#555", z=5)
-    v.rect(-ri - t["head_l"], z_top - 2 * t["pitch"] - 4, -ri, z_top + 4, fc=TDRC, lw=THIN, z=5)
+    v.rect(-ri - w - t["head_l"], p.PORT_Z0 + 0.5, -ri, p.PORT_Z1 - 0.5, fc=TDRC, lw=THIN, z=5)
     v.line([(-ri, z_top + 2), (-ri + p.OF_TIP_FROM_WALL, z_top + 2)], lw=1.2, c=FBGC, z=5.2)
     v.rect(p.PT100_R - 1.5, zs - p.PT100_L, p.PT100_R + 1.5, zs - (p.PT100_L - p.PT100_METAL), fc=PTC, lw=0.5, z=5.2)
     v.line([(p.PT100_R, zs - (p.PT100_L - p.PT100_METAL)), (p.PT100_R, zs - 1), (rb, zs - 1)], lw=0.9, c="#8a7300", z=5.2)
@@ -966,7 +966,7 @@ def _sheet_cup(pdf):
     v.dim_v(0, tb, rb, rb + 8, f"{tb:g}")
     v.dim_v(zs, Hc, rb, rb + 8, f"{Hc - zs:g}")
     v.dim_v(tb, zs, rb, rb + 18, "100 sand")
-    v.dim_v(z_top, Hc, rb, rb + 30, f"{t['top_from_collar']:g}")
+    v.dim_v(p.PORT_Z1, Hc, rb, rb + 30, f"{Hc - p.PORT_Z1:g}")
     v.dim_h(-ri, -ri + t["rod_l"], tb + 6, tb + 6, f"CS645 rods {t['rod_l']:g} (measured 77)")
     v.note(-ri + 30, z_top - t["pitch"], f"3 rods ⌀3.2, pitch {t['pitch']:g}", -40, 40, ha="left")
     v.note(-ri + 20, z_top + 2, f"optical fibre, tip {p.OF_TIP_FROM_WALL:g} from the wall", -40, 150, ha="left")
@@ -995,13 +995,13 @@ def _sheet_cup(pdf):
     f.dim_h(-ri, ri, ri, rb + 6, "⌀100")
     # notes
     sh.heading(255, 276, "Sensors at point M (existing)")
-    rows = [["TDR", "Campbell CS645", f"rods 75 (77 meas.), pitch 8.9; top rod {t['top_from_collar']:g} below the collar top"],
+    rows = [["TDR", "Campbell CS645", "rods 75 (77 meas.), pitch 8.9; head fills the port, rods centred in it"],
             ["OF", "optical fibre", f"horizontal at the top rod, tip {p.OF_TIP_FROM_WALL:g} from the wall"],
             ["Pt100", "37 mm (25 metal)", f"vertical from the sand surface, {p.PT100_R:g} from the axis"]]
     y = table(sh, 255, 272, ["", "sensor", "position"], rows, [16, 36, 103], row_h=5.8)
     sh.text(255, y - 4,
-            "Depths below the sand surface (z = 126): rods 32 / 41 / 50,\n"
-            "fibre ≈ 31, Pt100 metal 12–37 → all three sense the 30–50 mm layer.\n"
+            "Depths below the sand surface (z = 126): rods 36 / 45 / 54,\n"
+            "fibre ≈ 34, Pt100 metal 12–37 → all three sense the 35–55 mm layer.\n"
             "Open (sketch 7.7.26): does the Pt100 measure at the tip or along its length?\n"
             "\n"
             "Cable routes (to print or drill)\n"
@@ -1070,11 +1070,11 @@ def _sheet_b_open(pdf):
     tag(v, 30, Z_S1 + 0.3, 150, Z_S1 - 25, "OPEN sand surface – nothing on it", "#2b62a3")
     tag(v, rc - 2, z_c, 150, z_c + 15, "collar rim = reference (laser line in the same image)", INK)
     tag(v, xpost + 10, zb + 40, 150, zb + 20, "post + arm on the base plate", INK)
-    tag(v, -10, Z_S1 - 41, -110, Z_S1 - 75, "M: CS645 + fibre\n+ Pt100 (existing)", "#d33682")
+    tag(v, -10, Z_S1 - 45, -110, Z_S1 - 75, "M: CS645 + fibre\n+ Pt100 (existing)", "#d33682")
     tag(v, -rb + 5, Z_S0 + 20, -110, Z_S0 - 15, "printed cell ⌀160 (V09)", INK)
     tag(v, -rb, zb - 5, -110, zb - 40, f"Al plate {bw:g}×{bd:g}×{bt:g}", INK)
     # camera view
-    c = View(sh, 330, 108, 0.8, "CAMERA VIEW (from above, ≈ 115 mm field)", (330, 152))
+    c = View(sh, 330, 108, 0.62, "CAMERA VIEW (from above, ≈ 115 mm field)", (330, 152))
     c.rect(-62, -58, 62, 58, fc="#2a2a2a", lw=THIN)
     c.circle(0, 0, rc, fc="#cfd8dc", lw=THIN)
     c.circle(0, 0, p.CAV_D / 2, fc="#b9a888", lw=THIN)
@@ -1083,7 +1083,7 @@ def _sheet_b_open(pdf):
     c.line([(-p.CAV_D / 2, 0), (p.CAV_D / 2, 0)], lw=1.4, c="#ff4d4d")
     c.line([(-p.CAV_D / 2, 6), (p.CAV_D / 2, 6)], lw=0.8, c="#ff4d4d", ls="--")
     c.circle(p.PT100_R, 0, 1.8, fc=PTC, lw=0.3)
-    sh.text(330, 66, "laser line on the rim (reference) and on the sand;\n"
+    sh.text(330, 68, "laser line on the rim (reference) and on the sand;\n"
             "dashed = after heave → shift Δx = Δh along the whole profile", fontsize=FS_SMALL, ha="center", va="top",
             linespacing=1.4)
     sh.heading(255, 276, "To buy (EUR excl. VAT, ≈)")
