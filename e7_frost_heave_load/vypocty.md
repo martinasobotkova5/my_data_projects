@@ -121,3 +121,49 @@ Tyčky 40 mm jsou na hranici – krátká doba běhu. Proto: průměrovat více 
 
 Všechny tři prvky leží v hloubce 54 mm, kolem r ≈ 25 mm, v pásu ±12 mm do strany (TDR tyčky nad sebou ±5 mm), takže měří stejnou vrstvu ve stejný okamžik promrzání. Pt100 je teplotní reference: přes ni se kalibruje FBG i termistor T3 přímo v cele (ledový bod při tání), a TDR se vztahuje k teplotě Pt100 → křivka nezamrzlé vody θu(T) (charakteristika mrznutí písku).
 
+## 9. Varianta A-min – maximálně zjednodušená varianta A
+
+Pevná část: Al píst 0.84 kg + tyč M16 0.27 kg = **1.11 kg ≈ 1.4 kPa**. Kotouče: plný 4.92 kg, poloviční 2.46 kg, čtvrtkotouč 9 mm 1.23 kg.
+
+| přitížení [kPa] | celkem [kg] | plné 36 | poloviční 18 | čtvrtkotouče 9 | doladit podložkami [kg] | výška kotoučů [mm] |
+|---|---|---|---|---|---|---|
+| 5 | 4.0 | 0 | 1 | 0 | 0.43 | 18 |
+| 10 | 8.0 | 1 | 0 | 1 | 0.75 | 45 |
+| 15 | 12.0 | 2 | 0 | 0 | 1.06 | 72 |
+| 20 | 16.0 | 3 | 0 | 0 | 0.14 | 108 |
+| 25 | 20.0 | 3 | 1 | 1 | 0.45 | 135 |
+
+**Stabilita bez rámu.** Píst je v cele veden na délce ≈ 25 mm s vůlí 0,5 mm (na průměr). Největší náklon ≈ atan(0,5/25) ≈ 1,1°. Těžiště 20 kg je ≈ 100 mm nad povrchem písku, takže se při plném náklonu posune o ≈ 2 mm – daleko uvnitř opěrné plochy ⌀100. Klopný moment ≈ 196 N × 2 mm = 0,4 N·m přenese stěna dvojicí sil ≈ 16 N; s třením Al–PTFE (μ ≈ 0,2) to je ≈ 3 N, tj. ≈ 0,4 kPa (1,6 % z 25 kPa). Rám tedy není potřeba; kotouče se jen musí nasazovat opatrně a souose (středicí osazení na kotoučích).
+
+**Čidla – konkrétní typy a orientační ceny (EUR bez DPH)**
+
+| tag | měří | typ | ks | cena/ks | celkem | zdroj ceny |
+|---|---|---|---|---|---|---|
+| PV1, PB1 | svislé napětí v písku / u dna | TML PDA-PA 200 kPa (⌀6.5 × 1 mm) | 2 | 600–1 000 | 1 200–2 000 | odhad |
+| Pt100 | referenční teplota v bodě M | Omega PM, Pt100 1/10 DIN, 4-wire, ⌀3.2 × 150 mm | 1 | 230–260 | 230–260 | web |
+|  | doplňkový modul k Pt100 | Campbell 4WPB100 | 1 | 60–120 | 60–120 | odhad |
+| TDR | vlhkost / nezamrzlá voda v bodě M | Campbell TDR200 (reflectometer) | 1 | 4 500–5 200 | 4 500–5 200 | web |
+|  | sonda TDR | TDR probe, custom 3 rods ⌀1.6 × 40 + RG58 1 m | 1 | 50–150 | 50–150 | odhad |
+| OPT | optická teplota v bodě M | Opsens OTG-F (fluorescent, ⌀0.15 mm) | 1 | 300–600 | 300–600 | odhad |
+|  | převodník k OPT | Opsens TempSens 4-ch., ±5 V output | 1 | 3 500–6 000 | 3 500–6 000 | odhad |
+| LVDT | kontrola, že se vzorek nehýbe | RDP DCTH400AG (±10 mm, spring) | 1 | 581 | 581 | web |
+|  | zdroj pro LVDT | DIN-rail power supply for the LVDT | 1 | 40–80 | 40–80 | odhad |
+| T1, T2, Tair | teplota písku 20/80 mm, vzduch | Campbell 109SS-L (⌀1.6 mm) | 3 | 180–260 | 540–780 | odhad |
+
+| mechanika | cena |
+|---|---|
+| cela PETG-CF (≈ 0,4 kg filamentu) + epoxid | 30–60 |
+| PTFE fólie 0,5 mm + silikonový tuk | 25–50 |
+| Kaiflex 25 mm samolepicí, ≈ 0,3 m² | 10–20 |
+| G10 kotouč ⌀150 × 10 | 25–50 |
+| Al deska 200 × 200 × 10, Al dno ⌀150 × 15, Al píst ⌀99,5 × 40 (obrobení) | 120–250 |
+| ocelové kotouče ⌀150: 3 × 36 + 1 × 18 + 1 čtvrtkotouč 9 mm (≈ 20 kg, pálení + vrtání) | 150–300 |
+| závitová tyč M16, nerezový sloupek ⌀12, objímka LVDT | 20–50 |
+
+| | čidla | mechanika | **celkem** |
+|---|---|---|---|
+| EUR bez DPH | 11 001–15 771 | 380–780 | **11 381–16 551** |
+| Kč bez DPH (≈ 25 Kč/€) | 275–394 tis. | 10–20 tis. | **285–414 tis.** |
+
+CR1000 se nepočítá (už je k dispozici). Největší položky jsou TDR200 a převodník optického čidla – dohromady ≈ 75 % ceny čidel.
+

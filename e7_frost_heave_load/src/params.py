@@ -121,3 +121,16 @@ PT100_D, PT100_TIP_R = 3.0, 20.0        # Pt100 1/10 DIN, plášť ⌀3, hrot na
 FBG_D, FBG_TIP_R = 1.0, 20.0            # FBG v nerezové kapiláře ⌀1, mřížka 10 mm u hrotu (r 20–30)
 M_BOSS = (34.0, 22.0, 10.0)             # nálitek na stěně: šířka × výška × přesah
 T_TIP_R = 40.0                          # hroty termistorů T1–T5 (obě varianty), mimo bod M a kotvy
+
+# --- varianta A-min: maximálně zjednodušená varianta A ----------------------------------
+# bez rámu: závaží na závitové tyči přímo v pístu, cela vede píst; bez multiplexerů
+AM_BASE = (230.0, 230.0, 10.0)          # Al deska (jen nese sloupek LVDT)
+AM_G10_T = 10.0                         # G10 ⌀150 – tepelný mezikus
+AM_BOTTOM_T = 15.0                      # Al dno ⌀150 s kapsou pro PB1 (místo podstavce + porézního kamene)
+AM_PISTON_H = 40.0                      # plný Al píst ⌀99,5 se závitem M16
+AM_ROD_L = 200.0                        # závitová tyč M16 – nosí kotouče
+AM_TRIM_T = 9.0                         # čtvrtkotouč ⌀150 × 9 (≈ 1,2 kg) na doladění
+AM_POST_D = 12.0                        # nerezový sloupek pro 1 LVDT
+AM_TEMPS = [("T1", 20.0, 0.0), ("T2", 80.0, 180.0)]      # termistory v písku (tag, hloubka, úhel)
+AM_PV = ("PV1", 30.0)                   # svislé napětí na ose (tag, hloubka) – nad bodem M
+AM_PB = ("PB1", 25.0, 288.0)            # na dně (tag, r, úhel)

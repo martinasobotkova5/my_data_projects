@@ -185,3 +185,47 @@ print("\nVšechny tři prvky leží v hloubce 54 mm, kolem r ≈ 25 mm, v pásu 
       "měří stejnou vrstvu ve stejný okamžik promrzání. Pt100 je teplotní reference: přes ni se kalibruje FBG "
       "i termistor T3 přímo v cele (ledový bod při tání), a TDR se vztahuje k teplotě Pt100 → křivka nezamrzlé "
       "vody θu(T) (charakteristika mrznutí písku).\n")
+
+# 9 ---------------------------------------------------------------------------
+import sensors as sn
+
+print("## 9. Varianta A-min – maximálně zjednodušená varianta A\n")
+rho_al = 2700.0
+m_piston = math.pi / 4 * 0.0995 ** 2 * p.AM_PISTON_H / 1000 * rho_al
+m_rod = math.pi / 4 * 0.016 ** 2 * p.AM_ROD_L / 1000 * p.RHO_STEEL * 0.85      # závit ≈ 85 % plného průřezu
+m_fix = m_piston + m_rod
+m_q = disc_kg(p.AM_TRIM_T)
+print(f"Pevná část: Al píst {m_piston:.2f} kg + tyč M16 {m_rod:.2f} kg = **{m_fix:.2f} kg ≈ "
+      f"{m_fix * 9.81 / A * 1000:.1f} kPa**. Kotouče: plný {m_full:.2f} kg, poloviční {m_half:.2f} kg, "
+      f"čtvrtkotouč {p.AM_TRIM_T:g} mm {m_q:.2f} kg.\n")
+head("přitížení [kPa]", "celkem [kg]", "plné 36", "poloviční 18", "čtvrtkotouče 9", "doladit podložkami [kg]", "výška kotoučů [mm]")
+for s in p.SURCHARGES_KPA:
+    m = s * A / 1000 / 9.81
+    rest = m - m_fix
+    n_f = int(rest // m_full); rest -= n_f * m_full
+    n_h = int(rest // m_half); rest -= n_h * m_half
+    n_q = int(rest // m_q); rest -= n_q * m_q
+    row(s, f"{m:.1f}", n_f, n_h, n_q, f"{rest:.2f}", f"{n_f * 36 + n_h * 18 + n_q * p.AM_TRIM_T:g}")
+print("\n**Stabilita bez rámu.** Píst je v cele veden na délce ≈ 25 mm s vůlí 0,5 mm (na průměr). Největší náklon "
+      "≈ atan(0,5/25) ≈ 1,1°. Těžiště 20 kg je ≈ 100 mm nad povrchem písku, takže se při plném náklonu posune o ≈ 2 mm "
+      "– daleko uvnitř opěrné plochy ⌀100. Klopný moment ≈ 196 N × 2 mm = 0,4 N·m přenese stěna dvojicí sil "
+      "≈ 16 N; s třením Al–PTFE (μ ≈ 0,2) to je ≈ 3 N, tj. ≈ 0,4 kPa (1,6 % z 25 kPa). Rám tedy není potřeba; "
+      "kotouče se jen musí nasazovat opatrně a souose (středicí osazení na kotoučích).\n")
+lo = hi = 0
+fm = lambda x: f"{x:,}".replace(",", " ")
+print("**Čidla – konkrétní typy a orientační ceny (EUR bez DPH)**\n")
+head("tag", "měří", "typ", "ks", "cena/ks", "celkem", "zdroj ceny")
+for tag, what, typ, n, a, b, src, ch in sn.A_MIN_SENSORS:
+    lo += n * a; hi += n * b
+    row(tag or "", what, typ, n, f"{fm(a)}" if a == b else f"{fm(a)}–{fm(b)}", f"{fm(n * a)}" if a == b else f"{fm(n * a)}–{fm(n * b)}", src)
+s_lo, s_hi = lo, hi
+print()
+head("mechanika", "cena")
+for what, a, b in sn.A_MIN_MECH:
+    lo += a; hi += b
+    row(what, f"{a}–{b}")
+print(f"\n| | čidla | mechanika | **celkem** |\n|---|---|---|---|\n| EUR bez DPH | {fm(s_lo)}–{fm(s_hi)} | {fm(lo - s_lo)}–{fm(hi - s_hi)} | "
+      f"**{fm(lo)}–{fm(hi)}** |\n| Kč bez DPH (≈ 25 Kč/€) | {s_lo * 25 / 1000:.0f}–{s_hi * 25 / 1000:.0f} tis. | "
+      f"{(lo - s_lo) * 25 / 1000:.0f}–{(hi - s_hi) * 25 / 1000:.0f} tis. | **{lo * 25 / 1000:.0f}–{hi * 25 / 1000:.0f} tis.** |\n")
+print("CR1000 se nepočítá (už je k dispozici). Největší položky jsou TDR200 a převodník optického čidla – "
+      "dohromady ≈ 75 % ceny čidel.\n")

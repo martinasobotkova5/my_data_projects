@@ -68,6 +68,11 @@ if __name__ == "__main__":
     render(b, os.path.join(m.OUT, "E7_variant_B.png"), title="E7 variant B – no load: heave and layer strain")
     render(b, os.path.join(m.OUT, "E7_variant_B_section.png"), elev=15, azim=75,
            title="E7 variant B – section: anchors E1–E3, surface LVDTs, thermistors", cut=half)
+    am = cq.Assembly(); m.variant_a_min(am)
+    render(am, os.path.join(m.OUT, "E7_variant_A_min.png"), elev=18, azim=-60,
+           title="E7 variant A-min – no frame, discs on the piston rod, 1 LVDT")
+    render(am, os.path.join(m.OUT, "E7_variant_A_min_section.png"), elev=15, azim=75, cut=half,
+           title="E7 variant A-min – section: PV1, PB1, T1/T2, point M")
     mr = cq.Assembly(); m.solid_cell(mr)
     far = cq.Workplane("XY").box(10, 10, 10).translate((5000, 0, 0)).val()   # no cut, just see-through insulation
     render(mr, os.path.join(m.OUT, "E7_cell.png"), elev=20, azim=100, cut=far,

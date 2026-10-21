@@ -4,7 +4,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 | soubor | obsah |
 |---|---|
-| `vykresy/E7_drawings.pdf` | 6 listů A3, anglicky (PNG po listech ve stejné složce) |
+| `vykresy/E7_drawings.pdf` | 7 listů A3 (V07 = zjednodušená varianta A-min), anglicky (PNG po listech ve stejné složce) |
 | `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, samotná cela, obě v mrazáku (+ STL a PNG náhledy) |
 | `vypocty.md` | zatížení, očekávané deformace, rozlišení LVDT, teplotní chyba stojanu, napětí v cele, závaží |
 | `src/params.py` | všechny rozměry a předpoklady |
@@ -34,6 +34,62 @@ Obě varianty sdílejí základovou desku, Al distanční kus, mezikus G10, pods
 - Gravitace dává přesně konstantní přitížení. Nezávisí na posunu vzorku ani na smrštění rámu v mrazu.
 - Není potřeba siloměr ani dotahování. Rám jen vede tyč a nese LVDT, takže nic nezatěžuje.
 - Do 25 kPa je to 20 kg, tedy 3 plné a 1 poloviční kotouč (výška 126 mm). To se do mrazáku vejde.
+
+## 1a. Varianta A-min – maximálně zjednodušená varianta A (E7-V07, `vypocty.md` §9)
+
+Stejný písek, stejná tištěná cela, stejné přitížení závažím 5–25 kPa a stejný bod M. Všechno ostatní je ubrané na minimum.
+
+**Sestava (zdola nahoru):**
+1. Al deska 230 × 230 × 10 na vaně mrazáku (jen nese sloupek LVDT).
+2. G10 ⌀150 × 10 – tepelný mezikus, aby vzorek promrzal shora.
+3. Al dno ⌀150 × 15 se zapuštěným PB1 (místo podstavce a porézního kamene – uzavřený systém).
+4. Cela PETG-CF (plný tisk) s PTFE fólií a tukem, Kaiflex 25; jen 2 nálitky pro termistory a nálitek bodu M.
+5. Písek ⌀100 × 100: PV1 na ose v hloubce 30 mm, T1 v hloubce 20 mm, bod M v 54 mm, T2 v 80 mm.
+6. Plný Al píst ⌀99,5 × 40 se závitovou tyčí M16 × 200, na ní ocelové kotouče ⌀150: 3 × 36 + 18 + 9 mm (+ podložky) → 20 kg = 25 kPa.
+7. Jeden LVDT na ose (hrot na konci tyče) na nerezovém sloupku ⌀12 v rohu desky – jen kontrola, že se vzorek nehýbe.
+
+**Proč stačí bez rámu:** píst vede cela (vůle 0,5 mm na délce 25 mm → náklon ≤ 1,1°). Těžiště 20 kg se při plném náklonu posune o ≈ 2 mm, přídavné tření ≈ 0,4 kPa (1,6 % z 25 kPa). Kotouče nasazovat pomalu a souose.
+
+**Co odpadá proti variantě A:** rám (sloupy, příčka, ložisko), nosná deska, vodicí tyč, kulička, terčík, G10 nad pístem, porézní kameny, Invarové sloupky, druhý LVDT, 4 ze 6 tlakových snímačů, 7 z 10 termistorů a oba multiplexery.
+
+**Čidla – konkrétní typy a orientační ceny (EUR bez DPH):**
+
+| tag | měří | typ | ks | cena celkem | zdroj ceny | CR1000 |
+|---|---|---|---|---|---|---|
+| PV1, PB1 | svislé napětí v písku a u dna | **TML PDA-PA 200 kPa** (⌀6,5 × 1 mm), PV1 na nerezovém disku ⌀20 × 2 | 2 | 1 200–2 000 | odhad – poptat Althen / Elkome | DIFF1, DIFF2, BrFull, VX1 |
+| Pt100 | referenční teplota v bodě M | **Omega PM, Pt100 1/10 DIN, 4vodič, ⌀3,2 × 150 mm** | 1 | ≈ 230–260 | web: 244 USD | DIFF3+4, BrHalf4W, VX2 |
+| | doplněk k Pt100 | **Campbell 4WPB100** | 1 | 60–120 | odhad | – |
+| TDR | vlhkost / nezamrzlá voda v bodě M | **Campbell TDR200** | 1 | 4 500–5 200 | web: 5 068 € (eBay, nový), 5 198 USD (Radwell, 2018) | C1–C3 (SDM), 12 V |
+| | sonda TDR | vlastní 3-tyčková ⌀1,6 × 40 mm + koax RG58 1 m | 1 | 50–150 | odhad (materiál) | – |
+| OPT | optická teplota v bodě M | **Opsens OTG-F** (fluorescenční, ⌀0,15 mm) | 1 | 300–600 | odhad – poptat Althen / Polytec | – |
+| | převodník k OPT | **Opsens TempSens** (4 kanály, výstup ±5 V) | 1 | 3 500–6 000 | odhad | SE10 |
+| LVDT | kontrola, že se vzorek nehýbe | **RDP DCTH400AG** (±10 mm, s pružinou) | 1 | 581 | web: Elkome 581 € | SE9 |
+| | zdroj pro LVDT | zdroj na DIN lištu | 1 | 40–80 | odhad | – |
+| T1, T2, Tair | teplota písku 20/80 mm, vzduch | **Campbell 109SS-L** (⌀1,6 mm) | 3 | 540–780 | odhad (cena po přihlášení) | SE11–13, Therm109, VX3 |
+
+| | čidla | mechanika | **celkem** |
+|---|---|---|---|
+| EUR bez DPH | ≈ 11 000–15 800 | ≈ 400–800 | **≈ 11 400–16 600** |
+| Kč bez DPH (≈ 25 Kč/€) | ≈ 275–395 tis. | ≈ 10–20 tis. | **≈ 285–415 tis.** |
+
+- **CR1000 se nepočítá** (už je). Multiplexery nejsou potřeba: 2 můstky + Pt100 + LVDT + optika + 3 termistory se vejdou na svorky CR1000 přímo, TDR200 jde na SDM.
+- **Největší položky:** TDR200 (≈ 5 000 €) a převodník optického čidla (≈ 3 500–6 000 €), dohromady ≈ 75 % ceny čidel.
+- **Kde ještě ušetřit:**
+  - bez optického čidla (−3 800 až −6 600 €) – teplotu v bodě M pak měří jen Pt100;
+  - TDR200 vypůjčit (často bývá na katedře / v jiné laboratoři) nebo použít starší TDR100;
+  - Pt100 jen třídy A místo 1/10 DIN (≈ 50 €, přesnost ±0,15 °C místo ±0,03 °C).
+- **Ceny jsou orientační.** Výrobci (TML, Campbell, Opsens) ceny nezveřejňují; „web“ = cena nalezená u prodejce v říjnu 2026, ostatní jsou odhady. Před objednávkou poptat:
+  - TML PDA-PA, Opsens: Althen Sensors, Elkome;
+  - Campbell: Campbell Scientific Europe (campbellsci.eu) nebo český distributor;
+  - RDP: Elkome (e-shop s cenou).
+- **Optické čidlo:** pro A-min navrhuji fluorescenční sondu, ne FBG. Jde přímo analogově do CR1000 a nepotřebuje interrogátor s vlastním PC (FBG interrogátor ≈ 8 000–25 000 €).
+
+**Zdroje cen:**
+- [Elkome – RDP DCTH400AG, 581 €](https://shop.elkome.com/en/sensors/lvdt-sensors/lvdtanturi)
+- [Global Test Supply – Omega PM 1/10 DIN, 4-wire, 0.125", 244.11 USD](https://www.globaltestsupply.com/categories/view/specialty-rtds-prts/page:2)
+- [eBay – Campbell TDR200, 5 068 €](https://www.ebay.com/itm/134796937151), [Radwell – TDR200, 5 198 USD (2018)](https://www.radwell.com/Buy/CAMPBELL%20SCIENTIFIC%20INC/CAMPBELL%20SCIENTIFIC%20INC/TDR200)
+- [Bestech – TML PDA-PA (parametry, bez ceny)](https://www.bestech.com.au/product/pda-pa-waterproof-miniature-pressure-gauge/)
+- [Althen – Opsens OTG-F (parametry, bez ceny)](https://www.althensensors.com/sensors/temperature-sensors/fiber-optic-temperature-sensors/otg-f-fiber-optic-temperature-sensors/)
 
 ## 2. Přitížení závažím (varianta A, E7-V01, `vypocty.md` §7)
 
@@ -230,6 +286,7 @@ Podmínky:
 | soubor | obsah |
 |---|---|
 | `E7_variant_A.step` | varianta A – lehký rám 40×40 (sloupy 410, příčka s ložiskem), tištěná cela s PTFE fólií, nenasycený písek, tlakové snímače PV1/PH1/PB1/PW1–3, G10, nosná deska s tyčí, 3 + 1 ocelové kotouče, 2× LVDT na bocích (±y) s Invarovými sloupky, termistory včetně Tw |
+| `E7_variant_A_min.step` | zjednodušená varianta A-min – deska, G10, Al dno, cela, písek, PV1/PB1, T1/T2, bod M, píst se závitovou tyčí, 5 kotoučů, 1 LVDT na sloupku |
 | `E7_variant_B.step` | varianta B – základová deska, stejná tištěná cela, nenasycený písek, horní deska PETG-CF, kotvy E1–E3 s Invarovými tyčkami a PTFE trubičkami, 6× LVDT s volným jádrem, 3 Invarové sloupky, Al můstek, termistory |
 | `E7_cell.step` | samotná cela PETG-CF s nálitky, PTFE fólií, izolací, termistory, snímači PW a bodem M (TDR, Pt100, FBG) |
 | `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku (stěny mrazáku průhledné, ≈ rozměry) |

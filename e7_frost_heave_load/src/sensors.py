@@ -71,3 +71,29 @@ CHANNELS = [
     ("–", "FBG interrogator", "1 fibre for both rigs; own PC, clock synced"),
     ("SE14–16", "spare", ""),
 ]
+
+# --- varianta A-min: konkrétní typy a orientační ceny (EUR bez DPH) ---------------------
+# zdroj: "web" = cena nalezená u prodejce (viz README), "odhad" = cena se nezveřejňuje → poptat
+# (tag, co měří, typ, ks, cena/ks min, cena/ks max, zdroj, CR1000)
+A_MIN_SENSORS = [
+    ("PV1, PB1", "svislé napětí v písku / u dna", "TML PDA-PA 200 kPa (⌀6.5 × 1 mm)", 2, 600, 1000, "odhad", "DIFF1, DIFF2 BrFull, VX1"),
+    ("Pt100", "referenční teplota v bodě M", "Omega PM, Pt100 1/10 DIN, 4-wire, ⌀3.2 × 150 mm", 1, 230, 260, "web", "DIFF3+4 BrHalf4W, VX2"),
+    ("", "doplňkový modul k Pt100", "Campbell 4WPB100", 1, 60, 120, "odhad", "–"),
+    ("TDR", "vlhkost / nezamrzlá voda v bodě M", "Campbell TDR200 (reflectometer)", 1, 4500, 5200, "web", "C1–C3 (SDM), 12V"),
+    ("", "sonda TDR", "TDR probe, custom 3 rods ⌀1.6 × 40 + RG58 1 m", 1, 50, 150, "odhad", "–"),
+    ("OPT", "optická teplota v bodě M", "Opsens OTG-F (fluorescent, ⌀0.15 mm)", 1, 300, 600, "odhad", "–"),
+    ("", "převodník k OPT", "Opsens TempSens 4-ch., ±5 V output", 1, 3500, 6000, "odhad", "SE10 VoltSE"),
+    ("LVDT", "kontrola, že se vzorek nehýbe", "RDP DCTH400AG (±10 mm, spring)", 1, 581, 581, "web", "SE9 VoltSE ±5 V"),
+    ("", "zdroj pro LVDT", "DIN-rail power supply for the LVDT", 1, 40, 80, "odhad", "–"),
+    ("T1, T2, Tair", "teplota písku 20/80 mm, vzduch", "Campbell 109SS-L (⌀1.6 mm)", 3, 180, 260, "odhad", "SE11–13 Therm109, VX3"),
+]
+# mechanika (EUR bez DPH, odhad: materiál + zakázková výroba)
+A_MIN_MECH = [
+    ("cela PETG-CF (≈ 0,4 kg filamentu) + epoxid", 30, 60),
+    ("PTFE fólie 0,5 mm + silikonový tuk", 25, 50),
+    ("Kaiflex 25 mm samolepicí, ≈ 0,3 m²", 10, 20),
+    ("G10 kotouč ⌀150 × 10", 25, 50),
+    ("Al deska 200 × 200 × 10, Al dno ⌀150 × 15, Al píst ⌀99,5 × 40 (obrobení)", 120, 250),
+    ("ocelové kotouče ⌀150: 3 × 36 + 1 × 18 + 1 čtvrtkotouč 9 mm (≈ 20 kg, pálení + vrtání)", 150, 300),
+    ("závitová tyč M16, nerezový sloupek ⌀12, objímka LVDT", 20, 50),
+]
