@@ -336,26 +336,26 @@ Podmínky:
 
 ## 9. 3D modely pro Onshape (`3d/`)
 
+Číslování odpovídá výkresům V01–V08. Jednotky mm, osa z nahoru.
+
 | soubor | obsah |
 |---|---|
-| `E7_variant_A.step` | varianta A – lehký rám 40×40 (sloupy 410, příčka s ložiskem), tištěná cela s PTFE fólií, nenasycený písek, tlakové snímače PV1/PH1/PB1/PW1–3, G10, nosná deska s tyčí, 3 + 1 ocelové kotouče, 2× LVDT na bocích (±y) s Invarovými sloupky, termistory včetně Tw |
-| `E7_variant_A_min.step` | zjednodušená varianta A-min – deska, G10, Al dno, cela, písek, PV1/PB1, T1/T2, bod M, píst, ocelové víko na 3 táhlech M10, středový šroub M16, 1 LVDT na sloupku |
-| `E7_variant_A_frame.step` | varianta A-rám – deska, 2 sloupy 40×80, příčník 80×80, šroub M16 × 1,5, Al sloupek + vložka POM-C, cela, písek, PV1/PB1, bod M, LVDT |
-| `E7_cell.step` | tištěná cela A ⌀160 (Column_one_body_version_1) s kanálem, CS645, vláknem a Pt100 |
-| `E7_variant_B.step` | varianta B – Al deska, tištěná cela ⌀160 s bodem M (CS645, vlákno, Pt100), horní deska PETG-CF, kotvy E1–E3 s Invarovými tyčkami, 6× LVDT s volným jádrem, 3 Invarové sloupky, Al můstek, termistory |
-| `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku (stěny mrazáku průhledné, ≈ rozměry) |
+| `E7_V02_variant_A_tie_rods.step` | A – víko na 3 táhlech M10 (V02) |
+| **`E7_V03_variant_A_frame.step`** | **A – píst držený Al rámem** (V03): deska, 2 sloupy 40×80, příčník 80×80, šroub M16, Al sloupek + POM, píst, cela ⌀160, písek, PV1/PB1, bod M, LVDT |
+| `E7_V04_cell.step` | samotná tištěná cela ⌀160 s kanálem, CS645, vláknem a Pt100 (V04) |
+| `E7_V05_variant_B_anchors.step` | B – kotvy E1–E3, 6 LVDT na Invarovém stojanu (V05) |
+| **`E7_V06_variant_B_open.step`** | **B – otevřený povrch** (V06): deska, cela, bod M, sloupek + rameno 20×20, vyhřívaný box s kamerou a objektivem, čárový laser s držákem |
+| `E7_V08_freezer_layout.step` | obě sestavy (V03 + V06) na vaně v mrazáku (V08) |
+| `parts_V03_variant_A_frame/`, `parts_V06_variant_B_open/` | **každý díl zvlášť** jako STEP – pro výrobní výkresy jednotlivých dílů |
 
-Náhledy jsou `3d/*.png`. Řezy ukazují `E7_variant_A_section.png` a `E7_variant_B_section.png`.
+Náhledy: `3d/E7_V0x_*.png` (pohled a řez).
 
-**Import do Onshape:**
-1. *Create → Import*, nebo v otevřeném dokumentu tlačítko *Import*.
-2. Vybrat soubor `.step`.
-3. Díly se načtou s názvy a barvami.
-4. Jednotky jsou mm, osa z míří nahoru, z = 0 je horní líc základové desky.
-
-**Zjednodušení modelu:**
-- Drážky profilů, závity, kabely a spojovací materiál nejsou modelované.
-- Čidla mají obalové rozměry podle katalogů. Přesné CAD modely lze stáhnout od výrobců.
+**Import do Onshape a výkresy:**
+1. V Onshape *Create → Document*, pak *Import* (ikona šipky) a vybrat `E7_V03_variant_A_frame.step` (a `E7_V06_variant_B_open.step`).
+2. V dialogu importu zaškrtnout **„Import as assembly“** – vznikne Part Studio s díly a Assembly se sestavou; názvy dílů zůstanou.
+3. Výkres sestavy: na záložce Assembly *+ → Create drawing* (A3, šablona ISO), vložit pohledy (přední, boční, půdorys, řez), kusovník (*Insert BOM*).
+4. Výkres dílu: v Part Studiu pravým tlačítkem na díl → *Create drawing of …* a okótovat. Případně importovat jednotlivé STEP ze složky `parts_*`.
+5. Barvy a průhlednost (písek, izolace) se přenesou; čidla mají obalové rozměry, závity a drážky profilů nejsou modelované.
 
 ## 10. Literatura (ověřeno vyhledáním; DOI jen kde potvrzeno)
 

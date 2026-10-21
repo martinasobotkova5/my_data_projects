@@ -59,26 +59,15 @@ def render(asm, path, elev=22, azim=-60, title="", cut=None):
 
 if __name__ == "__main__":
     import cadquery as cq
-    a = cq.Assembly(); m.variant_a(a)
-    b = cq.Assembly(); m.variant_b(b)
-    render(a, os.path.join(m.OUT, "E7_variant_A.png"), title="E7 variant A – dead weight ≤ 25 kPa, unsaturated sand")
     half = cq.Workplane("XY").box(2000, 1000, 2000, centered=(True, False, True)).val()
-    render(a, os.path.join(m.OUT, "E7_variant_A_section.png"), elev=15, azim=75,
-           title="E7 variant A – section: sand, pressure cells, thermistors", cut=half)
-    render(b, os.path.join(m.OUT, "E7_variant_B.png"), title="E7 variant B – no load: heave and layer strain")
-    render(b, os.path.join(m.OUT, "E7_variant_B_section.png"), elev=15, azim=75,
-           title="E7 variant B – section: anchors E1–E3, surface LVDTs, thermistors", cut=half)
-    am = cq.Assembly(); m.variant_a_min(am)
-    render(am, os.path.join(m.OUT, "E7_variant_A_min.png"), elev=18, azim=-60,
-           title="E7 variant A-min – fixed lid on 3 tie rods, 1 LVDT")
-    render(am, os.path.join(m.OUT, "E7_variant_A_min_section.png"), elev=15, azim=75, cut=half,
-           title="E7 variant A-min – section: PV1, PB1, T1/T2, point M")
-    af = cq.Assembly(); m.variant_a_frame(af)
-    render(af, os.path.join(m.OUT, "E7_variant_A_frame.png"), elev=18, azim=-60,
-           title="E7 variant A-frame – fixed piston in an Al profile frame")
-    mr = cq.Assembly(); m.body_a(mr)
-    far = cq.Workplane("XY").box(10, 10, 10).translate((5000, 0, 0)).val()   # no cut, just see-through insulation
-    render(mr, os.path.join(m.OUT, "E7_cell.png"), elev=20, azim=100, cut=far,
-           title="E7 cell A – body D160, port with CS645, fibre, Pt100")
-    render(m.freezer_layout(), os.path.join(m.OUT, "E7_freezer_layout.png"), elev=35, azim=-70,
-           title="E7 – both rigs in the chest freezer")
+    xcut = cq.Workplane("XY").box(1000, 2000, 2000, centered=(False, True, True)).val()
+    for fn, name, title in ((m.variant_a_min, "E7_V02_variant_A_tie_rods", "E7 V02 – A, fixed lid on tie rods"),
+                            (m.variant_a_frame, "E7_V03_variant_A_frame", "E7 V03 – A, piston fixed by an Al frame"),
+                            (m.body_a, "E7_V04_cell", "E7 V04 – printed cell ⌀160 with point M"),
+                            (m.variant_b, "E7_V05_variant_B_anchors", "E7 V05 – B, anchors and Invar stand"),
+                            (m.variant_b_open, "E7_V06_variant_B_open", "E7 V06 – B, open surface, camera + laser")):
+        a = cq.Assembly(); fn(a)
+        render(a, os.path.join(m.OUT, name + ".png"), title=title)
+        render(a, os.path.join(m.OUT, name + "_section.png"), elev=12, azim=0, cut=xcut, title=title + " (section)")
+    render(m.freezer_layout(), os.path.join(m.OUT, "E7_V08_freezer_layout.png"), elev=35, azim=-70,
+           title="E7 V08 – both rigs in the chest freezer")

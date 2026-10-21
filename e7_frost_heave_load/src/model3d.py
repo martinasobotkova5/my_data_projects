@@ -81,175 +81,6 @@ def radial_off(ang, r0, r1, z, d, w=0.0):
     return c.rotate((0, 0, 0), (0, 0, 1), ang)
 
 
-def m_point(asm, prefix=""):
-    """Measuring point M: 3-rod mini TDR probe, Pt100 and FBG side by side at one depth."""
-    z = Z_S1 - p.M_DEPTH
-    a = p.M_ANG
-    r_wall = p.D_SAMPLE / 2
-    hw, hh, hd = p.TDR_HEAD
-    head = box(R_OUT - 2, R_OUT - 2 + hd, -hw / 2, hw / 2, z - hh / 2, z + hh / 2).rotate((0, 0, 0), (0, 0, 1), a)
-    asm.add(head, name=prefix + "M TDR probe head (epoxy)", color=C["tdr"])
-    for i, dz in enumerate(p.TDR_RODS_DZ, 1):
-        asm.add(radial_off(a, r_wall - p.TDR_ROD_L, R_OUT, z + dz, p.TDR_ROD_D),
-                name=f"{prefix}M TDR rod {i} D1.6", color=C["steel"])
-    asm.add(radial_off(a, R_OUT + hd - 2, R_OUT + 60, z, 5.0), name=prefix + "M TDR coax cable", color=C["tdr"])
-    asm.add(radial_off(a, p.PT100_TIP_R, R_OUT + INS_T + 25, z, p.PT100_D, w=p.M_SIDE),
-            name=prefix + "M Pt100 1/10 DIN D3", color=C["pt100"])
-    asm.add(radial_off(a, p.FBG_TIP_R, R_OUT + INS_T + 25, z, p.FBG_D, w=-p.M_SIDE),
-            name=prefix + "M FBG temperature sensor (capillary D1)", color=C["fbg"])
-
-
-def m_boss_cuts(cell, liner, ins):
-    """Printed boss for point M on the cell wall + holes in wall, liner and insulation."""
-    z = Z_S1 - p.M_DEPTH
-    a = p.M_ANG
-    bw, bh, bt = p.M_BOSS
-    hw, hh, hd = p.TDR_HEAD
-    cell = cell.union(box(R_OUT - 2, R_OUT + bt, -bw / 2, bw / 2, z - bh / 2, z + bh / 2)
-                      .rotate((0, 0, 0), (0, 0, 1), a))
-    cell = cell.cut(box(R_OUT - 2, R_OUT + bt + 1, -hw / 2 - 0.3, hw / 2 + 0.3, z - hh / 2 - 0.3, z + hh / 2 + 0.3)
-                    .rotate((0, 0, 0), (0, 0, 1), a))
-    for dz in p.TDR_RODS_DZ:
-        cell = cell.cut(radial_off(a, R_IN - 1, R_OUT, z + dz, p.TDR_ROD_D + 0.2))
-        liner = liner.cut(radial_off(a, p.D_SAMPLE / 2 - 1, R_IN + 1, z + dz, p.TDR_ROD_D + 0.6))
-    for w, d in ((p.M_SIDE, p.PT100_D), (-p.M_SIDE, p.FBG_D)):
-        cell = cell.cut(radial_off(a, R_IN - 1, R_OUT + bt + 1, z, d + 0.2, w))
-        liner = liner.cut(radial_off(a, p.D_SAMPLE / 2 - 1, R_IN + 1, z, d + 0.6, w))
-    ins = ins.cut(box(R_OUT - 1, R_OUT + bt + 1, -bw / 2 - 1, bw / 2 + 1, z - bh / 2 - 1, z + bh / 2 + 1)
-                  .rotate((0, 0, 0), (0, 0, 1), a))
-    return cell, liner, ins
-
-
-def solid_cell(asm, prefix="", t_tip=None, temps=None, wall_cells=True):
-    """Solid 3D-printed PETG-CF cell: wall 8, foot D150, thermistor bosses, PW holders, PTFE liner,
-    Kaiflex 25 insulation; thermistors T1–T5 and wall pressure sensors PW1–3."""
-    cell = tube(p.D_CELL_OUT, p.D_CELL_IN, CELL_H, Z_S0)
-    cell = cell.union(tube(p.CELL_FOOT_D, p.D_CELL_IN, p.CELL_FOOT_T, Z_S0))
-    liner = tube(p.D_CELL_IN, p.D_SAMPLE, CELL_H, Z_S0)
-    ins = tube(2 * (R_OUT + INS_T), 2 * R_OUT, CELL_H - p.CELL_FOOT_T, Z_S0 + p.CELL_FOOT_T)
-    temps = WALL_TH if temps is None else temps
-    for d, ang in temps:
-        z = Z_S1 - d
-        cell = cell.union(box(R_OUT - 2, R_OUT + 8, -5, 5, z - 5, z + 5).rotate((0, 0, 0), (0, 0, 1), ang))
-        cell = cell.cut(radial(ang, R_IN - 1, R_OUT + 9, z, 1.7))
-        ins = ins.cut(box(R_OUT - 1, R_OUT + 9, -6, 6, z - 6, z + 6).rotate((0, 0, 0), (0, 0, 1), ang))
-    for tag, d, ang in (p.PWALL if wall_cells else []):
-        z = Z_S1 - d
-        cell = cell.union(box(R_OUT - 2, R_OUT + 8, -6, 6, z - 6, z + 6).rotate((0, 0, 0), (0, 0, 1), ang))
-        cell = cell.cut(radial(ang, R_IN - 1, R_OUT + 9, z, p.PWALL_D + 0.2))
-        liner = liner.cut(radial(ang, p.D_SAMPLE / 2 - 1, R_IN + 1, z, p.PWALL_D + 0.2))
-        ins = ins.cut(box(R_OUT - 1, R_OUT + 9, -7, 7, z - 7, z + 7).rotate((0, 0, 0), (0, 0, 1), ang))
-        asm.add(radial(ang, p.D_SAMPLE / 2, R_OUT + 14, z, p.PWALL_D), name=f"{prefix}{tag} wall pressure sensor",
-                color=C["pressure"])
-    cell, liner, ins = m_boss_cuts(cell, liner, ins)
-    m_point(asm, prefix)
-    asm.add(cell, name=prefix + "cell PETG-CF (solid print)", color=C["petg"])
-    asm.add(liner, name=prefix + "PTFE liner 0.5", color=C["ptfe"])
-    asm.add(ins, name=prefix + "insulation Kaiflex 25", color=C["ins"])
-    t_tip = t_tip or p.T_TIP_R
-    for i, (d, ang) in enumerate(temps, 1):
-        asm.add(radial(ang, t_tip, R_OUT + INS_T + 15, Z_S1 - d, 1.6), name=f"{prefix}T{i} 109SS", color=C["temp"])
-
-
-def cell_stack(asm, prefix=""):
-    asm.add(cyl(150, G10_T, H_BOT), name=prefix + "G10 thermal break", color=C["g10"])
-    ped = cyl(150, p.PEDESTAL_H, Z_PED).cut(cyl(99.6, 10, Z_S0 - 10))
-    asm.add(ped, name=prefix + "pedestal Al", color=C["al"])
-    asm.add(cyl(99.5, 10, Z_S0 - 10), name=prefix + "porous stone bottom", color=C["stone"])
-    solid_cell(asm, prefix)
-    _piston_and_sensors(asm, prefix, sand=True)
-    embedded_cells(asm, prefix)
-    base_cells(asm, prefix)
-
-
-def embedded_cells(asm, prefix=""):
-    """Miniature earth pressure cells inside the sand (variant A)."""
-    for tag, kind, d, rr, ang in p.PCELLS:
-        z = Z_S1 - d
-        x, y = rr * math.cos(math.radians(ang)), rr * math.sin(math.radians(ang))
-        if kind == "v":
-            c = cyl(p.PCELL_D, p.PCELL_T, z - p.PCELL_T / 2, x, y)
-            label = "vertical stress"
-        else:
-            c = (cq.Workplane("YZ").circle(p.PCELL_D / 2).extrude(p.PCELL_T)
-                 .translate((rr - p.PCELL_T / 2, 0, z)).rotate((0, 0, 0), (0, 0, 1), ang))
-            label = "radial stress"
-        asm.add(c, name=f"{prefix}{tag} earth pressure cell ({label})", color=C["pressure"])
-        asm.add(radial(ang, rr + p.PCELL_D / 2 * (kind == "v"), R_OUT + INS_T + 15, z, 2.5),
-                name=f"{prefix}{tag} cable", color=C["pressure"])
-
-
-def base_cells(asm, prefix=""):
-    for tag, rr, ang in p.PBASE:
-        x, y = rr * math.cos(math.radians(ang)), rr * math.sin(math.radians(ang))
-        asm.add(cyl(8, 1.5, Z_S0 - 1.5, x, y), name=f"{prefix}{tag} base pressure sensor (flush)",
-                color=C["pressure"])
-
-
-def _piston_and_sensors(asm, prefix, sand=False):
-    asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0),
-            name=prefix + ("unsaturated sand D100x100" if sand else "soil sample D100x100"),
-            color=C["sand"] if sand else C["soil"])
-    asm.add(cyl(99.5, 10, Z_S1), name=prefix + "porous stone top", color=C["stone"])
-    asm.add(cyl(99.5, Z_PT - Z_S1 - 10, Z_S1 + 10), name=prefix + "piston Al", color=C["al"])
-    asm.add(cyl(140, 5, Z_PT), name=prefix + "LVDT target plate", color=C["al"])
-    asm.add(cq.Workplane("XY").sphere(6).translate((0, 0, BALL_C)), name=prefix + "steel ball D12",
-            color=C["steel"])
-    # thermistor probes (Campbell 109SS, D1.6)
-    asm.add(radial(180, 10, 74, Z_PED + 15, 1.6), name=prefix + "Tbot 109SS", color=C["temp"])
-    asm.add(radial(0, 10, 49, Z_PT - 8, 1.6), name=prefix + "Ttop 109SS", color=C["temp"])
-    # Invar reference with 2 LVDTs (RDP DCTH400)
-    if sand:      # variant A: weights above → LVDTs at ±y on tabs of the target plate
-        for s in (-1, 1):
-            asm.add(box(-10, 10, s * 60, s * (p.LVDT_R + 6), Z_PT, Z_PT + 5) if s > 0 else
-                    box(-10, 10, s * (p.LVDT_R + 6), s * 60, Z_PT, Z_PT + 5),
-                    name=f"{prefix}target tab {'+y' if s > 0 else '-y'}", color=C["al"])
-            n = 1 if s < 0 else 2
-            asm.add(cyl(19, 60, Z_LC, 0, s * p.LVDT_R), name=f"{prefix}LVDT-{n} DCTH400", color=C["sensor"])
-            asm.add(cyl(4, Z_LC - Z_TGT, Z_TGT, 0, s * p.LVDT_R), name=f"{prefix}LVDT-{n} plunger", color=C["steel"])
-            asm.add(cyl(10, Z_LC + 60, 0, 25, s * p.LVDT_R), name=f"{prefix}Invar post {n}", color=C["invar"])
-            arm = box(0, 25, s * p.LVDT_R - 6, s * p.LVDT_R + 6, Z_LC + 50, Z_LC + 60) if s > 0 else \
-                box(0, 25, s * p.LVDT_R - 6, s * p.LVDT_R + 6, Z_LC + 50, Z_LC + 60)
-            asm.add(arm, name=f"{prefix}LVDT clamp arm {n}", color=C["invar"])
-        return
-    for s in (-1, 1):
-        asm.add(cyl(10, 300, 0, s * 62, -75), name=f"{prefix}Invar rod {'L' if s < 0 else 'R'}", color=C["invar"])
-        asm.add(cyl(19, 60, Z_LC, s * 62, 0), name=f"{prefix}LVDT-{1 if s < 0 else 2} DCTH400", color=C["sensor"])
-        asm.add(cyl(4, Z_LC - Z_TGT, Z_TGT, s * 62, 0), name=f"{prefix}LVDT-{1 if s < 0 else 2} plunger",
-                color=C["steel"])
-    bridge = box(-75, 75, -85, 12, 300, 308).cut(cyl(60, 8, 300))
-    for s in (-1, 1):
-        bridge = bridge.union(box(s * 62 - 12, s * 62 + 12, -10, 12, Z_LC + 60, 300))
-    asm.add(bridge, name=prefix + "Invar/Al LVDT bridge", color=C["invar"])
-
-
-def variant_a(asm, prefix=""):
-    """Variant A: unsaturated sand in the solid printed cell, pressure sensors, dead-weight surcharge ≤ 25 kPa."""
-    zb = p.FRAME_H_A
-    hb, hd = p.BASE_W / 2, p.BASE_D / 2
-    asm.add(box(-hb, hb, -hd, hd, -p.BASE_T, 0), name=prefix + "base plate Al 6082", color=C["al"])
-    for i, (x, y) in enumerate(((-hb + 20, -hd + 20), (hb - 20, -hd + 20), (0, hd - 20))):
-        asm.add(cyl(16, 18, -p.BASE_T - 18, x, y), name=f"{prefix}levelling foot {i + 1}", color=C["steel"])
-    for s in (-1, 1):
-        asm.add(box(s * X_COL - 20, s * X_COL + 20, -20, 20, 0, zb),
-                name=f"{prefix}column 40x40 {'L' if s < 0 else 'R'}", color=C["profile"])
-    bar = box(-X_COL - 20, X_COL + 20, -20, 20, zb, zb + p.BEAM_H_A).cut(cyl(28, p.BEAM_H_A, zb))
-    asm.add(bar, name=prefix + "cross-bar 40x40 (guide only)", color=C["profile"])
-    asm.add(tube(28, p.DW_ROD_D + 0.1, p.BEAM_H_A, zb), name=prefix + "linear ball bushing D16", color=C["steel"])
-    asm.add(cyl(60, H_BOT, 0), name=prefix + "Al spacer (bottom)", color=C["al"])
-    cell_stack(asm, prefix)
-    zg = Z_LC
-    asm.add(cyl(p.DW_G10_D, p.DW_G10_T, zg), name=prefix + "G10 thermal break D60x10", color=C["g10"])
-    zc = zg + p.DW_G10_T
-    asm.add(cyl(p.DW_D, p.DW_CARRIER_T, zc), name=prefix + "carrier plate steel D150x10", color=C["steel"])
-    asm.add(cyl(p.DW_ROD_D, p.DW_ROD_L, zc + p.DW_CARRIER_T), name=prefix + "guide rod D16", color=C["steel"])
-    z = zc + p.DW_CARRIER_T
-    for i, t in enumerate((p.DW_FULL_T,) * 3 + (p.DW_HALF_T,), 1):
-        asm.add(tube(p.DW_D, p.DW_HOLE, t - 0.5, z), name=f"{prefix}steel disc {i} D150x{t:g}", color=C["weight"])
-        z += t
-    asm.add(radial(0, 30, 75, (zc + z) / 2, 1.6), name=prefix + "Tw 109SS (weights)", color=C["temp"])
-
-
 def variant_b(asm, prefix=""):
     """Variant B: same printed cell ⌀160 and point M as A, no load; surface + anchor LVDTs on an Invar stand."""
     hb, hd = p.BASE_W / 2, p.BASE_D / 2
@@ -421,14 +252,44 @@ def variant_a_frame(asm, prefix=""):
     asm.add(cyl(19, 55, zp + 5, xl, yl), name=prefix + "LVDT RDP DCTH400AG", color=C["sensor"])
     asm.add(cyl(4, 5, zp, xl, yl), name=prefix + "LVDT plunger", color=C["steel"])
 
+def variant_b_open(asm, prefix=""):
+    """Variant B-open (sheet V06): printed cell ⌀160 on an Al plate, nothing on the sand; camera looking down
+    in a heated box on a post + arm, line laser at 45°."""
+    bw, bd, bt = p.BC_BASE
+    zb = body_a(asm, prefix, temps=[], pv=False, pb=False, opt=False)
+    rb = p.BODY_D / 2
+    x0 = -rb - 20
+    asm.add(box(x0, x0 + bw, -bd / 2, bd / 2, zb - bt, zb), name=prefix + "Al base plate 320x220x10", color=C["al"])
+    zcam = Z_S1 + p.BL_CAM_H
+    bx, bz = 70.0, 80.0
+    xpost = rb + 50
+    z_arm0, z_arm1 = zcam + bz / 2 + 20, zcam + bz / 2 + 40
+    asm.add(box(xpost, xpost + 20, -10, 10, zb, z_arm1), name=prefix + "post Al profile 20x20", color=C["profile"])
+    asm.add(box(-bx / 2 - 10, xpost, -10, 10, z_arm0, z_arm1), name=prefix + "arm Al profile 20x20", color=C["profile"])
+    cam_box = box(-bx / 2, bx / 2, -bx / 2, bx / 2, zcam - bz / 2, z_arm0).cut(
+        box(-bx / 2 + 20, bx / 2 - 20, -bx / 2 + 20, bx / 2 - 20, zcam - bz / 2 + 20, z_arm0 - 20)).cut(
+        cyl(28, 20, zcam - bz / 2))
+    asm.add(cam_box, name=prefix + "heated camera box XPS 30", color=C["ins"])
+    asm.add(cyl(28, 2, zcam - bz / 2, 0, 0), name=prefix + "double-glass window", color=C["freezer"])
+    asm.add(cyl(30, 25, zcam - bz / 2 + 2), name=prefix + "lens 12 mm C-mount", color=C["steel"])
+    asm.add(box(-19, 19, -19, 19, zcam - bz / 2 + 27, zcam - bz / 2 + 47), name=prefix + "Raspberry Pi HQ camera",
+            color=C["petg"])
+    xl = p.BL_LASER_X
+    zl = Z_S1 + p.BL_LASER_X / math.tan(math.radians(p.BL_LASER_ANG))
+    laser = (cq.Workplane("YZ").circle(6).extrude(30).translate((-15, 0, 0))
+             .rotate((0, 0, 0), (0, 1, 0), -p.BL_LASER_ANG).translate((xl, 0, zl)))
+    asm.add(laser, name=prefix + "line laser 650 nm (45 deg)", color=C["temp"])
+    asm.add(box(xpost + 20, xl + 12, -8, 8, zl + 8, zl + 14), name=prefix + "laser bracket", color=C["al"])
+    return zb
+
+
 def freezer_layout():
+    """Both rigs on the tray in the chest freezer (sheet V08): A-frame left, B-open turned 90° right."""
     asm = cq.Assembly(name="E7 freezer layout")
     z_tray = 20.0
-    z0 = z_tray + 40 + 18 + p.BASE_T        # base plate top on feet on the tray
-    sub_b, sub_a = cq.Assembly(name="rig B"), cq.Assembly(name="rig A")
-    variant_b(sub_b)
-    variant_a(sub_a)
-    # chest freezer inside (origin at inner floor corner), tray and mat
+    sub_a, sub_b = cq.Assembly(name="rig A-frame"), cq.Assembly(name="rig B-open")
+    variant_a_frame(sub_a)
+    zb_b = variant_b_open(sub_b)
     asm.add(box(0, p.FRZ_L, 0, p.FRZ_W, -5, 0), name="freezer floor (inside ≈ 900x550)", color=C["freezer"])
     walls = box(-10, p.FRZ_L + 10, -10, p.FRZ_W + 10, 0, p.FRZ_H).cut(box(0, p.FRZ_L, 0, p.FRZ_W, 0, p.FRZ_H))
     asm.add(walls, name="freezer walls (≈ 650 high)", color=C["freezer"])
@@ -437,26 +298,48 @@ def freezer_layout():
     tray = box(50, 50 + p.TRAY_L, 105, 105 + p.TRAY_W, z_tray, z_tray + 40)
     tray = tray.cut(box(51.5, 48.5 + p.TRAY_L, 106.5, 103.5 + p.TRAY_W, z_tray + 1.5, z_tray + 41))
     asm.add(tray, name="stainless tray", color=C["tray"])
-    asm.add(sub_b, loc=cq.Location((185, 275, z0)))
-    asm.add(sub_a, loc=cq.Location((445, 275, z0)))
+    z_top_tray = z_tray + 1.5
+    zbA = Z_S0 - p.AM_BOTTOM_T - p.AM_G10_T - p.AF_BASE[2] - 18
+    ax = 50 + 10 + p.AF_BASE[0] / 2
+    asm.add(sub_a, loc=cq.Location((ax, 105 + p.TRAY_W / 2, z_top_tray - zbA)))
+    zbB = zb_b - p.BC_BASE[2]
+    bx_ = ax + p.AF_BASE[0] / 2 + 15 + p.BC_BASE[1] / 2
+    asm.add(sub_b, loc=cq.Location((bx_, 105 + p.TRAY_W / 2 + 20, z_top_tray - zbB), (0, 0, 1), 90))
     return asm
+
+
+def export_parts(asm, folder):
+    """One STEP per part (for drawings in Onshape); names from the assembly."""
+    os.makedirs(folder, exist_ok=True)
+    for f in os.listdir(folder):
+        if f.endswith(".step"):
+            os.remove(os.path.join(folder, f))
+    n = 0
+    for shape, name, loc, color in asm:
+        nm = name.split("/")[-1]
+        safe = "".join(ch if ch.isalnum() or ch in "-_." else "_" for ch in nm).strip("_")
+        cq.exporters.export(cq.Workplane().add(shape.moved(loc)), os.path.join(folder, safe + ".step"))
+        n += 1
+    return n
 
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    a = cq.Assembly(name="E7 variant A - dead weight <= 25 kPa, unsaturated sand")
-    variant_a(a)
-    b = cq.Assembly(name="E7 variant B - no load, heave and layer strain")
+    b = cq.Assembly(name="E7 V05 variant B - anchors, layer strain")
     variant_b(b)
-    mr = cq.Assembly(name="E7 cell A - Column_one_body_version_1")
+    mr = cq.Assembly(name="E7 V04 cell A - Column_one_body_version_1")
     body_a(mr)
-    am = cq.Assembly(name="E7 variant A-min - fixed lid")
+    am = cq.Assembly(name="E7 V02 variant A - fixed lid on tie rods")
     variant_a_min(am)
-    af = cq.Assembly(name="E7 variant A-frame - fixed piston in Al frame")
+    af = cq.Assembly(name="E7 V03 variant A - fixed piston in Al frame")
     variant_a_frame(af)
+    bo = cq.Assembly(name="E7 V06 variant B - open surface, camera + laser")
+    variant_b_open(bo)
     lay = freezer_layout()
-    for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (mr, "E7_cell"), (am, "E7_variant_A_min"), (af, "E7_variant_A_frame"),
-                    (lay, "E7_freezer_layout")):
+    for asm, fn in ((am, "E7_V02_variant_A_tie_rods"), (af, "E7_V03_variant_A_frame"), (mr, "E7_V04_cell"),
+                    (b, "E7_V05_variant_B_anchors"), (bo, "E7_V06_variant_B_open"), (lay, "E7_V08_freezer_layout")):
         asm.save(os.path.join(OUT, fn + ".step"))
         cq.exporters.export(asm.toCompound(), os.path.join(OUT, fn + ".stl"), tolerance=0.2, angularTolerance=0.3)
-        print(fn, "ok", len(asm.children) if hasattr(asm, "children") else "")
+        print(fn, "ok", len(asm.children))
+    for asm, folder in ((af, "parts_V03_variant_A_frame"), (bo, "parts_V06_variant_B_open")):
+        print(folder, export_parts(asm, os.path.join(OUT, folder)), "parts")
