@@ -217,3 +217,10 @@ BC_CAM_DIST = 150.0                     # vzdálenost objektiv – značka
 BC_CAM_BOX = (90.0, 70.0, 80.0)         # vyhřívaný izolovaný box kamery (d × š × v)
 BC_FOV = 40.0                           # šířka zorného pole na značce [mm]
 BC_SENSOR_PX = 4056                     # Raspberry Pi HQ camera (IMX477)
+
+# --- B-open: bezkontaktně – kamera shora + čárový laser (laserová triangulace) ------------
+BL_CAM_H = 220.0                        # objektiv nad povrchem písku
+BL_LENS_F = 12.0                        # objektiv 12 mm → zorné pole ≈ 115 mm (celý ⌀100 + límec)
+BL_SENSOR_W = 6.29                      # IMX477, šířka čipu [mm]
+BL_LASER_ANG = 45.0                     # čárový laser odkloněný od svislice
+BL_LASER_X = 150.0                      # laser stranou od osy (ve výšce kamery)

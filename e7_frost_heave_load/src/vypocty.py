@@ -335,22 +335,23 @@ print(f"**Co koupit:** LVDT s volným jádrem + zdroj, Invarový sloupek s ramen
       f"Celkem ≈ {lo:.0f}–{hi:.0f} € bez DPH (≈ {lo * 25 / 1000:.0f}–{hi * 25 / 1000:.0f} tis. Kč).\n")
 
 # 13 --------------------------------------------------------------------------
-print("## 13. Varianta B-open s kamerou (bez LVDT a Invarového sloupku)\n")
-px = p.BC_FOV / p.BC_SENSOR_PX * 1000
-print(f"Kamera snímá z boku značku na tyčce z terčíku a 2 referenční značky na horní hraně límce. "
-      f"Zorné pole ≈ {p.BC_FOV:g} mm na {p.BC_SENSOR_PX} px → **{px:.1f} µm/px**; se subpixelovým "
-      f"vyhodnocením (template matching / těžiště, 0,1–0,2 px) ≈ **{0.1 * px:.0f}–{0.2 * px:.0f} µm** teoreticky, "
-      "reálně ≈ 5 µm (vibrace kompresoru, teplota, rozostření).\n")
+print("## 13. Varianta B-open – bezkontaktně: kamera shora + čárový laser\n")
+fov = p.BL_SENSOR_W * p.BL_CAM_H / p.BL_LENS_F
+px = fov / p.BC_SENSOR_PX * 1000
+k = math.tan(math.radians(p.BL_LASER_ANG))
+print("Na povrchu písku nic neleží. Čárový laser svítí šikmo (45° od svislice) přes celý povrch a přes horní "
+      "hranu límce; kamera shora snímá čáru. Když povrch stoupne o Δh, čára se v obraze posune do strany o "
+      f"Δh·tan 45° = Δh. Zorné pole ≈ {fov:.0f} mm → **{px:.0f} µm/px**; s vyhodnocením těžiště čáry "
+      f"(≈ 0,1–0,3 px) ≈ {0.1 * px / k:.0f}–{0.3 * px / k:.0f} µm, reálně ≈ 10 µm (zrnitost písku, námraza).\n")
+print("Čára dává celý **profil povrchu** napříč vzorkem (střed i okraj u stěny), ne jen jeden bod. Druhý laser "
+      "otočený o 90° (+15–60 €) přidá druhý profil.\n")
 rim = (p.COLLAR_TOP - p.BODY_BOTTOM)
-d_rim = rim * p.ALPHA_PETG * dT * 1000
-print(f"**Reference = horní hrana límce.** Límec je od dna dutiny {rim:g} mm PETG → při {dT:g} K se posune o ≈ {d_rim:.0f} µm. "
-      "To se zopakuje v každém cyklu stejně a odečte se ze **slepé zkoušky** (Al náhrada vzorku, stejný program). "
-      "Kamera i její držák se mohou hýbat – měří se rozdíl značka – referenční značky v jednom snímku, "
-      "takže pohyb kamery se vyruší.\n")
+print(f"**Reference = čára na horní hraně límce** ve stejném snímku – ruší pohyb kamery i laseru. Límec se ale sám "
+      f"posune o ≈ {rim * p.ALPHA_PETG * dT * 1000:.0f} µm na {dT:g} K → odečíst ze **slepé zkoušky** (Al náhrada vzorku).\n")
 lo = sum(a_ for *_, a_, b_ in sn.B_CAM_BUY) + sum(a_ for _, a_, b_ in sn.B_CAM_MECH)
 hi = sum(b_ for *_, a_, b_ in sn.B_CAM_BUY) + sum(b_ for _, a_, b_ in sn.B_CAM_MECH)
-print("**Kamera v mrazáku:** Raspberry Pi i HQ kamera jsou stavěné na 0 … +50 °C → izolovaný box (XPS 20 mm) "
-      "s topnou fólií 5 W a termostatem na ≈ +5 °C, okénko ze dvou skel (nemlží se). Stálé LED osvětlení, "
-      "snímek každých 10 min, čas synchronizovaný s CR1000 (NTP). Rozostření kvůli teplotě kontrolovat na referenčních značkách.\n")
-print(f"**Cena:** ≈ {lo:.0f}–{hi:.0f} € bez DPH (≈ {lo * 25 / 1000:.0f}–{hi * 25 / 1000:.0f} tis. Kč). "
-      "Odpadá LVDT, zdroj LVDT a Invarový sloupek.\n")
+print("**Kamera a laser v mrazáku:** oba v izolovaném boxu (XPS 30 mm) s topnou fólií 5 W a termostatem na +5 °C, "
+      "okénka ze dvou skel. Teplo boxu nad vzorkem je malé (≈ 1 W přes izolaci a okénko), ale vliv ověřit termistorem "
+      "Ttop / bodem M ve slepé zkoušce; lepší je kamera mimo mrazák s okénkem ve víku, pokud to víko dovolí. "
+      "Laser zapínat jen na snímek (každých 10 min), jinak tma; čas synchronizovat s CR1000.\n")
+print(f"**Cena:** ≈ {lo:.0f}–{hi:.0f} € bez DPH (≈ {lo * 25 / 1000:.0f}–{hi * 25 / 1000:.0f} tis. Kč).\n")

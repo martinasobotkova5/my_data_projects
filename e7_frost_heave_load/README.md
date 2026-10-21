@@ -264,15 +264,15 @@ Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely,
 
 **Siloměry** nejsou potřeba v žádné variantě. A je zatížená závažím (síla = hmotnost), B není zatížená vůbec.
 
-## 5a. Varianta B-open – otevřený povrch, posun snímá kamera (E7-V10, `vypocty.md` §13)
+## 5a. Varianta B-open – otevřený povrch, bezkontaktně: kamera + čárový laser (E7-V10, `vypocty.md` §13)
 
-- Tištěná cela ⌀160 na Al desce 320 × 220 × 10; žádné víko, horní deska, kotvy, LVDT ani Invarový sloupek.
-- Na **otevřeném** povrchu leží terčík PETG ⌀30 s tyčkou ⌀3; na jejím konci 20 mm nad límcem je šachovnicová značka 12 × 8 mm.
-- Na horní hraně límce jsou 2 referenční značky. **Kamera** (Raspberry Pi HQ + objektiv 16 mm, zorné pole ≈ 40 mm) je na držáku na desce, ve vyhřívaném boxu (+5 °C, dvojité okénko), se stálým LED světlem; snímek každých 10 min, čas synchronizovaný s CR1000.
-- **Zdvih(t)** = výška značky nad referenčními značkami v každém snímku minus výchozí stav. Referenční značky dávají měřítko (px → mm) a ruší pohyb kamery. Rozlišení ≈ 10 µm/px, subpixelově ≈ 2–5 µm.
-- Límec (PETG) se při 20 K posune o ≈ 120 µm → odečíst ze **slepé zkoušky** s Al náhradou vzorku.
-- Bod M stejně jako dřív (CS645, vlákno, Pt100). Otevřený povrch vysychá – celu vážit před a po cyklu.
-- **Koupit:** Raspberry Pi 5, HQ kamera, objektiv, LED, vyhřívaný box, Al deska a držák, terčík se značkou, volitelně Tair → **≈ 450–710 € bez DPH (≈ 11–18 tis. Kč)**.
+- Tištěná cela ⌀160 na Al desce 320 × 220 × 10; **na povrchu písku nic neleží** (žádné víko, deska ani terčík).
+- **Kamera** (Raspberry Pi HQ + objektiv 12 mm, zorné pole ≈ 115 mm) visí na rameni ≈ 220 mm nad povrchem a dívá se dolů; **čárový laser** 650 nm svítí šikmo pod 45° přes celý povrch i přes horní hranu límce. Oba ve vyhřívaném boxu (+5 °C, dvojité okénko).
+- **Laserová triangulace:** když povrch stoupne o Δh, čára se v obraze posune do strany o Δh (při 45°). ≈ 28 µm/px, těžiště čáry na 0,1–0,3 px → ≈ 3–9 µm, reálně ≈ 10 µm. Výsledkem je **celý profil povrchu** napříč vzorkem, ne jen jeden bod; druhý laser otočený o 90° přidá druhý profil.
+- **Reference:** část čáry na horní hraně límce ve stejném snímku ruší pohyb kamery a laseru. Límec se sám posune o ≈ 120 µm na 20 K → slepá zkouška s Al náhradou.
+- Laser zapínat jen na snímek (každých 10 min), čas synchronizovat s CR1000. Box nad vzorkem přidá ≈ 1 W – vliv ověřit ve slepé zkoušce; lepší je kamera mimo mrazák s okénkem ve víku, pokud to víko dovolí.
+- Bod M stejně jako dřív. Otevřený povrch vysychá – celu vážit před a po cyklu.
+- **Koupit:** Raspberry Pi 5, HQ kamera, objektiv 12 mm, čárový laser, vyhřívaný box, Al deska a rameno → **≈ 460–770 € bez DPH (≈ 11–19 tis. Kč)**.
 
 **Deformace po vrstvách kamerou (rozšíření):** do stěny cely vytisknout svislé okénko ≈ 20 × 100 mm z PMMA/PC; kamera z boku snímá zrna písku a metodou **DIC/PIV** (např. open-source GeoPIV-RG) se z posunu zrn spočítá svislý posun v každé hloubce → poměrná deformace vrstev bez kotev. Okénko zvyšuje tepelný únik (mezi snímky zakrýt izolační zátkou) a tření o stěnu je u něj jiné; druhá kamera ≈ +150 €.
 

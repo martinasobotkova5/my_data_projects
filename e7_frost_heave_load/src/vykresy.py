@@ -1028,89 +1028,87 @@ def sheet_cup(pdf):
 
 
 def _sheet_b_open(pdf):
-    sh = Sheet("Variant B-open – open surface, displacement by camera", "E7-V10", "≈ 1 : 2.2", 10, TOTAL,
-               "no lid, no LVDT, no Invar post: printed cell + point M + marker + camera")
-    v = View(sh, 112, 50, 0.48)
+    sh = Sheet("Variant B-open – open surface, laser line + camera", "E7-V10", "≈ 1 : 2.5", 10, TOTAL,
+               "nothing on the sand: camera above, laser at 45°, rim = reference")
+    v = View(sh, 112, 42, 0.42)
     bw, bd, bt = p.BC_BASE
     zb = Z_S0 - p.BODY_BOTTOM
-    rb = p.BODY_D / 2
+    rb, rc = p.BODY_D / 2, p.COLLAR_OD / 2
     v.rect(-rb - 20, zb - bt, -rb - 20 + bw, zb, fc=METAL, hatch="////")
     cup_cell(v)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
     m_section_a(v, labels=True, cable_up=True)
     v.line([(-p.D_SAMPLE / 2, Z_S1 + 0.3), (p.D_SAMPLE / 2, Z_S1 + 0.3)], lw=1.4, c="#4a90d9", z=4.5)
     z_c = zb + p.COLLAR_TOP
-    xt = 20.0
-    zm = z_c + p.BC_MARK_ABOVE
-    hw, hh = p.BC_MARK_HEAD
-    v.rect(xt - p.BO_TARGET_D / 2, Z_S1, xt + p.BO_TARGET_D / 2, Z_S1 + p.BO_TARGET_T, fc=PETG, lw=THIN, z=5)
-    v.rect(xt - 1.5, Z_S1 + p.BO_TARGET_T, xt + 1.5, zm - hh / 2, fc="#333", lw=0.3, z=5)
-    v.rect(xt - hw / 2, zm - hh / 2, xt + hw / 2, zm + hh / 2, fc="white", lw=THIN, z=5)
-    v.rect(xt - hw / 2, zm, xt, zm + hh / 2, fc="black", lw=0, z=5.1)
-    v.rect(xt, zm - hh / 2, xt + hw / 2, zm, fc="black", lw=0, z=5.1)
-    rc = p.COLLAR_OD / 2
-    for x_ in (-rc + 4, rc - 4):
-        v.rect(x_ - 4, z_c - 6, x_ + 4, z_c, fc="white", lw=THIN, z=5)
-        v.rect(x_ - 4, z_c - 3, x_, z_c, fc="black", lw=0, z=5.1)
-        v.rect(x_, z_c - 6, x_ + 4, z_c - 3, fc="black", lw=0, z=5.1)
-    # camera (front view of the setup = camera looks into the page; drawn beside, on its bracket)
-    cx0 = rb + 40
-    bx, by, bz = p.BC_CAM_BOX
-    zc_ax = (z_c + zm) / 2
-    v.rect(cx0, zb, cx0 + 20, zc_ax - bz / 2, fc=METAL, lw=THIN)
-    v.rect(cx0 - 10, zc_ax - bz / 2, cx0 + bx - 10, zc_ax + bz / 2, fc="#f3e7c9", lw=THICK, hatch="..")
-    v.rect(cx0 + 5, zc_ax - 15, cx0 + 45, zc_ax + 15, fc="#2f3b45", lw=THIN, z=4)
-    v.rect(cx0 - 10, zc_ax - 12, cx0 + 5, zc_ax + 12, fc="#555", lw=THIN, z=4)
-    v.rect(cx0 - 12, zc_ax - 14, cx0 - 10, zc_ax + 14, fc="#bfe3f5", lw=THIN, z=4.2)
-    for zz in (zc_ax - 20, zc_ax + 20):
-        v.line([(cx0 - 12, zz * 0 + zc_ax), (xt + hw, zm if zz > zc_ax else z_c - 6)], lw=0.5, c="#2b62a3", ls="--")
-    v.rect(cx0 - 10, zc_ax + bz / 2, cx0 + 30, zc_ax + bz / 2 + 6, fc="#ffe680", lw=THIN)
-    # labels
-    tag(v, xt + hw / 2, zm, 150, zm + 45, f"marker 12×8 on rod ⌀3,\n{p.BC_MARK_ABOVE:g} above the collar", INK)
-    tag(v, -rc + 4, z_c - 3, -110, z_c + 40, "2 reference marks\non the collar rim", INK)
-    tag(v, xt, Z_S1 + 1, 150, Z_S1 + 5, "target ⌀30 on the OPEN surface", "#2b62a3")
-    tag(v, cx0 + 25, zc_ax, 150, zc_ax + 25, "Raspberry Pi HQ camera + 16 mm lens\nin a heated box (+5 °C), double window", INK)
-    tag(v, cx0 + 10, zc_ax + bz / 2 + 3, 150, zc_ax + bz / 2 + 90, "LED light (constant)", INK)
-    tag(v, cx0 + 10, zb + 20, 150, zb + 10, "camera bracket on the base plate", INK)
+    zcam = Z_S1 + p.BL_CAM_H
+    bx, by, bz = 70.0, 70.0, 80.0
+    # bracket: post on the base plate + arm over the cell
+    xpost = rb + 50
+    v.rect(xpost, zb, xpost + 20, zcam + bz / 2 + 20, fc="#d9dde1", lw=THIN)
+    v.rect(-bx / 2 - 10, zcam + bz / 2 + 20, xpost + 20, zcam + bz / 2 + 40, fc="#d9dde1", lw=THIN)
+    # camera box above the axis
+    v.rect(-bx / 2, zcam - bz / 2, bx / 2, zcam + bz / 2 + 20, fc="#f3e7c9", lw=THICK, hatch="..")
+    v.rect(-15, zcam - 10, 15, zcam + 30, fc="#2f3b45", lw=THIN, z=4)
+    v.rect(-12, zcam - bz / 2 + 2, 12, zcam - 10, fc="#555", lw=THIN, z=4)
+    v.rect(-14, zcam - bz / 2 - 2, 14, zcam - bz / 2, fc="#bfe3f5", lw=THIN, z=4.2)
+    # field of view
+    for s_ in (-1, 1):
+        v.line([(s_ * 12, zcam - bz / 2), (s_ * 58, z_c)], lw=0.5, c="#2b62a3", ls="--")
+    # laser (on the arm, at 45° to the surface centre)
+    xl = p.BL_LASER_X
+    zl = Z_S1 + p.BL_LASER_X / math.tan(math.radians(p.BL_LASER_ANG))
+    v.rect(xl - 8, zl - 8, xl + 8, zl + 8, fc="#c0392b", lw=THIN, z=4)
+    v.line([(xl - 6, zl - 6), (0, Z_S1)], lw=1.2, c="#e74c3c", z=4.6)
+    v.line([(0, Z_S1), (-8, Z_S1 + 8)], lw=0.4, c="#e74c3c", ls=":")
+    # heave shift illustration
+    dh = 10.0
+    v.line([(-p.D_SAMPLE / 2, Z_S1 + dh), (p.D_SAMPLE / 2, Z_S1 + dh)], lw=0.6, c="#4a90d9", ls="--", z=4.5)
+    v.line([(xl - 6, zl - 6), (dh, Z_S1 + dh)], lw=0.6, c="#e74c3c", ls="--", z=4.6)
+    v.dim_h(0, dh, Z_S1 + dh, Z_S1 + dh + 8, "Δx = Δh")
+    tag(v, 0, zcam + 10, 150, zcam + 40, "Raspberry Pi HQ + 12 mm lens, looking down\n(heated box +5 °C, double window)", INK)
+    tag(v, xl, zl, 150, zl - 10, "line laser 650 nm, 45° from vertical", "#c0392b")
+    tag(v, 30, Z_S1 + 0.3, 150, Z_S1 - 25, "OPEN sand surface – nothing on it", "#2b62a3")
+    tag(v, rc - 2, z_c, 150, z_c + 15, "collar rim = reference (laser line in the same image)", INK)
+    tag(v, xpost + 10, zb + 40, 150, zb + 20, "post + arm on the base plate", INK)
     tag(v, -10, Z_S1 - 41, -110, Z_S1 - 75, "M: CS645 + fibre\n+ Pt100 (existing)", "#d33682")
-    tag(v, -rb + 5, Z_S0 + 20, -150, Z_S0 - 10, "printed cell ⌀160 (V09)", INK)
-    tag(v, -rb, zb - 5, -150, zb - 40, f"Al plate {bw:g}×{bd:g}×{bt:g}", INK)
-    # camera view (what the camera sees)
-    c = View(sh, 330, 82, 1.6, "CAMERA VIEW (≈ 40 mm field)  1.6 : 1", (330, 128))
-    c.rect(-20, -12, 20, 18, fc="#fafafa", lw=THIN)
-    c.rect(-20, -12, 20, 0, fc=PETG, lw=0.3)
-    for x_ in (-16, 16):
-        c.rect(x_ - 4, -6, x_ + 4, 0, fc="white", lw=THIN)
-        c.rect(x_ - 4, -3, x_, 0, fc="black", lw=0)
-        c.rect(x_, -6, x_ + 4, -3, fc="black", lw=0)
-    c.rect(-1.5, -12, 1.5, p.BC_MARK_ABOVE - hh / 2, fc="#333", lw=0)
-    c.rect(-hw / 2, p.BC_MARK_ABOVE - hh / 2, hw / 2, p.BC_MARK_ABOVE + hh / 2, fc="white", lw=THIN)
-    c.rect(-hw / 2, p.BC_MARK_ABOVE, 0, p.BC_MARK_ABOVE + hh / 2, fc="black", lw=0)
-    c.rect(0, p.BC_MARK_ABOVE - hh / 2, hw / 2, p.BC_MARK_ABOVE, fc="black", lw=0)
-    c.dim_v(0, p.BC_MARK_ABOVE, 20, 24, "h(t)")
-    sh.text(330, 58, "heave(t) = h(t) − h(0); reference marks give scale (px→mm)\n"
-            "and cancel any movement of the camera", fontsize=FS_SMALL, ha="center", va="top", linespacing=1.4)
-    # right panel
+    tag(v, -rb + 5, Z_S0 + 20, -110, Z_S0 - 15, "printed cell ⌀160 (V09)", INK)
+    tag(v, -rb, zb - 5, -110, zb - 40, f"Al plate {bw:g}×{bd:g}×{bt:g}", INK)
+    # camera view
+    c = View(sh, 330, 108, 0.8, "CAMERA VIEW (from above, ≈ 115 mm field)", (330, 152))
+    c.rect(-62, -58, 62, 58, fc="#2a2a2a", lw=THIN)
+    c.circle(0, 0, rc, fc="#cfd8dc", lw=THIN)
+    c.circle(0, 0, p.CAV_D / 2, fc="#b9a888", lw=THIN)
+    c.line([(-rc, -4), (-p.CAV_D / 2, -4)], lw=1.4, c="#ff4d4d")
+    c.line([(p.CAV_D / 2, -4), (rc, -4)], lw=1.4, c="#ff4d4d")
+    c.line([(-p.CAV_D / 2, 0), (p.CAV_D / 2, 0)], lw=1.4, c="#ff4d4d")
+    c.line([(-p.CAV_D / 2, 6), (p.CAV_D / 2, 6)], lw=0.8, c="#ff4d4d", ls="--")
+    c.circle(p.PT100_R, 0, 1.8, fc=PTC, lw=0.3)
+    sh.text(330, 66, "laser line on the rim (reference) and on the sand;\n"
+            "dashed = after heave → shift Δx = Δh along the whole profile", fontsize=FS_SMALL, ha="center", va="top",
+            linespacing=1.4)
     sh.heading(255, 276, "To buy (EUR excl. VAT, ≈)")
-    rows = [[tg_ or "  +", what, f"{a_}–{b_}"] for tg_, what, n, a_, b_ in sn.B_CAM_BUY]
-    rows += [["mech.", what, f"{a_}–{b_}"] for what, a_, b_ in sn.B_CAM_MECH]
-    rows = [[r[0], r[1].replace("objektiv", "lens").replace("mezikroužek", "spacer").replace("pásek / kroužek", "strip / ring")
-             .replace("rozptylka", "diffuser").replace("stálé osvětlení", "constant light").replace("vyhřívaný box", "heated box")
-             .replace("topná fólie", "heater foil").replace("okénko 2× sklo", "double-glass window").replace("termostat", "thermostat")
-             .replace("volitelně", "optional").replace("zdroj", "PSU").replace("karta", "SD card").replace("deska", "plate")
-             .replace("držák kamery (úhelník / profil 20×20)", "camera bracket (profile 20×20)").replace("terčík", "target")
-             .replace("tyčka", "rod").replace("se značkou", "+ marker").replace("ref. značky na límec (tisk)", "rim marks (printed)"),
-             r[2]] for r in rows]
+    tr = {"zdroj": "PSU", "karta": "SD card", "objektiv": "lens", "nízké zkreslení": "low distortion",
+          "čárový laser": "line laser", "třída": "class", "úhel": "fan", "vyhřívaný box": "heated box",
+          "topná fólie": "heater foil", "termostat": "thermostat", "okénko 2× sklo": "double-glass window",
+          "volitelně": "optional", "deska": "plate", "rameno nad celou: profil 20×20 (sloupek + výložník)":
+          "post + arm over the cell (profile 20×20)", "2 referenční plíšky na límec (matně bílé) – kontrola":
+          "2 matt-white reference tabs on the rim (check)"}
+    def en(t_):
+        for a_, b_ in tr.items():
+            t_ = t_.replace(a_, b_)
+        return t_
+    rows = [[tg_ or "  +", en(what), f"{a_}–{b_}"] for tg_, what, n, a_, b_ in sn.B_CAM_BUY]
+    rows += [["mech.", en(what), f"{a_}–{b_}"] for what, a_, b_ in sn.B_CAM_MECH]
     y = table(sh, 255, 272, ["tag", "item", "EUR"], rows, [16, 116, 23], row_h=5.6)
     lo = sum(a_ for *_, a_, b_ in sn.B_CAM_BUY) + sum(a_ for _, a_, b_ in sn.B_CAM_MECH)
     hi = sum(b_ for *_, a_, b_ in sn.B_CAM_BUY) + sum(b_ for _, a_, b_ in sn.B_CAM_MECH)
     sh.text(255, y - 4,
             f"Total ≈ {lo:.0f}–{hi:.0f} EUR (estimates). Already available: cell, CS645,\n"
-            "Pt100, optical fibre, CR1000. No LVDT, no Invar post.\n"
+            "Pt100, optical fibre, CR1000.\n"
             "\n"
-            "Resolution ≈ 10 µm/px, sub-pixel ≈ 2–5 µm (vypocty.md §13)\n"
-            "Rim moves ≈ 120 µm per 20 K (PETG) → blank run with an Al dummy.\n"
-            "Photo every 10 min, clock synced (NTP) with the CR1000.",
+            "≈ 28 µm/px, line centre to 0.1–0.3 px → ≈ 3–9 µm, realistic ≈ 10 µm\n"
+            "Gives the whole surface profile; rim moves ≈ 120 µm / 20 K → blank run.\n"
+            "Laser on only for the photo (every 10 min); clock synced with the CR1000.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V10_variant_B_open.png"))
 

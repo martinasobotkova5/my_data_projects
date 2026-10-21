@@ -236,13 +236,15 @@ Odečte se slepou zkouškou (Al náhrada vzorku). S nerezovou tyčkou jádra mí
 
 **Co koupit:** LVDT s volným jádrem + zdroj, Invarový sloupek s ramenem, Al deska, terčík; volitelně Tair. Celkem ≈ 830–1250 € bez DPH (≈ 21–31 tis. Kč).
 
-## 13. Varianta B-open s kamerou (bez LVDT a Invarového sloupku)
+## 13. Varianta B-open – bezkontaktně: kamera shora + čárový laser
 
-Kamera snímá z boku značku na tyčce z terčíku a 2 referenční značky na horní hraně límce. Zorné pole ≈ 40 mm na 4056 px → **9.9 µm/px**; se subpixelovým vyhodnocením (template matching / těžiště, 0,1–0,2 px) ≈ **1–2 µm** teoreticky, reálně ≈ 5 µm (vibrace kompresoru, teplota, rozostření).
+Na povrchu písku nic neleží. Čárový laser svítí šikmo (45° od svislice) přes celý povrch a přes horní hranu límce; kamera shora snímá čáru. Když povrch stoupne o Δh, čára se v obraze posune do strany o Δh·tan 45° = Δh. Zorné pole ≈ 115 mm → **28 µm/px**; s vyhodnocením těžiště čáry (≈ 0,1–0,3 px) ≈ 3–9 µm, reálně ≈ 10 µm (zrnitost písku, námraza).
 
-**Reference = horní hrana límce.** Límec je od dna dutiny 134 mm PETG → při 20 K se posune o ≈ 121 µm. To se zopakuje v každém cyklu stejně a odečte se ze **slepé zkoušky** (Al náhrada vzorku, stejný program). Kamera i její držák se mohou hýbat – měří se rozdíl značka – referenční značky v jednom snímku, takže pohyb kamery se vyruší.
+Čára dává celý **profil povrchu** napříč vzorkem (střed i okraj u stěny), ne jen jeden bod. Druhý laser otočený o 90° (+15–60 €) přidá druhý profil.
 
-**Kamera v mrazáku:** Raspberry Pi i HQ kamera jsou stavěné na 0 … +50 °C → izolovaný box (XPS 20 mm) s topnou fólií 5 W a termostatem na ≈ +5 °C, okénko ze dvou skel (nemlží se). Stálé LED osvětlení, snímek každých 10 min, čas synchronizovaný s CR1000 (NTP). Rozostření kvůli teplotě kontrolovat na referenčních značkách.
+**Reference = čára na horní hraně límce** ve stejném snímku – ruší pohyb kamery i laseru. Límec se ale sám posune o ≈ 121 µm na 20 K → odečíst ze **slepé zkoušky** (Al náhrada vzorku).
 
-**Cena:** ≈ 447–710 € bez DPH (≈ 11–18 tis. Kč). Odpadá LVDT, zdroj LVDT a Invarový sloupek.
+**Kamera a laser v mrazáku:** oba v izolovaném boxu (XPS 30 mm) s topnou fólií 5 W a termostatem na +5 °C, okénka ze dvou skel. Teplo boxu nad vzorkem je malé (≈ 1 W přes izolaci a okénko), ale vliv ověřit termistorem Ttop / bodem M ve slepé zkoušce; lepší je kamera mimo mrazák s okénkem ve víku, pokud to víko dovolí. Laser zapínat jen na snímek (každých 10 min), jinak tma; čas synchronizovat s CR1000.
+
+**Cena:** ≈ 457–770 € bez DPH (≈ 11–19 tis. Kč).
 
