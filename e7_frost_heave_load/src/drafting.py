@@ -43,7 +43,7 @@ class Sheet:
         ax.set_aspect("equal")
         ax.axis("off")
         self.ax = ax
-        ax.add_patch(Rectangle((20, 10), 390, 277, fill=False, lw=THICK, ec=INK))
+        # (no outer frame)
         self._title_block(title, number, scale, sheet_no, sheet_total, subtitle)
 
     def _title_block(self, title, number, scale, n, tot, subtitle):
