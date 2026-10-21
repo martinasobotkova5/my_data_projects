@@ -351,6 +351,50 @@ def variant_a_min(asm, prefix=""):
     asm.add(cyl(4, z_arm - 60 - zl1, zl1, xl, yl), name=prefix + "LVDT plunger", color=C["steel"])
 
 
+def variant_a_frame(asm, prefix=""):
+    """Variant A-frame: same sample and sensors as A-min, piston held by an Al profile frame
+    (2 columns 40x80 + cross-beam 80x80), screw M16x1.5, Al spacer + POM-C thermal insert."""
+    bw, bd, bt = p.AF_BASE
+    zb0 = Z_S0 - p.AM_BOTTOM_T - p.AM_G10_T
+    zbeam = zb0 + p.AF_COL_H
+    xc = p.COL_SPAN / 2
+    asm.add(box(-bw / 2, bw / 2, -bd / 2, bd / 2, zb0 - bt, zb0), name=prefix + "Al base plate 260x200x25", color=C["al"])
+    for i, (x, y) in enumerate(((-bw / 2 + 20, -bd / 2 + 20), (bw / 2 - 20, -bd / 2 + 20), (0, bd / 2 - 20)), 1):
+        asm.add(cyl(16, 18, zb0 - bt - 18, x, y), name=f"{prefix}levelling foot {i}", color=C["steel"])
+    for s_ in (-1, 1):
+        asm.add(box(s_ * xc - 20, s_ * xc + 20, -40, 40, zb0, zbeam),
+                name=f"{prefix}column 40x80 {'L' if s_ < 0 else 'R'}", color=C["profile"])
+    asm.add(box(-xc - 20, xc + 20, -40, 40, zbeam, zbeam + p.AF_BEAM_H).cut(cyl(16, p.AF_BEAM_H, zbeam)),
+            name=prefix + "cross-beam 80x80", color=C["profile"])
+    asm.add(cyl(150, p.AM_G10_T, zb0), name=prefix + "G10 thermal break D150x10", color=C["g10"])
+    xb, yb = p.AM_PB[1] * math.cos(math.radians(p.AM_PB[2])), p.AM_PB[1] * math.sin(math.radians(p.AM_PB[2]))
+    asm.add(cyl(150, p.AM_BOTTOM_T, zb0 + p.AM_G10_T).cut(cyl(8.2, 1.5, Z_S0 - 1.5, xb, yb)),
+            name=prefix + "Al bottom D150x15", color=C["al"])
+    asm.add(cyl(8, 1.5, Z_S0 - 1.5, xb, yb), name=prefix + "PB1 TML PDA-PA (flush)", color=C["pressure"])
+    solid_cell(asm, prefix, temps=[(d, a) for _, d, a in p.AM_TEMPS], wall_cells=False)
+    asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0), name=prefix + "unsaturated sand D100x100", color=C["sand"])
+    asm.add(cyl(p.PCELL_D, p.PCELL_T, Z_S1 - p.AM_PV[1] - p.PCELL_T / 2), name=prefix + "PV1 TML PDA-PA on D20 disc",
+            color=C["pressure"])
+    asm.add(radial(0, p.PCELL_D / 2, R_OUT + INS_T + 15, Z_S1 - p.AM_PV[1], 2.5), name=prefix + "PV1 cable",
+            color=C["pressure"])
+    zp = Z_S1 + p.AM_PISTON_H
+    asm.add(cyl(99.5, p.AM_PISTON_H, Z_S1), name=prefix + "Al piston D99.5x40", color=C["al"])
+    z_pom0 = zbeam - p.AF_SCREW_PROTRUDE - p.AF_POM_T
+    asm.add(cyl(p.AF_SPACER_D, z_pom0 - zp, zp), name=prefix + "Al spacer D40x50", color=C["al"])
+    asm.add(cyl(p.AF_SPACER_D, p.AF_POM_T, z_pom0), name=prefix + "POM-C thermal insert D40x15", color=C["ptfe"])
+    asm.add(cyl(16, p.AF_SCREW_PROTRUDE + p.AF_BEAM_H + 35, zbeam - p.AF_SCREW_PROTRUDE),
+            name=prefix + "screw M16x1.5", color=C["weight"])
+    asm.add(cyl(26, 10, zbeam + p.AF_BEAM_H), name=prefix + "lock nut M16", color=C["weight"])
+    asm.add(cyl(60, 6, zbeam + p.AF_BEAM_H + 35), name=prefix + "handwheel", color=C["steel"])
+    # LVDT on the piston top edge (at -y), post on the base plate at -y
+    yl = -40.0
+    yp = -(R_OUT + INS_T + 8)
+    asm.add(cyl(p.AM_POST_D, zp + 70 - zb0, zb0, 0, yp), name=prefix + "stainless post D12", color=C["steel"])
+    asm.add(box(-6, 6, yp, yl + 6, zp + 60, zp + 70), name=prefix + "LVDT clamp arm", color=C["steel"])
+    asm.add(cyl(19, 55, zp + 5, 0, yl), name=prefix + "LVDT RDP DCTH400AG", color=C["sensor"])
+    asm.add(cyl(4, 5, zp, 0, yl), name=prefix + "LVDT plunger", color=C["steel"])
+
+
 def freezer_layout():
     asm = cq.Assembly(name="E7 freezer layout")
     z_tray = 20.0
@@ -382,8 +426,10 @@ if __name__ == "__main__":
     solid_cell(mr)
     am = cq.Assembly(name="E7 variant A-min - fixed lid")
     variant_a_min(am)
+    af = cq.Assembly(name="E7 variant A-frame - fixed piston in Al frame")
+    variant_a_frame(af)
     lay = freezer_layout()
-    for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (mr, "E7_cell"), (am, "E7_variant_A_min"),
+    for asm, fn in ((a, "E7_variant_A"), (b, "E7_variant_B"), (mr, "E7_cell"), (am, "E7_variant_A_min"), (af, "E7_variant_A_frame"),
                     (lay, "E7_freezer_layout")):
         asm.save(os.path.join(OUT, fn + ".step"))
         cq.exporters.export(asm.toCompound(), os.path.join(OUT, fn + ".stl"), tolerance=0.2, angularTolerance=0.3)

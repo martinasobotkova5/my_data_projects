@@ -171,3 +171,41 @@ Táhla a vnitřní sestava se při ochlazení zkracují téměř stejně, takže
 
 Bez ceny (už máte): TDR, teplotní čidlo a optické vlákno v bodě M, datalogger CR1000. Termistory T1, T2, Tair jsou volitelné.
 
+## 10. Varianta A-rám – nehybné omezení v rámu z Al profilů
+
+Stejné jako A-min, jen místo víka na táhlech drží píst rám: 2 sloupy 40×80 a příčník 80×80, v příčníku šroub M16 × 1,5, mezi šroubem a pístem Al sloupek ⌀40 a vložka POM-C.
+
+| při 1000 kPa (F = 7.85 kN) | posun [µm] | poznámka |
+|---|---|---|
+| průhyb příčníku 80×80, rozpětí 220 | 18 | prostý nosník |
+| protažení 2 sloupů 40×80 × 250 | 13 |  |
+| stlačení Al sloupku 50 + POM 15 | 36 | POM E ≈ 3 GPa |
+| spoje profilů (šrouby do čela) | 10–80 | rozhoduje – dotáhnout momentem |
+| **celkem** | **77–147** | při 200 kPa pětkrát méně |
+
+**Teplotní roztažnost** – Al sloupy se při ochlazení zkrátí víc než vnitřní sestava (písek má menší α), takže by rám vzorek stlačil. Vložka POM-C (α ≈ 110·10⁻⁶) to vyrovná:
+
+|  | sloupy − sestava při 20 K [µm] | falešný tlak (zmrzlý písek) [kPa] |
+|---|---|---|
+| Al sloupek 65 mm (bez POM) | +27 | 44 |
+| Al 50 + POM 15 mm | +1 | 1 |
+
+Tuhost rám ≈ 70 kN/mm, zmrzlý vzorek ≈ 16 kN/mm (E = 200 MPa). α zmrzlého písku je odhad – zbytek se odečte ze **slepé zkoušky** s Al náhradou vzorku ve stejném programu.
+
+**Mechanika A-rám (EUR bez DPH, odhad)**
+
+| položka | cena |
+|---|---|
+| cela PETG-CF (≈ 0,4 kg filamentu) + epoxid | 30–60 |
+| PTFE fólie 0,5 mm + silikonový tuk | 25–50 |
+| Kaiflex 25 mm samolepicí, ≈ 0,3 m² | 10–20 |
+| G10 kotouč ⌀150 × 10 | 25–50 |
+| Al profily: 2× 40×80 × 250 + 80×80 × 260 (řezané), krytky | 50–100 |
+| 4 šrouby do čela M12 + 4 šrouby M10 do desky, vrtání | 20–50 |
+| Al deska 260 × 200 × 25, Al dno ⌀150 × 15, Al píst ⌀99,5 × 40, Al sloupek ⌀40 × 50 (obrobení) | 180–350 |
+| vložka POM-C ⌀40 × 15 | 5–15 |
+| šroub M16 × 1,5 + pojistná matice, závitové pouzdro v příčníku | 20–40 |
+| nerezový sloupek ⌀12 + objímka LVDT, terčík na sloupku | 20–45 |
+
+Čidla stejná jako A-min (2 361–3 441 €). **Celkem ≈ 2 746–4 221 € (≈ 69–106 tis. Kč) bez DPH**; TDR, teplotní čidlo, optické vlákno a CR1000 už máte.
+

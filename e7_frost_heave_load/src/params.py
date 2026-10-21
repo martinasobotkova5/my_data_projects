@@ -145,3 +145,13 @@ AM_LID_GAP = 15.0                        # mezera píst – víko (šroub)
 AM_BASE_T2 = 20.0                        # základová deska Al tl. 20 (nese táhla)
 AM_P_DESIGN_KPA = 1000.0                 # návrhový tlak z mrznutí při zamezeném zdvihu (horní mez)
 AM_SEATING_KPA = 5.0                     # dosedací předpětí při dotažení
+
+# --- A-rám: varianta A s nehybným omezením v rámu z Al profilů ---------------------------
+AF_BASE = (260.0, 200.0, 25.0)          # Al deska 6082 (sloupy do ní šrouby do čela)
+AF_COL_H = 250.0                         # 2 sloupy 40×80, osová vzdálenost COL_SPAN (220)
+AF_BEAM_H = 80.0                         # příčník 80×80
+AF_SPACER_D = 40.0                       # distanční sloupek mezi pístem a šroubem
+AF_POM_T = 15.0                          # teplotně kompenzační vložka POM-C ⌀40 × 15
+ALPHA_POM = 110e-6
+ALPHA_SAND_FROZEN = 12e-6                # ≈, písek se zmrzlou vodou (ověřit slepou zkouškou)
+AF_SCREW_PROTRUDE = 20.0                 # šroub M16 × 1,5 vyčnívá pod příčník

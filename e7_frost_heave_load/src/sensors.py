@@ -98,3 +98,17 @@ A_MIN_MECH = [
     ("3 táhla M10 nerez A4 + matice a podložky, šroub M16 × 1,5 + pojistná matice", 25, 50),
     ("nerezový sloupek ⌀12 + objímka LVDT", 15, 40),
 ]
+
+# --- A-rám: mechanika (čidla stejná jako A-min) ---------------------------------------
+A_FRAME_MECH = [
+    ("cela PETG-CF (≈ 0,4 kg filamentu) + epoxid", 30, 60),
+    ("PTFE fólie 0,5 mm + silikonový tuk", 25, 50),
+    ("Kaiflex 25 mm samolepicí, ≈ 0,3 m²", 10, 20),
+    ("G10 kotouč ⌀150 × 10", 25, 50),
+    ("Al profily: 2× 40×80 × 250 + 80×80 × 260 (řezané), krytky", 50, 100),
+    ("4 šrouby do čela M12 + 4 šrouby M10 do desky, vrtání", 20, 50),
+    ("Al deska 260 × 200 × 25, Al dno ⌀150 × 15, Al píst ⌀99,5 × 40, Al sloupek ⌀40 × 50 (obrobení)", 180, 350),
+    ("vložka POM-C ⌀40 × 15", 5, 15),
+    ("šroub M16 × 1,5 + pojistná matice, závitové pouzdro v příčníku", 20, 40),
+    ("nerezový sloupek ⌀12 + objímka LVDT, terčík na sloupku", 20, 45),
+]

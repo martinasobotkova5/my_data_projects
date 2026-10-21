@@ -73,6 +73,9 @@ if __name__ == "__main__":
            title="E7 variant A-min – fixed lid on 3 tie rods, 1 LVDT")
     render(am, os.path.join(m.OUT, "E7_variant_A_min_section.png"), elev=15, azim=75, cut=half,
            title="E7 variant A-min – section: PV1, PB1, T1/T2, point M")
+    af = cq.Assembly(); m.variant_a_frame(af)
+    render(af, os.path.join(m.OUT, "E7_variant_A_frame.png"), elev=18, azim=-60,
+           title="E7 variant A-frame – fixed piston in an Al profile frame")
     mr = cq.Assembly(); m.solid_cell(mr)
     far = cq.Workplane("XY").box(10, 10, 10).translate((5000, 0, 0)).val()   # no cut, just see-through insulation
     render(mr, os.path.join(m.OUT, "E7_cell.png"), elev=20, azim=100, cut=far,
