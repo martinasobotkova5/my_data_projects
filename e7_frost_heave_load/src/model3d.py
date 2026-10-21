@@ -236,8 +236,8 @@ def variant_a_frame(asm, prefix=""):
     zp = Z_S1 + p.AM_PISTON_H
     asm.add(cyl(99.5, p.AM_PISTON_H, Z_S1), name=prefix + "Al piston D99.5x40", color=C["al"])
     z_pom0 = zbeam - p.AF_SCREW_PROTRUDE - p.AF_POM_T
-    asm.add(cyl(p.AF_SPACER_D, z_pom0 - zp, zp), name=prefix + "Al spacer D40x50", color=C["al"])
-    asm.add(cyl(p.AF_SPACER_D, p.AF_POM_T, z_pom0), name=prefix + "POM-C thermal insert D40x15", color=C["ptfe"])
+    asm.add(cyl(p.AF_SPACER_D, z_pom0 - zp, zp), name=prefix + f"Al spacer D40x{p.AF_SPACER_L:g}", color=C["al"])
+    asm.add(cyl(p.AF_SPACER_D, p.AF_POM_T, z_pom0), name=prefix + f"POM-C thermal insert D40x{p.AF_POM_T:g}", color=C["ptfe"])
     asm.add(cyl(16, p.AF_SCREW_PROTRUDE + p.AF_BEAM_H + 35, zbeam - p.AF_SCREW_PROTRUDE),
             name=prefix + "screw M16x1.5", color=C["weight"])
     asm.add(cyl(26, 10, zbeam + p.AF_BEAM_H), name=prefix + "lock nut M16", color=C["weight"])
