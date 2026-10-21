@@ -216,3 +216,23 @@ Tělo ⌀160 × 130, límec ⌀106 do 160 mm, dutina ⌀100, dno 26 mm, písek 1
 
 Doporučení pro tisk: kolem dutiny stěnu ≈ 5 mm (≈ 8 perimetrů), pod dutinou (z 0–26) 100 % výplň (modifikátor v PrusaSliceru), zbytek pláště 10 % (izolace). Pak cela snese i horní odhad 1 MPa.
 
+## 12. Varianta B-open – nejjednodušší sestava, otevřený povrch
+
+Tištěná cela ⌀160 na Al desce, bod M (CS645 + vlákno + Pt100 – už máte), na povrchu písku jen malý terčík ⌀30 × 2 s jedním LVDT s volným jádrem na Invarovém sloupku. Žádné víko, horní deska, kotvy ani můstek.
+
+**Přítlak terčíku na písek:** ≈ 18 g na ⌀30 → ≈ 0.25 kPa jen pod terčíkem; zbytek povrchu je volný.
+
+| prvek | délka [mm] | změna při 20 K [µm] |
+|---|---|---|
+| tištěné dno cely 26 mm | 26 | +23 |
+| Invarový sloupek ≈ 235 mm | 235 | -6 |
+| Invarová tyčka jádra ≈ 110 mm | 110 | -3 |
+| tělo LVDT od upnutí k nule | 45 | +15 |
+| **zdánlivý posun povrchu** |  | **+30** |
+
+Odečte se slepou zkouškou (Al náhrada vzorku). S nerezovou tyčkou jádra místo Invarové by chyba vzrostla o ≈ 35 µm.
+
+**Otevřený povrch a vysychání:** v mrazáku písek z povrchu pomalu sublimuje/vysychá (u mrazáků s odmrazováním rychleji). Celu vážit na začátku a po každém cyklu (váha 5 kg / 0,1 g); pokud ztráta přesáhne ≈ 1 % vody, dát nad celu volný stan z fólie (nedotýká se povrchu, povrch zůstane otevřený).
+
+**Co koupit:** LVDT s volným jádrem + zdroj, Invarový sloupek s ramenem, Al deska, terčík; volitelně Tair. Celkem ≈ 830–1250 € bez DPH (≈ 21–31 tis. Kč).
+

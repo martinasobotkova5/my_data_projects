@@ -10,7 +10,7 @@ from drafting import (BLUE, FROZEN, FS, FS_SMALL, INK, INSUL, METAL, PLASTIC, RE
                       THICK, THIN, WATER, Sheet, View, table)
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "vykresy")
-TOTAL = 9
+TOTAL = 10
 PT_MM = 72 / 25.4        # points per mm of paper
 PETG = "#cfd8dc"
 G10 = "#c9d9a6"
@@ -1027,6 +1027,89 @@ def sheet_cup(pdf):
         _sheet_cup(pdf)
 
 
+def _sheet_b_open(pdf):
+    sh = Sheet("Variant B-open – simplest setup, open surface", "E7-V10", "≈ 1 : 2", 10, TOTAL,
+               "no lid, no top plate: printed cell + point M + 1 LVDT on a small target")
+    v = View(sh, 120, 40, 0.62)
+    bw, bd, bt = p.BO_BASE
+    zb = Z_S0 - p.BODY_BOTTOM
+    v.rect(-bw / 2, zb - bt, bw / 2, zb, fc=METAL, hatch="////")
+    cup_cell(v)
+    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
+    m_section_a(v, labels=True, cable_up=True)
+    # target + core rod + LVDT + Invar post (post and target revolved to the left)
+    xt = -p.BO_TARGET_R
+    z_c = zb + p.COLLAR_TOP
+    z_arm = z_c + p.BO_ARM_Z
+    xp = -math.hypot(bw / 2 - 15, bd / 2 - 15)
+    v.rect(xt - p.BO_TARGET_D / 2, Z_S1, xt + p.BO_TARGET_D / 2, Z_S1 + p.BO_TARGET_T, fc=PETG, lw=THIN, z=5)
+    v.line([(xt, Z_S1 + p.BO_TARGET_T), (xt, z_arm - 40)], lw=1.2, c=INVAR, z=5)
+    v.rect(xt - 9.5, z_arm - 60, xt + 9.5, z_arm, fc=SENS, lw=THIN, z=5)
+    v.rect(xp - p.BO_POST_D / 2, zb, xp + p.BO_POST_D / 2, z_arm + 10, fc=INVAR, lw=THIN, alpha=0.85)
+    v.rect(xp - 6, z_arm, xt + 12, z_arm + 10, fc=METAL, lw=THIN)
+    v.circle(-p.BODY_D / 2 - 40, Z_S1 - 30, 2.0, fc=TCOL, lw=0)
+    v.text(-p.BODY_D / 2 - 40, Z_S1 - 23, "Tair (opt.)", fontsize=FS_SMALL, color=TCOL, ha="center")
+    v.line([(-p.D_SAMPLE / 2, Z_S1 + 0.3), (p.D_SAMPLE / 2, Z_S1 + 0.3)], lw=1.4, c="#4a90d9", z=4.5)
+    # labels
+    tag(v, xt, z_arm - 30, 115, z_arm + 5, "LVDT free core (RDP DCTH200)\non 1 Invar post", SENS_TXT)
+    tag(v, xt, Z_S1 + 25, 115, z_arm - 40, "Invar core rod ⌀3", INVAR)
+    tag(v, xt + 10, Z_S1 + 1, 115, Z_S1 + 22, f"target PETG ⌀{p.BO_TARGET_D:g}×{p.BO_TARGET_T:g} (≈ 0.25 kPa)", INK)
+    tag(v, 30, Z_S1 + 0.3, 115, Z_S1 - 8, "OPEN sand surface (no lid, no plate)", "#2b62a3")
+    tag(v, -10, Z_S1 - 41, 115, Z_S1 - 45, "M: CS645 + fibre + Pt100\n(existing, depth 32–50)", "#d33682")
+    tag(v, p.BODY_D / 2 - 5, Z_S0 + 20, 115, Z_S0 - 10, "printed cell ⌀160 (V09)", INK)
+    tag(v, 60, zb - 5, 115, zb - 35, f"Al plate {bw:g}×{bd:g}×{bt:g}", INK)
+    tag(v, xp, zb + 60, -150, zb + 90, "Invar post ⌀12", INVAR)
+    # plan
+    f = View(sh, 320, 85, 0.26, "PLAN  1 : 3.8", (320, 122))
+    f.rect(-bw / 2, -bd / 2, bw / 2, bd / 2, fc=METAL, lw=THIN)
+    f.circle(0, 0, p.BODY_D / 2, fc=PETG, lw=THIN)
+    f.circle(0, 0, p.CAV_D / 2, fc="#e9dcb8", lw=THIN)
+    f.rect(-p.PORT_W / 2, -p.BODY_D / 2, p.PORT_W / 2, -p.CAV_D / 2 - 3, fc=TDRC, lw=THIN)
+    f.line([(0, -p.CAV_D / 2), (0, 25)], lw=1.4, c="#777")
+    f.circle(p.PT100_R, 0, 2.5, fc=PTC, lw=THIN)
+    a = math.radians(p.BO_TARGET_ANG)
+    xtp, ytp = p.BO_TARGET_R * math.cos(a), p.BO_TARGET_R * math.sin(a)
+    f.circle(xtp, ytp, p.BO_TARGET_D / 2, fc=PETG, lw=THIN)
+    cpost = -(bw / 2 - 15)
+    f.circle(cpost, -cpost, p.BO_POST_D / 2, fc=INVAR, lw=THIN)
+    f.line([(cpost, -cpost), (xtp, ytp)], lw=2.5, c="#9aa0a6")
+    # right panel
+    sh.heading(255, 276, "To buy (EUR excl. VAT, ≈)")
+    rows = []
+    for tg_, what, typ, n, a_, b_, src, ch in sn.B_OPEN_BUY:
+        rows.append([tg_ or "  +", typ, str(n), f"{n * a_}–{n * b_}", ch])
+    for what, a_, b_ in sn.B_OPEN_MECH[1:]:
+        rows.append(["mech.", what.replace("Invarová tyč", "Invar rod").replace("objímka", "clamp")
+                     .replace("rameno", "arm").replace("deska", "plate").replace("terčík", "target")
+                     .replace("Invar rodka jádra", "Invar core rod"), "1", f"{a_}–{b_}", "–"])
+    y = table(sh, 255, 272, ["tag", "item", "pcs", "EUR", "CR1000"], rows, [16, 82, 8, 20, 29], row_h=5.8)
+    lo = sum(n * a_ for _, _, _, n, a_, b_, _, _ in sn.B_OPEN_BUY) + sum(a_ for _, a_, b_ in sn.B_OPEN_MECH)
+    hi = sum(n * b_ for _, _, _, n, a_, b_, _, _ in sn.B_OPEN_BUY) + sum(b_ for _, a_, b_ in sn.B_OPEN_MECH)
+    sh.text(255, y - 4,
+            f"Total ≈ {lo:.0f}–{hi:.0f} EUR. Already available: cell ⌀160, CS645 + reflectometer,\n"
+            "Pt100, optical fibre, CR1000. Estimates – ask for quotes.\n"
+            "\n"
+            "How it works\n"
+            "• sand surface open; only a ⌀30 target (≈ 0.25 kPa) rests on it\n"
+            "• 1 free-core LVDT: heave while freezing, settlement while thawing,\n"
+            "  residual per cycle (no tilt, no layer strain – that needs B, V02)\n"
+            "• point M: unfrozen water (CS645) vs. temperature (Pt100, fibre)\n"
+            "• reference error ≈ 30 µm per 20 K → blank run (vypocty.md §12)\n"
+            "\n"
+            "CR1000: CS645 → reflectometer (SDM C1–C3) · Pt100 via 4WPB100\n"
+            "(DIFF1–2) · LVDT SE5 · Tair SE6 · fibre on its own reader\n"
+            "\n"
+            "Open surface: weigh the cell before and after each cycle;\n"
+            "if water loss > 1 %, put a loose foil tent above (not touching).",
+            fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.save(pdf, os.path.join(OUT, "E7-V10_variant_B_open.png"))
+
+
+def sheet_b_open(pdf):
+    with bigger_fonts():
+        _sheet_b_open(pdf)
+
+
 def rig_plan(v, cx, cy, variant):
     hb, hd = p.BASE_W / 2, p.BASE_D / 2
     v.rect(cx - hb, cy - hd, cx + hb, cy + hd, fc=METAL, lw=THIN, z=2)
@@ -1167,5 +1250,5 @@ if __name__ == "__main__":
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E7_drawings.pdf")) as pdf:
         for fn in (sheet_a_simple, sheet_b_simple, sheet_cell, sheet_frame, sheet_sensors, sheet_layout,
-                   sheet_a_min, sheet_a_frame, sheet_cup):
+                   sheet_a_min, sheet_a_frame, sheet_cup, sheet_b_open):
             fn(pdf)

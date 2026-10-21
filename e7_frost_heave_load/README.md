@@ -4,7 +4,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 | soubor | obsah |
 |---|---|
-| `vykresy/E7_drawings.pdf` | 9 listů A3 (V07 = A-min s víkem na táhlech, V08 = A-rám, V09 = tištěná cela A), anglicky (PNG po listech ve stejné složce) |
+| `vykresy/E7_drawings.pdf` | 10 listů A3 (V07 = A-min s víkem na táhlech, V08 = A-rám, V09 = tištěná cela A, V10 = B-open), anglicky (PNG po listech ve stejné složce) |
 | `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, samotná cela, obě v mrazáku (+ STL a PNG náhledy) |
 | `vypocty.md` | zatížení, očekávané deformace, rozlišení LVDT, teplotní chyba stojanu, napětí v cele, závaží |
 | `src/params.py` | všechny rozměry a předpoklady |
@@ -263,6 +263,16 @@ Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely,
 4. Mezeru mezi deskou a stěnou cely překrýt volnou PE fólií, aby písek během týdnů nevysychal sublimací.
 
 **Siloměry** nejsou potřeba v žádné variantě. A je zatížená závažím (síla = hmotnost), B není zatížená vůbec.
+
+## 5a. Varianta B-open – nejjednodušší sestava, otevřený povrch (E7-V10, `vypocty.md` §12)
+
+- Tištěná cela ⌀160 stojí na Al desce 220 × 220 × 10. Žádné víko, horní deska, kotvy, můstek ani rám.
+- Povrch písku je **otevřený**; leží na něm jen terčík PETG ⌀30 × 2 (≈ 0,25 kPa jen pod ním).
+- **1 LVDT s volným jádrem** (Invarová tyčka ⌀3 z terčíku) na jednom Invarovém sloupku v rohu desky → zdvih při mrznutí, sednutí při tání, nevratná deformace za cyklus. Náklon ani deformace po vrstvách se neměří (to umí varianta B, V02).
+- **Bod M** stejně jako v A/B: CS645 kanálem, optické vlákno, Pt100 svisle (kabel volně nahoru).
+- Teplotní chyba reference ≈ 30 µm / 20 K → slepá zkouška s Al náhradou.
+- **Vysychání otevřeného povrchu:** celu vážit před a po každém cyklu; při ztrátě > 1 % vody dát nad celu volný stan z fólie (nedotýká se povrchu).
+- **Koupit:** LVDT RDP DCTH200 s volným jádrem + zdroj, Invarový sloupek s ramenem, Al deska, terčík, volitelně Tair → **≈ 830–1 250 € bez DPH (≈ 21–31 tis. Kč)**. Ostatní (cela, CS645, Pt100, vlákno, CR1000) už máte.
 
 ## 6. Rám A a stojan B (E7-V04)
 

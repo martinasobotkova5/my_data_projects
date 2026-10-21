@@ -301,3 +301,35 @@ for name, f_ in (("obvodové napětí, jen vnitřní stěna 3 mm", lambda q: q *
 row("tlak na dno (= tlak v písku)", "0,2 MPa", "1,0 MPa", "10 % gyroid ≈ 1–2 MPa pevnost v tlaku → pod dutinou 100 % výplň")
 print("\nDoporučení pro tisk: kolem dutiny stěnu ≈ 5 mm (≈ 8 perimetrů), pod dutinou (z 0–26) 100 % výplň (modifikátor v PrusaSliceru), "
       "zbytek pláště 10 % (izolace). Pak cela snese i horní odhad 1 MPa.\n")
+
+# 12 --------------------------------------------------------------------------
+print("## 12. Varianta B-open – nejjednodušší sestava, otevřený povrch\n")
+print("Tištěná cela ⌀160 na Al desce, bod M (CS645 + vlákno + Pt100 – už máte), na povrchu písku jen malý terčík "
+      f"⌀{p.BO_TARGET_D:g} × {p.BO_TARGET_T:g} s jedním LVDT s volným jádrem na Invarovém sloupku. Žádné víko, horní deska, "
+      "kotvy ani můstek.\n")
+A_t = math.pi / 4 * p.BO_TARGET_D ** 2
+m_t = 0.002 + math.pi / 4 * 0.003 ** 2 * 0.11 * 8100 + 0.010     # terčík + Invarová tyčka 110 mm + jádro LVDT (≈ 10 g)
+print(f"**Přítlak terčíku na písek:** ≈ {m_t * 1000:.0f} g na ⌀{p.BO_TARGET_D:g} → ≈ {m_t * 9.81 / A_t * 1000:.2f} kPa "
+      "jen pod terčíkem; zbytek povrchu je volný.\n")
+z_base = 80.0 - p.BODY_BOTTOM
+post = (80.0 + p.H_SAMPLE + (p.COLLAR_TOP - p.SAND_TOP) + p.BO_ARM_Z) - z_base
+items = [(f"tištěné dno cely {p.BODY_BOTTOM:g} mm", p.BODY_BOTTOM, p.ALPHA_PETG, +1),
+         (f"Invarový sloupek ≈ {post:.0f} mm", post, p.ALPHA_INVAR, -1),
+         ("Invarová tyčka jádra ≈ 110 mm", 110.0, p.ALPHA_INVAR, -1),
+         ("tělo LVDT od upnutí k nule", 45.0, 17e-6, +1)]
+head("prvek", "délka [mm]", f"změna při {dT:g} K [µm]")
+tot = 0.0
+for name, L, a, sg in items:
+    d = sg * a * L * dT * 1000
+    tot += d
+    row(name, f"{L:.0f}", f"{d:+.0f}")
+row("**zdánlivý posun povrchu**", "", f"**{tot:+.0f}**")
+print("\nOdečte se slepou zkouškou (Al náhrada vzorku). S nerezovou tyčkou jádra místo Invarové by chyba vzrostla "
+      "o ≈ 35 µm.\n")
+print("**Otevřený povrch a vysychání:** v mrazáku písek z povrchu pomalu sublimuje/vysychá (u mrazáků s odmrazováním "
+      "rychleji). Celu vážit na začátku a po každém cyklu (váha 5 kg / 0,1 g); pokud ztráta přesáhne ≈ 1 % vody, "
+      "dát nad celu volný stan z fólie (nedotýká se povrchu, povrch zůstane otevřený).\n")
+lo = sum(n_ * a_ for _, _, _, n_, a_, b_, _, _ in sn.B_OPEN_BUY) + sum(a_ for _, a_, b_ in sn.B_OPEN_MECH)
+hi = sum(n_ * b_ for _, _, _, n_, a_, b_, _, _ in sn.B_OPEN_BUY) + sum(b_ for _, a_, b_ in sn.B_OPEN_MECH)
+print(f"**Co koupit:** LVDT s volným jádrem + zdroj, Invarový sloupek s ramenem, Al deska, terčík; volitelně Tair. "
+      f"Celkem ≈ {lo:.0f}–{hi:.0f} € bez DPH (≈ {lo * 25 / 1000:.0f}–{hi * 25 / 1000:.0f} tis. Kč).\n")

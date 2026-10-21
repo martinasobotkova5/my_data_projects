@@ -110,3 +110,16 @@ A_FRAME_MECH = [
     ("šroub M16 × 1,5 + pojistná matice, závitové pouzdro v příčníku", 20, 40),
     ("nerezový sloupek ⌀12 + objímka LVDT, terčík na sloupku", 20, 45),
 ]
+
+# --- B-open: co koupit (EUR bez DPH, orientačně) ----------------------------------------
+B_OPEN_BUY = [
+    ("LVDT", "zdvih / sednutí povrchu", "RDP DCTH200, free core (±5 mm) [U]", 1, 550, 750, "odhad (DCTH400AG 581 € web)", "SE1"),
+    ("", "zdroj pro LVDT", "DIN-rail power supply", 1, 40, 80, "odhad", "–"),
+    ("Tair", "teplota vzduchu (volitelně)", "Campbell 109-L", 1, 150, 220, "odhad", "SE2, VX1"),
+]
+B_OPEN_MECH = [
+    ("tištěná cela ⌀160 (už máte)", 0, 0),
+    ("Al deska 220 × 220 × 10", 30, 60),
+    ("Invarová tyč ⌀12 × 300 + objímka + Al rameno", 50, 110),
+    ("terčík PETG ⌀30 × 2 + Invarová tyčka jádra ⌀3", 10, 30),
+]

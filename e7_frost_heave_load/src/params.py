@@ -198,3 +198,11 @@ AM_PV_DEPTH = 75.0                     # PV1 přesunut pod TDR (tyčky TDR proch
 # --- varianta B v tištěné cele ⌀160 ----------------------------------------------------
 B_BASE_T = 20.0                          # Al deska 260 × 200 × 20, cela stojí přímo na ní (izoluje tištěné dno)
 B_PT100_HOLE = 6.0                       # otvor v horní desce pro svislé Pt100 (deska se po něm posouvá)
+
+# --- varianta B-open: nejjednodušší sestava, povrch otevřený (bez víka a horní desky) -----
+BO_BASE = (220.0, 220.0, 10.0)          # Al deska – nese jen cela a 1 sloupek
+BO_TARGET_D, BO_TARGET_T = 30.0, 2.0    # terčík PETG ⌀30 × 2 (≈ 2 g) volně na povrchu písku
+BO_TARGET_R, BO_TARGET_ANG = 20.0, 135.0   # mimo Pt100 (r 15, 0°) a osu TDR (270°)
+BO_POST_D = 12.0                        # 1 Invarový sloupek ⌀12 v rohu desky
+BO_POST_ANG = 135.0                     # sloupek v rohu desky směrem k terčíku
+BO_ARM_Z = 75.0                         # rameno LVDT nad horní hranou límce
