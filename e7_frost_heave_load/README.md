@@ -226,16 +226,14 @@ Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely,
 
 ## 5. Varianta B – posuny a deformace mezi mrznutím a táním (E7-V02, `vypocty.md` §1–4)
 
-**Sestava:**
-- Stejný písek ve stejné tištěné cele s PTFE fólií jako A, bez pístu a bez závaží.
-- Na povrchu leží **lehká horní deska** PETG-CF ⌀99 × 6 (≈ 65 g, tj. 0,08 kPa, to je jako tíha horních 5 mm písku). Deska je jen terč pro LVDT.
-- **3 povrchové LVDT S1–S3** (r 40, po 120°) stojí na desce. Jejich průměr dává zdvih nebo sednutí povrchu, rozdíl mezi nimi náklon desky.
-- **3 kotvy E1–E3** (settlement anchors) jsou při ukládání písku vloženy do hloubky 25, 50 a 75 mm (r 25, po 120°, mimo povrchová LVDT):
-  - nerezový kotouček ⌀16 × 1,5;
-  - Invarová tyčka ⌀2 vede nahoru v PTFE trubičce ⌀4 (trubička odděluje tyčku od písku nad kotvou);
-  - tyčka prochází otvorem ⌀7 v horní desce (deska se po ní volně posouvá) a nese jádro LVDT.
-- **LVDT s volným jádrem** (bez pružiny): na vzorek netlačí. Běžné LVDT s pružinou by přidaly 0,1–0,25 kPa na každý snímač, což je víc než celá horní deska.
-- **Reference:** těla LVDT jsou upnutá v Al můstku ⌀220 × 10 na 3 Invarových sloupcích ⌀12 (r 100) přišroubovaných do základové desky. Můstek se při plnění cely sundá.
+**Sestava (aktualizováno – stejná tištěná cela ⌀160 a bod M jako varianta A):**
+- **Cela:** tištěné tělo ⌀160 podle výkresu Column_one_body_version_1 (kap. 1c, E7-V09) stojí přímo na Al desce 260 × 200 × 20; tištěné dno 26 mm izoluje, G10 ani podstavec nejsou potřeba.
+- **Bod M:** stejně jako v A – TDR CS645 kanálem (tyčky v hloubce 32 / 41 / 50 mm), optické vlákno v úrovni horní tyčky, Pt100 svisle 15 mm od osy; jeho kabel vede otvorem ⌀6 v horní desce.
+- **Horní deska** PETG-CF ⌀99 × 6 (≈ 65 g, 0,08 kPa) leží na písku uvnitř límce – jen terč pro LVDT.
+- **3 povrchová LVDT S1–S3** (r 40, úhly 0/120/240°) → průměrný zdvih/sednutí + náklon.
+- **3 kotvy E1–E3** v hloubce 25 / 50 / 75 mm (r 25, úhly 150/30/210°): nerezový kotouček ⌀16, Invarová tyčka ⌀2 v PTFE trubičce, nahoře LVDT. Úhly jsou zvolené tak, aby kotvy a tyčky byly ≥ 14 mm od tyček TDR, vlákna a Pt100 (zkontrolováno v 3D).
+- **LVDT s volným jádrem** (bez pružiny) – na vzorek netlačí.
+- **Reference:** Al můstek ⌀220 × 10 na 3 Invarových sloupcích ⌀12 (r 100, vně těla ⌀160), délka 196 mm. Tlakové snímače na stěně (PW) ve variantě B odpadly.
 
 **Co se vyhodnocuje v každém cyklu:**
 
@@ -255,11 +253,11 @@ Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely,
 
 **Přesnost (`vypocty.md` §3–4):**
 - LVDT ±5 mm na CR1000: rozlišení ≈ 0,7 µm, poměrná deformace vrstvy 25 mm ≈ 4·10⁻⁵.
-- Teplotní chyba stojanu: Al podstavec a distanční kus proti Invaru ≈ 50 µm na 20 K. Odstraní se **slepou zkouškou** s Al náhradou vzorku ve stejném programu (korekce podle Tbot a Tstand). Chyba je společná všem LVDT, takže v rozdílech mezi kotvami se z velké části odečte.
+- Teplotní chyba stojanu: tištěné dno a tělo LVDT proti Invaru ≈ 40 µm na 20 K. Odstraní se **slepou zkouškou** s Al náhradou vzorku ve stejném programu (korekce podle Tbot a Tstand). Chyba je společná všem LVDT, takže v rozdílech mezi kotvami se z velké části odečte.
 - Linearita LVDT ±0,25 % FS → každý LVDT zkalibrovat mikrometrem.
 
 **Příprava vzorku B:**
-1. Do cely s namazanou PTFE fólií uložit písek po vrstvách 12,5 mm na cílovou hustotu a vlhkost.
+1. Vložit TDR CS645 kanálem a vlákno, pak do cely (epoxid + PTFE sprej + tuk) uložit písek po vrstvách 12,5 mm na cílovou hustotu a vlhkost.
 2. Po dosažení hloubky 75, 50 a 25 mm pod budoucím povrchem položit kotvu, na ní nasadit tyčku s trubičkou a pokračovat v hutnění (tyčky drží ve svislé poloze šablona nad celou).
 3. Zarovnat povrch, položit horní desku přes trubičky, nasadit můstek s LVDT a vynulovat.
 4. Mezeru mezi deskou a stěnou cely překrýt volnou PE fólií, aby písek během týdnů nevysychal sublimací.
@@ -330,7 +328,7 @@ Podmínky:
 | `E7_variant_A_min.step` | zjednodušená varianta A-min – deska, G10, Al dno, cela, písek, PV1/PB1, T1/T2, bod M, píst, ocelové víko na 3 táhlech M10, středový šroub M16, 1 LVDT na sloupku |
 | `E7_variant_A_frame.step` | varianta A-rám – deska, 2 sloupy 40×80, příčník 80×80, šroub M16 × 1,5, Al sloupek + vložka POM-C, cela, písek, PV1/PB1, bod M, LVDT |
 | `E7_cell.step` | tištěná cela A ⌀160 (Column_one_body_version_1) s kanálem, CS645, vláknem a Pt100 |
-| `E7_variant_B.step` | varianta B – základová deska, stejná tištěná cela, nenasycený písek, horní deska PETG-CF, kotvy E1–E3 s Invarovými tyčkami a PTFE trubičkami, 6× LVDT s volným jádrem, 3 Invarové sloupky, Al můstek, termistory |
+| `E7_variant_B.step` | varianta B – Al deska, tištěná cela ⌀160 s bodem M (CS645, vlákno, Pt100), horní deska PETG-CF, kotvy E1–E3 s Invarovými tyčkami, 6× LVDT s volným jádrem, 3 Invarové sloupky, Al můstek, termistory |
 | `E7_freezer_layout.step` | obě sestavy na vaně v mrazáku (stěny mrazáku průhledné, ≈ rozměry) |
 
 Náhledy jsou `3d/*.png`. Řezy ukazují `E7_variant_A_section.png` a `E7_variant_B_section.png`.

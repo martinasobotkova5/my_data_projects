@@ -95,9 +95,9 @@ LVDT_R = 95.0                # LVDT na bocích (±y), terčík má výstupky do 
 TOP_PLATE_D, TOP_PLATE_T = 99.0, 6.0      # lehká horní deska PETG-CF (≈ 60 g ≈ 0,1 kPa), jen terč pro LVDT
 TOP_PLATE_KG = 0.065
 # povrchové LVDT na horní desce: (tag, r, úhel) → průměrný zdvih + náklon
-SURF_LVDT = [("S1", 40.0, 30.0), ("S2", 40.0, 150.0), ("S3", 40.0, 270.0)]
+SURF_LVDT = [("S1", 40.0, 0.0), ("S2", 40.0, 120.0), ("S3", 40.0, 240.0)]     # mimo Pt100 (r 15, 0°) a kotvy
 # kotvy (settlement anchors) uvnitř písku: (tag, hloubka pod povrchem, r, úhel)
-ANCHORS = [("E1", 25.0, 25.0, 90.0), ("E2", 50.0, 25.0, 210.0), ("E3", 75.0, 25.0, 330.0)]
+ANCHORS = [("E1", 25.0, 25.0, 150.0), ("E2", 50.0, 25.0, 30.0), ("E3", 75.0, 25.0, 210.0)]   # ≥ 14 mm od TDR, vlákna a Pt100
 ANCHOR_D, ANCHOR_T = 16.0, 1.5            # nerezový kotouček
 ROD_D, SLEEVE_D = 2.0, 4.0                # Invarová tyčka ⌀2 v PTFE trubičce ⌀4/2,5 (sleeve)
 PLATE_HOLE_D = 7.0                        # otvor v horní desce pro trubičku (deska se po ní volně posouvá)
@@ -194,3 +194,7 @@ OF_TIP_FROM_WALL = 37.5                # optické vlákno – vodorovně v úrov
 OF_SIDE = 4.7                          # boční odsazení vlákna od roviny TDR (≈ z půdorysu)
 PT100_L, PT100_METAL, PT100_R = 37.0, 25.0, 15.0   # Pt100 svisle shora, 37 mm (25 mm kov), 15 mm od osy
 AM_PV_DEPTH = 75.0                     # PV1 přesunut pod TDR (tyčky TDR procházejí osou v hl. 32–50)
+
+# --- varianta B v tištěné cele ⌀160 ----------------------------------------------------
+B_BASE_T = 20.0                          # Al deska 260 × 200 × 20, cela stojí přímo na ní (izoluje tištěné dno)
+B_PT100_HOLE = 6.0                       # otvor v horní desce pro svislé Pt100 (deska se po něm posouvá)

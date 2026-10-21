@@ -42,14 +42,13 @@ LVDT ±5 mm s výstupem ±5 V na rozsahu CR1000 ±5000 mV: rozlišení ≈ 0.67 
 
 | prvek | délka [mm] | α [1/K] | změna při 20 K [µm] |
 |---|---|---|---|
-| Al distanční kus + podstavec | 70 | 23.1·10⁻⁶ | +32 |
-| G10 mezikus | 10 | 15.0·10⁻⁶ | +3 |
-| Invarové sloupky 250 mm | 250 | 1.2·10⁻⁶ | -6 |
+| tištěné dno cely 26 mm (PETG) | 26 | 45.0·10⁻⁶ | +23 |
+| Invarové sloupky 196 mm | 196 | 1.2·10⁻⁶ | -5 |
 | tělo LVDT (nerez) od upnutí k nule | 45 | 17.0·10⁻⁶ | +15 |
 | horní deska PETG-CF | 6 | 45.0·10⁻⁶ | +5 |
-| **zdánlivý posun povrchu** |  |  | **+50** |
+| **zdánlivý posun povrchu** |  |  | **+39** |
 
-Zdánlivý posun ≈ 50 µm za 20 K je malý proti očekávaným desetinám mm, ale ne zanedbatelný. Odstraní se **slepou zkouškou** s Al náhradou vzorku ve stejném programu (odečíst jako funkci teploty Tbot a Tbridge). Kotvy mají Invarové tyčky (100–160 mm × 1,2·10⁻⁶ × 20 K ≈ 3–4 µm), takže chyba vrstev je hlavně společná všem snímačům a v rozdílech mezi kotvami se odečte.
+Zdánlivý posun ≈ 39 µm za 20 K je malý proti očekávaným desetinám mm, ale ne zanedbatelný. Odstraní se **slepou zkouškou** s Al náhradou vzorku ve stejném programu (odečíst jako funkci teploty Tbot a Tstand). Kotvy mají Invarové tyčky (100–160 mm × 1,2·10⁻⁶ × 20 K ≈ 3–4 µm), takže chyba vrstev je hlavně společná všem snímačům a v rozdílech mezi kotvami se odečte.
 
 ## 5. Cela z PETG-CF – napětí
 

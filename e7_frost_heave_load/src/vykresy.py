@@ -334,7 +334,7 @@ def m_section(v, side=-1, labels=False, big=False):
         v.text(side * 25, z - 6, "M", fontsize=FS_SMALL, color="#d33682", ha="center", va="top", weight="bold", zorder=6)
 
 
-def m_section_a(v, labels=False):
+def m_section_a(v, labels=False, cable_up=False):
     """Point M of variant A (sketch): CS645 rods horizontal through the axis, optical fibre at the top-rod
     level (tip 37.5 from the wall), Pt100 vertical from the sand surface 15 mm beside the axis."""
     t = p.TDR_CS645
@@ -348,8 +348,11 @@ def m_section_a(v, labels=False):
     v.line([(-ri, z_top + 1.8), (-ri + p.OF_TIP_FROM_WALL, z_top + 1.8)], lw=1.1, c=FBGC, z=5.2)
     v.rect(p.PT100_R - 1.5, Z_S1 - p.PT100_L, p.PT100_R + 1.5, Z_S1 - (p.PT100_L - p.PT100_METAL), fc=PTC, lw=0.5, z=5.2)
     # Pt100 cable: up to the sand surface, in a groove under the piston, out through a ⌀4 hole in the collar
-    v.line([(p.PT100_R, Z_S1 - (p.PT100_L - p.PT100_METAL)), (p.PT100_R, Z_S1 - 1), (p.CAV_D / 2 + p.CUP_WALL_IN + 4,
-            Z_S1 - 1)], lw=0.9, c="#8a7300", z=5.2)
+    if cable_up:
+        v.line([(p.PT100_R, Z_S1 - (p.PT100_L - p.PT100_METAL)), (p.PT100_R, Z_S1 + 30)], lw=0.9, c="#8a7300", z=5.2)
+    else:
+        v.line([(p.PT100_R, Z_S1 - (p.PT100_L - p.PT100_METAL)), (p.PT100_R, Z_S1 - 1),
+                (p.CAV_D / 2 + p.CUP_WALL_IN + 4, Z_S1 - 1)], lw=0.9, c="#8a7300", z=5.2)
     if labels:
         v.text(-ri + t["rod_l"] + 2, z_top - t["pitch"], "CS645", fontsize=FS_SMALL - 0.5, va="center", color="#333")
 
@@ -524,38 +527,31 @@ Z_BR = p.Z_BRIDGE
 BODY_D, BODY_L = p.LVDT_B_BODY
 Z_BODY0 = Z_BR - 35.0                          # LVDT body bottom (clamped in the bridge)
 # x positions in the revolved section (true positions on the plan view)
-X_S = {"S1": 42.0, "S2": -42.0}
-X_E = {"E1": -22.0, "E2": 22.0, "E3": 6.0}
+X_S = {"S1": -34.0, "S2": -47.0}
+X_E = {"E1": -20.0, "E2": 28.0, "E3": 42.0}
 
 
 
 
 def rig_b(v):
-    """Simplified elevation of rig B: no frame, Invar stand + bridge with 5 free-core LVDTs."""
+    """Simplified elevation of rig B: printed cell ⌀160 on a base plate, Invar stand + bridge with 6 free-core
+    LVDTs, point M as in A (CS645 + fibre + Pt100)."""
     hb = p.BASE_W / 2
-    v.rect(-hb, -p.BASE_T, hb, 0, fc=METAL, hatch="////")
+    zb = Z_S0 - p.BODY_BOTTOM
+    v.rect(-hb, zb - p.B_BASE_T, hb, zb, fc=METAL, hatch="////")
     for xf in (-hb + 20, hb - 20):
-        v.rect(xf - 8, -p.BASE_T - 18, xf + 8, -p.BASE_T, fc=STEEL, lw=THIN)
+        v.rect(xf - 8, zb - p.B_BASE_T - 18, xf + 8, zb - p.B_BASE_T, fc=STEEL, lw=THIN)
     light = dict(lw=THIN)
-    v.rect(-30, 0, 30, H_BOT, fc=METAL, **light)
-    v.rect(-75, Z_G10, 75, Z_PED, fc=G10, **light)
-    v.rect(-75, Z_PED, 75, Z_S0, fc=METAL, **light)
-    for s_ in (-1, 1):
-        v.rect(s_ * R_OUT, Z_S0 + p.CELL_FOOT_T, s_ * R_INS, TUBE_TOP, fc=INSUL, lw=0.3)
-    solid_cell(v)
+    cup_cell(v)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", **light)
-    v.rect(-49.75, Z_S0 - 4, 49.75, Z_S0, fc="#bfc5b0", lw=0.3)
     v.rect(-p.TOP_PLATE_D / 2, Z_S1, p.TOP_PLATE_D / 2, Z_TP, fc=PETG, **light)
-    # Invar posts (one in the section plane, two revolved) and the bridge
-    v.rect(-p.STAND_R - 6, 0, -p.STAND_R + 6, Z_BR, fc=INVAR, lw=THIN, alpha=0.8)
-    v.rect(p.STAND_R - 6, 0, p.STAND_R + 6, Z_BR, fc=INVAR, lw=THIN, ls="--", alpha=0.35)
+    v.rect(-p.STAND_R - 6, zb, -p.STAND_R + 6, Z_BR, fc=INVAR, lw=THIN, alpha=0.8)
+    v.rect(p.STAND_R - 6, zb, p.STAND_R + 6, Z_BR, fc=INVAR, lw=THIN, ls="--", alpha=0.35)
     v.rect(-p.BRIDGE_D / 2, Z_BR, p.BRIDGE_D / 2, Z_BR + p.BRIDGE_T, fc=METAL, lw=THIN, hatch="////")
-    # surface LVDTs on the top plate
     for t, x in X_S.items():
         v.rect(x - 2, Z_TP, x + 2, Z_TP + 3, fc=STEEL, lw=0.3)
         v.line([(x, Z_TP + 3), (x, Z_BODY0 + 20)], lw=THICK, c=STEEL)
         v.rect(x - 6, Z_BODY0, x + 6, Z_BODY0 + BODY_L, fc=SENS, **light)
-    # anchors with Invar rods in PTFE sleeves
     for (t, d, r, ang) in p.ANCHORS:
         x = X_E[t]
         z = Z_S1 - d
@@ -565,36 +561,42 @@ def rig_b(v):
         v.rect(x - 6, Z_BODY0, x + 6, Z_BODY0 + BODY_L, fc=SENS, **light)
         v.text(x + (p.ANCHOR_D / 2 + 1) * (1 if x > 0 else -1), z, t, fontsize=FS_SMALL - 0.5, va="center",
                ha="left" if x > 0 else "right", color="#333", weight="bold", zorder=6)
-    m_section(v)
-    for name, x, z in (("Ttop", -35, Z_S1 + 3), ("Tbot", 30, Z_PED + 15), ("Tstand", -p.STAND_R, 228)):
+    m_section_a(v, cable_up=True)
+    for name, x, z in (("Ttop", -40, Z_S1 + 3), ("Tbot", 30, zb - 8), ("Tstand", -p.STAND_R, 228)):
         v.circle(x, z, 2.0, fc=TCOL, lw=0, z_=6)
-        v.text(x + (5 if name != "Ttop" else -5), z, name, fontsize=FS_SMALL, color=TCOL, va="center", weight="bold", zorder=6,
-               ha="right" if name == "Ttop" else "left", bbox=dict(fc="white", ec="none", pad=0.2))
+        v.text(x + (5 if name != "Ttop" else -5), z, name, fontsize=FS_SMALL, color=TCOL, va="center", weight="bold",
+               zorder=6, ha="right" if name == "Ttop" else "left", bbox=dict(fc="white", ec="none", pad=0.2))
+    rb = p.BODY_D / 2
     for i, (d, ang) in enumerate(WALL_TH, 1):
         s_ = 1 if i % 2 else -1
         z = Z_S1 - d - 2
-        v.line([(s_ * R_INS, z), (s_ * 40, z)], lw=0.8, c=TCOL)
+        v.line([(s_ * (rb + 6), z), (s_ * 40, z)], lw=0.8, c=TCOL)
         v.circle(s_ * 40, z, 1.6, fc=TCOL, lw=0)
-        v.text(s_ * (R_INS + 3), z, f"T{i}", fontsize=FS_SMALL, color=TCOL, va="center",
+        v.text(s_ * (rb + 8), z, f"T{i}", fontsize=FS_SMALL, color=TCOL, va="center",
                ha="left" if s_ > 0 else "right", weight="bold")
     v.circle(-p.STAND_R - 45, 230, 2.0, fc=TCOL, lw=0)
     v.text(-p.STAND_R - 45, 236, "Tair", fontsize=FS_SMALL, color=TCOL, ha="center", weight="bold")
 
 
 def plate_plan(v):
-    """Plan of the top plate: true positions of S1–S3, E1–E3 and the Invar posts."""
-    v.circle(0, 0, R_INS, fc=INSUL, lw=THIN)
-    v.circle(0, 0, R_OUT, fc=PETG, lw=THIN)
+    """Plan of the top plate: true positions of S1–S3, E1–E3, Pt100, TDR axis, port and the Invar posts."""
+    rb, rc, ri = p.BODY_D / 2, p.COLLAR_OD / 2, p.CAV_D / 2
+    v.circle(0, 0, rb, fc=PETG, lw=THIN)
+    v.circle(0, 0, rc, fc="none", lw=THIN)
     v.circle(0, 0, p.TOP_PLATE_D / 2, fc="#eef0f2", lw=THIN)
+    a = math.radians(p.PORT_ANG)
+    v.line([(rb * math.cos(a), rb * math.sin(a)), (-25 * math.cos(a), -25 * math.sin(a))], lw=1.6, c="#777")
+    v.rect(-p.PORT_W / 2, -rb, p.PORT_W / 2, -ri - p.CUP_WALL_IN, fc=TDRC, lw=THIN)
+    v.circle(p.PT100_R, 0, p.B_PT100_HOLE / 2, fc=PTC, lw=THIN)
     for t, r, ang in p.SURF_LVDT:
         x, y = r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
         v.circle(x, y, 4, fc=SENS, lw=THIN)
-        v.text(x * 1.35, y * 1.35, t, fontsize=FS_SMALL - 0.5, ha="center", va="center", color=SENS_TXT, weight="bold")
+        v.text(x * 1.45, y * 1.45, t, fontsize=FS_SMALL - 0.5, ha="center", va="center", color=SENS_TXT, weight="bold")
     for t, d, r, ang in p.ANCHORS:
         x, y = r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
         v.circle(x, y, p.PLATE_HOLE_D / 2, fc="white", lw=THIN)
         v.circle(x, y, 1.0, fc=INVAR, lw=0)
-        v.text(x * 0.45, y * 0.45, t, fontsize=FS_SMALL - 0.5, ha="center", va="center", color="#333", weight="bold")
+        v.text(x * 1.45, y * 1.45, t, fontsize=FS_SMALL - 0.5, ha="center", va="center", color="#333", weight="bold")
     for ang in p.STAND_ANG:
         v.circle(p.STAND_R * math.cos(math.radians(ang)), p.STAND_R * math.sin(math.radians(ang)),
                  p.STAND_POST_D / 2, fc=INVAR, lw=THIN)
@@ -604,8 +606,13 @@ def plate_plan(v):
 def anchor_detail(sh, ox, oy, k):
     """Enlarged section: cell, sand, top plate, anchors with rods and sleeves."""
     v = View(sh, ox, oy, k)
-    v.rect(-R_IN - 1, Z_S0 - 12, R_IN + 1, Z_S0, fc=METAL, lw=THIN)
-    solid_cell(v, top=Z_S1 + 18, foot=False)
+    ri, w = p.CAV_D / 2, p.CUP_WALL_IN
+    for s_ in (-1, 1):
+        v.rect(s_ * ri, Z_S0 - 12, s_ * (ri + 14), Z_S1 + 22, fc=PETG, lw=THIN, hatch="..")
+        v.rect(s_ * ri, Z_S0, s_ * (ri + w), Z_S1 + 22, fc=PETG, lw=THIN)
+    v.rect(-ri, Z_S0 - 12, ri, Z_S0, fc=PETG, lw=THIN, hatch="..")
+    zb = Z_S0 - p.BODY_BOTTOM
+    v.rect(-ri - 14.5, zb + p.PORT_Z0, -ri - w, zb + p.PORT_Z1, fc="white", lw=THIN)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
     import random
     rnd = random.Random(2)
@@ -623,73 +630,71 @@ def anchor_detail(sh, ox, oy, k):
         v.rect(x - p.SLEEVE_D / 2, z + 2, x + p.SLEEVE_D / 2, Z_TP + 4, fc="white", lw=0.3, z=4)
         v.line([(x, z), (x, Z_TP + 16)], lw=0.9, c=INVAR, z=5)
         v.text(x, Z_TP + 17, t, fontsize=FS_SMALL - 0.5, ha="center", va="bottom", color="#333", weight="bold")
-        v.line([(x + p.ANCHOR_D / 2, z), (R_IN + 2, z)], lw=0.3, c="#777", ls=":")
+        v.line([(x + p.ANCHOR_D / 2, z), (p.CAV_D / 2 + 2, z)], lw=0.3, c="#777", ls=":")
     for i, (d, ang) in enumerate(WALL_TH, 1):
         s_ = 1 if i % 2 else -1
         z = Z_S1 - d - 2
-        v.line([(s_ * R_OUT, z), (s_ * 40, z)], lw=0.7, c=TCOL)
+        v.line([(s_ * (p.CAV_D / 2 + 14), z), (s_ * 40, z)], lw=0.7, c=TCOL)
         v.circle(s_ * 40, z, 1.2, fc=TCOL, lw=0)
-        v.text(s_ * (R_OUT + 2), z, f"T{i}", fontsize=FS_SMALL - 0.5, color=TCOL, va="center",
+        v.text(s_ * (p.CAV_D / 2 + 16), z, f"T{i}", fontsize=FS_SMALL - 0.5, color=TCOL, va="center",
                ha="left" if s_ > 0 else "right")
-    for tag_, d, ang in p.PWALL:
-        z = Z_S1 - d
-        v.rect(-R_IN - 3, z - p.PWALL_D / 2, -R_IN + 0.5, z + p.PWALL_D / 2, fc=PCOL, lw=THIN, z=4)
-    m_section(v, labels=True)
+    m_section_a(v, labels=True, cable_up=True)
     zt = Z_S1
     for _, d, _, _ in p.ANCHORS:
-        v.dim_v(Z_S1 - d, zt, R_OUT, R_OUT + 12, f"{(zt and 25):g}")
+        v.dim_v(Z_S1 - d, zt, p.CAV_D / 2 + 14, p.CAV_D / 2 + 34, f"{(zt and 25):g}")
         zt = Z_S1 - d
-    v.dim_v(Z_S0, zt, R_OUT, R_OUT + 12, "25")
-    v.dim_v(Z_S0, Z_S1, R_OUT, R_OUT + 24, "100")
+    v.dim_v(Z_S0, zt, p.CAV_D / 2 + 14, p.CAV_D / 2 + 34, "25")
+    v.dim_v(Z_S0, Z_S1, p.CAV_D / 2 + 14, p.CAV_D / 2 + 46, "100")
     v.dim_h(-p.D_SAMPLE / 2, p.D_SAMPLE / 2, Z_S0 - 12, Z_S0 - 18, "⌀100 unsaturated sand", side="below")
 
 
-def sheet_b_simple(pdf):
-    sh = Sheet("Variant B – same sample, no load: heave, settlement, layer strain", "E7-V02", "≈ 1 : 2", 2,
-               TOTAL, "schematic; orange = displacement, red = temperature, violet = Invar reference; "
-               "sensors revolved into section (true positions on the plan)")
-    v = View(sh, 112, 66, 0.48)
+def _sheet_b_simple(pdf):
+    sh = Sheet("Variant B – same sample, no load: heave and layer strain", "E7-V02", "≈ 1 : 2", 2,
+               TOTAL, "orange = displacement, red = temperature, violet = Invar; revolved section")
+    v = View(sh, 118, 62, 0.48)
     rig_b(v)
-    tag(v, 42, Z_BODY0 + 60, 150, Z_BR + 60, "S1–S3  surface LVDT, free core\n(3× → mean heave + tilt)", SENS_TXT)
-    tag(v, -22, Z_BODY0 + 60, -150, Z_BR + 60, "E1–E3  anchor LVDT, free core", SENS_TXT)
-    tag(v, p.BRIDGE_D / 2 - 10, Z_BR + 5, 150, Z_BR + 20, "Al bridge ⌀220×10 (LVDT clamps)", INK)
-    tag(v, -p.STAND_R, 60, -150, 120, "3 Invar posts ⌀12\nfrom the base plate", INVAR)
-    tag(v, 30, Z_S1 + 3, 150, Z_S1 + 25, "top plate PETG-CF ⌀99×6\n≈ 65 g ≈ 0.08 kPa", INK)
-    tag(v, 22, Z_S1 - 25, 150, Z_S1 - 10, "anchor ⌀16×1.5 + Invar rod ⌀2\nin PTFE sleeve ⌀4", INK)
-    tag(v, R_OUT, Z_S0 + 40, 150, Z_S0 + 20, "same cell PETG-CF\n+ PTFE liner (as A)", INK)
-    tag(v, -60, Z_G10 + 5, -150, 30, "G10 thermal break", INK)
-    tag(v, -25, Z_S1 - p.M_DEPTH, -150, Z_S1 - 30, f"M: TDR + Pt100 + FBG at one point\n(depth {p.M_DEPTH:g}, r ≈ 25, 108°)", "#d33682")
-    tag(v, 0, -12, 60, -40, "base plate Al 260×200×25 – no frame, no load", INK)
-    rows = [["S1…S3", "surface heave / settlement", sn.PICK["LVDT-B"][1], "SE3–5"],
-            ["E1…E3", "anchor displ. at 25/50/75", sn.PICK["LVDT-B"][1], "SE6–8"],
-            ["PW1…PW3", "lateral stress (optional)", sn.PICK["PW"][1], sn.PICK["PW"][3]],
-            ["T1…T5", "soil, r 40 mm", sn.PICK["T"][1], sn.PICK["T"][3]],
-            ["M: TDR", "water / unfrozen water", sn.PICK["TDR"][1], sn.PICK["TDR"][3]],
-            ["M: Pt100", "reference temperature", sn.PICK["PT100"][1], sn.PICK["PT100"][3]],
-            ["M: FBG", "optical temperature", sn.PICK["FBG"][1], sn.PICK["FBG"][3]],
-            ["Ttop, Tbot", "top plate, pedestal", sn.PICK["T"][1], "(same)"],
-            ["Tstand, Tair", "Invar stand, air", sn.PICK["TX"][1], sn.PICK["TX"][3]]]
-    y = legend(sh, rows)
+    zb = Z_S0 - p.BODY_BOTTOM
+    tag(v, X_S["S1"], Z_BODY0 + 60, -150, Z_BR + 75, "S1–S3 surface LVDT\n(free core, 3×)", SENS_TXT)
+    tag(v, X_E["E3"], Z_BODY0 + 60, 150, Z_BR + 75, "E1–E3 anchor LVDT\n(free core)", SENS_TXT)
+    tag(v, p.BRIDGE_D / 2 - 10, Z_BR + 5, 150, Z_BR + 30, "Al bridge ⌀220×10", INK)
+    tag(v, -p.STAND_R, zb + 40, -150, zb + 60, "3 Invar posts ⌀12", INVAR)
+    tag(v, 30, Z_S1 + 3, 150, Z_S1 + 45, "top plate PETG-CF ⌀99×6\n≈ 65 g ≈ 0.08 kPa", INK)
+    tag(v, X_E["E2"], Z_S1 - 50, 150, Z_S1 + 5, "anchor ⌀16 + Invar rod ⌀2\nin PTFE sleeve", INK)
+    tag(v, -10, Z_S1 - 41, 150, Z_S1 - 40, "M: CS645 + fibre + Pt100\n(as in A, depth 32–50)", "#d33682")
+    tag(v, p.BODY_D / 2 - 5, Z_S0 + 15, 150, Z_S0 - 15, "printed cell ⌀160 (V09)", INK)
+    tag(v, 0, zb - 12, 150, zb - 45, "Al base plate 260×200×20", INK)
+    rows = [["S1…S3", "surface heave", sn.PICK["LVDT-B"][1], "SE3–5"],
+            ["E1…E3", "anchors 25/50/75", sn.PICK["LVDT-B"][1], "SE6–8"],
+            ["M: TDR", "unfrozen water", "Campbell CS645 (existing)", "C1–C3 SDM"],
+            ["M: Pt100", "temperature", "Pt100 37 mm (existing)", "4-wire"],
+            ["M: OF", "temperature", "optical fibre (existing)", "own reader"],
+            ["T1…T5", "soil, r 40", sn.PICK["T"][1], "MUX-2 SE13"],
+            ["Ttop, Tbot", "plate, base", sn.PICK["T"][1], "(same)"],
+            ["Tstand, Tair", "stand, air", sn.PICK["TX"][1], "(same)"]]
+    sh.heading(255, 276, "Sensors (tag → model → CR1000)")
+    y = table(sh, 255, 272, ["tag", "measures", "model", "CR1000"], rows, [24, 34, 60, 37], row_h=5.6)
     sh.text(255, y - 4,
-            "What is measured in each freeze–thaw cycle\n"
-            "• surface: heave during freezing, settlement during thawing, residual after the cycle\n"
-            "  (mean of S1–S3; their difference = tilt of the top plate)\n"
-            "• 4 layers of 25 mm: Δh₁ = S̄ − E1, Δh₂ = E1 − E2, Δh₃ = E2 − E3, Δh₄ = E3 (base fixed)\n"
-            "  strain εᵢ = Δhᵢ / 25 mm, resolution ≈ 4·10⁻⁵ (vypocty.md §3)\n"
-            "• frost depth from T1–T5 (0 °C isotherm) → strain vs. frozen / unfrozen layer\n"
-            "• after the last cycle: height (caliper), mass, water content of 5 slices × 20 mm\n"
-            "\n"
-            "No load: free-core LVDTs push nothing; the plate adds 0.08 kPa only.\n"
-            "Reference error ≈ 50 µm per 20 K → blank run with Al dummy (vypocty.md §4).",
+            "Per freeze–thaw cycle\n"
+            "• heave, settlement, residual: mean of S1–S3 (difference = tilt)\n"
+            "• 4 layers of 25 mm: S̄ − E1, E1 − E2, E2 − E3, E3 (bottom fixed)\n"
+            "  → strain per layer, resolution ≈ 4·10⁻⁵\n"
+            "• frost depth from T1–T5, unfrozen water at M\n"
+            "No load: free-core LVDTs push nothing, the plate adds 0.08 kPa.\n"
+            "Reference error ≈ 40 µm per 20 K → blank run (vypocty.md §4).",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.text(300, 153, "DETAIL – anchors and top plate  ≈ 1 : 1.6", fontsize=FS + 0.5, weight="bold", ha="center")
-    anchor_detail(sh, 300, 18, 0.62)
-    sh.text(378, 153, "PLAN – top plate  1 : 3.6", fontsize=FS + 0.5, weight="bold", ha="center")
-    pv = View(sh, 378, 105, 0.28)
+    sh.text(292, 150, "DETAIL – anchors  ≈ 1 : 1.9", fontsize=FS + 0.5, weight="bold", ha="center")
+    anchor_detail(sh, 292, 30, 0.52)
+    sh.text(386, 150, "PLAN  1 : 4", fontsize=FS + 0.5, weight="bold", ha="center")
+    pv = View(sh, 386, 112, 0.24)
     plate_plan(pv)
-    sh.text(378, 66, "orange S = surface LVDT (r 40)\nE = anchor rod hole (r 25)\nviolet = Invar posts (r 100)",
-            fontsize=FS_SMALL - 0.5, ha="center", va="top", linespacing=1.4)
+    sh.text(386, 80, "S = surface LVDT (r 40)\nE = anchor (r 25)\nyellow = Pt100, green = port\n"
+            "violet = Invar posts", fontsize=FS_SMALL - 0.5, ha="center", va="top", linespacing=1.4)
     sh.save(pdf, os.path.join(OUT, "E7-V02_variant_B_scheme.png"))
+
+
+def sheet_b_simple(pdf):
+    with bigger_fonts():
+        _sheet_b_simple(pdf)
 
 
 # --- variant A-min: maximally simplified A --------------------------------------------

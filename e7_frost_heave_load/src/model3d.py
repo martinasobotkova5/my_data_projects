@@ -251,35 +251,28 @@ def variant_a(asm, prefix=""):
 
 
 def variant_b(asm, prefix=""):
-    """Variant B: same sand sample in the same printed cell, no load; surface + anchor LVDTs on an Invar stand."""
+    """Variant B: same printed cell ⌀160 and point M as A, no load; surface + anchor LVDTs on an Invar stand."""
     hb, hd = p.BASE_W / 2, p.BASE_D / 2
-    asm.add(box(-hb, hb, -hd, hd, -p.BASE_T, 0), name=prefix + "base plate Al 6082", color=C["al"])
+    zb = body_a(asm, prefix, temps=WALL_TH, pv=False, pb=False, opt=False)
+    asm.add(box(-hb, hb, -hd, hd, zb - p.B_BASE_T, zb), name=prefix + "Al base plate 260x200x20", color=C["al"])
     for i, (x, y) in enumerate(((-hb + 20, -hd + 20), (hb - 20, -hd + 20), (0, hd - 20))):
-        asm.add(cyl(16, 18, -p.BASE_T - 18, x, y), name=f"{prefix}levelling foot {i + 1}", color=C["steel"])
-    asm.add(cyl(60, H_BOT, 0), name=prefix + "Al spacer (bottom)", color=C["al"])
-    asm.add(cyl(150, G10_T, H_BOT), name=prefix + "G10 thermal break", color=C["g10"])
-    ped = cyl(150, p.PEDESTAL_H, Z_PED).cut(cyl(99.6, 10, Z_S0 - 10))
-    asm.add(ped, name=prefix + "pedestal Al", color=C["al"])
-    asm.add(cyl(99.5, 10, Z_S0 - 10), name=prefix + "porous stone bottom", color=C["stone"])
-    solid_cell(asm, prefix)
+        asm.add(cyl(16, 18, zb - p.B_BASE_T - 18, x, y), name=f"{prefix}levelling foot {i + 1}", color=C["steel"])
     z_tp = Z_S1 + p.TOP_PLATE_T
-    sand = cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0)
     plate = cyl(p.TOP_PLATE_D, p.TOP_PLATE_T, Z_S1)
     for t, d, r, ang in p.ANCHORS:
         x, y = r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
         plate = plate.cut(cyl(p.PLATE_HOLE_D, p.TOP_PLATE_T, Z_S1, x, y))
-    asm.add(sand, name=prefix + "unsaturated sand D100x100", color=C["sand"])
+    a_pt = p.PORT_ANG + 90
+    xp, yp = p.PT100_R * math.cos(math.radians(a_pt)), p.PT100_R * math.sin(math.radians(a_pt))
+    plate = plate.cut(cyl(p.B_PT100_HOLE, p.TOP_PLATE_T, Z_S1, xp, yp))
     asm.add(plate, name=prefix + "top plate PETG-CF D99x6", color=C["petg"])
-    asm.add(radial(0, 5, 45, Z_S1 + p.TOP_PLATE_T / 2, 1.6), name=prefix + "Ttop 109SS (in top plate)",
-            color=C["temp"])
-    asm.add(radial(180, 10, 74, Z_PED + 15, 1.6), name=prefix + "Tbot 109SS", color=C["temp"])
-    bd, bl = p.LVDT_B_BODY
+    bd_, bl = p.LVDT_B_BODY
     z_body = p.Z_BRIDGE - 35.0
     for t, r, ang in p.SURF_LVDT:
         x, y = r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
         asm.add(cyl(5, 3, z_tp, x, y), name=f"{prefix}{t} rod seat", color=C["steel"])
         asm.add(cyl(3, z_body + 20 - z_tp - 3, z_tp + 3, x, y), name=f"{prefix}{t} core rod D3", color=C["steel"])
-        asm.add(tube(bd, 4, bl, z_body).translate((x, y, 0)), name=f"{prefix}{t} LVDT DCTH200 free core",
+        asm.add(tube(bd_, 4, bl, z_body).translate((x, y, 0)), name=f"{prefix}{t} LVDT DCTH200 free core",
                 color=C["sensor"])
     for t, d, r, ang in p.ANCHORS:
         x, y = r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
@@ -289,20 +282,19 @@ def variant_b(asm, prefix=""):
         asm.add(tube(p.SLEEVE_D, p.ROD_D + 0.5, z_tp + 4 - (z + 2), z + 2).translate((x, y, 0)),
                 name=f"{prefix}{t} PTFE sleeve D4", color=C["ptfe"])
         asm.add(cyl(p.ROD_D, z_body + 20 - z, z, x, y), name=f"{prefix}{t} Invar rod D2", color=C["invar"])
-        asm.add(tube(bd, 4, bl, z_body).translate((x, y, 0)), name=f"{prefix}{t} LVDT DCTH200 free core",
+        asm.add(tube(bd_, 4, bl, z_body).translate((x, y, 0)), name=f"{prefix}{t} LVDT DCTH200 free core",
                 color=C["sensor"])
     for i, ang in enumerate(p.STAND_ANG, 1):
         x, y = p.STAND_R * math.cos(math.radians(ang)), p.STAND_R * math.sin(math.radians(ang))
-        asm.add(cyl(p.STAND_POST_D, p.Z_BRIDGE, 0, x, y), name=f"{prefix}Invar post {i}", color=C["invar"])
+        asm.add(cyl(p.STAND_POST_D, p.Z_BRIDGE - zb, zb, x, y), name=f"{prefix}Invar post {i}", color=C["invar"])
     bridge = cyl(p.BRIDGE_D, p.BRIDGE_T, p.Z_BRIDGE)
     for t, r, ang in p.SURF_LVDT + [(a[0], a[2], a[3]) for a in p.ANCHORS]:
-        bridge = bridge.cut(cyl(bd + 0.5, p.BRIDGE_T, p.Z_BRIDGE, r * math.cos(math.radians(ang)),
+        bridge = bridge.cut(cyl(bd_ + 0.5, p.BRIDGE_T, p.Z_BRIDGE, r * math.cos(math.radians(ang)),
                                 r * math.sin(math.radians(ang))))
     asm.add(bridge, name=prefix + "Al bridge D220x10 (LVDT clamps)", color=C["al"])
     asm.add(radial(180, p.STAND_R - 6, p.STAND_R + 20, 230, 1.6), name=prefix + "Tstand 109SS", color=C["temp"])
 
-
-def body_a(asm, prefix="", temps=None):
+def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True):
     """Variant A cell per drawing Column_one_body_version_1: body ⌀160 × 130 + collar ⌀106 to 160,
     cavity ⌀100 from z 26 (z = 0 at the underside), side port 13 wide at 67.5–94.5 (PORT_ANG).
     Point M: CS645 in the port, optical fibre, Pt100 vertical. Returns z of the underside."""
@@ -321,12 +313,15 @@ def body_a(asm, prefix="", temps=None):
     temps = [(d, ang) for _, d, ang in p.AM_TEMPS] if temps is None else temps
     for d, ang in temps:
         body = body.cut(radial(ang, ri - 1, rb + 1, Z_S1 - d, 2.0))
-    body = body.cut(radial(90, ri - 1, rb + 1, Z_S1 - p.AM_PV[1], 3.5))
+    if pv:
+        body = body.cut(radial(90, ri - 1, rb + 1, Z_S1 - p.AM_PV[1], 3.5))
     body = body.cut(radial(0, ri - 1, rb + 1, Z_S1 - 1, 4.0))
     xb, yb = 25 * math.cos(math.radians(p.AM_PB[2])), 25 * math.sin(math.radians(p.AM_PB[2]))
-    body = body.cut(cyl(8.2, 1.6, Z_S0 - 1.6, xb, yb))
+    if pb:
+        body = body.cut(cyl(8.2, 1.6, Z_S0 - 1.6, xb, yb))
     asm.add(body, name=prefix + "cell body PETG D160 (Column_one_body_version_1)", color=C["petg"])
-    asm.add(cyl(8, 1.5, Z_S0 - 1.5, xb, yb), name=prefix + "PB1 TML PDA-PA (flush)", color=C["pressure"])
+    if pb:
+        asm.add(cyl(8, 1.5, Z_S0 - 1.5, xb, yb), name=prefix + "PB1 TML PDA-PA (flush)", color=C["pressure"])
     asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0), name=prefix + "unsaturated sand D100x100", color=C["sand"])
     # point M
     asm.add(box(ri - 0.5, ri + t["head_l"] - 0.5, -6, 6, z_top - 2 * t["pitch"] - 4, z_top + 4)
@@ -341,7 +336,10 @@ def body_a(asm, prefix="", temps=None):
     asm.add(cyl(2.0, p.PT100_L - p.PT100_METAL, Z_S1 - (p.PT100_L - p.PT100_METAL), xp, yp),
             name=prefix + "M Pt100 cable", color=C["pt100"])
     for i_, (d, ang) in enumerate(temps, 1):
-        asm.add(radial(ang, p.T_TIP_R, rb + 8, Z_S1 - d, 1.6), name=f"{prefix}T{i_} 109SS (opt.)", color=C["temp"])
+        asm.add(radial(ang, p.T_TIP_R, rb + 8, Z_S1 - d, 1.6),
+                name=f"{prefix}T{i_} 109SS" + (" (opt.)" if opt else ""), color=C["temp"])
+    if not pv:
+        return zb
     asm.add(cyl(p.PCELL_D, p.PCELL_T, Z_S1 - p.AM_PV[1] - p.PCELL_T / 2), name=prefix + "PV1 TML PDA-PA on D20 disc",
             color=C["pressure"])
     asm.add(radial(90, p.PCELL_D / 2, rb + 15, Z_S1 - p.AM_PV[1], 2.5), name=prefix + "PV1 cable",

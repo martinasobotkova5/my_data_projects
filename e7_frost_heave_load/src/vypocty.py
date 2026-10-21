@@ -68,11 +68,10 @@ print(f"\nLVDT ±{p.LVDT_B_RANGE:g} mm s výstupem ±5 V na rozsahu CR1000 ±500
 # 4 ---------------------------------------------------------------------------
 print("## 4. Varianta B – teplotní chyba referenčního stojanu\n")
 dT = p.T_WARM - p.T_COLD
-al_stack = 40.0 + p.PEDESTAL_H           # Al distanční kus + podstavec
-post = p.Z_BRIDGE
+z_base = 80.0 - p.BODY_BOTTOM               # horní líc základové desky (výkresové souřadnice, dno vzorku = 80)
+post = p.Z_BRIDGE - z_base
 body = 45.0                               # upnutí LVDT → nulová poloha jádra (≈)
-items = [("Al distanční kus + podstavec", al_stack, p.ALPHA_AL, +1),
-         ("G10 mezikus", 10.0, p.ALPHA_G10, +1),
+items = [(f"tištěné dno cely {p.BODY_BOTTOM:g} mm (PETG)", p.BODY_BOTTOM, p.ALPHA_PETG, +1),
          (f"Invarové sloupky {post:g} mm", post, p.ALPHA_INVAR, -1),
          ("tělo LVDT (nerez) od upnutí k nule", body, 17e-6, +1),
          ("horní deska PETG-CF", p.TOP_PLATE_T, 45e-6, +1)]
@@ -85,7 +84,7 @@ for name, L, a, sg in items:
 row("**zdánlivý posun povrchu**", "", "", f"**{tot:+.0f}**")
 print(f"\nZdánlivý posun ≈ {abs(tot):.0f} µm za 20 K je malý proti očekávaným desetinám mm, ale ne zanedbatelný. "
       "Odstraní se **slepou zkouškou** s Al náhradou vzorku ve stejném programu (odečíst jako funkci teploty "
-      "Tbot a Tbridge). Kotvy mají Invarové tyčky (100–160 mm × 1,2·10⁻⁶ × 20 K ≈ 3–4 µm), takže chyba "
+      "Tbot a Tstand). Kotvy mají Invarové tyčky (100–160 mm × 1,2·10⁻⁶ × 20 K ≈ 3–4 µm), takže chyba "
       "vrstev je hlavně společná všem snímačům a v rozdílech mezi kotvami se odečte.\n")
 
 # 5 ---------------------------------------------------------------------------
