@@ -4,12 +4,14 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 | soubor | obsah |
 |---|---|
-| `vykresy/E7_drawings.pdf` | 10 listů A3 (V07 = A-min s víkem na táhlech, V08 = A-rám, V09 = tištěná cela A, V10 = B-open), anglicky (PNG po listech ve stejné složce) |
+| `vykresy/E7_drawings.pdf` | 8 listů A3, anglicky: V01 přehled A a B · V02 A s víkem na táhlech · V03 A s Al rámem · V04 tištěná cela + bod M · V05 B s kotvami · V06 B otevřený povrch (kamera + laser) · V07 čidla a CR1000 · V08 mrazák |
 | `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, samotná cela, obě v mrazáku (+ STL a PNG náhledy) |
 | `vypocty.md` | zatížení, očekávané deformace, rozlišení LVDT, teplotní chyba stojanu, napětí v cele, závaží |
 | `src/params.py` | všechny rozměry a předpoklady |
 | `src/sensors.py` | výběr čidel a plán kanálů CR1000 |
 | `src/vykresy.py`, `src/vypocty.py`, `src/model3d.py`, `src/render3d.py` | generátory |
+
+> Kapitoly 2–3 a 6–8 popisují i starší řešení varianty A (závaží, vícekroužková/plná cela); aktuální návrh je v kap. 1a–1c, 4a, 5, 5a a na výkresech V01–V08.
 
 Regenerace: `cd src && python vykresy.py && python vypocty.py > ../vypocty.md && python model3d.py && python render3d.py`
 
@@ -17,7 +19,7 @@ Regenerace: `cd src && python vykresy.py && python vypocty.py > ../vypocty.md &&
 
 ## 1. Dvě varianty
 
-| | **A – konstantní přitížení** (E7-V01) | **B – bez zatížení** (E7-V02) |
+| | **A – konstantní přitížení** (E7-V01) | **B – bez zatížení** (E7-V05) |
 |---|---|---|
 | vzorek | nenasycený písek ⌀100 × 100 (Sr ≈ 0,3–0,5) | **stejný** |
 | cela | plná, 3D tisk PETG-CF v jednom kuse, PTFE fólie 0,5 mm + silikonový tuk | **stejná** |
@@ -35,7 +37,7 @@ Obě varianty sdílejí základovou desku, Al distanční kus, mezikus G10, pods
 - Není potřeba siloměr ani dotahování. Rám jen vede tyč a nese LVDT, takže nic nezatěžuje.
 - Do 25 kPa je to 20 kg, tedy 3 plné a 1 poloviční kotouč (výška 126 mm). To se do mrazáku vejde.
 
-## 1a. Varianta A-min – zjednodušená varianta A s nehybným víkem (E7-V07, `vypocty.md` §9)
+## 1a. Varianta A-min – zjednodušená varianta A s nehybným víkem (E7-V02, `vypocty.md` §9)
 
 Stejný písek a stejná tištěná cela jako A. Vzorek je nahoře **pevně sevřený**, takže se nemůže zvednout ani posunout; při mrznutí se měří tlak, který přitom vznikne. TDR, teplotní čidlo a optické vlákno už v laboratoři máte – jsou v bodě M a v ceně nejsou.
 
@@ -79,7 +81,7 @@ Bez termistorů T1/T2/Tair je to ≈ 2 200–3 400 €.
 - [Bestech – TML PDA-PA (parametry, rozsah 2–30 bar, bez ceny)](https://www.bestech.com.au/product/pda-pa-waterproof-miniature-pressure-gauge/)
 - [Campbell Scientific – 109SS (cena po přihlášení)](https://www.campbellsci.com/order/109)
 
-## 1b. Varianta A-rám – nehybný píst v rámu z Al profilů (E7-V08, `vypocty.md` §10)
+## 1b. Varianta A-rám – nehybný píst v rámu z Al profilů (E7-V03, `vypocty.md` §10)
 
 Stejný vzorek, cela, čidla a bod M jako A-min. Rozdíl je jen v tom, co drží píst: místo víka na táhlech je to **rám z Al profilů**.
 
@@ -109,7 +111,7 @@ Stejný vzorek, cela, čidla a bod M jako A-min. Rozdíl je jen v tom, co drží
 
 Čidla ke koupi jsou stejná jako v A-min (2× TML PDA-PA, LVDT RDP DCTH400AG se zdrojem, volitelně 3× 109SS-L); TDR, teplotní čidlo, optické vlákno a CR1000 už máte. Ceny jsou orientační – viz kap. 1a.
 
-## 1c. Tištěná cela A – podle výkresu Column_one_body_version_1 (E7-V09, `vypocty.md` §11)
+## 1c. Tištěná cela A – podle výkresu Column_one_body_version_1 (E7-V04, `vypocty.md` §11)
 
 Podle výkresu M. Vrány (23. 6. 2026) a náčrtu čidel:
 
@@ -184,7 +186,7 @@ O kolik tlak při mrznutí vzroste nad přitížení, tolik vytváří led v pó
 - **Led na snímačích:** snímače utěsnit silikonem nebo epoxidem.
 - **Sání v nenasyceném písku:** tenziometry v mrazu zamrznou. Před zmrazením změřit sání (tenziometr nebo filtrační papír) a pak ho odhadovat z teploty (Clapeyron) nebo z obsahu nezamrzlé vody (TDR).
 
-## 4. Cela – plná, 3D tisk z PETG-CF (obě varianty, E7-V03)
+## 4. Cela – plná, 3D tisk z PETG-CF (obě varianty, E7-V04)
 
 - **Tvar:** trubka ⌀117/101, výška 125 mm, patka ⌀150 × 8 se zaoblením R4, tištěno nastojato v jednom kuse. Nad vzorkem zůstává 25 mm pro píst (A) nebo horní desku (B).
 - **Vnitřek:** stěna utěsněná tenkou vrstvou epoxidu, pak PTFE fólie 0,5 mm (spoj natupo na 180°) a silikonový tuk → vnitřní ⌀100.
@@ -205,7 +207,7 @@ O kolik tlak při mrznutí vzroste nad přitížení, tolik vytváří led v pó
 - **A:** PV1 (40 mm) a PB1 (dno) vyhodnocovat jako profil σv(z), ne jako jednu hodnotu. Rozdíl mezi nimi přímo ukáže tření.
 - **B:** přitížení je nulové, takže tření je malé. Zmrzlá horní vrstva ale může přimrznout ke stěně a brzdit zdvih. PTFE má ze všech běžných materiálů nejmenší adhezi ledu.
 
-## 4a. Bod M – TDR, Pt100 a optické čidlo ve stejném místě (obě varianty, E7-V03 detail M, `vypocty.md` §8)
+## 4a. Bod M – TDR, Pt100 a optické čidlo ve stejném místě (obě varianty, E7-V04 detail M, `vypocty.md` §8)
 
 Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely, rovnoběžně, a měří stejnou vrstvu písku ve stejném okamžiku promrzání. Poloha je v obou variantách stejná: **hloubka 54 mm pod povrchem, r ≈ 25 mm, úhel 108°** (mezi termistory T2 a T3, mimo kotvy B a tlakové snímače A; kolize zkontrolované v 3D).
 
@@ -224,10 +226,10 @@ Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely,
 - **Montáž:** tyčky TDR a Pt100/FBG se zasunou otvory ve stěně a ve fólii do už uloženého písku (nebo se písek ukládá kolem nich). Hlava TDR zalepená v nálitku, Pt100 a FBG utěsněné silikonem.
 - **Optické čidlo:** předpokládám teplotní FBG. Pokud máte jiný typ (fluorescenční sonda, např. Opsens OTG-F s analogovým výstupem do CR1000, nebo distribuované měření DTS), poloha zůstane stejná, změní se jen průměr otvoru a připojení.
 
-## 5. Varianta B – posuny a deformace mezi mrznutím a táním (E7-V02, `vypocty.md` §1–4)
+## 5. Varianta B – posuny a deformace mezi mrznutím a táním (E7-V05, `vypocty.md` §1–4)
 
 **Sestava (aktualizováno – stejná tištěná cela ⌀160 a bod M jako varianta A):**
-- **Cela:** tištěné tělo ⌀160 podle výkresu Column_one_body_version_1 (kap. 1c, E7-V09) stojí přímo na Al desce 260 × 200 × 20; tištěné dno 26 mm izoluje, G10 ani podstavec nejsou potřeba.
+- **Cela:** tištěné tělo ⌀160 podle výkresu Column_one_body_version_1 (kap. 1c, E7-V04) stojí přímo na Al desce 260 × 200 × 20; tištěné dno 26 mm izoluje, G10 ani podstavec nejsou potřeba.
 - **Bod M:** stejně jako v A – TDR CS645 kanálem (tyčky v hloubce 36 / 45 / 54 mm), optické vlákno v úrovni horní tyčky, Pt100 svisle 15 mm od osy; jeho kabel vede otvorem ⌀6 v horní desce.
 - **Horní deska** PETG-CF ⌀99 × 6 (≈ 65 g, 0,08 kPa) leží na písku uvnitř límce – jen terč pro LVDT.
 - **3 povrchová LVDT S1–S3** (r 40, úhly 0/120/240°) → průměrný zdvih/sednutí + náklon.
@@ -264,7 +266,7 @@ Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely,
 
 **Siloměry** nejsou potřeba v žádné variantě. A je zatížená závažím (síla = hmotnost), B není zatížená vůbec.
 
-## 5a. Varianta B-open – otevřený povrch, bezkontaktně: kamera + čárový laser (E7-V10, `vypocty.md` §13)
+## 5a. Varianta B-open – otevřený povrch, bezkontaktně: kamera + čárový laser (E7-V06, `vypocty.md` §13)
 
 - Tištěná cela ⌀160 na Al desce 320 × 220 × 10; **na povrchu písku nic neleží** (žádné víko, deska ani terčík).
 - **Kamera** (Raspberry Pi HQ + objektiv 12 mm, zorné pole ≈ 115 mm) visí na rameni ≈ 220 mm nad povrchem a dívá se dolů; **čárový laser** 650 nm svítí šikmo pod 45° přes celý povrch i přes horní hranu límce. Oba ve vyhřívaném boxu (+5 °C, dvojité okénko).
@@ -276,7 +278,7 @@ Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely,
 
 **Deformace po vrstvách kamerou (rozšíření):** do stěny cely vytisknout svislé okénko ≈ 20 × 100 mm z PMMA/PC; kamera z boku snímá zrna písku a metodou **DIC/PIV** (např. open-source GeoPIV-RG) se z posunu zrn spočítá svislý posun v každé hloubce → poměrná deformace vrstev bez kotev. Okénko zvyšuje tepelný únik (mezi snímky zakrýt izolační zátkou) a tření o stěnu je u něj jiné; druhá kamera ≈ +150 €.
 
-## 6. Rám A a stojan B (E7-V04)
+## 6. Rám A a stojan B (E7-V03)
 
 - **Základ:** v obou variantách základová deska Al 260 × 200 × 25 na 3 stavitelných nožkách.
 - **Rám A:** 2 sloupy 40×40 × 410 mm a příčka 40×40 s lineárním kuličkovým ložiskem ⌀16 pro vodicí tyč závaží. Rám nenese zatížení, jen vede tyč a nese Invarové sloupky LVDT.
@@ -284,7 +286,7 @@ Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely,
 - **Výška:** nejvyšší bod je vodicí tyč A (≈ 590 mm nad podlahou mrazáku, vč. vany). Sestava B je vysoká ≈ 330 mm vč. desky.
 - **Teplota:** rám A přitížení nemění. Stojan B je reference posunu, jeho chyba ≈ 50 µm / 20 K se koriguje slepou zkouškou.
 
-## 7. Vydrží PETG-CF? (E7-V03, `vypocty.md` §5)
+## 7. Vydrží PETG-CF? (E7-V04, `vypocty.md` §5)
 
 **Ano, pro obě varianty.** Pevnost PETG-CF z katalogových listů a literatury: ≈ 40–55 MPa ve směru vlákna nebo vrstvy, jen 15–30 MPa kolmo na vrstvy. Dlouhodobě počítám s ≈ 30 % pevnosti.
 
@@ -304,7 +306,7 @@ Podmínky:
   1. 10 cyklů mrznutí a tání nasycených vzorků materiálu a pak tahová zkouška;
   2. kontrola průměru ⌀101 při +20 a −10 °C (smrštění 0,06–0,12 mm, píst A má vůli 0,25 mm).
 
-## 8. Čidla a zapojení na CR1000 (E7-V05, `src/sensors.py`)
+## 8. Čidla a zapojení na CR1000 (E7-V07, `src/sensors.py`)
 
 | měření | doporučeno | alternativy |
 |---|---|---|

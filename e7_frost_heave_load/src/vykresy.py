@@ -10,7 +10,7 @@ from drafting import (BLUE, FROZEN, FS, FS_SMALL, INK, INSUL, METAL, PLASTIC, RE
                       THICK, THIN, WATER, Sheet, View, table)
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "vykresy")
-TOTAL = 10
+TOTAL = 8
 PT_MM = 72 / 25.4        # points per mm of paper
 PETG = "#cfd8dc"
 G10 = "#c9d9a6"
@@ -65,158 +65,6 @@ def parts_list(sh, items, y0=276):
         y -= 5.6
     return y
 
-
-def sheet_cell(pdf):
-    sh = Sheet("Sample cell – PETG-CF, solid 3D print (both variants)", "E7-V03", "1 : 1", 3, TOTAL,
-               "print upright in one piece; hoop direction = layer direction; foot rests on the pedestal, not bolted")
-    v = View(sh, 120, 112, 1.0)
-    h = TUBE_TOP - Z_S0
-    for s_ in (-1, 1):
-        v.rect(s_ * R_IN, 0, s_ * R_OUT, h, fc=PETG, hatch="\\\\\\\\")
-        v.rect(s_ * R_OUT, 0, s_ * R_FOOT, p.CELL_FOOT_T, fc=PETG, hatch="\\\\\\\\")
-        v.poly([(s_ * R_OUT, p.CELL_FOOT_T), (s_ * (R_OUT + 4), p.CELL_FOOT_T), (s_ * R_OUT, p.CELL_FOOT_T + 4)],
-               fc=PETG, lw=THIN)
-        v.rect(s_ * (R_IN - p.LINER), 0, s_ * R_IN, h, fc="white", lw=0.4)
-    # thermistor bosses (revolved into the section; true angles on view F)
-    for d, ang in WALL_TH:
-        s_ = 1 if math.cos(math.radians(ang)) >= 0 else -1
-        z = p.H_SAMPLE - d
-        v.rect(s_ * R_OUT, z - 5, s_ * (R_OUT + 8), z + 5, fc=PETG, lw=THIN)
-        v.rect(s_ * R_IN, z - 0.85, s_ * (R_OUT + 8), z + 0.85, fc="white", lw=THIN)
-        v.text(s_ * (R_OUT + 10), z, f"T  d{d} / {ang}°", fontsize=FS_SMALL - 0.5, va="center",
-               ha="left" if s_ > 0 else "right", color=RED)
-    # wall pressure-sensor holders PW1–3
-    for tag_, d, ang in p.PWALL:
-        s_ = 1 if math.cos(math.radians(ang)) >= 0 else -1
-        z = p.H_SAMPLE - d
-        v.rect(s_ * R_OUT, z - 6, s_ * (R_OUT + 8), z + 6, fc=PETG, lw=THIN)
-        v.rect(s_ * (R_IN - p.LINER), z - p.PWALL_D / 2, s_ * (R_OUT + 8), z + p.PWALL_D / 2, fc=PCOL, lw=THIN)
-        v.text(s_ * (R_OUT + 10), z, f"{tag_}  d{d:g} / {ang:g}°", fontsize=FS_SMALL - 0.5, va="center",
-               ha="left" if s_ > 0 else "right", color=PCOL, weight="bold")
-    v.axis_line([(0, -5), (0, h + 8)])
-    v.dim_h(-R_IN, R_IN, h, h + 8, "⌀101 (printed, reamed) → ⌀100 with liner")
-    v.dim_h(-R_OUT, R_OUT, h, h + 18, "⌀117")
-    v.dim_h(-R_FOOT, R_FOOT, 0, -8, "⌀150 foot", side="below")
-    v.dim_v(0, h, R_FOOT, R_FOOT + 10, f"{h:g}")
-    v.dim_v(0, p.CELL_FOOT_T, R_FOOT, R_FOOT + 4, f"{p.CELL_FOOT_T:g}")
-    v.dim_v(h - 25, h, -R_FOOT, -R_FOOT - 6, "25")
-    v.note(-R_IN + 0.25, 72, "PTFE film 0.5 mm, butt seam at 180°,\nsilicone grease; cut-outs ⌀8 at PW1–3", -98, 140,
-           ha="left")
-    v.note(R_OUT + 8, 10, "boss 8×10, ⌀1.7 hole for 109SS\n(45° chamfer below)", 95, -10, ha="left")
-    v.note(-R_OUT - 2, p.CELL_FOOT_T + 2, "fillet R4 (no notch)", -98, -7, ha="left")
-    v.note(R_IN - 10, h - 12, "25 free height above the sample:\npiston (A) / top plate (B)", 95, 140, ha="left")
-    f = View(sh, 205, 52, 0.42, "VIEW F – cell from above  1 : 2.4", (205, 94))
-    f.circle(0, 0, R_FOOT, fc="#eef0f2", lw=THIN)
-    f.circle(0, 0, R_OUT, fc=PETG, lw=THIN)
-    f.circle(0, 0, R_IN, fc="white", lw=THIN)
-    for d, ang in WALL_TH:
-        c, s2 = math.cos(math.radians(ang)), math.sin(math.radians(ang))
-        f.line([(R_OUT * c, R_OUT * s2), ((R_OUT + 8) * c, (R_OUT + 8) * s2)], lw=2.6, c=PETG)
-        f.line([(p.T_TIP_R * c, p.T_TIP_R * s2), ((R_OUT + 16) * c, (R_OUT + 16) * s2)], lw=0.7, c=RED)
-    for tag_, d, ang in p.PWALL:
-        c, s2 = math.cos(math.radians(ang)), math.sin(math.radians(ang))
-        f.circle((R_OUT + 3) * c, (R_OUT + 3) * s2, 5, fc=PCOL, lw=THIN)
-    c, s2 = math.cos(math.radians(p.M_ANG)), math.sin(math.radians(p.M_ANG))
-    f.line([(R_OUT * c, R_OUT * s2), ((R_OUT + p.M_BOSS[2]) * c, (R_OUT + p.M_BOSS[2]) * s2)], lw=8, c=TDRC)
-    f.text((R_OUT + 20) * c, (R_OUT + 20) * s2, "M", fontsize=FS_SMALL, color="#d33682", ha="center",
-           va="center", weight="bold")
-    sh.text(85, 88, f"DETAIL M – sensor port, plan at depth {p.M_DEPTH:g} mm (angle {p.M_ANG:g}°)  1 : 1",
-            fontsize=FS + 0.5, weight="bold", ha="center")
-    m_plan(View(sh, 35, 58, 1.0))
-    sh.text(205, 20, "red = thermistors T1–T5 at 0/72/144/216/288°, tip r 40;\nblue = PW1–3 at 30/150/270°; green = point M at 108°",
-            fontsize=FS_SMALL - 0.5, ha="center", va="top")
-    sh.heading(255, 276, "Material check – PETG-CF")
-    rows = [["hoop: A 25 kPa surcharge, K0 = 1", "0.16 MPa", "> 250", "> 75"],
-            ["hoop: B ice on the wall 200 kPa (upper est.)", "1.3 MPa", "32–44", "9–13"],
-            ["hoop: extreme 1 MPa", "6.3 MPa", "6–9", "1.9–2.6"],
-            ["axial (across layers): friction, A 25 kPa", "< 0.05 MPa", "> 300", "> 90"]]
-    table(sh, 255, 272, ["load case", "stress", "SF short", "SF long"], rows, [66, 22, 20, 20], row_h=4.6)
-    sh.text(255, 246,
-            "Assumed strength (data-sheet range, verify): XY 40–55 MPa, Z 15–30 MPa,\n"
-            "E 3–6 GPa; long-term limit ≈ 30 % (creep, layer bond). Details: vypocty.md §5.\n"
-            "\n"
-            "Verdict: suitable for both variants as a solid print (no sleeve needed).\n"
-            "\n"
-            "Wall friction (the price of a solid cell, vypocty.md §5)\n"
-            "• A: friction carries part of the surcharge into the wall; with the PTFE liner\n"
-            "  + grease (μ ≈ 0.05) the vertical stress at the base is ≈ 90 % of the top,\n"
-            "  without the liner (μ ≈ 0.5) only ≈ 30–45 % → compare PV1 / PB1 with it.\n"
-            "• B: friction and ice adhesion hold back heave of the frozen top layer;\n"
-            "  PTFE has very low ice adhesion – liner and grease are mandatory.\n"
-            "\n"
-            "Conditions\n"
-            "• wall 8 mm, concentric perimeters only, 100 % infill;\n"
-            "• no printed threads or sharp notches (CF lowers toughness at −10 °C);\n"
-            "• inside sealed with a thin epoxy coat before the liner goes in;\n"
-            "• cell not clamped at the foot – friction then pushes, never pulls layers.\n"
-            "\n"
-            "Print settings (starting point)\n"
-            "hardened nozzle 0.6 mm, layer 0.2 mm, 250–260 °C, bed 80 °C, slow outer\n"
-            "walls, filament dried 4 h at 65 °C, enclosure, part cooling ≤ 30 %.\n"
-            "Print upright, bosses with 45° chamfer underneath (no supports).\n"
-            "\n"
-            "Qualification before use\n"
-            "1  10 freeze–thaw cycles −10/+10 °C of water-saturated coupons, then\n"
-            "   tensile test XY and Z vs. dry control;\n"
-            "2  bore check ⌀101 ± 0.1 at 3 heights, at +20 and −10 °C.",
-            fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.save(pdf, os.path.join(OUT, "E7-V03_cell_PETG-CF.png"))
-
-
-def sheet_frame(pdf):
-    sh = Sheet("Frame A (aluminium profiles) and Invar stand B", "E7-V04", "1 : 4", 4, TOTAL,
-               "frame A only guides the weights; stand B is only a displacement reference – neither carries load")
-    k = 0.25
-    zb = p.FRAME_H_A
-    v = View(sh, 80, 70, k, "A – FRONT VIEW  1 : 4", (80, 210))
-    frame(v, z_beam=zb, beam_h=p.BEAM_H_A)
-    v.rect(-R_INS, Z_S0, R_INS, TUBE_TOP, fc="none", lw=THIN, ls="--")
-    v.rect(-p.DW_D / 2, Z_BALL + 22, p.DW_D / 2, Z_BALL + 158, fc="none", lw=THIN, ls="--")
-    v.dim_h(-p.BASE_W / 2, p.BASE_W / 2, -p.BASE_T, -p.BASE_T - 60, f"{p.BASE_W:g}", side="below")
-    v.dim_h(-X_COL, X_COL, zb + p.BEAM_H_A, zb + p.BEAM_H_A + 40, f"{p.COL_SPAN:g}")
-    v.dim_v(0, zb, -X_COL - 20, -X_COL - 60, f"{zb:g}")
-    v.dim_v(-p.BASE_T, zb + p.BEAM_H_A, 150, 200, f"{zb + p.BEAM_H_A + p.BASE_T:g}")
-    b = View(sh, 190, 70, k, "B – FRONT VIEW  1 : 4", (190, 210))
-    hb = p.BASE_W / 2
-    b.rect(-hb, -p.BASE_T, hb, 0, fc=METAL, hatch="////")
-    for xf in (-hb + 20, hb - 20):
-        b.rect(xf - 8, -p.BASE_T - 18, xf + 8, -p.BASE_T, fc=STEEL, lw=THIN)
-    for x in (-p.STAND_R, p.STAND_R * math.cos(math.radians(60))):
-        b.rect(x - 6, 0, x + 6, p.Z_BRIDGE, fc=INVAR, lw=THIN, alpha=0.8)
-    b.rect(-p.BRIDGE_D / 2, p.Z_BRIDGE, p.BRIDGE_D / 2, p.Z_BRIDGE + p.BRIDGE_T, fc=METAL, lw=THIN, hatch="////")
-    b.rect(-R_INS, Z_S0, R_INS, TUBE_TOP, fc="none", lw=THIN, ls="--")
-    for x in (-42, -22, 6, 22, 42):
-        b.rect(x - 5, Z_BODY0, x + 5, Z_BODY0 + BODY_L, fc=SENS, lw=THIN)
-    b.dim_h(-p.BASE_W / 2, p.BASE_W / 2, -p.BASE_T, -p.BASE_T - 60, f"{p.BASE_W:g}", side="below")
-    b.dim_v(0, p.Z_BRIDGE, -hb, -hb - 40, f"{p.Z_BRIDGE:g}")
-    b.dim_v(-p.BASE_T, Z_BODY0 + BODY_L, 150, 200, f"{Z_BODY0 + BODY_L + p.BASE_T:g}")
-    b.dim_h(-p.BRIDGE_D / 2, p.BRIDGE_D / 2, p.Z_BRIDGE + p.BRIDGE_T, Z_BODY0 + BODY_L + 30, f"⌀{p.BRIDGE_D:g}")
-    rows = [["1", "base plate Al 6082 T6 (A and B)", f"{p.BASE_W:g} × {p.BASE_D:g} × 25", "2"],
-            ["2", "A: profile 40×40 column", f"l = {p.FRAME_H_A:g}", "2"],
-            ["3", "A: profile 40×40 cross-bar", f"l = {p.COL_SPAN + 40:g}", "1"],
-            ["4", "A: linear ball bushing ⌀16 in cross-bar", "", "1"],
-            ["5", "A: Invar post ⌀10 + clamp arm (LVDT)", f"l ≈ 300", "2"],
-            ["6", f"B: Invar post ⌀{p.STAND_POST_D:g}, M6 both ends", f"l = {p.Z_BRIDGE:g}", "3"],
-            ["7", f"B: Al bridge ⌀{p.BRIDGE_D:g}×{p.BRIDGE_T:g}, 6 LVDT clamps", "", "1"],
-            ["8", "core bolt M8 / socket screw M8", "", "8"],
-            ["9", "levelling foot M12, steel", "", "6"]]
-    sh.heading(255, 276, "Bill of materials")
-    table(sh, 255, 272, ["#", "part", "size", "qty"], rows, [8, 80, 30, 12], row_h=4.6)
-    sh.text(255, 222,
-            "Frame A: carries nothing except the guide of the weight rod (bushing)\n"
-            "and the LVDT posts; the surcharge goes straight down through the sample.\n"
-            "\n"
-            "Stand B: three Invar posts screwed into the base plate at r 100\n"
-            "(60/180/300°, outside the insulation), bridge on top with split clamps\n"
-            "for 5 LVDTs (+1 spare). The bridge is lifted off to fill the cell.\n"
-            "Reference error of the stand ≈ 50 µm per 20 K (Al pedestal vs. Invar)\n"
-            "→ blank run with an Al dummy sample (vypocty.md §4).\n"
-            "\n"
-            f"Heights incl. base plate: A {zb + p.BEAM_H_A + p.BASE_T:g} mm (+ guide rod), "
-            f"B {Z_BODY0 + BODY_L + p.BASE_T:g} mm;\n"
-            "two rigs side by side on the tray – layout on E7-V06.",
-            fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.save(pdf, os.path.join(OUT, "E7-V04_frame.png"))
 
 # ---------------------------------------------------------------------------
 # simplified schemes (variant A and B)
@@ -460,67 +308,6 @@ def legend(sh, rows, y0=276):
                  [27, 36, 50, 37], row_h=5.2)
 
 
-def sheet_a_simple(pdf):
-    sh = Sheet("Variant A – unsaturated sand, dead-weight surcharge ≤ 25 kPa", "E7-V01", "≈ 1 : 3", 1,
-               TOTAL, "schematic; orange = displacement, blue = pressure, red = temperature; "
-               "cells and LVDTs revolved into section")
-    v = View(sh, 105, 68, 1 / 3)
-    z_lc, (zg, zc, ztop), zb = simple_rig(v, "A")
-    temp_points(v, "A", z_lc)
-    v.circle(60, (zc + ztop) / 2, 2.0, fc=TCOL, lw=0)
-    v.text(64, (zc + ztop) / 2, "Tw", fontsize=FS_SMALL, color=TCOL, va="center", weight="bold",
-           bbox=dict(fc="white", ec="none", pad=0.3))
-    tag(v, 0, (zc + ztop) / 2 + 15, 135, ztop + 25,
-        f"steel discs ⌀{p.DW_D:g}: 3 × {p.DW_FULL_T:g} + 1 × {p.DW_HALF_T:g} mm\n"
-        f"= 20 kg incl. piston → 25 kPa", INK)
-    tag(v, -60, zc + 5, -150, zc + 40, "carrier plate ⌀150 + guide rod ⌀16", INK)
-    tag(v, 0, zb + 20, 135, zb + 55, "linear ball bushing in light\ncross-bar 40×40 (guide only)", INK)
-    tag(v, -20, zg + 5, -150, zg - 10, "G10 thermal break ⌀60×10", INK)
-    tag(v, p.DW_D / 2 + 10, ztop - 20, 135, ztop - 45, "insulation wrap 10 (optional)", INK)
-    tag(v, p.LVDT_R, z_lc + 25, 135, z_lc - 30, "LVDT-1, -2 at ±y (on target tabs)", SENS_TXT)
-    tag(v, -(p.LVDT_R + 8), 60, -150, 200, "Invar reference", INVAR)
-    tag(v, -R_IN - 4, Z_S0 + 50, -150, 160, "cell PETG-CF, solid print\n+ PTFE liner 0.5 + grease", INK)
-    tag(v, -R_INS + 5, Z_S0 + 20, -150, 100, "insulation Kaiflex 25", INK)
-    tag(v, -25, Z_S1 - p.M_DEPTH, -150, 130, f"M: TDR + Pt100 + FBG at one point\n(depth {p.M_DEPTH:g}, r ≈ 25, 108°)", "#d33682")
-    tag(v, -60, Z_G10 + 5, -150, 40, "G10 thermal break", INK)
-    tag(v, 0, -12, 60, -45, f"light frame: Al 40×40, columns {p.FRAME_H_A:g}", INK)
-    rows = [["PV1 / PH1", "vert. / radial stress", sn.PICK["PC"][1], sn.PICK["PC"][3]],
-            ["PB1", "vertical stress at base", sn.PICK["PW"][1], sn.PICK["PW"][3]],
-            ["PW1…PW3", "lateral stress on wall", sn.PICK["PW"][1], sn.PICK["PW"][3]],
-            ["LVDT-1,2", "check: no movement", sn.PICK["LVDT"][1], sn.PICK["LVDT"][3]],
-            ["T1…T5", "soil, r 40 mm", sn.PICK["T"][1], sn.PICK["T"][3]],
-            ["M: TDR", "water / unfrozen water", sn.PICK["TDR"][1], sn.PICK["TDR"][3]],
-            ["M: Pt100", "reference temperature", sn.PICK["PT100"][1], sn.PICK["PT100"][3]],
-            ["M: FBG", "optical temperature", sn.PICK["FBG"][1], sn.PICK["FBG"][3]],
-            ["Ttop, Tbot, Tw", "piston, pedestal, weights", sn.PICK["T"][1], "(same)"],
-            ["Tframe, Tair", "frame, air", sn.PICK["TX"][1], sn.PICK["TX"][3]]]
-    y = legend(sh, rows)
-    A_ = math.pi * 2500
-    disc = lambda t: math.pi / 4 * ((p.DW_D / 1000) ** 2 - (p.DW_HOLE / 1000) ** 2) * t / 1000 * p.RHO_STEEL
-    m_fixed = (p.PISTON_ASSY_KG + math.pi / 4 * (p.DW_D / 1000) ** 2 * p.DW_CARRIER_T / 1000 * p.RHO_STEEL
-               + math.pi / 4 * (p.DW_ROD_D / 1000) ** 2 * p.DW_ROD_L / 1000 * p.RHO_STEEL)
-    mrows = []
-    for s_ in p.SURCHARGES_KPA:
-        m = s_ * A_ / 1000 / 9.81
-        rest = m - m_fixed
-        n_f = int(rest // disc(p.DW_FULL_T)); rest -= n_f * disc(p.DW_FULL_T)
-        n_h = int(rest // disc(p.DW_HALF_T)); rest -= n_h * disc(p.DW_HALF_T)
-        mrows.append([f"{s_}", f"{m:.1f}", f"{n_f}", f"{n_h}", f"{rest:.2f}"])
-    y = table(sh, 255, y - 4, ["σ kPa", "total kg", "full discs", "half discs", "trim kg"], mrows,
-              [22, 26, 26, 26, 26], row_h=4.6)
-    sh.text(255, y - 3,
-            "How it works\n"
-            f"Gravity gives an exactly constant surcharge; fixed part ≈ {m_fixed:.1f} kg ≈ "
-            f"{m_fixed * 9.81 / A_ * 1000:.1f} kPa (piston, carrier, rod).\n"
-            "No load cell, no adjustment; the frame only guides the rod and carries the LVDTs.\n"
-            "Weights lag the freezer air by ≈ 0.6 K at the 0.1 K/h ramp (vypocty.md §7).",
-            fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.text(330, 143, "DETAIL – sand, pressure sensors, thermistors  ≈ 1 : 1.6", fontsize=FS + 0.5,
-            weight="bold", ha="center")
-    cell_detail(sh, 330, 16, 0.62)
-    sh.save(pdf, os.path.join(OUT, "E7-V01_variant_A_scheme.png"))
-
-
 # --- variant B: same sample, no load, displacement + layer strain --------------------
 Z_TP = Z_S1 + p.TOP_PLATE_T                    # top of the light top plate
 Z_BR = p.Z_BRIDGE
@@ -649,7 +436,7 @@ def anchor_detail(sh, ox, oy, k):
 
 
 def _sheet_b_simple(pdf):
-    sh = Sheet("Variant B – same sample, no load: heave and layer strain", "E7-V02", "≈ 1 : 2", 2,
+    sh = Sheet("Variant B – same sample, no load: heave and layer strain", "E7-V05", "≈ 1 : 2", 5,
                TOTAL, "orange = displacement, red = temperature, violet = Invar; revolved section")
     v = View(sh, 118, 62, 0.48)
     rig_b(v)
@@ -661,7 +448,7 @@ def _sheet_b_simple(pdf):
     tag(v, 30, Z_S1 + 3, 150, Z_S1 + 45, "top plate PETG-CF ⌀99×6\n≈ 65 g ≈ 0.08 kPa", INK)
     tag(v, X_E["E2"], Z_S1 - 50, 150, Z_S1 + 5, "anchor ⌀16 + Invar rod ⌀2\nin PTFE sleeve", INK)
     tag(v, -10, Z_S1 - 45, 150, Z_S1 - 40, "M: CS645 + fibre + Pt100\n(as in A, depth 36–54)", "#d33682")
-    tag(v, p.BODY_D / 2 - 5, Z_S0 + 15, 150, Z_S0 - 15, "printed cell ⌀160 (V09)", INK)
+    tag(v, p.BODY_D / 2 - 5, Z_S0 + 15, 150, Z_S0 - 15, "printed cell ⌀160 (V04)", INK)
     tag(v, 0, zb - 12, 150, zb - 45, "Al base plate 260×200×20", INK)
     rows = [["S1…S3", "surface heave", sn.PICK["LVDT-B"][1], "SE3–5"],
             ["E1…E3", "anchors 25/50/75", sn.PICK["LVDT-B"][1], "SE6–8"],
@@ -689,7 +476,7 @@ def _sheet_b_simple(pdf):
     plate_plan(pv)
     sh.text(386, 80, "S = surface LVDT (r 40)\nE = anchor (r 25)\nyellow = Pt100, green = port\n"
             "violet = Invar posts", fontsize=FS_SMALL - 0.5, ha="center", va="top", linespacing=1.4)
-    sh.save(pdf, os.path.join(OUT, "E7-V02_variant_B_scheme.png"))
+    sh.save(pdf, os.path.join(OUT, "E7-V05_variant_B_scheme.png"))
 
 
 def sheet_b_simple(pdf):
@@ -699,8 +486,8 @@ def sheet_b_simple(pdf):
 
 # --- variant A-min: maximally simplified A --------------------------------------------
 def _sheet_a_min(pdf):
-    sh = Sheet("Variant A-min – fixed lid on 3 tie rods", "E7-V07",
-               "≈ 1 : 2.2", 7, TOTAL, "blue = pressure, red = temperature, magenta = point M")
+    sh = Sheet("Variant A-min – fixed lid on 3 tie rods", "E7-V02",
+               "≈ 1 : 2.2", 2, TOTAL, "blue = pressure, red = temperature, magenta = point M")
     v = View(sh, 112, 40, 0.5)
     bw, bd, _ = p.AM_BASE
     bt = p.AM_BASE_T2
@@ -756,7 +543,7 @@ def _sheet_a_min(pdf):
     tag(v, 60, zb0 - 10, 150, zb0 - 45, f"Al base plate {bw:g}×{bd:g}×{bt:g}", INK)
     # labels (left)
     tag(v, xpost, z_arm - 60, -128, z_arm - 40, "stainless post ⌀12", INK)
-    tag(v, -R_IN - 4, Z_S0 + 50, -118, Z_S0 + 40, "printed cell ⌀160\n(V09)", INK)
+    tag(v, -R_IN - 4, Z_S0 + 50, -118, Z_S0 + 40, "printed cell ⌀160\n(V04)", INK)
     v.dim_v(zb0 - bt, zl1, 125, 135, f"{zl1 - zb0 + bt:.0f}")
     # table
     sh.heading(255, 276, "To buy – type, quantity, price (EUR excl. VAT, ≈)")
@@ -792,7 +579,7 @@ def _sheet_a_min(pdf):
             "Removed vs. variant A: frame, weights, carrier, ball, Invar posts, 2nd LVDT,\n"
             "4 of 6 pressure cells, porous stones, pedestal, both multiplexers.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.save(pdf, os.path.join(OUT, "E7-V07_variant_A_min.png"))
+    sh.save(pdf, os.path.join(OUT, "E7-V02_variant_A_min.png"))
 
 
 def sheet_a_min(pdf):
@@ -822,10 +609,8 @@ class bigger_fonts:
         drafting.FS, drafting.FS_SMALL, g["FS"], g["FS_SMALL"] = self.old
 
 
-def _sheet_a_frame(pdf):
-    sh = Sheet("Variant A-frame – piston fixed by an Al frame", "E7-V08", "≈ 1 : 2.2", 8,
-               TOTAL, "blue = pressure, red = temperature, magenta = point M; dashed = behind")
-    v = View(sh, 122, 44, 0.45)
+def draw_a_frame(v):
+    """Elevation of variant A-frame (no labels); returns the key coordinates."""
     bw, bd, bt = p.AF_BASE
     zb0 = Z_S0 - p.AM_BOTTOM_T - p.AM_G10_T          # top of the base plate
     zbeam = zb0 + p.AF_COL_H
@@ -868,6 +653,54 @@ def _sheet_a_frame(pdf):
     v.line([(x_l + 6, zp + 55), (86, zp + 55), (86, zb0)], lw=THIN, ls=(0, (4, 2)), c=STEEL)
     v.circle(-xc - 60, Z_S1 + 70, 2.0, fc=TCOL, lw=0)
     v.text(-xc - 60, Z_S1 + 77, "Tair", fontsize=FS_SMALL, color=TCOL, ha="center")
+    return bw, bd, bt, zb0, zbeam, xc, zp, r_sp, z_pom0, x_l
+
+
+def draw_b_open(v):
+    """Elevation of variant B-open (no labels); returns the key coordinates."""
+    bw, bd, bt = p.BC_BASE
+    zb = Z_S0 - p.BODY_BOTTOM
+    rb, rc = p.BODY_D / 2, p.COLLAR_OD / 2
+    v.rect(-rb - 20, zb - bt, -rb - 20 + bw, zb, fc=METAL, hatch="////")
+    cup_cell(v)
+    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
+    m_section_a(v, labels=True, cable_up=True)
+    v.line([(-p.D_SAMPLE / 2, Z_S1 + 0.3), (p.D_SAMPLE / 2, Z_S1 + 0.3)], lw=1.4, c="#4a90d9", z=4.5)
+    z_c = zb + p.COLLAR_TOP
+    zcam = Z_S1 + p.BL_CAM_H
+    bx, by, bz = 70.0, 70.0, 80.0
+    # bracket: post on the base plate + arm over the cell
+    xpost = rb + 50
+    v.rect(xpost, zb, xpost + 20, zcam + bz / 2 + 20, fc="#d9dde1", lw=THIN)
+    v.rect(-bx / 2 - 10, zcam + bz / 2 + 20, xpost + 20, zcam + bz / 2 + 40, fc="#d9dde1", lw=THIN)
+    # camera box above the axis
+    v.rect(-bx / 2, zcam - bz / 2, bx / 2, zcam + bz / 2 + 20, fc="#f3e7c9", lw=THICK, hatch="..")
+    v.rect(-15, zcam - 10, 15, zcam + 30, fc="#2f3b45", lw=THIN, z=4)
+    v.rect(-12, zcam - bz / 2 + 2, 12, zcam - 10, fc="#555", lw=THIN, z=4)
+    v.rect(-14, zcam - bz / 2 - 2, 14, zcam - bz / 2, fc="#bfe3f5", lw=THIN, z=4.2)
+    # field of view
+    for s_ in (-1, 1):
+        v.line([(s_ * 12, zcam - bz / 2), (s_ * 58, z_c)], lw=0.5, c="#2b62a3", ls="--")
+    # laser (on the arm, at 45° to the surface centre)
+    xl = p.BL_LASER_X
+    zl = Z_S1 + p.BL_LASER_X / math.tan(math.radians(p.BL_LASER_ANG))
+    v.rect(xl - 8, zl - 8, xl + 8, zl + 8, fc="#c0392b", lw=THIN, z=4)
+    v.line([(xl - 6, zl - 6), (0, Z_S1)], lw=1.2, c="#e74c3c", z=4.6)
+    v.line([(0, Z_S1), (-8, Z_S1 + 8)], lw=0.4, c="#e74c3c", ls=":")
+    # heave shift illustration
+    dh = 10.0
+    v.line([(-p.D_SAMPLE / 2, Z_S1 + dh), (p.D_SAMPLE / 2, Z_S1 + dh)], lw=0.6, c="#4a90d9", ls="--", z=4.5)
+    v.line([(xl - 6, zl - 6), (dh, Z_S1 + dh)], lw=0.6, c="#e74c3c", ls="--", z=4.6)
+    v.dim_h(0, dh, Z_S1 + dh, Z_S1 + dh + 8, "Δx = Δh")
+    return bw, bd, bt, zb, rb, rc, z_c, zcam, xl, zl, xpost
+
+
+def _sheet_a_frame(pdf):
+    sh = Sheet("Variant A-frame – piston fixed by an Al frame", "E7-V03", "≈ 1 : 2.2", 3,
+               TOTAL, "blue = pressure, red = temperature, magenta = point M; dashed = behind")
+    v = View(sh, 122, 44, 0.45)
+    bw, bd, bt, zb0, zbeam, xc, zp, r_sp, z_pom0, x_l = draw_a_frame(v)
+    rb = p.AM_PB[1]
     # labels right
     tag(v, 0, zbeam + p.AF_BEAM_H + 25, 150, zbeam + p.AF_BEAM_H + 45,
         "screw M16×1.5 + lock nut", INK)
@@ -882,7 +715,7 @@ def _sheet_a_frame(pdf):
     tag(v, 80, zb0 - 12, 150, zb0 - 50, f"Al base plate {bw:g}×{bd:g}×{bt:g}", INK)
     # labels left
     tag(v, -xc, zbeam - 40, -150, zbeam - 30, f"columns 40×80 × {p.AF_COL_H:g}", INK)
-    tag(v, -R_IN - 4, Z_S0 + 50, -150, Z_S0 + 40, "printed cell ⌀160\n(V09)", INK)
+    tag(v, -R_IN - 4, Z_S0 + 50, -150, Z_S0 + 40, "printed cell ⌀160\n(V04)", INK)
     v.dim_v(zb0 - bt, zbeam + p.AF_BEAM_H, -xc - 30, -xc - 40, f"{p.AF_COL_H + p.AF_BEAM_H + bt:g}")
     v.dim_h(-xc, xc, zbeam + p.AF_BEAM_H, zbeam + p.AF_BEAM_H + 60, f"{p.COL_SPAN:g}")
     # right panel
@@ -893,7 +726,7 @@ def _sheet_a_frame(pdf):
             ["access to the sample", "open sides, screw from top", "lid must be removed"],
             ["mechanics, EUR (≈)", "≈ 375–760", "≈ 330–670"],
             ["sensors to buy, EUR (≈)", "2 360–3 440 (same)", "2 360–3 440"]]
-    y = table(sh, 255, 272, ["", "A-frame (this sheet)", "A-min (E7-V07)"], rows, [46, 58, 51], row_h=5.8)
+    y = table(sh, 255, 272, ["", "A-frame (this sheet)", "A-min (E7-V02)"], rows, [46, 58, 51], row_h=5.8)
     sh.heading(255, y - 9, "To buy (same sensors as A-min)")
     rows = []
     for tg_, what, typ, n, a, b, src, ch in sn.A_MIN_SENSORS:
@@ -913,7 +746,7 @@ def _sheet_a_frame(pdf):
             "  the stack back (Δ ≈ 1 µm per 20 K), blank run with an Al dummy confirms it.\n"
             "Details: vypocty.md §10.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.save(pdf, os.path.join(OUT, "E7-V08_variant_A_frame.png"))
+    sh.save(pdf, os.path.join(OUT, "E7-V03_variant_A_frame.png"))
 
 
 def sheet_a_frame(pdf):
@@ -922,7 +755,7 @@ def sheet_a_frame(pdf):
 
 
 def _sheet_cup(pdf):
-    sh = Sheet("Cell A – printed body ⌀160 (Column_one_body_version_1)", "E7-V09", "1 : 1.25", 9, TOTAL,
+    sh = Sheet("Cell A – printed body ⌀160 (Column_one_body_version_1)", "E7-V04", "1 : 1.25", 4, TOTAL,
                "per drawing M. Vrána 23.06.2026 + sensor sketch; z = 0 at the underside")
     rb, rc, ri, w = p.BODY_D / 2, p.COLLAR_OD / 2, p.CAV_D / 2, p.CUP_WALL_IN
     H, Hc, tb, zs = p.BODY_H, p.COLLAR_TOP, p.BODY_BOTTOM, p.SAND_TOP
@@ -1019,7 +852,7 @@ def _sheet_cup(pdf):
             "  ≈ 3 MPa hoop stress at 200 kPa, ≈ 17 MPa at 1 MPa\n"
             "• epoxy coat + PTFE spray + silicone grease inside the cavity",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.save(pdf, os.path.join(OUT, "E7-V09_cup_A.png"))
+    sh.save(pdf, os.path.join(OUT, "E7-V04_cup_A.png"))
 
 
 def sheet_cup(pdf):
@@ -1028,50 +861,17 @@ def sheet_cup(pdf):
 
 
 def _sheet_b_open(pdf):
-    sh = Sheet("Variant B-open – open surface, laser line + camera", "E7-V10", "≈ 1 : 2.5", 10, TOTAL,
+    sh = Sheet("Variant B-open – open surface, laser line + camera", "E7-V06", "≈ 1 : 2.5", 6, TOTAL,
                "nothing on the sand: camera above, laser at 45°, rim = reference")
     v = View(sh, 112, 42, 0.42)
-    bw, bd, bt = p.BC_BASE
-    zb = Z_S0 - p.BODY_BOTTOM
-    rb, rc = p.BODY_D / 2, p.COLLAR_OD / 2
-    v.rect(-rb - 20, zb - bt, -rb - 20 + bw, zb, fc=METAL, hatch="////")
-    cup_cell(v)
-    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
-    m_section_a(v, labels=True, cable_up=True)
-    v.line([(-p.D_SAMPLE / 2, Z_S1 + 0.3), (p.D_SAMPLE / 2, Z_S1 + 0.3)], lw=1.4, c="#4a90d9", z=4.5)
-    z_c = zb + p.COLLAR_TOP
-    zcam = Z_S1 + p.BL_CAM_H
-    bx, by, bz = 70.0, 70.0, 80.0
-    # bracket: post on the base plate + arm over the cell
-    xpost = rb + 50
-    v.rect(xpost, zb, xpost + 20, zcam + bz / 2 + 20, fc="#d9dde1", lw=THIN)
-    v.rect(-bx / 2 - 10, zcam + bz / 2 + 20, xpost + 20, zcam + bz / 2 + 40, fc="#d9dde1", lw=THIN)
-    # camera box above the axis
-    v.rect(-bx / 2, zcam - bz / 2, bx / 2, zcam + bz / 2 + 20, fc="#f3e7c9", lw=THICK, hatch="..")
-    v.rect(-15, zcam - 10, 15, zcam + 30, fc="#2f3b45", lw=THIN, z=4)
-    v.rect(-12, zcam - bz / 2 + 2, 12, zcam - 10, fc="#555", lw=THIN, z=4)
-    v.rect(-14, zcam - bz / 2 - 2, 14, zcam - bz / 2, fc="#bfe3f5", lw=THIN, z=4.2)
-    # field of view
-    for s_ in (-1, 1):
-        v.line([(s_ * 12, zcam - bz / 2), (s_ * 58, z_c)], lw=0.5, c="#2b62a3", ls="--")
-    # laser (on the arm, at 45° to the surface centre)
-    xl = p.BL_LASER_X
-    zl = Z_S1 + p.BL_LASER_X / math.tan(math.radians(p.BL_LASER_ANG))
-    v.rect(xl - 8, zl - 8, xl + 8, zl + 8, fc="#c0392b", lw=THIN, z=4)
-    v.line([(xl - 6, zl - 6), (0, Z_S1)], lw=1.2, c="#e74c3c", z=4.6)
-    v.line([(0, Z_S1), (-8, Z_S1 + 8)], lw=0.4, c="#e74c3c", ls=":")
-    # heave shift illustration
-    dh = 10.0
-    v.line([(-p.D_SAMPLE / 2, Z_S1 + dh), (p.D_SAMPLE / 2, Z_S1 + dh)], lw=0.6, c="#4a90d9", ls="--", z=4.5)
-    v.line([(xl - 6, zl - 6), (dh, Z_S1 + dh)], lw=0.6, c="#e74c3c", ls="--", z=4.6)
-    v.dim_h(0, dh, Z_S1 + dh, Z_S1 + dh + 8, "Δx = Δh")
+    bw, bd, bt, zb, rb, rc, z_c, zcam, xl, zl, xpost = draw_b_open(v)
     tag(v, 0, zcam + 10, 150, zcam + 40, "Raspberry Pi HQ + 12 mm lens, looking down\n(heated box +5 °C, double window)", INK)
     tag(v, xl, zl, 150, zl - 10, "line laser 650 nm, 45° from vertical", "#c0392b")
     tag(v, 30, Z_S1 + 0.3, 150, Z_S1 - 25, "OPEN sand surface – nothing on it", "#2b62a3")
     tag(v, rc - 2, z_c, 150, z_c + 15, "collar rim = reference (laser line in the same image)", INK)
     tag(v, xpost + 10, zb + 40, 150, zb + 20, "post + arm on the base plate", INK)
     tag(v, -10, Z_S1 - 45, -110, Z_S1 - 75, "M: CS645 + fibre\n+ Pt100 (existing)", "#d33682")
-    tag(v, -rb + 5, Z_S0 + 20, -110, Z_S0 - 15, "printed cell ⌀160 (V09)", INK)
+    tag(v, -rb + 5, Z_S0 + 20, -110, Z_S0 - 15, "printed cell ⌀160 (V04)", INK)
     tag(v, -rb, zb - 5, -110, zb - 40, f"Al plate {bw:g}×{bd:g}×{bt:g}", INK)
     # camera view
     c = View(sh, 330, 108, 0.62, "CAMERA VIEW (from above, ≈ 115 mm field)", (330, 152))
@@ -1110,7 +910,7 @@ def _sheet_b_open(pdf):
             "Gives the whole surface profile; rim moves ≈ 120 µm / 20 K → blank run.\n"
             "Laser on only for the photo (every 10 min); clock synced with the CR1000.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.save(pdf, os.path.join(OUT, "E7-V10_variant_B_open.png"))
+    sh.save(pdf, os.path.join(OUT, "E7-V06_variant_B_open.png"))
 
 
 def sheet_b_open(pdf):
@@ -1118,137 +918,192 @@ def sheet_b_open(pdf):
         _sheet_b_open(pdf)
 
 
-def rig_plan(v, cx, cy, variant):
-    hb, hd = p.BASE_W / 2, p.BASE_D / 2
-    v.rect(cx - hb, cy - hd, cx + hb, cy + hd, fc=METAL, lw=THIN, z=2)
-    if variant == "A":
-        for s_ in (-1, 1):
-            v.rect(cx + s_ * X_COL - 20, cy - 20, cx + s_ * X_COL + 20, cy + 20, fc="#d9dde1", lw=THIN, z=2.1)
-    else:
-        v.circle(cx, cy, p.BRIDGE_D / 2, fc="none", ec=INK, lw=THIN, ls="--", z_=2.5)
-        for ang in p.STAND_ANG:
-            v.circle(cx + p.STAND_R * math.cos(math.radians(ang)), cy + p.STAND_R * math.sin(math.radians(ang)),
-                     p.STAND_POST_D / 2, fc=INVAR, lw=THIN, z_=2.6)
-    v.circle(cx, cy, R_INS, fc=INSUL, lw=THIN, z_=2.2)
-    v.circle(cx, cy, R_OUT, fc=PETG, lw=THIN, z_=2.3)
-    v.circle(cx, cy, p.D_SAMPLE / 2, fc="#e9dcb8", lw=THIN, z_=2.4)
-    v.text(cx, cy, variant, fontsize=FS + 2, weight="bold", ha="center", va="center", zorder=5)
-
-
-def sheet_layout(pdf):
-    sh = Sheet("Both rigs in the chest freezer + CR1000", "E7-V06", "1 : 5", 6, TOTAL,
-               "same freezer as E6 (inside ≈ 900 × 550 × 650, to be measured); logger outside")
-    k = 0.2
-    v = View(sh, 35, 160, k)
-    v.text(10, 530, "PLAN  1 : 5", fontsize=FS + 1, weight="bold", va="top")
-    v.rect(0, 0, p.FRZ_L, p.FRZ_W, fc="#f5f9fc", lw=THICK, z=1)
-    v.rect(50, 105, 50 + p.TRAY_L, 105 + p.TRAY_W, fc="#d6d9dc", lw=THIN, z=1.2)
-    v.rect(620, 15, 885, 535, fc="none", lw=THIN, ls="--", z=1.3)
-    v.text(752, 60, "floor step (if present)", fontsize=FS_SMALL - 1, ha="center")
-    rig_plan(v, 185, 275, "B")
-    rig_plan(v, 445, 275, "A")
-    v.circle(560, 460, 9, fc="white", ec=TCOL, lw=THIN, z_=3)
-    v.text(575, 460, "Tair", fontsize=FS_SMALL, color=TCOL, va="center")
-    v.rect(0, p.FRZ_W, p.FRZ_L, p.FRZ_W + 30, fc="#f3e3e1", ec=RED, lw=THIN, z=1)
-    for gx, lab in ((185, "G1"), (445, "G2"), (700, "G3")):
-        v.circle(gx, p.FRZ_W + 15, 8, fc="white", ec=RED, lw=THIN, z_=3)
-        v.text(gx + 12, p.FRZ_W + 15, lab, fontsize=FS_SMALL - 1, va="center", color=RED)
-    v.dim_h(50, 50 + p.TRAY_L, 105, 70, f"tray ≈ {p.TRAY_L:g} × {p.TRAY_W:g}", side="below")
-    v.dim_h(185 - p.BASE_W / 2, 185 + p.BASE_W / 2, 405, 470, f"{p.BASE_W:g}")
-    # elevation
-    e = View(sh, 35, 22, k)
-    e.text(10, 640, "ELEVATION  1 : 5", fontsize=FS + 1, weight="bold", va="top")
-    e.rect(0, 0, p.FRZ_L, p.FRZ_H, fc="#f5f9fc", lw=THICK, z=1)
-    e.line([(0, p.FRZ_H), (p.FRZ_L, p.FRZ_H)], lw=THICK, c=RED, ls="--")
-    e.text(p.FRZ_L - 5, p.FRZ_H - 8, "lid / collar", fontsize=FS_SMALL - 1, ha="right", va="top", color=RED)
-    e.rect(25, 0, 610, 20, fc="#3a3a3a", lw=0, z=1.2)
-    e.rect(50, 20, 580, 60, fc="none", lw=THIN, z=1.3)
-    e.rect(620, 0, 885, 230, fc="none", lw=THIN, ls="--", z=1.2)
-    zb = 60 + 18 + p.BASE_T
-    for cx, var in ((185, "B"), (445, "A")):
-        e.rect(cx - p.BASE_W / 2, zb - p.BASE_T, cx + p.BASE_W / 2, zb, fc=METAL, lw=THIN, z=2)
-        if var == "A":
-            hcol = p.FRAME_H_A
-            for s_ in (-1, 1):
-                e.rect(cx + s_ * X_COL - 20, zb, cx + s_ * X_COL + 20, zb + hcol, fc="#d9dde1", lw=THIN, z=2)
-            e.rect(cx - X_COL - 20, zb + hcol, cx + X_COL + 20, zb + hcol + p.BEAM_H_A, fc="#d9dde1", lw=THIN, z=2)
-            e.rect(cx - p.DW_D / 2, zb + 257, cx + p.DW_D / 2, zb + 383, fc="#8a8f96", lw=THIN, z=3)
-            e.rect(cx - 8, zb + 257, cx + 8, zb + 257 + p.DW_ROD_L, fc=STEEL, lw=THIN, z=3.1)
-        else:
-            for x in (-p.STAND_R, p.STAND_R / 2):
-                e.rect(cx + x - 6, zb, cx + x + 6, zb + p.Z_BRIDGE, fc=INVAR, lw=THIN, z=2)
-            e.rect(cx - p.BRIDGE_D / 2, zb + p.Z_BRIDGE, cx + p.BRIDGE_D / 2, zb + p.Z_BRIDGE + p.BRIDGE_T,
-                   fc=METAL, lw=THIN, z=2)
-            for x in (-42, -22, 6, 22, 42):
-                e.rect(cx + x - 5, zb + Z_BODY0, cx + x + 5, zb + Z_BODY0 + BODY_L, fc=SENS, lw=THIN, z=3)
-        e.rect(cx - R_INS, zb + Z_S0, cx + R_INS, zb + TUBE_TOP, fc=INSUL, lw=THIN, z=2.1)
-        e.text(cx, zb + 120, var, fontsize=FS + 2, weight="bold", ha="center", va="center", zorder=5)
-    top = max(zb + 257 + p.DW_ROD_L, zb + p.FRAME_H_A + p.BEAM_H_A)
-    e.dim_v(0, top, 445 + 75, 640, f"{top:.0f}")
-    e.dim_v(0, p.FRZ_H, p.FRZ_L, p.FRZ_L + 25, f"≈ {p.FRZ_H:g}")
-    # logger box outside
-    box_ = dict(boxstyle="round,pad=0,rounding_size=1.5")
-    sh.ax.add_patch(FancyBboxPatch((222, 185), 26, 70, fc="#f1eff7", ec=INK, lw=THIN, zorder=2, **box_))
-    sh.text(235, 250, "outside", fontsize=FS_SMALL - 1, ha="center", style="italic")
-    sh.text(235, 238, "CR1000\n+ AM16/32B\n+ 12 V\nbattery /\nmains", fontsize=FS_SMALL - 1, ha="center", va="top")
-    sh.ax.plot([35 + 185 * k, 35 + 185 * k, 222], [160 + (p.FRZ_W + 15) * k, 266, 266], c="#6a3d9a", lw=0.9)
-    sh.ax.plot([35 + 445 * k, 35 + 445 * k], [160 + (p.FRZ_W + 15) * k, 266], c="#6a3d9a", lw=0.9)
-    sh.ax.plot([235, 235], [266, 255], c="#6a3d9a", lw=0.9)
-    sh.text(150, 278.5, "sensor cables through the collar glands (no connectors on the cold side)",
-            fontsize=FS_SMALL - 1, color="#6a3d9a", ha="center", va="bottom")
-    sh.heading(255, 278, "Fit check")
-    rows = [["base plates 2 × 260 × 200", "520 × 200", "tray ≈ 530 × 340", "OK (tight)"],
-            ["rig A (weights)", "20 kg steel discs ⌀150", "nothing outside frame", "OK"],
-            ["rig B (stand)", f"{zb + Z_BODY0 + BODY_L:.0f} mm high", "no load, no frame", "OK"],
-            ["highest point", f"{top:.0f} mm", "inside ≈ 650", "OK, measure"],
-            ["logger", "outside, 0…+40 °C", "CR1000 −25…+50 °C", "keep warm & dry"]]
-    table(sh, 255, 274, ["item", "size", "limit", "status"], rows, [48, 32, 38, 32], row_h=5.0)
-    sh.text(255, 236,
-            "Notes\n"
-            "• Both rigs share the freezer program (Set A) and the CR1000; each rig has\n"
-            "  its own Tair sensor at sample mid-height.\n"
-            "• Same sand, same printed cell, same thermistors in A and B – the only\n"
-            "  difference is the load (A ≤ 25 kPa dead weight, B none).\n"
-            "• Run the blank test with Al dummies in both rigs before the first sand run.\n"
-            "• Dimensions marked ≈ are estimates from the photos (E6) – please measure.",
+# --- overview, sensors, freezer layout ---------------------------------------------------
+def _sheet_overview(pdf):
+    sh = Sheet("E7 – overview: variant A (fixed) and B (free, open surface)", "E7-V01", "≈ 1 : 3", 1, TOTAL,
+               "same sand, same printed cell ⌀160, same point M in both variants")
+    a = View(sh, 72, 52, 0.30)
+    bw, bd, bt, zb0, zbeam, xc, zp, r_sp, z_pom0, x_l = draw_a_frame(a)
+    a.text(0, zbeam + p.AF_BEAM_H + 70, "A – sample held fixed", fontsize=FS + 1, weight="bold", ha="center")
+    a.text(0, zb0 - bt - 40, "Al frame + screw, piston locked\nmeasures freezing PRESSURE (PV1, PB1)",
+           fontsize=FS_SMALL, ha="center", va="top", linespacing=1.4)
+    b = View(sh, 178, 52, 0.30)
+    bw2, bd2, bt2, zb, rb, rc, z_c, zcam, xl, zl, xpost = draw_b_open(b)
+    b.text(20, zcam + 110, "B – free, open surface", fontsize=FS + 1, weight="bold", ha="center")
+    b.text(20, zb - bt2 - 40, "nothing on the sand; camera + laser line\nmeasure HEAVE and SETTLEMENT",
+           fontsize=FS_SMALL, ha="center", va="top", linespacing=1.4)
+    sh.heading(255, 276, "Comparison")
+    rows = [["", "A (V03, alt. V02)", "B (V06, alt. V05)"],
+            ["sample", "unsaturated sand ⌀100 × 100", "same"],
+            ["cell", "printed body ⌀160 (V04)", "same"],
+            ["top of the sample", "piston locked (screw)", "open, nothing on it"],
+            ["main result", "freezing pressure", "heave / settlement"],
+            ["measured by", "PV1, PB1 (TML PDA-PA)", "camera + line laser"],
+            ["check", "LVDT: piston does not move", "rim = in-image reference"],
+            ["point M (existing)", "CS645 + Pt100 + fibre", "same"],
+            ["to buy, EUR (≈)", "2 750–4 200", "460–770"]]
+    y = table(sh, 255, 272, rows[0], rows[1:], [42, 60, 53], row_h=5.8)
+    sh.text(255, y - 5,
+            "Sheets\n"
+            "V01 overview · V02 A with lid on tie rods · V03 A with Al frame\n"
+            "V04 printed cell + point M · V05 B with anchors (layer strain)\n"
+            "V06 B open, camera + laser · V07 sensors + CR1000 · V08 freezer\n"
+            "\n"
+            "Common to both\n"
+            "• freezer program −10 / +10 °C, freezing from the top (insulating body)\n"
+            "• point M at 36–54 mm depth: unfrozen water (CS645) vs. T (Pt100, fibre)\n"
+            "• blank run with an Al dummy sample before the first sand run\n"
+            "• weigh the cell before and after each cycle",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.save(pdf, os.path.join(OUT, "E7-V06_freezer_layout.png"))
+    sh.save(pdf, os.path.join(OUT, "E7-V01_overview.png"))
+
+
+def sheet_overview(pdf):
+    with bigger_fonts():
+        _sheet_overview(pdf)
+
+
+def _sheet_sensors(pdf):
+    sh = Sheet("Sensors and CR1000 wiring (A + B-open in one freezer)", "E7-V07", "–", 7, TOTAL,
+               "existing = already in the lab; prices ≈ EUR excl. VAT, ask for quotes")
+    sh.heading(28, 278, "Sensors")
+    rows = [["A", "PV1, PB1", "freezing pressure in sand / at bottom", "TML PDA-PA 500 kPa [U]", "buy", "1 200–2 000"],
+            ["A", "LVDT", "check: piston does not move", "RDP DCTH400AG ±10 mm", "buy", "581 + PSU"],
+            ["A", "T1, T2", "sand temp. 20 / 80 mm (optional)", "Campbell 109SS-L", "buy", "360–520"],
+            ["A, B", "M: TDR", "unfrozen water (36–54 mm)", "Campbell CS645 + TDR100/200", "existing", "–"],
+            ["A, B", "M: Pt100", "reference temperature", "Pt100 37 mm, 4-wire", "existing", "–"],
+            ["A, B", "M: OF", "temperature (optical fibre)", "optical fibre + reader", "existing", "–"],
+            ["B", "CAM + LAS", "surface profile, heave", "RPi HQ camera + line laser", "buy", "460–770"],
+            ["A, B", "Tair", "air temperature", "Campbell 109-L / 107", "buy", "150–220"]]
+    y = table(sh, 28, 274, ["rig", "tag", "measures", "model", "status", "EUR"], rows, [14, 24, 66, 58, 20, 26],
+              row_h=5.8)
+    sh.heading(28, y - 8, "CR1000 channel plan (no multiplexer)")
+    ch = [["DIFF1", "PV1 (A)", "BrFull, VX1 2000 mV"],
+          ["DIFF2", "PB1 (A)", "BrFull, VX1 2000 mV"],
+          ["DIFF3", "Pt100 (A) via 4WPB100", "BrHalf4W, VX2 2500 mV"],
+          ["DIFF4", "Pt100 (B) via 4WPB100", "BrHalf4W, VX2 2500 mV"],
+          ["SE9", "LVDT (A)", "VoltSE ±5000 mV, own ±15 V supply"],
+          ["SE10, SE11", "T1, T2 (A, optional)", "Therm109, VX3"],
+          ["SE12", "Tair", "Therm109, VX3"],
+          ["C1–C3", "TDR100/200 → SDMX50", "2× CS645 (A and B), SDM"],
+          ["12V, G", "TDR, LVDT supply via relay", ""],
+          ["–", "optical fibre", "own interrogator, clock synced"],
+          ["–", "camera + laser (B)", "Raspberry Pi, NTP-synced, laser on per photo"],
+          ["SE13–16", "spare", ""]]
+    table(sh, 28, y - 12, ["terminal", "connected to", "measurement"], ch, [26, 60, 122], row_h=5.6)
+    sh.text(255, 276,
+            "Notes\n"
+            "• CR1000 outside the freezer (−25…+50 °C); cables through the lid seal.\n"
+            "• PV1 and PB1 share VX1, the Pt100s share VX2 – the program\n"
+            "  measures them in sequence.\n"
+            "• CS645: one TDR instrument + SDMX50 multiplexer serves both cells.\n"
+            "  In frozen sand it gives unfrozen water; calibrate in this sand.\n"
+            "• Pt100 is the reference: check fibre and thermistors against it in the\n"
+            "  cell at the ice point during thawing.\n"
+            "• LVDT supply switched by the CR1000 (relay) – less heat in the freezer.\n"
+            "• Camera + laser: Raspberry Pi in a heated box, photo every 10 min,\n"
+            "  time stamps synced with the CR1000 (NTP).\n"
+            "• Scan interval 10 min; 1 min during the phase change.\n"
+            "• CR1000 is discontinued (successor CR1000X); the existing one suffices.",
+            fontsize=FS_SMALL, va="top", linespacing=1.5)
+    sh.save(pdf, os.path.join(OUT, "E7-V07_sensors_CR1000.png"))
 
 
 def sheet_sensors(pdf):
-    sh = Sheet("Sensor selection and CR1000 wiring", "E7-V05", "–", 5, TOTAL,
-               "both rigs on one CR1000 + AM16/32B; models from manufacturer data (see README §7)")
-    sh.heading(28, 278, "Options per measurement (PICK = recommended)")
-    rows = [list(o) for o in sn.OPTIONS]
-    table(sh, 28, 274, ["sensor", "maker / model", "key specs", "verdict"], rows, [18, 58, 98, 34], row_h=4.4)
-    sh.heading(240, 278, "CR1000 channel plan")
-    y = table(sh, 240, 274, ["terminal", "connected to", "measurement"], [list(c) for c in sn.CHANNELS],
-              [24, 40, 106], row_h=4.6)
-    sh.text(240, y - 4,
-            "Channel count (2 rigs): 8 LVDTs, 9 pressure bridges, ≈ 20 thermistors,\n"
-            "point M ×2: 2 TDR (TDR200 + SDMX50SP), 2 Pt100 (MUX-1), 2 FBG (interrogator).\n"
-            "No load cells: A is loaded by dead weight, B is not loaded at all.\n"
-            "\n"
-            "Resolution with the CR1000 (13-bit ADC, ±5000 mV range)\n"
-            "• LVDT ±10 mm (A): ≈ 1.3 µm; LVDT ±5 mm (B): ≈ 0.7 µm\n"
-            "  → layer strain over 25 mm ≈ 4·10⁻⁵ (B)\n"
-            "• absolute linearity ±0.25 % FS → calibrate each LVDT with a micrometer\n"
-            "• 109SS: ±0.38 °C at 0 °C; ice-point offset check improves it\n"
-            "\n"
+    with bigger_fonts():
+        _sheet_sensors(pdf)
+
+
+def _sheet_layout(pdf):
+    sh = Sheet("Both rigs in the chest freezer", "E7-V08", "1 : 5", 8, TOTAL,
+               "same freezer as E6 (inside ≈ 900 × 550 × 650, to be measured); CR1000 + RPi outside")
+    k = 0.2
+    v = View(sh, 35, 160, k)
+    v.text(10, 535, "PLAN  1 : 5", fontsize=FS + 1, weight="bold", va="top")
+    v.rect(0, 0, p.FRZ_L, p.FRZ_W, fc="#f5f9fc", lw=THICK, z=1)
+    tx0, ty0 = 50, 105
+    v.rect(tx0, ty0, tx0 + p.TRAY_L, ty0 + p.TRAY_W, fc="#d6d9dc", lw=THIN, z=1.2)
+    v.rect(620, 15, 885, 535, fc="none", lw=THIN, ls="--", z=1.3)
+    v.text(752, 60, "floor step (if present)", fontsize=FS_SMALL - 1, ha="center")
+    bwA, bdA, btA = p.AF_BASE
+    ax, ay = tx0 + 10 + bwA / 2, ty0 + p.TRAY_W / 2
+    v.rect(ax - bwA / 2, ay - bdA / 2, ax + bwA / 2, ay + bdA / 2, fc=METAL, lw=THIN, z=2)
+    for s_ in (-1, 1):
+        v.rect(ax + s_ * p.COL_SPAN / 2 - 20, ay - 40, ax + s_ * p.COL_SPAN / 2 + 20, ay + 40, fc="#d9dde1",
+               lw=THIN, z=2.2)
+    v.rect(ax - p.COL_SPAN / 2 - 20, ay - 40, ax + p.COL_SPAN / 2 + 20, ay + 40, fc="none", lw=THIN, ls="--", z=2.3)
+    v.circle(ax, ay, p.BODY_D / 2, fc=PETG, lw=THIN, z_=2.1)
+    v.circle(ax, ay, p.CAV_D / 2, fc="#e9dcb8", lw=THIN, z_=2.15)
+    v.text(ax, ay, "A", fontsize=FS + 3, weight="bold", ha="center", va="center", zorder=5)
+    bwB, bdB, btB = p.BC_BASE
+    bx_, by_ = ax + bwA / 2 + 15 + bdB / 2, ty0 + p.TRAY_W / 2
+    v.rect(bx_ - bdB / 2, by_ - bwB / 2, bx_ + bdB / 2, by_ + bwB / 2, fc=METAL, lw=THIN, z=2)
+    cyB = by_ - bwB / 2 + 20 + p.BODY_D / 2
+    v.circle(bx_, cyB, p.BODY_D / 2, fc=PETG, lw=THIN, z_=2.1)
+    v.circle(bx_, cyB, p.CAV_D / 2, fc="#e9dcb8", lw=THIN, z_=2.15)
+    v.rect(bx_ - 10, by_ + bwB / 2 - 35, bx_ + 10, by_ + bwB / 2 - 15, fc="#d9dde1", lw=THIN, z=2.2)
+    v.line([(bx_, by_ + bwB / 2 - 25), (bx_, cyB)], lw=2, c="#9aa0a6", z=2.3)
+    v.text(bx_, cyB, "B", fontsize=FS + 3, weight="bold", ha="center", va="center", zorder=5)
+    v.dim_h(tx0, tx0 + p.TRAY_L, ty0, ty0 - 35, f"tray ≈ {p.TRAY_L:g} × {p.TRAY_W:g}", side="below")
+    v.dim_h(ax - bwA / 2, bx_ + bdB / 2, ty0 + p.TRAY_W, ty0 + p.TRAY_W + 40, f"{bwA + 15 + bdB:g}")
+    v.circle(560, 470, 9, fc="white", ec=TCOL, lw=THIN, z_=3)
+    v.text(575, 470, "Tair", fontsize=FS_SMALL, color=TCOL, va="center")
+    e = View(sh, 35, 22, k)
+    e.text(10, 650, "ELEVATION  1 : 5", fontsize=FS + 1, weight="bold", va="top")
+    e.rect(0, 0, p.FRZ_L, p.FRZ_H, fc="#f5f9fc", lw=THICK, z=1)
+    e.line([(0, p.FRZ_H), (p.FRZ_L, p.FRZ_H)], lw=THICK, c=RED, ls="--")
+    e.text(p.FRZ_L - 5, p.FRZ_H - 8, "lid", fontsize=FS_SMALL - 1, ha="right", va="top", color=RED)
+    e.rect(25, 0, 610, 20, fc="#3a3a3a", lw=0, z=1.2)
+    e.rect(tx0, 20, tx0 + p.TRAY_L, 60, fc="none", lw=THIN, z=1.3)
+    e.rect(620, 0, 885, 230, fc="none", lw=THIN, ls="--", z=1.2)
+    z0 = 60
+    zA = z0 + 18 + btA
+    e.rect(ax - bwA / 2, zA - btA, ax + bwA / 2, zA, fc=METAL, lw=THIN, z=2)
+    for s_ in (-1, 1):
+        e.rect(ax + s_ * p.COL_SPAN / 2 - 20, zA, ax + s_ * p.COL_SPAN / 2 + 20, zA + p.AF_COL_H, fc="#d9dde1",
+               lw=THIN, z=2)
+    e.rect(ax - p.COL_SPAN / 2 - 20, zA + p.AF_COL_H, ax + p.COL_SPAN / 2 + 20, zA + p.AF_COL_H + p.AF_BEAM_H,
+           fc="#d9dde1", lw=THIN, z=2)
+    e.rect(ax - p.BODY_D / 2, zA, ax + p.BODY_D / 2, zA + p.BODY_H, fc=PETG, lw=THIN, z=2.1)
+    e.rect(ax - p.COLLAR_OD / 2, zA + p.BODY_H, ax + p.COLLAR_OD / 2, zA + p.COLLAR_TOP, fc=PETG, lw=THIN, z=2.1)
+    topA = zA + p.AF_COL_H + p.AF_BEAM_H + 41
+    e.rect(ax - 8, zA + p.AF_COL_H + p.AF_BEAM_H, ax + 8, topA, fc=STEEL, lw=THIN, z=2.2)
+    e.text(ax, zA + 60, "A", fontsize=FS + 2, weight="bold", ha="center", va="center", zorder=5)
+    zB = z0 + btB
+    e.rect(bx_ - bdB / 2, zB - btB, bx_ + bdB / 2, zB, fc=METAL, lw=THIN, z=2)
+    e.rect(bx_ - p.BODY_D / 2, zB, bx_ + p.BODY_D / 2, zB + p.BODY_H, fc=PETG, lw=THIN, z=2.1)
+    e.rect(bx_ - p.COLLAR_OD / 2, zB + p.BODY_H, bx_ + p.COLLAR_OD / 2, zB + p.COLLAR_TOP, fc=PETG, lw=THIN, z=2.1)
+    zcam = zB + p.BODY_BOTTOM + p.H_SAMPLE + p.BL_CAM_H
+    topB = zcam + 80
+    e.rect(bx_ - 35, zcam - 40, bx_ + 35, zcam + 60, fc="#f3e7c9", lw=THIN, z=2.2)
+    e.rect(bx_ + 60, zB, bx_ + 80, topB, fc="#d9dde1", lw=THIN, z=2)
+    e.rect(bx_ - 45, topB - 20, bx_ + 80, topB, fc="#d9dde1", lw=THIN, z=2)
+    e.text(bx_, zB + 60, "B", fontsize=FS + 2, weight="bold", ha="center", va="center", zorder=5)
+    top = max(topA, topB)
+    e.dim_v(0, top, bx_ + bdB / 2 + 10, bx_ + bdB / 2 + 50, f"{top:.0f}")
+    e.dim_v(0, p.FRZ_H, p.FRZ_L, p.FRZ_L + 25, f"≈ {p.FRZ_H:g}")
+    sh.heading(255, 278, "Fit check")
+    rows = [["base plates", f"A {bwA:g}×{bdA:g}, B {bdB:g}×{bwB:g}", f"{bwA + 15 + bdB:g} × {max(bdA, bwB):g}",
+             "tray 530×340 OK"],
+            ["rig A height", "frame + screw", f"{topA - z0:.0f} above tray", "OK"],
+            ["rig B height", "camera arm", f"{topB - z0:.0f} above tray", "OK"],
+            ["highest point", "above freezer floor", f"{top:.0f}", "inside ≈ 650 OK"],
+            ["outside", "CR1000, TDR, RPi", "0…+40 °C", "keep dry"]]
+    table(sh, 255, 274, ["item", "size", "value", "status"], rows, [28, 56, 36, 35], row_h=5.6)
+    sh.text(255, 236,
             "Notes\n"
-            "• Rig B uses LVDTs with a FREE (unguided) core – no spring force on the\n"
-            "  sample; the core rides on the anchor rod / plate rod. Check the free-core\n"
-            "  version and the core length with RDP before ordering [U].\n"
-            "• DC-LVDTs need their own ±15 V (or 24 V) supply, logger only reads ±5 V.\n"
-            "• CR1000 is discontinued (successor CR1000X / CR1000Xe, 24-bit); the\n"
-            "  existing one is fine for these resolutions.\n"
-            "• Logger outside the freezer (CR1000 −25…+50 °C).\n"
-            "• Point M: TDR, Pt100 and FBG sit 12 mm apart at one depth – Pt100 is the\n"
-            "  reference for the FBG and for T3; TDR gives unfrozen water vs. temperature.\n"
-            "• Pressure cells: calibrate in the same sand under dead weight (5–25 kPa)\n"
-            "  at +10 and −10 °C; correct zero(T) with the neighbouring thermistor.",
-            fontsize=FS_SMALL, va="top", linespacing=1.45)
-    sh.save(pdf, os.path.join(OUT, "E7-V05_sensors_CR1000.png"))
+            "• Both rigs share the freezer program and the CR1000.\n"
+            "• B is turned 90° (320 mm along the tray depth) so both fit the tray.\n"
+            "• LED/laser of B only on for the photo; camera box ≥ 100 mm from A.\n"
+            "• Run the blank test with Al dummies in both cells first.\n"
+            "• Dimensions marked ≈ are estimates from the photos (E6) – measure.",
+            fontsize=FS_SMALL, va="top", linespacing=1.5)
+    sh.save(pdf, os.path.join(OUT, "E7-V08_freezer_layout.png"))
+
+
+def sheet_layout(pdf):
+    with bigger_fonts():
+        _sheet_layout(pdf)
 
 
 if __name__ == "__main__":
@@ -1257,6 +1112,6 @@ if __name__ == "__main__":
         if f.endswith((".png", ".pdf")):
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E7_drawings.pdf")) as pdf:
-        for fn in (sheet_a_simple, sheet_b_simple, sheet_cell, sheet_frame, sheet_sensors, sheet_layout,
-                   sheet_a_min, sheet_a_frame, sheet_cup, sheet_b_open):
+        for fn in (sheet_overview, sheet_a_min, sheet_a_frame, sheet_cup, sheet_b_simple, sheet_b_open,
+                   sheet_sensors, sheet_layout):
             fn(pdf)
