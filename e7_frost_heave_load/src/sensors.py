@@ -123,3 +123,18 @@ B_OPEN_MECH = [
     ("Invarová tyč ⌀12 × 300 + objímka + Al rameno", 50, 110),
     ("terčík PETG ⌀30 × 2 + Invarová tyčka jádra ⌀3", 10, 30),
 ]
+
+# --- B-open s kamerou: co koupit (EUR bez DPH, orientačně) ---------------------------------
+B_CAM_BUY = [
+    ("CAM", "Raspberry Pi 5 (4 GB) + zdroj + karta", 1, 90, 120),
+    ("", "Raspberry Pi HQ Camera (IMX477, 12 MP)", 1, 55, 70),
+    ("", "objektiv 16 mm C-mount (+ mezikroužek)", 1, 40, 70),
+    ("", "LED pásek / kroužek 12 V, rozptylka (stálé osvětlení)", 1, 15, 30),
+    ("", "vyhřívaný box: XPS 20, topná fólie 5 W, termostat, okénko 2× sklo", 1, 40, 80),
+    ("Tair", "Campbell 109-L (volitelně)", 1, 150, 220),
+]
+B_CAM_MECH = [
+    ("Al deska 320 × 220 × 10", 40, 70),
+    ("Al držák kamery (úhelník / profil 20×20)", 15, 40),
+    ("terčík PETG ⌀30 + tyčka ⌀3 se značkou, 2 ref. značky na límec (tisk)", 2, 10),
+]

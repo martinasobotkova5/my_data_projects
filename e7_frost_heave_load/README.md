@@ -264,15 +264,17 @@ Všechna tři čidla vstupují vodorovně **jedním nálitkem** ve stěně cely,
 
 **Siloměry** nejsou potřeba v žádné variantě. A je zatížená závažím (síla = hmotnost), B není zatížená vůbec.
 
-## 5a. Varianta B-open – nejjednodušší sestava, otevřený povrch (E7-V10, `vypocty.md` §12)
+## 5a. Varianta B-open – otevřený povrch, posun snímá kamera (E7-V10, `vypocty.md` §13)
 
-- Tištěná cela ⌀160 stojí na Al desce 220 × 220 × 10. Žádné víko, horní deska, kotvy, můstek ani rám.
-- Povrch písku je **otevřený**; leží na něm jen terčík PETG ⌀30 × 2 (≈ 0,25 kPa jen pod ním).
-- **1 LVDT s volným jádrem** (Invarová tyčka ⌀3 z terčíku) na jednom Invarovém sloupku v rohu desky → zdvih při mrznutí, sednutí při tání, nevratná deformace za cyklus. Náklon ani deformace po vrstvách se neměří (to umí varianta B, V02).
-- **Bod M** stejně jako v A/B: CS645 kanálem, optické vlákno, Pt100 svisle (kabel volně nahoru).
-- Teplotní chyba reference ≈ 30 µm / 20 K → slepá zkouška s Al náhradou.
-- **Vysychání otevřeného povrchu:** celu vážit před a po každém cyklu; při ztrátě > 1 % vody dát nad celu volný stan z fólie (nedotýká se povrchu).
-- **Koupit:** LVDT RDP DCTH200 s volným jádrem + zdroj, Invarový sloupek s ramenem, Al deska, terčík, volitelně Tair → **≈ 830–1 250 € bez DPH (≈ 21–31 tis. Kč)**. Ostatní (cela, CS645, Pt100, vlákno, CR1000) už máte.
+- Tištěná cela ⌀160 na Al desce 320 × 220 × 10; žádné víko, horní deska, kotvy, LVDT ani Invarový sloupek.
+- Na **otevřeném** povrchu leží terčík PETG ⌀30 s tyčkou ⌀3; na jejím konci 20 mm nad límcem je šachovnicová značka 12 × 8 mm.
+- Na horní hraně límce jsou 2 referenční značky. **Kamera** (Raspberry Pi HQ + objektiv 16 mm, zorné pole ≈ 40 mm) je na držáku na desce, ve vyhřívaném boxu (+5 °C, dvojité okénko), se stálým LED světlem; snímek každých 10 min, čas synchronizovaný s CR1000.
+- **Zdvih(t)** = výška značky nad referenčními značkami v každém snímku minus výchozí stav. Referenční značky dávají měřítko (px → mm) a ruší pohyb kamery. Rozlišení ≈ 10 µm/px, subpixelově ≈ 2–5 µm.
+- Límec (PETG) se při 20 K posune o ≈ 120 µm → odečíst ze **slepé zkoušky** s Al náhradou vzorku.
+- Bod M stejně jako dřív (CS645, vlákno, Pt100). Otevřený povrch vysychá – celu vážit před a po cyklu.
+- **Koupit:** Raspberry Pi 5, HQ kamera, objektiv, LED, vyhřívaný box, Al deska a držák, terčík se značkou, volitelně Tair → **≈ 450–710 € bez DPH (≈ 11–18 tis. Kč)**.
+
+**Deformace po vrstvách kamerou (rozšíření):** do stěny cely vytisknout svislé okénko ≈ 20 × 100 mm z PMMA/PC; kamera z boku snímá zrna písku a metodou **DIC/PIV** (např. open-source GeoPIV-RG) se z posunu zrn spočítá svislý posun v každé hloubce → poměrná deformace vrstev bez kotev. Okénko zvyšuje tepelný únik (mezi snímky zakrýt izolační zátkou) a tření o stěnu je u něj jiné; druhá kamera ≈ +150 €.
 
 ## 6. Rám A a stojan B (E7-V04)
 

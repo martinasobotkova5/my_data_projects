@@ -1028,79 +1028,89 @@ def sheet_cup(pdf):
 
 
 def _sheet_b_open(pdf):
-    sh = Sheet("Variant B-open – simplest setup, open surface", "E7-V10", "≈ 1 : 2", 10, TOTAL,
-               "no lid, no top plate: printed cell + point M + 1 LVDT on a small target")
-    v = View(sh, 120, 40, 0.62)
-    bw, bd, bt = p.BO_BASE
+    sh = Sheet("Variant B-open – open surface, displacement by camera", "E7-V10", "≈ 1 : 2.2", 10, TOTAL,
+               "no lid, no LVDT, no Invar post: printed cell + point M + marker + camera")
+    v = View(sh, 112, 50, 0.48)
+    bw, bd, bt = p.BC_BASE
     zb = Z_S0 - p.BODY_BOTTOM
-    v.rect(-bw / 2, zb - bt, bw / 2, zb, fc=METAL, hatch="////")
+    rb = p.BODY_D / 2
+    v.rect(-rb - 20, zb - bt, -rb - 20 + bw, zb, fc=METAL, hatch="////")
     cup_cell(v)
     v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
     m_section_a(v, labels=True, cable_up=True)
-    # target + core rod + LVDT + Invar post (post and target revolved to the left)
-    xt = -p.BO_TARGET_R
-    z_c = zb + p.COLLAR_TOP
-    z_arm = z_c + p.BO_ARM_Z
-    xp = -math.hypot(bw / 2 - 15, bd / 2 - 15)
-    v.rect(xt - p.BO_TARGET_D / 2, Z_S1, xt + p.BO_TARGET_D / 2, Z_S1 + p.BO_TARGET_T, fc=PETG, lw=THIN, z=5)
-    v.line([(xt, Z_S1 + p.BO_TARGET_T), (xt, z_arm - 40)], lw=1.2, c=INVAR, z=5)
-    v.rect(xt - 9.5, z_arm - 60, xt + 9.5, z_arm, fc=SENS, lw=THIN, z=5)
-    v.rect(xp - p.BO_POST_D / 2, zb, xp + p.BO_POST_D / 2, z_arm + 10, fc=INVAR, lw=THIN, alpha=0.85)
-    v.rect(xp - 6, z_arm, xt + 12, z_arm + 10, fc=METAL, lw=THIN)
-    v.circle(-p.BODY_D / 2 - 40, Z_S1 - 30, 2.0, fc=TCOL, lw=0)
-    v.text(-p.BODY_D / 2 - 40, Z_S1 - 23, "Tair (opt.)", fontsize=FS_SMALL, color=TCOL, ha="center")
     v.line([(-p.D_SAMPLE / 2, Z_S1 + 0.3), (p.D_SAMPLE / 2, Z_S1 + 0.3)], lw=1.4, c="#4a90d9", z=4.5)
+    z_c = zb + p.COLLAR_TOP
+    xt = 20.0
+    zm = z_c + p.BC_MARK_ABOVE
+    hw, hh = p.BC_MARK_HEAD
+    v.rect(xt - p.BO_TARGET_D / 2, Z_S1, xt + p.BO_TARGET_D / 2, Z_S1 + p.BO_TARGET_T, fc=PETG, lw=THIN, z=5)
+    v.rect(xt - 1.5, Z_S1 + p.BO_TARGET_T, xt + 1.5, zm - hh / 2, fc="#333", lw=0.3, z=5)
+    v.rect(xt - hw / 2, zm - hh / 2, xt + hw / 2, zm + hh / 2, fc="white", lw=THIN, z=5)
+    v.rect(xt - hw / 2, zm, xt, zm + hh / 2, fc="black", lw=0, z=5.1)
+    v.rect(xt, zm - hh / 2, xt + hw / 2, zm, fc="black", lw=0, z=5.1)
+    rc = p.COLLAR_OD / 2
+    for x_ in (-rc + 4, rc - 4):
+        v.rect(x_ - 4, z_c - 6, x_ + 4, z_c, fc="white", lw=THIN, z=5)
+        v.rect(x_ - 4, z_c - 3, x_, z_c, fc="black", lw=0, z=5.1)
+        v.rect(x_, z_c - 6, x_ + 4, z_c - 3, fc="black", lw=0, z=5.1)
+    # camera (front view of the setup = camera looks into the page; drawn beside, on its bracket)
+    cx0 = rb + 40
+    bx, by, bz = p.BC_CAM_BOX
+    zc_ax = (z_c + zm) / 2
+    v.rect(cx0, zb, cx0 + 20, zc_ax - bz / 2, fc=METAL, lw=THIN)
+    v.rect(cx0 - 10, zc_ax - bz / 2, cx0 + bx - 10, zc_ax + bz / 2, fc="#f3e7c9", lw=THICK, hatch="..")
+    v.rect(cx0 + 5, zc_ax - 15, cx0 + 45, zc_ax + 15, fc="#2f3b45", lw=THIN, z=4)
+    v.rect(cx0 - 10, zc_ax - 12, cx0 + 5, zc_ax + 12, fc="#555", lw=THIN, z=4)
+    v.rect(cx0 - 12, zc_ax - 14, cx0 - 10, zc_ax + 14, fc="#bfe3f5", lw=THIN, z=4.2)
+    for zz in (zc_ax - 20, zc_ax + 20):
+        v.line([(cx0 - 12, zz * 0 + zc_ax), (xt + hw, zm if zz > zc_ax else z_c - 6)], lw=0.5, c="#2b62a3", ls="--")
+    v.rect(cx0 - 10, zc_ax + bz / 2, cx0 + 30, zc_ax + bz / 2 + 6, fc="#ffe680", lw=THIN)
     # labels
-    tag(v, xt, z_arm - 30, 115, z_arm + 5, "LVDT free core (RDP DCTH200)\non 1 Invar post", SENS_TXT)
-    tag(v, xt, Z_S1 + 25, 115, z_arm - 40, "Invar core rod ⌀3", INVAR)
-    tag(v, xt + 10, Z_S1 + 1, 115, Z_S1 + 22, f"target PETG ⌀{p.BO_TARGET_D:g}×{p.BO_TARGET_T:g} (≈ 0.25 kPa)", INK)
-    tag(v, 30, Z_S1 + 0.3, 115, Z_S1 - 8, "OPEN sand surface (no lid, no plate)", "#2b62a3")
-    tag(v, -10, Z_S1 - 41, 115, Z_S1 - 45, "M: CS645 + fibre + Pt100\n(existing, depth 32–50)", "#d33682")
-    tag(v, p.BODY_D / 2 - 5, Z_S0 + 20, 115, Z_S0 - 10, "printed cell ⌀160 (V09)", INK)
-    tag(v, 60, zb - 5, 115, zb - 35, f"Al plate {bw:g}×{bd:g}×{bt:g}", INK)
-    tag(v, xp, zb + 60, -150, zb + 90, "Invar post ⌀12", INVAR)
-    # plan
-    f = View(sh, 320, 85, 0.26, "PLAN  1 : 3.8", (320, 122))
-    f.rect(-bw / 2, -bd / 2, bw / 2, bd / 2, fc=METAL, lw=THIN)
-    f.circle(0, 0, p.BODY_D / 2, fc=PETG, lw=THIN)
-    f.circle(0, 0, p.CAV_D / 2, fc="#e9dcb8", lw=THIN)
-    f.rect(-p.PORT_W / 2, -p.BODY_D / 2, p.PORT_W / 2, -p.CAV_D / 2 - 3, fc=TDRC, lw=THIN)
-    f.line([(0, -p.CAV_D / 2), (0, 25)], lw=1.4, c="#777")
-    f.circle(p.PT100_R, 0, 2.5, fc=PTC, lw=THIN)
-    a = math.radians(p.BO_TARGET_ANG)
-    xtp, ytp = p.BO_TARGET_R * math.cos(a), p.BO_TARGET_R * math.sin(a)
-    f.circle(xtp, ytp, p.BO_TARGET_D / 2, fc=PETG, lw=THIN)
-    cpost = -(bw / 2 - 15)
-    f.circle(cpost, -cpost, p.BO_POST_D / 2, fc=INVAR, lw=THIN)
-    f.line([(cpost, -cpost), (xtp, ytp)], lw=2.5, c="#9aa0a6")
+    tag(v, xt + hw / 2, zm, 150, zm + 45, f"marker 12×8 on rod ⌀3,\n{p.BC_MARK_ABOVE:g} above the collar", INK)
+    tag(v, -rc + 4, z_c - 3, -110, z_c + 40, "2 reference marks\non the collar rim", INK)
+    tag(v, xt, Z_S1 + 1, 150, Z_S1 + 5, "target ⌀30 on the OPEN surface", "#2b62a3")
+    tag(v, cx0 + 25, zc_ax, 150, zc_ax + 25, "Raspberry Pi HQ camera + 16 mm lens\nin a heated box (+5 °C), double window", INK)
+    tag(v, cx0 + 10, zc_ax + bz / 2 + 3, 150, zc_ax + bz / 2 + 90, "LED light (constant)", INK)
+    tag(v, cx0 + 10, zb + 20, 150, zb + 10, "camera bracket on the base plate", INK)
+    tag(v, -10, Z_S1 - 41, -110, Z_S1 - 75, "M: CS645 + fibre\n+ Pt100 (existing)", "#d33682")
+    tag(v, -rb + 5, Z_S0 + 20, -150, Z_S0 - 10, "printed cell ⌀160 (V09)", INK)
+    tag(v, -rb, zb - 5, -150, zb - 40, f"Al plate {bw:g}×{bd:g}×{bt:g}", INK)
+    # camera view (what the camera sees)
+    c = View(sh, 330, 82, 1.6, "CAMERA VIEW (≈ 40 mm field)  1.6 : 1", (330, 128))
+    c.rect(-20, -12, 20, 18, fc="#fafafa", lw=THIN)
+    c.rect(-20, -12, 20, 0, fc=PETG, lw=0.3)
+    for x_ in (-16, 16):
+        c.rect(x_ - 4, -6, x_ + 4, 0, fc="white", lw=THIN)
+        c.rect(x_ - 4, -3, x_, 0, fc="black", lw=0)
+        c.rect(x_, -6, x_ + 4, -3, fc="black", lw=0)
+    c.rect(-1.5, -12, 1.5, p.BC_MARK_ABOVE - hh / 2, fc="#333", lw=0)
+    c.rect(-hw / 2, p.BC_MARK_ABOVE - hh / 2, hw / 2, p.BC_MARK_ABOVE + hh / 2, fc="white", lw=THIN)
+    c.rect(-hw / 2, p.BC_MARK_ABOVE, 0, p.BC_MARK_ABOVE + hh / 2, fc="black", lw=0)
+    c.rect(0, p.BC_MARK_ABOVE - hh / 2, hw / 2, p.BC_MARK_ABOVE, fc="black", lw=0)
+    c.dim_v(0, p.BC_MARK_ABOVE, 20, 24, "h(t)")
+    sh.text(330, 58, "heave(t) = h(t) − h(0); reference marks give scale (px→mm)\n"
+            "and cancel any movement of the camera", fontsize=FS_SMALL, ha="center", va="top", linespacing=1.4)
     # right panel
     sh.heading(255, 276, "To buy (EUR excl. VAT, ≈)")
-    rows = []
-    for tg_, what, typ, n, a_, b_, src, ch in sn.B_OPEN_BUY:
-        rows.append([tg_ or "  +", typ, str(n), f"{n * a_}–{n * b_}", ch])
-    for what, a_, b_ in sn.B_OPEN_MECH[1:]:
-        rows.append(["mech.", what.replace("Invarová tyč", "Invar rod").replace("objímka", "clamp")
-                     .replace("rameno", "arm").replace("deska", "plate").replace("terčík", "target")
-                     .replace("Invar rodka jádra", "Invar core rod"), "1", f"{a_}–{b_}", "–"])
-    y = table(sh, 255, 272, ["tag", "item", "pcs", "EUR", "CR1000"], rows, [16, 82, 8, 20, 29], row_h=5.8)
-    lo = sum(n * a_ for _, _, _, n, a_, b_, _, _ in sn.B_OPEN_BUY) + sum(a_ for _, a_, b_ in sn.B_OPEN_MECH)
-    hi = sum(n * b_ for _, _, _, n, a_, b_, _, _ in sn.B_OPEN_BUY) + sum(b_ for _, a_, b_ in sn.B_OPEN_MECH)
+    rows = [[tg_ or "  +", what, f"{a_}–{b_}"] for tg_, what, n, a_, b_ in sn.B_CAM_BUY]
+    rows += [["mech.", what, f"{a_}–{b_}"] for what, a_, b_ in sn.B_CAM_MECH]
+    rows = [[r[0], r[1].replace("objektiv", "lens").replace("mezikroužek", "spacer").replace("pásek / kroužek", "strip / ring")
+             .replace("rozptylka", "diffuser").replace("stálé osvětlení", "constant light").replace("vyhřívaný box", "heated box")
+             .replace("topná fólie", "heater foil").replace("okénko 2× sklo", "double-glass window").replace("termostat", "thermostat")
+             .replace("volitelně", "optional").replace("zdroj", "PSU").replace("karta", "SD card").replace("deska", "plate")
+             .replace("držák kamery (úhelník / profil 20×20)", "camera bracket (profile 20×20)").replace("terčík", "target")
+             .replace("tyčka", "rod").replace("se značkou", "+ marker").replace("ref. značky na límec (tisk)", "rim marks (printed)"),
+             r[2]] for r in rows]
+    y = table(sh, 255, 272, ["tag", "item", "EUR"], rows, [16, 116, 23], row_h=5.6)
+    lo = sum(a_ for *_, a_, b_ in sn.B_CAM_BUY) + sum(a_ for _, a_, b_ in sn.B_CAM_MECH)
+    hi = sum(b_ for *_, a_, b_ in sn.B_CAM_BUY) + sum(b_ for _, a_, b_ in sn.B_CAM_MECH)
     sh.text(255, y - 4,
-            f"Total ≈ {lo:.0f}–{hi:.0f} EUR. Already available: cell ⌀160, CS645 + reflectometer,\n"
-            "Pt100, optical fibre, CR1000. Estimates – ask for quotes.\n"
+            f"Total ≈ {lo:.0f}–{hi:.0f} EUR (estimates). Already available: cell, CS645,\n"
+            "Pt100, optical fibre, CR1000. No LVDT, no Invar post.\n"
             "\n"
-            "How it works\n"
-            "• sand surface open; only a ⌀30 target (≈ 0.25 kPa) rests on it\n"
-            "• 1 free-core LVDT: heave while freezing, settlement while thawing,\n"
-            "  residual per cycle (no tilt, no layer strain – that needs B, V02)\n"
-            "• point M: unfrozen water (CS645) vs. temperature (Pt100, fibre)\n"
-            "• reference error ≈ 30 µm per 20 K → blank run (vypocty.md §12)\n"
-            "\n"
-            "CR1000: CS645 → reflectometer (SDM C1–C3) · Pt100 via 4WPB100\n"
-            "(DIFF1–2) · LVDT SE5 · Tair SE6 · fibre on its own reader\n"
-            "\n"
-            "Open surface: weigh the cell before and after each cycle;\n"
-            "if water loss > 1 %, put a loose foil tent above (not touching).",
+            "Resolution ≈ 10 µm/px, sub-pixel ≈ 2–5 µm (vypocty.md §13)\n"
+            "Rim moves ≈ 120 µm per 20 K (PETG) → blank run with an Al dummy.\n"
+            "Photo every 10 min, clock synced (NTP) with the CR1000.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V10_variant_B_open.png"))
 

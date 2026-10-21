@@ -206,3 +206,14 @@ BO_TARGET_R, BO_TARGET_ANG = 20.0, 135.0   # mimo Pt100 (r 15, 0°) a osu TDR (2
 BO_POST_D = 12.0                        # 1 Invarový sloupek ⌀12 v rohu desky
 BO_POST_ANG = 135.0                     # sloupek v rohu desky směrem k terčíku
 BO_ARM_Z = 75.0                         # rameno LVDT nad horní hranou límce
+
+# --- B-open s kamerou (bez LVDT a Invarového sloupku) -------------------------------------
+BC_BASE = (320.0, 220.0, 10.0)          # Al deska – cela + držák kamery
+BC_MARK_ROD_D = 3.0                     # tyčka značky (PETG/uhlík) z terčíku nad límec
+BC_MARK_ABOVE = 20.0                    # hlava značky nad horní hranou límce
+BC_MARK_HEAD = (12.0, 8.0)              # šachovnicová značka 12 × 8 mm
+BC_REF_MARKS = 2                        # 2 referenční značky na límci (vlevo/vpravo od tyčky)
+BC_CAM_DIST = 150.0                     # vzdálenost objektiv – značka
+BC_CAM_BOX = (90.0, 70.0, 80.0)         # vyhřívaný izolovaný box kamery (d × š × v)
+BC_FOV = 40.0                           # šířka zorného pole na značce [mm]
+BC_SENSOR_PX = 4056                     # Raspberry Pi HQ camera (IMX477)

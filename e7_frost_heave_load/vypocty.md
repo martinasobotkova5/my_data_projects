@@ -236,3 +236,13 @@ Odečte se slepou zkouškou (Al náhrada vzorku). S nerezovou tyčkou jádra mí
 
 **Co koupit:** LVDT s volným jádrem + zdroj, Invarový sloupek s ramenem, Al deska, terčík; volitelně Tair. Celkem ≈ 830–1250 € bez DPH (≈ 21–31 tis. Kč).
 
+## 13. Varianta B-open s kamerou (bez LVDT a Invarového sloupku)
+
+Kamera snímá z boku značku na tyčce z terčíku a 2 referenční značky na horní hraně límce. Zorné pole ≈ 40 mm na 4056 px → **9.9 µm/px**; se subpixelovým vyhodnocením (template matching / těžiště, 0,1–0,2 px) ≈ **1–2 µm** teoreticky, reálně ≈ 5 µm (vibrace kompresoru, teplota, rozostření).
+
+**Reference = horní hrana límce.** Límec je od dna dutiny 134 mm PETG → při 20 K se posune o ≈ 121 µm. To se zopakuje v každém cyklu stejně a odečte se ze **slepé zkoušky** (Al náhrada vzorku, stejný program). Kamera i její držák se mohou hýbat – měří se rozdíl značka – referenční značky v jednom snímku, takže pohyb kamery se vyruší.
+
+**Kamera v mrazáku:** Raspberry Pi i HQ kamera jsou stavěné na 0 … +50 °C → izolovaný box (XPS 20 mm) s topnou fólií 5 W a termostatem na ≈ +5 °C, okénko ze dvou skel (nemlží se). Stálé LED osvětlení, snímek každých 10 min, čas synchronizovaný s CR1000 (NTP). Rozostření kvůli teplotě kontrolovat na referenčních značkách.
+
+**Cena:** ≈ 447–710 € bez DPH (≈ 11–18 tis. Kč). Odpadá LVDT, zdroj LVDT a Invarový sloupek.
+
