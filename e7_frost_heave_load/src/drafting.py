@@ -201,8 +201,9 @@ class View:
         self.line(pts, lw=THIN)
 
 
-def table(sheet, x, y, cols, rows, widths, row_h=4.6, header=True, fs=FS_SMALL):
+def table(sheet, x, y, cols, rows, widths, row_h=4.6, header=True, fs=None):
     """Jednoduchá tabulka; (x, y) = levý horní roh v mm papíru."""
+    fs = fs or FS_SMALL
     ax = sheet.ax
     allrows = ([cols] if header else []) + rows
     for i, r in enumerate(allrows):

@@ -760,10 +760,28 @@ def sheet_a_min(pdf):
 POMC = "#f4f1e8"
 
 
-def sheet_a_frame(pdf):
-    sh = Sheet("Variant A-frame – fixed piston in an Al profile frame, no multiplexer", "E7-V08", "≈ 1 : 2.2", 8,
-               TOTAL, "schematic; blue = pressure, red = temperature, magenta = point M (existing sensors); "
-               "dashed = behind the section plane")
+class bigger_fonts:
+    """Temporarily enlarge all text on one sheet (drafting + this module read the sizes at call time)."""
+    def __init__(self, fs=9.5, fs_small=8.5):
+        self.new = (fs, fs_small)
+
+    def __enter__(self):
+        import drafting
+        g = globals()
+        self.old = (drafting.FS, drafting.FS_SMALL, g["FS"], g["FS_SMALL"])
+        drafting.FS, drafting.FS_SMALL = self.new
+        g["FS"], g["FS_SMALL"] = self.new
+        return self
+
+    def __exit__(self, *exc):
+        import drafting
+        g = globals()
+        drafting.FS, drafting.FS_SMALL, g["FS"], g["FS_SMALL"] = self.old
+
+
+def _sheet_a_frame(pdf):
+    sh = Sheet("Variant A-frame – piston fixed by an Al frame", "E7-V08", "≈ 1 : 2.2", 8,
+               TOTAL, "blue = pressure, red = temperature, magenta = point M; dashed = behind")
     v = View(sh, 122, 44, 0.45)
     bw, bd, bt = p.AF_BASE
     zb0 = Z_S0 - p.AM_BOTTOM_T - p.AM_G10_T          # top of the base plate
@@ -838,13 +856,14 @@ def sheet_a_frame(pdf):
             ["access to the sample", "open sides, screw from top", "lid must be removed"],
             ["mechanics, EUR (≈)", "≈ 385–780", "≈ 340–690"],
             ["sensors to buy, EUR (≈)", "2 360–3 440 (same)", "2 360–3 440"]]
-    y = table(sh, 255, 272, ["", "A-frame (this sheet)", "A-min (E7-V07)"], rows, [42, 58, 50], row_h=4.8)
-    sh.heading(255, y - 6, "To buy (same sensors as A-min)")
+    y = table(sh, 255, 272, ["", "A-frame (this sheet)", "A-min (E7-V07)"], rows, [46, 58, 51], row_h=5.8)
+    sh.heading(255, y - 9, "To buy (same sensors as A-min)")
     rows = []
     for tg_, what, typ, n, a, b, src, ch in sn.A_MIN_SENSORS:
         price = f"{n * a:,}" if a == b else f"{n * a:,}–{n * b:,}"
-        rows.append([tg_ or "  +", typ, str(n), price.replace(",", " ") + (" *" if src == "web" else ""), ch])
-    y = table(sh, 255, y - 10, ["tag", "type", "pcs", "EUR", "CR1000"], rows, [18, 66, 7, 22, 42], row_h=4.6)
+        rows.append([tg_ or "  +", typ, str(n), price.replace(",", " ") + (" *" if src == "web" else ""),
+                     ch.replace(" VoltSE ±5 V", "").replace(" Therm109", "")])
+    y = table(sh, 255, y - 13, ["tag", "type", "pcs", "EUR", "CR1000"], rows, [20, 60, 8, 23, 44], row_h=5.8)
     sh.text(255, y - 3,
             "* price found at a dealer (Oct 2026); others estimated – ask for quotes.\n"
             "Already available: TDR, temperature sensor, optical fibre (point M), CR1000.\n"
@@ -858,6 +877,11 @@ def sheet_a_frame(pdf):
             "Details: vypocty.md §10.",
             fontsize=FS_SMALL, va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V08_variant_A_frame.png"))
+
+
+def sheet_a_frame(pdf):
+    with bigger_fonts():
+        _sheet_a_frame(pdf)
 
 
 def rig_plan(v, cx, cy, variant):
