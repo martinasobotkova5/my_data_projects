@@ -220,8 +220,7 @@ def port_view(sh, ox, oy):
 
 def frame_and_title(sh, x0, y0):
     w, h = 420 * S, 297 * S
-    sh.rect(x0, y0, x0 + w, y0 + h, "FRAME")
-    sh.rect(x0 + 10 * S, y0 + 10 * S, x0 + w - 10 * S, y0 + h - 10 * S, "FRAME")
+    # no sheet border (title block only)
     tx, ty = x0 + w - 10 * S - 180 * S, y0 + 10 * S
     sh.rect(tx, ty, x0 + w - 10 * S, ty + 40 * S, "FRAME")
     for k in (10, 20, 30):
@@ -263,7 +262,22 @@ def main():
     import matplotlib
     matplotlib.use("Agg")
     mpl_draw.qsave(doc.modelspace(), os.path.join(OUT, "E7_V04_cell.pdf"), bg="#FFFFFF", dpi=200)
-    mpl_draw.qsave(doc.modelspace(), os.path.join(OUT, "E7_V04_cell.png"), bg="#FFFFFF", dpi=300)
+    # PNG on a true A3 sheet (420 × 297 mm) at 300 dpi
+    import matplotlib.pyplot as plt
+    from ezdxf.addons.drawing import Frontend, RenderContext
+    from ezdxf.addons.drawing.config import BackgroundPolicy, Configuration
+    from ezdxf.addons.drawing.matplotlib import MatplotlibBackend
+    fig = plt.figure(figsize=(420 / 25.4, 297 / 25.4))
+    ax = fig.add_axes([0, 0, 1, 1])
+    Frontend(RenderContext(doc), MatplotlibBackend(ax),
+             config=Configuration(background_policy=BackgroundPolicy.WHITE)).draw_layout(doc.modelspace())
+    ax.set_xlim(0, 420 * S)
+    ax.set_ylim(0, 297 * S)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    fig.set_size_inches(420 / 25.4, 297 / 25.4)          # the backend shrinks the figure – restore A3
+    fig.savefig(os.path.join(OUT, "E7_V04_cell.png"), dpi=300, facecolor="white")
+    plt.close(fig)
     print("ok", path)
 
 
