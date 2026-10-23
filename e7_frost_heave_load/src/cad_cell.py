@@ -14,8 +14,8 @@ import params as p
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "cad")
 S = 1.5                      # print scale 1 : 1.5 on A3
-TH = 3.5 * S                 # text height on paper 3.5 mm
-TS = 2.5 * S                 # small text
+TH = 5.0 * S                 # headings 5 mm on paper
+TS = 3.0 * S                 # small text 3 mm on paper
 
 RB, RC, RI, W = p.BODY_D / 2, p.COLLAR_OD / 2, p.CAV_D / 2, p.CUP_WALL_IN
 H, HC, TB, ZS = p.BODY_H, p.COLLAR_TOP, p.BODY_BOTTOM, p.SAND_TOP
@@ -26,23 +26,33 @@ RODS = [Z_MID + T["pitch"], Z_MID, Z_MID - T["pitch"]]
 
 def setup():
     doc = ezdxf.new("R2010", setup=True, units=4)          # units = mm
-    for name, color, lt in (("OUTLINE", 7, "CONTINUOUS"), ("HIDDEN", 8, "DASHED"), ("CENTER", 1, "CENTER"),
-                            ("HATCH", 8, "CONTINUOUS"), ("DIM", 4, "CONTINUOUS"), ("TEXT", 7, "CONTINUOUS"),
-                            ("SENSOR", 3, "CONTINUOUS"), ("SAND", 2, "DASHED"), ("FRAME", 7, "CONTINUOUS")):
-        doc.layers.add(name, color=color, linetype=lt)
+    for name, color, lt, lw in (("OUTLINE", 7, "CONTINUOUS", 50), ("HIDDEN", 8, "DASHED", 25),
+                                ("CENTER", 8, "CENTER", 18), ("HATCH", 8, "CONTINUOUS", 13),
+                                ("DIM", 7, "CONTINUOUS", 25), ("TEXT", 7, "CONTINUOUS", 25),
+                                ("SENSOR", 3, "CONTINUOUS", 25), ("SAND", 2, "DASHED", 25),
+                                ("FRAME", 7, "CONTINUOUS", 50)):
+        layer = doc.layers.add(name, color=color, linetype=lt)
+        layer.dxf.lineweight = lw
+        if name in ("OUTLINE", "DIM", "TEXT", "FRAME"):
+            layer.rgb = (0, 0, 0)                           # true black (prints black on any background)
     ds = doc.dimstyles.new("E7")
-    ds.dxf.dimtxt = TH * 0.8
-    ds.dxf.dimasz = 2.5 * S
-    ds.dxf.dimexe = 1.5 * S
+    ds.dxf.dimtxt = 3.5 * S                                 # 3.5 mm on paper (ISO 129 for A3)
+    ds.dxf.dimasz = 3.0 * S
+    ds.dxf.dimexe = 2.0 * S
     ds.dxf.dimexo = 1.0 * S
-    ds.dxf.dimgap = 0.8 * S
+    ds.dxf.dimgap = 1.0 * S
     ds.dxf.dimdec = 1
+    ds.dxf.dimdsep = ord(",")                               # decimal comma (CZ)
     ds.dxf.dimzin = 8                                       # drop trailing zeros
     ds.dxf.dimtad = 1
     ds.dxf.dimtih = 0
     ds.dxf.dimtoh = 0
-    ds.dxf.dimclrd = 4
-    ds.dxf.dimclre = 4
+    ds.dxf.dimclrd = 256                                    # colours ByLayer → DIM layer = black
+    ds.dxf.dimclre = 256
+    ds.dxf.dimclrt = 256
+    ds.dxf.dimlwd = 25
+    ds.dxf.dimlwe = 25
+    ds.dxf.dimtxsty = "OpenSans"
     doc.header["$LTSCALE"] = 1.5
     return doc
 
@@ -127,7 +137,7 @@ def section(sh, ox, oy):
     # centre line, sand surface
     sh.line(P(0, -8), P(0, HC + 8), "CENTER")
     sh.line(P(-RI, ZS), P(RI, ZS), "SAND")
-    sh.text("sand surface", P(RI - 2, ZS + 1.5), align=TextEntityAlignment.BOTTOM_RIGHT)
+    sh.text("sand surface", P(-RI + 2, ZS + 1.5), align=TextEntityAlignment.BOTTOM_LEFT)
     # sensors (layer SENSOR, for position only)
     for z in RODS:
         sh.rect(-RI + ox, z - T["rod_d"] / 2 + oy, -RI + T["rod_l"] + ox, z + T["rod_d"] / 2 + oy, "SENSOR")
@@ -147,7 +157,7 @@ def section(sh, ox, oy):
     sh.dim_v(oy + ZS, oy + HC, ox + RB, ox + RB + 12)
     sh.dim_v(oy + TB, oy + HC, ox + RB, ox + RB + 26)
     sh.dim_v(oy + H, oy + HC, ox + RC, ox + RB + 40)
-    sh.dim_v(oy + p.PORT_Z0, oy + p.PORT_Z1, ox - RI - W, ox - RI - W + 10)
+    sh.dim_v(oy + p.PORT_Z0, oy + p.PORT_Z1, ox - RB, ox - RB - 6)
     # rods: positions from the collar top + pitch
     sh.dim_v(oy + RODS[0], oy + HC, ox - RI + T["rod_l"], ox + 40, "<> (top rod)")
     # widths (top)
@@ -159,8 +169,8 @@ def section(sh, ox, oy):
     sh.dim_h(ox - RI, ox - RI + T["rod_l"], oy + RODS[2] - 2, oy + TB + 14, "75 CS645 (meas. 77)")
     sh.dim_h(ox - RI, ox - RI + p.OF_TIP_FROM_WALL, oy + zf, oy + zf + 22, "<> fibre")
     sh.dim_h(ox, ox + p.PT100_R, oy + ZS, oy + ZS + 7)
-    sh.dim_v(oy + ZS - p.PT100_L, oy + ZS, ox + p.PT100_R + 1.5, ox + p.PT100_R + 8, "37 Pt100")
-    sh.dim_h(ox - RI - W - T["head_l"], ox - RI - W, oy + p.PORT_Z0, oy + p.PORT_Z0 - 8, "19 (head)")
+    sh.dim_v(oy + ZS - p.PT100_L, oy + ZS, ox + p.PT100_R - 1.5, ox + p.PT100_R - 9, "37 Pt100")
+    sh.dim_h(ox - RI - W - T["head_l"], ox - RI - W, oy + p.PORT_Z0, oy + p.PORT_Z0 - 12, "19 head")
     sh.dim_h(ox - RI - W, ox - RI, oy + p.PORT_Z1, oy + p.PORT_Z1 + 7)
     sh.dim_r(P(RI - r, TB + r), r, 315)
     sh.text("SECTION A–A  (along the TDR axis)", (ox - RB, oy + HC + 40), h=TH)
@@ -185,7 +195,7 @@ def plan(sh, ox, oy):
     sh.dim_d(P(0, 0), RC, 135)
     sh.dim_d(P(0, 0), RI, 160)
     sh.dim_h(ox - hw, ox + hw, oy + yb, oy - RB - 14, "13 (port)")
-    sh.dim_h(ox - p.OF_SIDE, ox, oy - RI + p.OF_TIP_FROM_WALL, oy - RI + p.OF_TIP_FROM_WALL + 8)
+    sh.dim_h(ox - p.OF_SIDE, ox, oy - RI + p.OF_TIP_FROM_WALL, oy - 30, "<> fibre")
     sh.dim_h(ox, ox + p.PT100_R, oy, oy + 30, "15 Pt100")
     sh.text("PLAN  (from above)", (ox - RB, oy + RB + 30), h=TH)
     sh.text("A", P(-RB - 14, -2), h=TH)
