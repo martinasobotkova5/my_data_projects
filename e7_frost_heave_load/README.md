@@ -5,6 +5,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 | soubor | obsah |
 |---|---|
 | `vykresy/E7_drawings.pdf` | 8 listů A3, anglicky: V01 přehled A a B · V02 A s víkem na táhlech · V03 A s Al rámem · V04 tištěná cela + bod M · V05 B s kotvami · V06 B otevřený povrch (kamera + laser) · V07 čidla a CR1000 · V08 mrazák |
+| `cad/E7_V04_cell.dxf` | **CAD výkres cely ⌀160 se všemi kótami** (DXF, kóty jako DIMENSION, vrstvy OUTLINE/DIM/SENSOR…; tisk A3 1 : 1,5) + PDF/PNG náhled |
 | `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, samotná cela, obě v mrazáku (+ STL a PNG náhledy) |
 | `vypocty.md` | zatížení, očekávané deformace, rozlišení LVDT, teplotní chyba stojanu, napětí v cele, závaží |
 | `src/params.py` | všechny rozměry a předpoklady |
@@ -13,7 +14,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 > Kapitoly 2–3 a 6–8 popisují i starší řešení varianty A (závaží, vícekroužková/plná cela); aktuální návrh je v kap. 1a–1c, 4a, 5, 5a a na výkresech V01–V08.
 
-Regenerace: `cd src && python vykresy.py && python vypocty.py > ../vypocty.md && python model3d.py && python render3d.py`
+Regenerace: `cd src && python cad_cell.py && python vykresy.py && python vypocty.py > ../vypocty.md && python model3d.py && python render3d.py`
 
 ---
 
