@@ -263,7 +263,7 @@ def main():
     import matplotlib
     matplotlib.use("Agg")
     mpl_draw.qsave(doc.modelspace(), os.path.join(OUT, "E7_V04_cell.pdf"), bg="#FFFFFF", dpi=200)
-    mpl_draw.qsave(doc.modelspace(), os.path.join(OUT, "E7_V04_cell.png"), bg="#FFFFFF", dpi=150)
+    mpl_draw.qsave(doc.modelspace(), os.path.join(OUT, "E7_V04_cell.png"), bg="#FFFFFF", dpi=300)
     print("ok", path)
 
 
