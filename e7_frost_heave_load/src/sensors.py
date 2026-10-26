@@ -138,3 +138,24 @@ B_CAM_MECH = [
     ("rameno nad celou: profil 20×20 (sloupek + výložník)", 25, 60),
     ("2 referenční plíšky na límec (matně bílé) – kontrola", 2, 10),
 ]
+
+# --- varianta C: měření deformace 1 (kamera + laser) a 2 (LVDT) – co koupit (EUR bez DPH) --------
+C_BUY = [
+    ("CAM", "Raspberry Pi 5 (4 GB) + PSU + SD card", 1, 90, 120, "web/odhad", "– (Ethernet, NTP)"),
+    ("", "Raspberry Pi HQ Camera (IMX477, 12 MP)", 1, 55, 70, "odhad", "–"),
+    ("", "lens 8 mm C/CS-mount, low distortion", 1, 30, 70, "odhad", "–"),
+    ("LAS", "multi-line laser 650 nm, 11 parallel lines (DOE), class 2", 1, 40, 150, "odhad", "– (switched by RPi)"),
+    ("", "heated camera box: XPS 30, heater 5 W, thermostat, double glass", 1, 40, 80, "odhad", "–"),
+    ("LVDT", "RDP DCTH400AG ±10 mm, spring", 1, 581, 581, "web (Elkome)", "SE1, ±5000 mV"),
+    ("", "DIN-rail power supply ±15 V for the LVDT", 1, 40, 80, "odhad", "via relay"),
+    ("", "Campbell 4WPB100 (for the existing Pt100)", 1, 60, 120, "odhad", "DIFF1"),
+    ("Tair", "Campbell 109-L (optional)", 1, 150, 220, "odhad", "SE3, VX1"),
+]
+C_MECH = [
+    ("Al base plate 260 × 200 × 25 (machined)", 60, 120),
+    ("Al profiles 2× 40×80 × 326 + 80×80 × 260, core bolts", 70, 150),
+    ("LM12UU bushing + rod ⌀12 h6 × 290 + steel ball ⌀8", 25, 60),
+    ("Al partial piston ⌀50 × 20 + carrier ⌀120 × 8 (machined)", 40, 80),
+    ("steel discs ⌀120: 4 × 1 kg + 0.5 kg + trim washers", 40, 90),
+    ("camera bracket + laser post (profile 20×20), LVDT clamp", 25, 60),
+]

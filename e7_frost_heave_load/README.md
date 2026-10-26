@@ -2,6 +2,22 @@
 
 Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiskem v jednom kuse, v truhlicovém mrazáku z E6 s programovatelným regulátorem. V obou variantách je **stejný vzorek** (nenasycený písek) a stejná cela. Varianta A má přitížení **závažím** (ocelové kotouče, max. 25 kPa) a měří tlaky uvnitř písku. Varianta B je **bez zatížení** a měří zdvih, sednutí a deformace po vrstvách mezi mrznutím a táním.
 
+## ★ Aktuální návrh: varianta C, měření deformace 1 + 2 (výkresy V01–V05)
+
+| list | obsah |
+|---|---|
+| **V01** | sestava C: Al rám jen vede mrtvou váhu na částečném pístu ⌀50, volný povrch, tabulka zatížení, díly |
+| **V02** | měření deformace: (1) kamera + vícečárový laser 11 čar → mapa výšek **celého povrchu**, (2) LVDT na zátěži; vyhodnocení a postup |
+| **V03** | tištěná cela ⌀160 s bodem M (CS645, vlákno, Pt100 v mezikruží mimo laser) |
+| **V04** | čidla ke koupi, zapojení CR1000, ceny (≈ 1,3–2,1 tis. €) |
+| **V05** | rig C v mrazáku, kontrola výšky |
+
+- Žádné tlakové snímače ani kotvy – zatížení je známá mrtvá váha, deformace se měří jen (1) a (2).
+- 3D: `3d/E7_V01_variant_C.step` (+ díly `3d/parts_V01_variant_C/`), `3d/E7_V03_cell.step`, `3d/E7_V05_freezer_layout.step`; CAD cely `cad/E7_V04_cell.dxf`.
+- Starší varianty A a B: `vykresy/archiv/`, `3d/archiv/` (kapitoly 1a–8 níže popisují i je).
+
+Regenerace výkresů: `cd src && python vykresy_c.py` (aktuální sada), `python vykresy.py` (archiv).
+
 | soubor | obsah |
 |---|---|
 | `vykresy/E7_drawings.pdf` | 9 listů A3, anglicky (V09 = varianta C, kombinace): V01 přehled A a B · V02 A s víkem na táhlech · V03 A s Al rámem · V04 tištěná cela + bod M · V05 B s kotvami · V06 B otevřený povrch (kamera + laser) · V07 čidla a CR1000 · V08 mrazák |

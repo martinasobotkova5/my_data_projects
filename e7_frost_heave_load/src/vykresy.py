@@ -1236,11 +1236,13 @@ def sheet_layout(pdf):
 
 
 if __name__ == "__main__":
+    # earlier variants A / B and the shared sheets → archive (the current set is drawn by vykresy_c.py)
+    OUT = os.path.join(OUT, "archiv")
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
         if f.endswith((".png", ".pdf")):
             os.remove(os.path.join(OUT, f))
-    with PdfPages(os.path.join(OUT, "E7_drawings.pdf")) as pdf:
+    with PdfPages(os.path.join(OUT, "E7_drawings_archive.pdf")) as pdf:
         for fn in (sheet_overview, sheet_a_min, sheet_a_frame, sheet_cup, sheet_b_simple, sheet_b_open,
                    sheet_sensors, sheet_layout, sheet_c):
             fn(pdf)

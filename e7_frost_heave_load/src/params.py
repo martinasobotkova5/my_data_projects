@@ -241,4 +241,10 @@ C_TRAVEL = 25.0                         # volný zdvih / pokles zátěže
 C_SURCHARGES_KPA = (5.0, 10.0, 15.0, 20.0, 25.0)   # pod pístem
 C_CAM_Y, C_CAM_H, C_CAM_TILT = -75.0, 150.0, 27.0  # kamera stranou (−y, nad kanálem TDR), výška nad pískem, sklon k ose
 C_LASER_Y, C_LASER_H = 95.0, 95.0       # laser z protější strany (+y, 45°), čára napříč (osa x) přes límec–písek–píst–písek–límec
-C_PT100_R, C_PT100_ANG = 37.5, 0.0      # Pt100 svisle ve volném mezikruží (r 25–50), mimo laserovou čáru
+C_PT100_R, C_PT100_ANG = 37.5, 315.0    # Pt100 svisle ve volném mezikruží na straně kamery (y < 0) – mimo laserovou čáru (y ≥ 0)
+
+# --- varianta C – měření deformace jen 1 (kamera + laser) a 2 (LVDT na zátěži) --------------
+C_LENS_F = 8.0                           # objektiv 8 mm → zorné pole ≈ 130 mm (celý límec ⌀106 + okraj)
+C_LVDT_X = 45.0                          # LVDT na příčníku, hrot na spodní straně nosné desky
+C_SNAP_MIN = (10, 1)                     # snímek / měření: běžně 10 min, při průchodu 0 °C 1 min
+C_LINES, C_LINE_PITCH = 11, 9.0          # vícečárový laser (DOE): 11 rovnoběžných čar po 9 mm → celý povrch ⌀100

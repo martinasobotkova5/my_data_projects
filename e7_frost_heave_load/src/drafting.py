@@ -65,7 +65,7 @@ class Sheet:
         t(x0 + 22, y0 + 12, "mm")
         t(x0 + 42, y0 + 12, "project")
         t(x0 + 60, y0 + 12, PROJECT)
-        t(x0 + 112, y0 + 12, "date 2026-10-20")
+        t(x0 + 112, y0 + 12, "date " + __import__("datetime").date.today().isoformat())
         t(x0 + 2, y0 + 20, "status")
         t(x0 + 22, y0 + 20, "DRAFT")
         t(x0 + 42, y0 + 20, "drawn")

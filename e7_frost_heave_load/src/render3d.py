@@ -59,15 +59,13 @@ def render(asm, path, elev=22, azim=-60, title="", cut=None):
 
 if __name__ == "__main__":
     import cadquery as cq
-    half = cq.Workplane("XY").box(2000, 1000, 2000, centered=(True, False, True)).val()
     xcut = cq.Workplane("XY").box(1000, 2000, 2000, centered=(False, True, True)).val()
-    for fn, name, title in ((m.variant_a_min, "E7_V02_variant_A_tie_rods", "E7 V02 – A, fixed lid on tie rods"),
-                            (m.variant_a_frame, "E7_V03_variant_A_frame", "E7 V03 – A, piston fixed by an Al frame"),
-                            (m.body_a, "E7_V04_cell", "E7 V04 – printed cell ⌀160 with point M"),
-                            (m.variant_b, "E7_V05_variant_B_anchors", "E7 V05 – B, anchors and Invar stand"),
-                            (m.variant_b_open, "E7_V06_variant_B_open", "E7 V06 – B, open surface, camera + laser")):
-        a = cq.Assembly(); fn(a)
-        render(a, os.path.join(m.OUT, name + ".png"), title=title)
-        render(a, os.path.join(m.OUT, name + "_section.png"), elev=12, azim=0, cut=xcut, title=title + " (section)")
-    render(m.freezer_layout(), os.path.join(m.OUT, "E7_V08_freezer_layout.png"), elev=35, azim=-70,
-           title="E7 V08 – both rigs in the chest freezer")
+    a = cq.Assembly(); m.variant_c(a)
+    render(a, os.path.join(m.OUT, "E7_V01_variant_C.png"), elev=18, azim=-35,
+           title="E7 C – dead weight on a partial piston, camera + laser, LVDT")
+    render(a, os.path.join(m.OUT, "E7_V01_variant_C_section.png"), elev=10, azim=0, cut=xcut,
+           title="E7 C – section x = 0")
+    c = cq.Assembly(); m.body_a(c, temps=[], pv=False, pb=False, opt=False, pt_r=m.p.C_PT100_R, pt_ang=m.p.C_PT100_ANG)
+    render(c, os.path.join(m.OUT, "E7_V03_cell.png"), elev=20, azim=-100, title="E7 cell ⌀160 with point M")
+    render(m.freezer_layout(), os.path.join(m.OUT, "E7_V05_freezer_layout.png"), elev=35, azim=-70,
+           title="E7 – rig C in the chest freezer")

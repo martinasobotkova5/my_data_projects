@@ -264,7 +264,7 @@ Kotouč ⌀120/17: 1 kg = 11.5 mm, 0,5 kg = 5.7 mm. Při 25 kPa jen ≈ 4 kotou�
 
 **Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±25 mm). Kuličkové pouzdro LM12UU má tření ≈ 0,002–0,005 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,05 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
 
-**Co se měří:** zdvih/sednutí **pod pístem** (horní plocha pístu) a **volného povrchu** v mezikruží – obojí jednou laserovou čárou (napříč, podél osy x; laser svítí z +y pod 45°) v jednom snímku, reference = horní hrana límce. Volitelně LVDT na nosné desce (kontrola pohybu zátěže). Tlak pod patkou: PV1 na ose v hloubce 75 mm, PB1 u dna.
+**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser (11 čar po 9 mm) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = horní hrana límce; (2) LVDT na nosné desce = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.
 
-**Rozměry:** sloupy 40×80 × 326 mm, spodní líc příčníku 200 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 přesunut do mezikruží (r 37,5) – pod pístem by překážel.
+**Rozměry:** sloupy 40×80 × 326 mm, spodní líc příčníku 200 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 v mezikruží (r 37,5, 315°, strana kamery) – mimo laserové čáry i píst.
 
