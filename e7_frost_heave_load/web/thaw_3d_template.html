@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Tání vzorku E7</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2; --surface: #fcfcfb; --surface-2: #efeee9; --border: #dcdad3;
+  --text: #0b0b0b; --text-2: #52514e; --muted: #7a7973; --accent: #2a78d6;
+  --scene: #eceae4; --grid: #e4e2dc; --axis: #b9b7ae;
+  --s-air: #2a78d6; --s-free: #eb6834; --s-under: #1baf7a; --s-m: #eda100;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #33332f;
+    --text: #f0efec; --text-2: #c3c2b7; --muted: #8f8e86; --accent: #3987e5;
+    --scene: #1d1d1b; --grid: #2a2a27; --axis: #4a4a45;
+    --s-air: #3987e5; --s-free: #d95926; --s-under: #199e70; --s-m: #c98500;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #33332f;
+  --text: #f0efec; --text-2: #c3c2b7; --muted: #8f8e86; --accent: #3987e5;
+  --scene: #1d1d1b; --grid: #2a2a27; --axis: #4a4a45;
+  --s-air: #3987e5; --s-free: #d95926; --s-under: #199e70; --s-m: #c98500;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.wrap {
+  max-width: 1200px; margin: 0 auto;
+  padding: 20px max(16px, env(safe-area-inset-right)) 40px max(16px, env(safe-area-inset-left));
+}
+h1 { font-size: 22px; margin: 0 0 4px; font-weight: 650; }
+.lede { color: var(--text-2); margin: 0 0 14px; max-width: 70ch; }
+.stage {
+  position: relative; background: var(--scene); border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; height: min(68vh, 640px); min-height: 380px;
+}
+#c3d { display: block; width: 100%; height: 100%; touch-action: none; }
+.hud {
+  position: absolute; left: 10px; top: 10px; background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 13px; min-width: 220px;
+  pointer-events: none;
+}
+.hud .t { font-size: 17px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.hud .phase { font-weight: 600; }
+.hud table { border-collapse: collapse; margin-top: 4px; }
+.hud td { padding: 1px 0; font-variant-numeric: tabular-nums; }
+.hud td:first-child { color: var(--text-2); padding-right: 12px; }
+.hud td:last-child { text-align: right; }
+.cbar {
+  position: absolute; right: 10px; top: 10px; width: 200px; background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px 6px; font-size: 12px; pointer-events: none;
+}
+.cbar .bar { height: 12px; border-radius: 3px; margin: 4px 0 2px; }
+.cbar .ticks { display: flex; justify-content: space-between; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.cbar .note { color: var(--muted); margin-top: 3px; }
+.views { position: absolute; right: 10px; bottom: 10px; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+button, select {
+  font: inherit; font-size: 14px; color: var(--text); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 7px; padding: 6px 11px; cursor: pointer; min-height: 34px;
+}
+button:hover, select:hover { border-color: var(--axis); }
+button.primary { background: var(--accent); color: #fff; border-color: transparent; min-width: 92px; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 12px 0 6px; }
+.controls label { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-size: 14px; cursor: pointer; }
+.slider { flex: 1 1 320px; display: flex; align-items: center; gap: 10px; }
+.slider input { flex: 1; accent-color: var(--accent); }
+.charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+@media (max-width: 760px) { .charts { grid-template-columns: 1fr; } .hud { min-width: 0; font-size: 12px; right: 10px; } .cbar { width: 170px; top: auto; bottom: 54px; } .cbar .note { display: none; } }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 12px 8px; position: relative; }
+.card h2 { font-size: 15px; margin: 0 0 6px; font-weight: 650; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--text-2); margin-bottom: 4px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.legend i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.legend b { color: var(--text); font-weight: 600; }
+canvas.chart { width: 100%; height: 220px; display: block; cursor: crosshair; }
+.tip {
+  position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 8px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.12); display: none; white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.notes { margin-top: 16px; color: var(--text-2); font-size: 14px; }
+.notes h2 { font-size: 15px; color: var(--text); margin: 0 0 6px; }
+.notes ul { margin: 0; padding-left: 18px; }
+details { margin-top: 12px; }
+summary { cursor: pointer; color: var(--text-2); }
+.tbl { overflow-x: auto; }
+.tbl table { border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; margin-top: 6px; }
+.tbl th, .tbl td { padding: 3px 10px; border-bottom: 1px solid var(--border); text-align: right; }
+.tbl th { color: var(--text-2); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Tání vzorku E7 – varianta C</h1>
+  <p class="lede">Písek ⌀100 × 100 v tištěné cele ⌀160, částečný píst ⌀50. Povrch je vidět jen v mezikruží kolem pístu
+    (to vidí kamera a laser). Barva = teplota (nebo podíl ledu): na řezu celá výška vzorku, nahoře povrch. Zdvih je zvětšený.</p>
+
+  <div class="stage">
+    <canvas id="c3d" aria-label="3D model sestavy s animací teploty"></canvas>
+    <div class="hud" aria-live="polite">
+      <div class="t" id="hT">t = 0 h</div>
+      <div class="phase" id="hPhase">mrznutí</div>
+      <table>
+        <tr><td>vzduch v truhle</td><td id="hAir"></td></tr>
+        <tr><td>volný povrch (mezikruží)</td><td id="hFree"></td></tr>
+        <tr><td>povrch pod pístem</td><td id="hUnder"></td></tr>
+        <tr><td>bod M (hloubka 45)</td><td id="hM"></td></tr>
+        <tr><td>zmrzlý podíl vody</td><td id="hIce"></td></tr>
+        <tr><td>zdvih volný / píst</td><td id="hHeave"></td></tr>
+      </table>
+    </div>
+    <div class="cbar">
+      <div id="cbTitle">Teplota [°C]</div>
+      <div class="bar" id="cbar"></div>
+      <div class="ticks" id="cbTicks"></div>
+      <div class="note" id="cbNote"></div>
+    </div>
+    <div class="views">
+      <button data-view="all">Celek</button>
+      <button data-view="cut">Řez</button>
+      <button data-view="cam">Pohled kamery</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="primary" id="play">▶ Spustit</button>
+    <div class="slider"><input type="range" id="slider" min="0" max="1" step="1" value="0" aria-label="čas"></div>
+    <button id="toThaw">Začátek tání</button>
+    <select id="speed" aria-label="rychlost">
+      <option value="300">pomalu</option><option value="150" selected>normálně</option><option value="60">rychle</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label><input type="checkbox" id="optCut" checked> řez</label>
+    <label><input type="checkbox" id="optGhost"> průhledný píst</label>
+    <label><input type="checkbox" id="optLaser" checked> laserové čáry</label>
+    <label><input type="checkbox" id="optFrame" checked> rám, kamera, závaží</label>
+    <label>barva
+      <select id="mode"><option value="T" selected>teplota</option><option value="ice">podíl ledu</option></select>
+    </label>
+    <label>zvětšení zdvihu
+      <select id="exag"><option value="1">×1</option><option value="10">×10</option><option value="20" selected>×20</option><option value="50">×50</option></select>
+    </label>
+  </div>
+
+  <div class="charts">
+    <div class="card">
+      <h2>Teplota [°C]</h2>
+      <div class="legend" id="lgT"></div>
+      <canvas class="chart" id="chT"></canvas>
+      <div class="tip" id="tipT"></div>
+    </div>
+    <div class="card">
+      <h2>Zdvih povrchu [mm] – jen objem ledu (9 %)</h2>
+      <div class="legend" id="lgH"></div>
+      <canvas class="chart" id="chH"></canvas>
+      <div class="tip" id="tipH"></div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h2>Předpoklady modelu (orientační)</h2>
+    <ul id="assump"></ul>
+  </div>
+  <details>
+    <summary>Tabulka hodnot po hodinách</summary>
+    <div class="tbl" id="tbl"></div>
+  </details>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const DATA = /*__DATA__*/null;
+(function () {
+  "use strict";
+  const D = DATA, G = D.geom, NR = D.nr, NZ = D.nz, DR = D.dr, DZ = D.dz, NF = D.t.length;
+  const THETA = D.props.theta, EXP = 0.09;
+  const raw = atob(D.T), buf = new Uint8Array(raw.length);
+  for (let k = 0; k < raw.length; k++) buf[k] = raw.charCodeAt(k);
+  const TT = new Int8Array(buf.buffer);                      // [frame][j][i] × 0.1 °C, −128 = air
+  const AIR = -128, cell = (f, i, j) => TT[(f * NZ + j) * NR + i];
+  const NS = Math.round(G.r_sand / DR), J0 = Math.round(G.z_bot / DZ), J1 = Math.round(G.z_sand / DZ) - 1;
+  const NP = Math.round(G.r_piston / DR);
+  const ringA = i => (i + 1) * (i + 1) - i * i;
+  const iceOf = T => Math.min(1, Math.max(0, -T / 0.5));    // T in °C (freezing range −0.5…0)
+
+  // ---------- derived series per frame ----------
+  const S = { free: [], under: [], m: [], ice: [], hFree: [], hPist: [], heave: [] };
+  const iM = Math.min(NS - 1, Math.floor(G.pt100[0] / DR)), jM = Math.floor((G.z_sand - 45) / DZ);
+  for (let f = 0; f < NF; f++) {
+    const hv = new Float32Array(NS); let iceV = 0, vol = 0;
+    for (let i = 0; i < NS; i++) {
+      let h = 0;
+      for (let j = J0; j <= J1; j++) { const fi = iceOf(cell(f, i, j) / 10); h += fi * THETA * EXP * DZ; iceV += fi * ringA(i); vol += ringA(i); }
+      hv[i] = h;
+    }
+    let a = 0, b = 0, c = 0, d = 0, hp = 0, hf = 0;
+    for (let i = 0; i < NS; i++) {
+      const T = cell(f, i, J1) / 10;
+      if (i < NP) { a += T * ringA(i); b += ringA(i); hp += hv[i] * ringA(i); } else { c += T * ringA(i); d += ringA(i); hf += hv[i] * ringA(i); }
+    }
+    S.under.push(a / b); S.free.push(c / d); S.m.push(cell(f, iM, jM) / 10); S.ice.push(iceV / vol);
+    S.hPist.push(hp / b); S.hFree.push(hf / d); S.heave.push(hv);
+  }
+  const fThaw = D.t.findIndex(t => t >= D.program.thaw_h);
+
+  // ---------- colour scale (diverging: blue – grey 0 °C – red) ----------
+  const STOPS = [[-10, "#0d366b"], [-6, "#256abf"], [-2.5, "#5598e7"], [-0.5, "#9ec5f4"], [0, "#f0efec"],
+                 [0.5, "#f6d3cd"], [3, "#ee8f86"], [6, "#e34948"], [10, "#8f1d1f"]];
+  const hex = h => [1, 3, 5].map(k => parseInt(h.substr(k, 2), 16) / 255);
+  const ST = STOPS.map(([v, h]) => [v, hex(h)]);
+  function tcol(T, out) {
+    if (T <= ST[0][0]) { out[0] = ST[0][1][0]; out[1] = ST[0][1][1]; out[2] = ST[0][1][2]; return; }
+    for (let k = 1; k < ST.length; k++) if (T <= ST[k][0] || k === ST.length - 1) {
+      const [v0, c0] = ST[k - 1], [v1, c1] = ST[k], u = Math.min(1, Math.max(0, (T - v0) / (v1 - v0)));
+      out[0] = c0[0] + (c1[0] - c0[0]) * u; out[1] = c0[1] + (c1[1] - c0[1]) * u; out[2] = c0[2] + (c1[2] - c0[2]) * u; return;
+    }
+  }
+  const ICE0 = hex("#f0efec"), ICE1 = hex("#104281"), BODY = hex("#8c8f94"), PIST = hex("#c4c8ce");
+  function icol(fi, out) { for (let k = 0; k < 3; k++) out[k] = ICE0[k] + (ICE1[k] - ICE0[k]) * fi; }
+  let mode = "T";
+  function setBar() {
+    const t = mode === "T";
+    document.getElementById("cbTitle").textContent = t ? "Teplota [°C]" : "Podíl zmrzlé vody [%]";
+    document.getElementById("cbar").style.background = t
+      ? "linear-gradient(90deg," + STOPS.map(([v, h]) => `${h} ${(v + 10) * 5}%`).join(",") + ")"
+      : "linear-gradient(90deg,#f0efec,#104281)";
+    document.getElementById("cbTicks").innerHTML = (t ? ["−10", "−5", "0", "+5", "+10"] : ["0", "25", "50", "75", "100"])
+      .map(x => `<span>${x}</span>`).join("");
+    document.getElementById("cbNote").textContent = t ? "černá čára na řezu = 0 °C (fronta tání)" : "šedá = cela a píst (bez vody)";
+  }
+
+  // ---------- three.js scene (model z → three y, model y → three −z; mm) ----------
+  const canvas = document.getElementById("c3d");
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35, 1, 5, 6000);
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a80, 0.75));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.65); sun.position.set(400, 900, 600); scene.add(sun);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.25); fill.position.set(-500, 300, -300); scene.add(fill);
+
+  const M = (c, o = {}) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.6, metalness: 0.15 }, o));
+  const matAl = M(0xb9bdc3, { metalness: 0.45, roughness: 0.4 }), matProf = M(0x9ea3aa, { metalness: 0.35 });
+  const matSteel = M(0x6d7178, { metalness: 0.6, roughness: 0.35 }), matPetg = M(0x34373b, { roughness: 0.75, side: THREE.DoubleSide });
+  const matSens = M(0xd9a400), matCam = M(0x2b2d31), matLaser = M(0xc0392b);
+  const PISTON_OPACITY = 0.22;
+
+  function box(x0, x1, y0, y1, z0, z1, mat) {            // model coordinates
+    const m = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, z1 - z0, y1 - y0), mat);
+    m.position.set((x0 + x1) / 2, (z0 + z1) / 2, -(y0 + y1) / 2); return m;
+  }
+  function cyl(r, h, z0, x = 0, y = 0, mat = matSteel, seg = 40, t0 = 0, tl = Math.PI * 2) {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg, 1, false, t0, tl), mat);
+    m.position.set(x, z0 + h / 2, -y); return m;
+  }
+
+  const frameGrp = new THREE.Group(), moving = new THREE.Group(); scene.add(frameGrp); scene.add(moving);
+  const [bw, bd, bt] = G.base, xc = G.col_span / 2, colH = G.z_bot + 100 + G.beam_gap, zBeam = colH;
+  scene.add(box(-bw / 2, bw / 2, -bd / 2, bd / 2, -bt, 0, matAl));
+  for (const s of [-1, 1]) frameGrp.add(box(s * xc - 20, s * xc + 20, -40, 40, 0, zBeam, matProf));
+  frameGrp.add(box(-xc - 20, xc + 20, -40, 40, zBeam, zBeam + G.beam_h, matProf));
+  frameGrp.add(cyl(9.5, 25, zBeam + G.beam_h, G.lvdt_x, 0, matSens, 24));
+  // camera (−y, tilted to the axis), bracket to the beam
+  const [camY, camH, camTilt] = G.cam, zCam = G.z_sand + camH;
+  const cam = new THREE.Group();
+  const cbody = new THREE.Mesh(new THREE.BoxGeometry(70, 80, 70), matCam); cam.add(cbody);
+  const lens = new THREE.Mesh(new THREE.CylinderGeometry(14, 14, 18, 28), matSteel); lens.position.set(0, -48, 0); cam.add(lens);
+  cam.position.set(0, zCam, -camY); cam.rotation.x = camTilt * Math.PI / 180; frameGrp.add(cam);
+  frameGrp.add(box(-10, 10, camY - 10, -40, zCam + 45, zBeam, matAl));
+  // laser (+y, 45°) on a post from the base plate
+  const [lasY, lasH] = G.laser, zLas = G.z_sand + lasH;
+  frameGrp.add(box(-45, -25, lasY - 2, lasY + 18, 0, zLas + 8, matProf));
+  frameGrp.add(box(-25, 8, lasY + 4, lasY + 14, zLas + 8, zLas + 14, matAl));
+  const las = new THREE.Mesh(new THREE.CylinderGeometry(6, 6, 30, 20), matLaser);
+  las.position.set(0, zLas, -lasY); las.rotation.x = -Math.PI / 4; frameGrp.add(las);
+
+  // moving load: ball, rod, carrier, 4 discs, LVDT plunger (offset by piston heave)
+  const zp = G.z_sand + G.h_piston, zRod0 = zp + 6, zC = zBeam + G.beam_h + 25 + 10;
+  moving.add(new THREE.Mesh(new THREE.SphereGeometry(4, 20, 14), matSteel)); moving.children[0].position.set(0, zp + 3, 0);
+  moving.add(cyl(G.rod_d / 2, zC - zRod0, zRod0, 0, 0, matSteel, 24));
+  moving.add(cyl(G.carrier[0] / 2, G.carrier[1], zC, 0, 0, matAl, 56));
+  for (let k = 0; k < 4; k++) moving.add(cyl(G.disc_d / 2, 11.2, zC + G.carrier[1] + k * 11.5, 0, 0, matSteel, 56));
+  const plunger = cyl(2, zC - (zBeam + G.beam_h + 25), zBeam + G.beam_h + 25, G.lvdt_x, 0, matSteel, 12);
+  moving.add(plunger);
+
+  // cell body (lathe of the profile, duplicated corners → crisp edges)
+  const prof = [[0, 0], [80, 0], [80, 0], [80, 130], [80, 130], [G.r_wall, 130], [G.r_wall, 130], [G.r_wall, 160], [G.r_wall, 160],
+    [50, 160], [50, 160], [50, 26], [50, 26], [0, 26]].map(([r, z]) => new THREE.Vector2(r, z));
+  let bodyMesh = null, pistonMesh = null, surfMesh = null;
+  const matPiston = M(0xc4c8ce, { metalness: 0.5, roughness: 0.35, transparent: true, opacity: 1, side: THREE.DoubleSide });
+
+  // section mesh (z = 0 plane), one quad per non-air cell, mirrored to −r
+  const quads = [];
+  for (let j = 0; j < NZ; j++) for (let i = 0; i < NR; i++) if (cell(0, i, j) !== AIR || (i < NP && j >= J1 + 1 && j < J1 + 1 + G.h_piston / DZ)) {
+    quads.push([i, j, 1], [i, j, -1]);
+  }
+  const secGeo = new THREE.BufferGeometry();
+  const secPos = new Float32Array(quads.length * 18), secCol = new Float32Array(quads.length * 18);
+  secGeo.setAttribute("position", new THREE.BufferAttribute(secPos, 3));
+  secGeo.setAttribute("color", new THREE.BufferAttribute(secCol, 3));
+  const secMesh = new THREE.Mesh(secGeo, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide,
+    polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }));
+  scene.add(secMesh);
+  const isoGeo = new THREE.BufferGeometry(); isoGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(6 * 4000), 3));
+  const iso = new THREE.LineSegments(isoGeo, new THREE.LineBasicMaterial({ color: 0x111111 }));
+  iso.renderOrder = 2; scene.add(iso);
+  const outline = new THREE.Line(new THREE.BufferGeometry().setFromPoints(
+    [[-80, 0], [80, 0], [80, 130], [G.r_wall, 130], [G.r_wall, 160], [50, 160], [50, 26], [-50, 26], [-50, 160], [-G.r_wall, 160],
+     [-G.r_wall, 130], [-80, 130], [-80, 0]].map(([x, y]) => new THREE.Vector3(x, y, 0.3))),
+    new THREE.LineBasicMaterial({ color: 0x1b1c1e }));
+  scene.add(outline);
+
+  // point M marker (sensor depth 45 mm, r 37.5) on the section
+  const mMark = new THREE.Mesh(new THREE.SphereGeometry(2.6, 16, 12), new THREE.MeshBasicMaterial({ color: 0x111111 }));
+  scene.add(mMark);
+
+  // laser lines on the surface / piston top
+  const [nLines, pitch] = G.lines, laserGrp = new THREE.Group(); scene.add(laserGrp);
+  const lineMat = new THREE.LineBasicMaterial({ color: 0xff2a1a });
+  const laserLines = [];
+  for (let k = 0; k < nLines; k++) {
+    const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3 * 90), 3));
+    const ln = new THREE.Line(g, lineMat); ln.renderOrder = 3; laserGrp.add(ln); laserLines.push(ln);
+  }
+
+  let cut = true, exag = 20, cur = 0;
+  function buildStatic() {
+    for (const m of [bodyMesh, pistonMesh, surfMesh]) if (m) { scene.remove(m); m.geometry.dispose(); }
+    const p0 = cut ? Math.PI / 2 : 0, pl = cut ? Math.PI : Math.PI * 2;
+    bodyMesh = new THREE.Mesh(new THREE.LatheGeometry(prof, 96, p0, pl), matPetg); scene.add(bodyMesh);
+    pistonMesh = cyl(G.r_piston, G.h_piston, G.z_sand, 0, 0, matPiston, 56, p0, pl); scene.add(pistonMesh);
+    // sand surface: rings r = 0…50 (step DR) × angular segments
+    const nA = cut ? 48 : 96, nRv = NS + 1, g = new THREE.BufferGeometry();
+    const pos = new Float32Array(nRv * (nA + 1) * 3), idx = [];
+    for (let a = 0; a <= nA; a++) for (let i = 0; i < nRv; i++) {
+      const ph = p0 + pl * a / nA, r = i * DR, v = (a * nRv + i) * 3;
+      pos[v] = r * Math.sin(ph); pos[v + 1] = G.z_sand; pos[v + 2] = r * Math.cos(ph);
+    }
+    for (let a = 0; a < nA; a++) for (let i = 0; i < nRv - 1; i++) {
+      const q = a * nRv + i, w = (a + 1) * nRv + i; idx.push(q, w, q + 1, q + 1, w, w + 1);
+    }
+    g.setIndex(idx); g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.BufferAttribute(new Float32Array(pos.length), 3));
+    surfMesh = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide })); scene.add(surfMesh);
+    surfMesh.userData = { nA, nRv };
+    secMesh.visible = iso.visible = outline.visible = mMark.visible = cut;
+    applyGhost();
+  }
+  function applyGhost() {
+    const g = document.getElementById("optGhost").checked;
+    matPiston.opacity = g ? PISTON_OPACITY : 1; matPiston.depthWrite = !g; matPiston.needsUpdate = true;
+  }
+
+  const tmp = [0, 0, 0];
+  function update(f) {
+    cur = f;
+    const hv = S.heave[f], E = exag;
+    // displacement of each sand cell's lower face (cumulative ice expansion below), mm × exaggeration
+    const U = [];
+    for (let i = 0; i < NS; i++) {
+      const u = new Float32Array(NZ + 1); let acc = 0;
+      for (let j = 0; j < NZ; j++) {
+        u[j] = acc * E;
+        if (j >= J0 && j <= J1) acc += iceOf(cell(f, i, j) / 10) * THETA * EXP * DZ;
+      }
+      u[NZ] = acc * E; U.push(u);
+    }
+    const pOff = S.hPist[f] * E;
+    const surfH = r => {                                  // linear between ring centres
+      const u = Math.min(NS - 1, Math.max(0, r / DR - 0.5)), i = Math.floor(u), k = Math.min(NS - 1, i + 1);
+      return (hv[i] + (hv[k] - hv[i]) * (u - i)) * E;
+    };
+    // section quads
+    let v = 0;
+    for (const [i, j, s] of quads) {
+      let T = cell(f, i, j), yl = j * DZ, yu = (j + 1) * DZ;
+      if (T === AIR) T = Math.round(D.piston[f] * 10);              // piston cells
+      if (i < NS && j >= J0 && j <= J1) { yl += U[i][j]; yu += U[i][j + 1]; }
+      else if (i < NP && j > J1) { yl += pOff; yu += pOff; }
+      const sand = i < NS && j >= J0 && j <= J1;
+      if (mode === "T") tcol(T / 10, tmp); else if (sand) icol(iceOf(T / 10), tmp); else { const c = j > J1 && i < NP ? PIST : BODY; tmp[0] = c[0]; tmp[1] = c[1]; tmp[2] = c[2]; }
+      const x0 = s * i * DR, x1 = s * (i + 1) * DR;
+      const P = [[x0, yl], [x1, yl], [x1, yu], [x0, yl], [x1, yu], [x0, yu]];
+      for (const [x, y] of P) { secPos[v] = x; secPos[v + 1] = y; secPos[v + 2] = 0; secCol[v] = tmp[0]; secCol[v + 1] = tmp[1]; secCol[v + 2] = tmp[2]; v += 3; }
+    }
+    secGeo.attributes.position.needsUpdate = secGeo.attributes.color.needsUpdate = true;
+    secGeo.computeBoundingSphere();
+    // isotherm 0 °C (marching squares on sand cell centres)
+    const ip = isoGeo.attributes.position.array; let n = 0;
+    const cy = (i, j) => (j + 0.5) * DZ + (U[i][j] + U[i][j + 1]) / 2, val = (i, j) => cell(f, i, j) / 10;
+    for (let i = 0; i < NS - 1; i++) for (let j = J0; j < J1; j++) {
+      const c = [[i, j], [i + 1, j], [i + 1, j + 1], [i, j + 1]], pts = [];
+      for (let e = 0; e < 4; e++) {
+        const [a1, b1] = c[e], [a2, b2] = c[(e + 1) % 4], t1 = val(a1, b1), t2 = val(a2, b2);
+        if ((t1 < 0) !== (t2 < 0)) {
+          const u = t1 / (t1 - t2);
+          const x = ((a1 + 0.5) + (a2 - a1) * u) * DR, y = cy(a1, b1) + (cy(a2, b2) - cy(a1, b1)) * u;
+          pts.push([x, y]);
+        }
+      }
+      for (let k = 0; k + 1 < pts.length; k += 2) for (const s of [1, -1]) {
+        if (n + 6 > ip.length) break;
+        ip[n++] = s * pts[k][0]; ip[n++] = pts[k][1]; ip[n++] = 0.5; ip[n++] = s * pts[k + 1][0]; ip[n++] = pts[k + 1][1]; ip[n++] = 0.5;
+      }
+    }
+    isoGeo.setDrawRange(0, n / 3); isoGeo.attributes.position.needsUpdate = true; isoGeo.computeBoundingSphere();
+    // sand surface
+    const { nA, nRv } = surfMesh.userData, sp = surfMesh.geometry.attributes.position.array, sc = surfMesh.geometry.attributes.color.array;
+    for (let i = 0; i < nRv; i++) {
+      const r = i * DR, ic = Math.min(NS - 1, Math.max(0, Math.round(r / DR - 0.5)));
+      if (mode === "T") tcol(cell(f, ic, J1) / 10, tmp); else icol(iceOf(cell(f, ic, J1) / 10), tmp);
+      const y = G.z_sand + surfH(Math.min(r, G.r_sand - 0.01));
+      for (let a = 0; a <= nA; a++) { const q = (a * nRv + i) * 3; sp[q + 1] = y; sc[q] = tmp[0]; sc[q + 1] = tmp[1]; sc[q + 2] = tmp[2]; }
+    }
+    surfMesh.geometry.attributes.position.needsUpdate = surfMesh.geometry.attributes.color.needsUpdate = true;
+    surfMesh.geometry.computeBoundingSphere();
+    // piston + moving load
+    pistonMesh.position.y = G.z_sand + G.h_piston / 2 + pOff;
+    moving.position.y = pOff;
+    // point M marker
+    const jm = jM, um = iM < NS ? (U[iM][jm] + U[iM][jm + 1]) / 2 : 0;
+    mMark.position.set(G.pt100[0], (jm + 0.5) * DZ + um, 1);
+    // laser lines: y = (k − 5)·pitch in the model; follow sand surface / piston top
+    for (let k = 0; k < nLines; k++) {
+      const yM = (k - (nLines - 1) / 2) * pitch, arr = laserLines[k].geometry.attributes.position.array;
+      const half = Math.sqrt(Math.max(0, G.r_sand * G.r_sand - yM * yM)); let c = 0;
+      if (cut && yM < 0) { laserLines[k].visible = false; continue; }
+      laserLines[k].visible = document.getElementById("optLaser").checked;
+      for (let s = 0; s <= 88; s++) {
+        const x = -half + 2 * half * s / 88, r = Math.hypot(x, yM);
+        const y = r < G.r_piston ? zp + pOff + 0.3 : G.z_sand + surfH(Math.min(r, G.r_sand - 0.01)) + 0.3;
+        arr[c++] = x; arr[c++] = y; arr[c++] = -yM;
+      }
+      laserLines[k].geometry.setDrawRange(0, 89);
+      laserLines[k].geometry.attributes.position.needsUpdate = true; laserLines[k].geometry.computeBoundingSphere();
+    }
+    updateHud(f); drawCharts();
+    document.getElementById("slider").value = f;
+  }
+
+  // ---------- HUD ----------
+  const fmt = (x, d = 1) => (x < 0 ? "−" : x > 0 ? "+" : "") + Math.abs(x).toFixed(d).replace(".", ",");
+  function hm(h) { const H = Math.floor(h + 1e-6), m = Math.round((h - H) * 60); return m ? `${H} h ${m} min` : `${H} h`; }
+  function updateHud(f) {
+    const t = D.t[f], th = D.program.thaw_h;
+    document.getElementById("hT").textContent = `t = ${String(t.toFixed(2)).replace(".", ",")} h`;
+    document.getElementById("hPhase").textContent = t < th ? `mrznutí (vzduch → ${fmt(D.program.cold, 0)} °C), ${hm(t)}`
+      : `tání (vzduch → ${fmt(D.program.warm, 0)} °C), +${hm(t - th)}`;
+    document.getElementById("hAir").textContent = fmt(D.air[f]) + " °C";
+    document.getElementById("hFree").textContent = fmt(S.free[f]) + " °C";
+    document.getElementById("hUnder").textContent = fmt(S.under[f]) + " °C";
+    document.getElementById("hM").textContent = fmt(S.m[f]) + " °C";
+    document.getElementById("hIce").textContent = Math.round(S.ice[f] * 100) + " %";
+    document.getElementById("hHeave").textContent = `${S.hFree[f].toFixed(2).replace(".", ",")} / ${S.hPist[f].toFixed(2).replace(".", ",")} mm`;
+  }
+
+  // ---------- charts ----------
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const CH = {
+    T: { el: document.getElementById("chT"), tip: document.getElementById("tipT"), lg: document.getElementById("lgT"), y0: -11, y1: 11, ticks: [-10, -5, 0, 5, 10], unit: "°C", d: 1,
+         series: [["vzduch", "--s-air", D.air], ["volný povrch", "--s-free", S.free], ["pod pístem", "--s-under", S.under], ["bod M (45 mm)", "--s-m", S.m]] },
+    H: { el: document.getElementById("chH"), tip: document.getElementById("tipH"), lg: document.getElementById("lgH"), y0: 0, y1: 1.5, ticks: [0, 0.5, 1, 1.5], unit: "mm", d: 2,
+         series: [["volný povrch", "--s-free", S.hFree], ["píst", "--s-under", S.hPist]] },
+  };
+  let hover = null;
+  function drawChart(c) {
+    const el = c.el, dpr = window.devicePixelRatio || 1, W = el.clientWidth, Hh = el.clientHeight;
+    if (el.width !== Math.round(W * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(Hh * dpr); }
+    const g = el.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, Hh);
+    const L = 36, R = 22, T = 22, B = 24, pw = W - L - R, ph = Hh - T - B, tEnd = D.program.end_h;
+    const X = t => L + pw * t / tEnd, Y = v => T + ph * (1 - (v - c.y0) / (c.y1 - c.y0));
+    c.X = X; c.L = L; c.pw = pw;
+    g.fillStyle = css("--surface-2"); g.fillRect(X(D.program.thaw_h), T, X(tEnd) - X(D.program.thaw_h), ph);
+    g.font = "12px system-ui, sans-serif"; g.fillStyle = css("--muted"); g.textBaseline = "top";
+    g.fillText("mrznutí", X(0) + 4, 3); g.fillText("tání", X(D.program.thaw_h) + 4, 3);
+    g.lineWidth = 1; g.textBaseline = "middle"; g.textAlign = "right";
+    for (const v of c.ticks) {
+      g.strokeStyle = v === 0 && c.y0 < 0 ? css("--axis") : css("--grid");
+      g.beginPath(); g.moveTo(L, Y(v) + 0.5); g.lineTo(L + pw, Y(v) + 0.5); g.stroke();
+      g.fillStyle = css("--text-2"); g.fillText(String(v).replace(".", ",").replace("-", "−"), L - 6, Y(v));
+    }
+    g.textAlign = "center"; g.textBaseline = "top";
+    for (let t = 0; t <= tEnd; t += 6) { g.fillStyle = css("--text-2"); g.fillText(t + (t === tEnd ? " h" : ""), X(t), T + ph + 6); }
+    g.lineWidth = 2; g.lineJoin = "round";
+    for (const [, col, arr] of c.series) {
+      g.strokeStyle = css(col); g.beginPath();
+      arr.forEach((v, k) => { const x = X(D.t[k]), y = Y(v); k ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke();
+    }
+    const show = hover && hover.c === c ? hover.f : cur;
+    g.strokeStyle = css("--text"); g.lineWidth = 1; g.setLineDash(hover && hover.c === c ? [3, 3] : []);
+    g.beginPath(); g.moveTo(X(D.t[show]) + 0.5, T); g.lineTo(X(D.t[show]) + 0.5, T + ph); g.stroke(); g.setLineDash([]);
+    for (const [, col, arr] of c.series) {
+      g.fillStyle = css(col); g.strokeStyle = css("--surface"); g.lineWidth = 2;
+      g.beginPath(); g.arc(X(D.t[show]), Y(arr[show]), 4.5, 0, Math.PI * 2); g.fill(); g.stroke();
+    }
+    c.lg.innerHTML = c.series.map(([n, col, arr]) => `<span><i style="background:var(${col})"></i>${n} <b>${fmt(arr[cur], c.d)}</b></span>`).join("");
+  }
+  function drawCharts() { drawChart(CH.T); drawChart(CH.H); }
+  for (const c of Object.values(CH)) {
+    const fAt = e => { const r = c.el.getBoundingClientRect(), t = (e.clientX - r.left - c.L) / c.pw * D.program.end_h;
+      return Math.max(0, Math.min(NF - 1, Math.round(t / (D.t[1] - D.t[0])))); };
+    c.el.addEventListener("pointermove", e => {
+      const f = fAt(e); hover = { c, f }; drawChart(c);
+      const r = c.el.getBoundingClientRect(), card = c.el.parentElement.getBoundingClientRect();
+      c.tip.innerHTML = `<b>${String(D.t[f]).replace(".", ",")} h</b><br>` +
+        c.series.map(([n, col, arr]) => `<span style="color:var(${col})">■</span> ${n}: ${fmt(arr[f], c.d)} ${c.unit}`).join("<br>");
+      c.tip.style.display = "block";
+      const x = e.clientX - card.left, w = c.tip.offsetWidth;
+      c.tip.style.left = Math.min(card.width - w - 6, Math.max(6, x + 12)) + "px";
+      c.tip.style.top = (r.top - card.top + 10) + "px";
+    });
+    c.el.addEventListener("pointerleave", () => { hover = null; c.tip.style.display = "none"; drawChart(c); });
+    c.el.addEventListener("click", e => { stop(); update(fAt(e)); });
+  }
+
+  // ---------- notes + table ----------
+  const P = D.props;
+  document.getElementById("assump").innerHTML = [
+    `Osově souměrné vedení tepla (konečné objemy 2,5 × 2 mm, entalpická metoda). Program: ${fmt(D.program.warm, 0)} °C ustáleno → 0 h vzduch ${fmt(D.program.cold, 0)} °C → ${D.program.thaw_h} h vzduch ${fmt(D.program.warm, 0)} °C (náběh vzduchu τ ≈ 30 min).`,
+    `Písek θ = ${String(P.theta).replace(".", ",")}, λ nezmrzlý ${String(P.k_u).replace(".", ",")} / zmrzlý ${String(P.k_f).replace(".", ",")} W/mK, latentní teplo ${(P.latent / 1e6).toFixed(0)} MJ/m³, mrznutí v rozsahu −0,5…0 °C.`,
+    `Cela PETG: vnitřní trubka a dno λ 0,2 W/mK, plášť (výplň 10 %) λ 0,05 W/mK. Přestup tepla do vzduchu ${P.h_out} W/m²K (uvnitř límce ${P.h_cav}, spodem přes Al desku ${P.h_bot}).`,
+    `Al píst ⌀50 × 20 jako jeden uzel (≈ 95 J/K), kontakt s pískem ${P.h_contact} W/m²K – píst zpožďuje oteplení písku pod sebou.`,
+    `Zdvih = jen 9 % objemu zmrzlé vody (bez ledových čoček a bez vlivu zatížení) → horní odhad. Skutečný zdvih měří kamera + laser (mezikruží) a LVDT (píst).`,
+  ].map(s => `<li>${s}</li>`).join("");
+  let rows = "<table><tr><th>t [h]</th><th>vzduch</th><th>volný povrch</th><th>pod pístem</th><th>bod M</th><th>led [%]</th><th>zdvih volný [mm]</th><th>zdvih píst [mm]</th></tr>";
+  for (let f = 0; f < NF; f += 4) rows += `<tr><td>${D.t[f]}</td><td>${fmt(D.air[f])}</td><td>${fmt(S.free[f])}</td><td>${fmt(S.under[f])}</td><td>${fmt(S.m[f])}</td><td>${Math.round(S.ice[f] * 100)}</td><td>${S.hFree[f].toFixed(2)}</td><td>${S.hPist[f].toFixed(2)}</td></tr>`;
+  document.getElementById("tbl").innerHTML = rows + "</table>";
+
+  // ---------- views ----------
+  const VIEWS = {
+    all: { pos: [360, 330, 430], tgt: [0, 150, 0], fov: 35 },
+    cut: { pos: [60, 175, 330], tgt: [0, 100, 0], fov: 35 },
+    cam: { pos: [0, zCam - 30, -camY + 15], tgt: [0, G.z_sand, 0], fov: 42 },
+  };
+  let tween = null;
+  function setView(name, instant) {
+    const v = VIEWS[name];
+    const from = { p: camera.position.clone(), t: controls.target.clone(), f: camera.fov };
+    const to = { p: new THREE.Vector3(...v.pos), t: new THREE.Vector3(...v.tgt), f: v.fov };
+    if (instant) { camera.position.copy(to.p); controls.target.copy(to.t); camera.fov = to.f; camera.updateProjectionMatrix(); return; }
+    tween = { from, to, t0: performance.now() };
+  }
+  const optCut = document.getElementById("optCut");
+  document.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => {
+    const v = b.dataset.view;
+    cam.visible = v !== "cam";
+    if (v === "cam" && cut) { cut = optCut.checked = false; buildStatic(); update(cur); }
+    if (v === "cut" && !cut) { cut = optCut.checked = true; buildStatic(); update(cur); }
+    setView(v);
+  }));
+
+  // ---------- controls ----------
+  const slider = document.getElementById("slider"); slider.max = NF - 1;
+  let playing = false, last = 0;
+  const playBtn = document.getElementById("play");
+  function stop() { playing = false; playBtn.textContent = "▶ Spustit"; }
+  playBtn.addEventListener("click", () => { playing = !playing; playBtn.textContent = playing ? "❚❚ Pauza" : "▶ Spustit"; if (playing && cur >= NF - 1) update(0); });
+  slider.addEventListener("input", () => { stop(); update(+slider.value); });
+  document.getElementById("toThaw").addEventListener("click", () => { update(fThaw); });
+  document.getElementById("optCut").addEventListener("change", e => { cut = e.target.checked; buildStatic(); update(cur); });
+  document.getElementById("optGhost").addEventListener("change", applyGhost);
+  document.getElementById("optLaser").addEventListener("change", () => update(cur));
+  document.getElementById("optFrame").addEventListener("change", e => { frameGrp.visible = moving.visible = e.target.checked; });
+  document.getElementById("mode").addEventListener("change", e => { mode = e.target.value; setBar(); update(cur); });
+  document.getElementById("exag").addEventListener("change", e => { exag = +e.target.value; update(cur); });
+
+  function themeBg() { renderer.setClearColor(new THREE.Color(css("--scene") || "#eceae4")); drawCharts(); }
+  new MutationObserver(themeBg).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class", "style"] });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", themeBg);
+
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); drawCharts();
+  }
+  new ResizeObserver(resize).observe(canvas.parentElement);
+
+  function loop(now) {
+    requestAnimationFrame(loop);
+    if (tween) {
+      const u = Math.min(1, (now - tween.t0) / 700), e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+      camera.position.lerpVectors(tween.from.p, tween.to.p, e); controls.target.lerpVectors(tween.from.t, tween.to.t, e);
+      camera.fov = tween.from.f + (tween.to.f - tween.from.f) * e; camera.updateProjectionMatrix();
+      if (u >= 1) tween = null;
+    }
+    if (playing && now - last > +document.getElementById("speed").value) {
+      last = now;
+      if (cur < NF - 1) update(cur + 1); else stop();
+    }
+    controls.update(); renderer.render(scene, camera);
+  }
+
+  setBar(); buildStatic(); themeBg(); setView("all", true); resize(); update(fThaw);
+  playing = true; playBtn.textContent = "❚❚ Pauza";
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

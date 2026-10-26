@@ -34,6 +34,16 @@ Regenerace: `cd src && python cad_cell.py && python vykresy.py && python vypocty
 
 ---
 
+
+### 3D animace mrznutí a tání (web/)
+
+`web/E7_thaw_3d.html` – hýbající se 3D model sestavy C (otevřít v prohlížeči): teplota na řezu vzorkem a na volném
+povrchu kolem pístu, fronta tání (0 °C), podíl ledu, zdvih povrchu a pístu (zvětšeně), pohled kamery RPi.
+Data z `src/sim_thaw.py` (osově souměrné vedení tepla, entalpická metoda; vlastnosti písku a cely odhadnuté, viz hlavička
+skriptu). Program: +10 °C → 0 h vzduch −10 °C → 24 h vzduch +10 °C. Výsledek modelu: vzorek zmrzne za ≈ 9 h, roztaje
+≈ 9 h po přepnutí na +10 °C; píst (Al, ≈ 95 J/K) zpožďuje tání písku pod sebou. Zdvih = jen 9 % objemu ledu → horní odhad.
+Znovu vytvořit: `python src/sim_thaw.py` (šablona `web/thaw_3d_template.html`).
+
 ## 1. Dvě varianty
 
 | | **A – konstantní přitížení** (E7-V01) | **B – bez zatížení** (E7-V05) |
