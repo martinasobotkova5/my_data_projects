@@ -226,3 +226,19 @@ BL_LENS_F = 12.0                        # objektiv 12 mm → zorné pole ≈ 115
 BL_SENSOR_W = 6.29                      # IMX477, šířka čipu [mm]
 BL_LASER_ANG = 45.0                     # čárový laser odkloněný od svislice
 BL_LASER_X = 150.0                      # laser stranou od osy (ve výšce kamery)
+
+# --- varianta C: kombinace A (Al rám) + B (kamera) – částečný píst, mrtvá váha pohyblivá -------
+# rám jen VEDE zátěž (kuličkové pouzdro), píst se s povrchem volně zvedá i klesá → konstantní zatížení
+C_PISTON_D, C_PISTON_H = 50.0, 20.0     # částečný píst (patka) ⌀50 – zakrývá 25 % plochy, zbytek volný
+C_BALL_D = 8.0                          # ocelová kulička v kuželových sedlech (píst se může naklonit)
+C_ROD_D = 12.0                          # vodicí tyč (kalená, h6) v kuličkovém pouzdře LM12UU
+C_BUSH = (21.0, 30.0)                   # LM12UU: vnější ⌀ × délka
+C_BEAM_GAP = 200.0                      # spodní líc příčníku nad povrchem písku (místo pro kameru + laser)
+C_CARRIER_D, C_CARRIER_T = 120.0, 8.0   # nosná deska závaží nad příčníkem (Al)
+C_DISC_D, C_DISC_HOLE = 120.0, 17.0     # ocelové kotouče ⌀120
+C_DISC_KG = (1.0, 0.5)                  # kotouč 1 kg a 0,5 kg
+C_TRAVEL = 25.0                         # volný zdvih / pokles zátěže
+C_SURCHARGES_KPA = (5.0, 10.0, 15.0, 20.0, 25.0)   # pod pístem
+C_CAM_Y, C_CAM_H, C_CAM_TILT = -75.0, 150.0, 27.0  # kamera stranou (−y, nad kanálem TDR), výška nad pískem, sklon k ose
+C_LASER_Y, C_LASER_H = 95.0, 95.0       # laser z protější strany (+y, 45°), čára napříč (osa x) přes límec–písek–píst–písek–límec
+C_PT100_R, C_PT100_ANG = 37.5, 0.0      # Pt100 svisle ve volném mezikruží (r 25–50), mimo laserovou čáru

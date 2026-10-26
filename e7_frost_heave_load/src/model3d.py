@@ -125,7 +125,7 @@ def variant_b(asm, prefix=""):
     asm.add(bridge, name=prefix + "Al bridge D220x10 (LVDT clamps)", color=C["al"])
     asm.add(radial(180, p.STAND_R - 6, p.STAND_R + 20, 230, 1.6), name=prefix + "Tstand 109SS", color=C["temp"])
 
-def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True):
+def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None):
     """Variant A cell per drawing Column_one_body_version_1: body ⌀160 × 130 + collar ⌀106 to 160,
     cavity ⌀100 from z 26 (z = 0 at the underside), side port 13 wide at 67.5–94.5 (PORT_ANG).
     Point M: CS645 in the port, optical fibre, Pt100 vertical. Returns z of the underside."""
@@ -162,7 +162,8 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True):
                 name=f"{prefix}M TDR CS645 rod {k + 1}", color=C["steel"])
     asm.add(radial_off(a, ri - p.OF_TIP_FROM_WALL, rb + 30, z_top + 2, 1.0, w=p.OF_SIDE),
             name=prefix + "M optical fibre", color=C["fbg"])
-    xp, yp = p.PT100_R * math.cos(math.radians(a + 90)), p.PT100_R * math.sin(math.radians(a + 90))
+    pt_r = p.PT100_R if pt_r is None else pt_r
+    xp, yp = pt_r * math.cos(math.radians(a + 90)), pt_r * math.sin(math.radians(a + 90))
     asm.add(cyl(3.0, p.PT100_METAL, Z_S1 - p.PT100_L, xp, yp), name=prefix + "M Pt100 metal part", color=C["pt100"])
     asm.add(cyl(2.0, p.PT100_L - p.PT100_METAL, Z_S1 - (p.PT100_L - p.PT100_METAL), xp, yp),
             name=prefix + "M Pt100 cable", color=C["pt100"])
@@ -283,6 +284,63 @@ def variant_b_open(asm, prefix=""):
     return zb
 
 
+def variant_c(asm, prefix=""):
+    """Variant C (combined A + B): Al frame only GUIDES a dead weight on a partial piston ⌀50 that moves freely
+    up and down with the surface (constant load); free annulus around it seen by a camera + line laser."""
+    bw, bd, bt = p.AF_BASE
+    zb0 = Z_S0 - p.BODY_BOTTOM                       # top of the base plate = underside of the cell
+    col_h = p.BODY_BOTTOM + p.H_SAMPLE + p.C_BEAM_GAP
+    zbeam = zb0 + col_h
+    xc = p.COL_SPAN / 2
+    asm.add(box(-bw / 2, bw / 2, -bd / 2, bd / 2, zb0 - bt, zb0), name=prefix + "Al base plate 260x200x25", color=C["al"])
+    for i, (x, y) in enumerate(((-bw / 2 + 20, -bd / 2 + 20), (bw / 2 - 20, -bd / 2 + 20), (0, bd / 2 - 20)), 1):
+        asm.add(cyl(16, 18, zb0 - bt - 18, x, y), name=f"{prefix}levelling foot {i}", color=C["steel"])
+    for s_ in (-1, 1):
+        asm.add(box(s_ * xc - 20, s_ * xc + 20, -40, 40, zb0, zbeam),
+                name=f"{prefix}column 40x80 x{col_h:g} {'L' if s_ < 0 else 'R'}", color=C["profile"])
+    bush_od, bush_l = p.C_BUSH
+    asm.add(box(-xc - 20, xc + 20, -40, 40, zbeam, zbeam + p.AF_BEAM_H).cut(cyl(bush_od, p.AF_BEAM_H, zbeam)),
+            name=prefix + "cross-beam 80x80", color=C["profile"])
+    asm.add(tube(bush_od, p.C_ROD_D + 0.1, bush_l, zbeam + (p.AF_BEAM_H - bush_l) / 2),
+            name=prefix + "linear ball bushing LM12UU", color=C["steel"])
+    body_a(asm, prefix, temps=[], pv=True, pb=True, opt=False, pt_r=p.C_PT100_R)
+    # moving load: partial piston, ball, guide rod, carrier, discs
+    zp = Z_S1 + p.C_PISTON_H
+    asm.add(cyl(p.C_PISTON_D, p.C_PISTON_H, Z_S1), name=prefix + "partial piston Al D50x20", color=C["al"])
+    asm.add(cq.Workplane("XY").sphere(p.C_BALL_D / 2).translate((0, 0, zp + p.C_BALL_D / 2 - 1)),
+            name=prefix + "steel ball D8", color=C["steel"])
+    z_rod0 = zp + p.C_BALL_D - 2
+    rod_l = zbeam + p.AF_BEAM_H + p.C_TRAVEL + 10 - z_rod0
+    asm.add(cyl(p.C_ROD_D, rod_l, z_rod0), name=prefix + f"guide rod D12 h6 x{rod_l:.0f}", color=C["steel"])
+    zc = z_rod0 + rod_l
+    asm.add(cyl(p.C_CARRIER_D, p.C_CARRIER_T, zc).cut(cyl(p.C_ROD_D, p.C_CARRIER_T, zc)),
+            name=prefix + "carrier plate Al D120x8", color=C["al"])
+    t1 = 1.0 / (math.pi / 4 * ((p.C_DISC_D / 1000) ** 2 - (p.C_DISC_HOLE / 1000) ** 2) * p.RHO_STEEL) * 1000
+    z = zc + p.C_CARRIER_T
+    for i in range(4):
+        asm.add(tube(p.C_DISC_D, p.C_DISC_HOLE, t1 - 0.3, z), name=f"{prefix}steel disc {i + 1} 1 kg D120",
+                color=C["weight"])
+        z += t1
+    # optional LVDT on the beam, plunger on the carrier underside
+    asm.add(cyl(19, 25, zbeam + p.AF_BEAM_H, 45, 0), name=prefix + "LVDT DCTH400AG (optional)", color=C["sensor"])
+    asm.add(cyl(4, zc - (zbeam + p.AF_BEAM_H + 25), zbeam + p.AF_BEAM_H + 25, 45, 0), name=prefix + "LVDT plunger",
+            color=C["steel"])
+    # camera (−y, tilted to the axis) hanging from the beam
+    zcam = Z_S1 + p.C_CAM_H
+    cam = (box(-35, 35, -35, 35, -40, 40).cut(cyl(28, 20, -40))
+           .rotate((0, 0, 0), (1, 0, 0), p.C_CAM_TILT).translate((0, p.C_CAM_Y, zcam)))
+    asm.add(cam, name=prefix + "heated camera box (RPi HQ + 12 mm lens)", color=C["ins"])
+    asm.add(box(-10, 10, p.C_CAM_Y - 10, -40, zcam + 45, zbeam), name=prefix + "camera bracket", color=C["al"])
+    # laser (+y), on a post from the base plate, aimed at the axis (45°)
+    yl, zl = p.C_LASER_Y, Z_S1 + p.C_LASER_H
+    asm.add(box(-45, -25, yl - 2, yl + 18, zb0, zl + 8), name=prefix + "laser post 20x20", color=C["profile"])
+    asm.add(box(-25, 8, yl + 4, yl + 14, zl + 8, zl + 14), name=prefix + "laser bracket", color=C["al"])
+    las = (cq.Workplane("XZ").circle(6).extrude(30).translate((0, 15, 0))
+           .rotate((0, 0, 0), (1, 0, 0), 45).translate((0, yl - 10, zl)))
+    asm.add(las, name=prefix + "line laser 650 nm (45 deg)", color=C["temp"])
+    return zb0
+
+
 def freezer_layout():
     """Both rigs on the tray in the chest freezer (sheet V08): A-frame left, B-open turned 90° right."""
     asm = cq.Assembly(name="E7 freezer layout")
@@ -335,11 +393,14 @@ if __name__ == "__main__":
     variant_a_frame(af)
     bo = cq.Assembly(name="E7 V06 variant B - open surface, camera + laser")
     variant_b_open(bo)
+    vc = cq.Assembly(name="E7 V09 variant C - frame guides dead weight, partial piston, camera")
+    variant_c(vc)
     lay = freezer_layout()
     for asm, fn in ((am, "E7_V02_variant_A_tie_rods"), (af, "E7_V03_variant_A_frame"), (mr, "E7_V04_cell"),
-                    (b, "E7_V05_variant_B_anchors"), (bo, "E7_V06_variant_B_open"), (lay, "E7_V08_freezer_layout")):
+                    (b, "E7_V05_variant_B_anchors"), (bo, "E7_V06_variant_B_open"), (vc, "E7_V09_variant_C_combined"), (lay, "E7_V08_freezer_layout")):
         asm.save(os.path.join(OUT, fn + ".step"))
         cq.exporters.export(asm.toCompound(), os.path.join(OUT, fn + ".stl"), tolerance=0.2, angularTolerance=0.3)
         print(fn, "ok", len(asm.children))
-    for asm, folder in ((af, "parts_V03_variant_A_frame"), (bo, "parts_V06_variant_B_open")):
+    for asm, folder in ((af, "parts_V03_variant_A_frame"), (bo, "parts_V06_variant_B_open"),
+                         (vc, "parts_V09_variant_C_combined")):
         print(folder, export_parts(asm, os.path.join(OUT, folder)), "parts")

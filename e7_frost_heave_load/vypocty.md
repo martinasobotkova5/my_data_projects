@@ -248,3 +248,23 @@ Na povrchu písku nic neleží. Čárový laser svítí šikmo (45° od svislice
 
 **Cena:** ≈ 457–770 € bez DPH (≈ 11–19 tis. Kč).
 
+## 14. Varianta C – kombinace: Al rám vede mrtvou váhu, částečný píst, kamera nad volným povrchem
+
+Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 287 255 g + Al nosná deska 244 g = **0.61 kg ≈ 3.0 kPa** (nejmenší přitížení pod pístem).
+
+| napětí pod pístem [kPa] | celkem [kg] | kotouče 1 kg | 0,5 kg | doladit [kg] |
+|---|---|---|---|---|
+| 5 | 1.00 | 0 | 0 | 0.39 |
+| 10 | 2.00 | 1 | 0 | 0.39 |
+| 15 | 3.00 | 2 | 0 | 0.40 |
+| 20 | 4.00 | 3 | 0 | 0.40 |
+| 25 | 5.00 | 4 | 0 | 0.40 |
+
+Kotouč ⌀120/17: 1 kg = 11.5 mm, 0,5 kg = 5.7 mm. Při 25 kPa jen ≈ 4 kotouče.
+
+**Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±25 mm). Kuličkové pouzdro LM12UU má tření ≈ 0,002–0,005 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,05 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
+
+**Co se měří:** zdvih/sednutí **pod pístem** (horní plocha pístu) a **volného povrchu** v mezikruží – obojí jednou laserovou čárou (napříč, podél osy x; laser svítí z +y pod 45°) v jednom snímku, reference = horní hrana límce. Volitelně LVDT na nosné desce (kontrola pohybu zátěže). Tlak pod patkou: PV1 na ose v hloubce 75 mm, PB1 u dna.
+
+**Rozměry:** sloupy 40×80 × 326 mm, spodní líc příčníku 200 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 přesunut do mezikruží (r 37,5) – pod pístem by překážel.
+

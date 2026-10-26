@@ -10,7 +10,7 @@ from drafting import (BLUE, FROZEN, FS, FS_SMALL, INK, INSUL, METAL, PLASTIC, RE
                       THICK, THIN, WATER, Sheet, View, table)
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "vykresy")
-TOTAL = 8
+TOTAL = 9
 PT_MM = 72 / 25.4        # points per mm of paper
 PETG = "#cfd8dc"
 G10 = "#c9d9a6"
@@ -182,7 +182,7 @@ def m_section(v, side=-1, labels=False, big=False):
         v.text(side * 25, z - 6, "M", fontsize=FS_SMALL, color="#d33682", ha="center", va="top", weight="bold", zorder=6)
 
 
-def m_section_a(v, labels=False, cable_up=False):
+def m_section_a(v, labels=False, cable_up=False, pt_r=None):
     """Point M of variant A (sketch): CS645 rods horizontal through the axis, optical fibre at the top-rod
     level (tip 37.5 from the wall), Pt100 vertical from the sand surface 15 mm beside the axis."""
     t = p.TDR_CS645
@@ -194,12 +194,13 @@ def m_section_a(v, labels=False, cable_up=False):
         v.line([(-ri, z), (-ri + t["rod_l"], z)], lw=1.3, c="#555", z=5)
     v.rect(-ri - p.CUP_WALL_IN - t["head_l"], zb + p.PORT_Z0 + 0.5, -ri, zb + p.PORT_Z1 - 0.5, fc=TDRC, lw=THIN, z=5)
     v.line([(-ri, z_top + 1.8), (-ri + p.OF_TIP_FROM_WALL, z_top + 1.8)], lw=1.1, c=FBGC, z=5.2)
-    v.rect(p.PT100_R - 1.5, Z_S1 - p.PT100_L, p.PT100_R + 1.5, Z_S1 - (p.PT100_L - p.PT100_METAL), fc=PTC, lw=0.5, z=5.2)
+    ptr = p.PT100_R if pt_r is None else pt_r
+    v.rect(ptr - 1.5, Z_S1 - p.PT100_L, ptr + 1.5, Z_S1 - (p.PT100_L - p.PT100_METAL), fc=PTC, lw=0.5, z=5.2)
     # Pt100 cable: up to the sand surface, in a groove under the piston, out through a ⌀4 hole in the collar
     if cable_up:
-        v.line([(p.PT100_R, Z_S1 - (p.PT100_L - p.PT100_METAL)), (p.PT100_R, Z_S1 + 30)], lw=0.9, c="#8a7300", z=5.2)
+        v.line([(ptr, Z_S1 - (p.PT100_L - p.PT100_METAL)), (ptr, Z_S1 + 30)], lw=0.9, c="#8a7300", z=5.2)
     else:
-        v.line([(p.PT100_R, Z_S1 - (p.PT100_L - p.PT100_METAL)), (p.PT100_R, Z_S1 - 1),
+        v.line([(ptr, Z_S1 - (p.PT100_L - p.PT100_METAL)), (ptr, Z_S1 - 1),
                 (p.CAV_D / 2 + p.CUP_WALL_IN + 4, Z_S1 - 1)], lw=0.9, c="#8a7300", z=5.2)
     if labels:
         v.text(-ri + t["rod_l"] + 2, z_top - t["pitch"], "CS645", fontsize=FS_SMALL - 0.5, va="center", color="#333")
@@ -918,6 +919,124 @@ def sheet_b_open(pdf):
         _sheet_b_open(pdf)
 
 
+# --- variant C: combined (frame guides a dead weight on a partial piston, camera above) ---
+def _sheet_c(pdf):
+    sh = Sheet("Variant C – dead weight on a partial piston + camera", "E7-V09",
+               "≈ 1 : 2.5", 9, TOTAL, "A + B combined; side view y–z; the frame only GUIDES the load")
+    v = View(sh, 118, 34, 0.42)
+    bw, bd, bt = p.AF_BASE
+    zb0 = Z_S0 - p.BODY_BOTTOM
+    col_h = p.BODY_BOTTOM + p.H_SAMPLE + p.C_BEAM_GAP
+    zbeam = zb0 + col_h
+    # base plate (depth 200 along y), column (behind, 80 wide in y), beam
+    v.rect(-bd / 2, zb0 - bt, bd / 2, zb0, fc=METAL, hatch="////")
+    for xf in (-bd / 2 + 20, bd / 2 - 20):
+        v.rect(xf - 8, zb0 - bt - 18, xf + 8, zb0 - bt, fc=STEEL, lw=THIN)
+    v.rect(-40, zb0, 40, zbeam, fc="#eceff1", lw=THIN, ls="--")
+    v.rect(-40, zbeam, 40, zbeam + p.AF_BEAM_H, fc="#d9dde1", lw=THICK)
+    bo, bl = p.C_BUSH
+    v.rect(-bo / 2, zbeam + (p.AF_BEAM_H - bl) / 2, bo / 2, zbeam + (p.AF_BEAM_H + bl) / 2, fc=STEEL, lw=THIN, hatch="xx")
+    cup_cell(v)
+    v.rect(-p.D_SAMPLE / 2, Z_S0, p.D_SAMPLE / 2, Z_S1, fc="#e9dcb8", lw=THIN)
+    m_section_a(v, labels=True, cable_up=True, pt_r=-p.C_PT100_R)
+    tg, d = p.AM_PV
+    v.rect(-p.PCELL_D / 2, Z_S1 - d - 1, p.PCELL_D / 2, Z_S1 - d + 1, fc=PCOL, lw=THIN, z=4)
+    v.rect(25 - 4, Z_S0 - 1.5, 25 + 4, Z_S0, fc=PCOL, lw=THIN, z=4)
+    # moving load
+    zp = Z_S1 + p.C_PISTON_H
+    v.rect(-p.C_PISTON_D / 2, Z_S1, p.C_PISTON_D / 2, zp, fc=METAL, lw=THICK, hatch="////", z=5)
+    v.circle(0, zp + p.C_BALL_D / 2 - 1, p.C_BALL_D / 2, fc=STEEL, lw=THIN, z_=5.2)
+    z_rod0 = zp + p.C_BALL_D - 2
+    zc = zbeam + p.AF_BEAM_H + p.C_TRAVEL + 10
+    v.rect(-p.C_ROD_D / 2, z_rod0, p.C_ROD_D / 2, zc, fc=STEEL, lw=THIN, z=5)
+    v.rect(-p.C_CARRIER_D / 2, zc, p.C_CARRIER_D / 2, zc + p.C_CARRIER_T, fc=METAL, lw=THIN, hatch="////")
+    t1 = 1.0 / (math.pi / 4 * ((p.C_DISC_D / 1000) ** 2 - (p.C_DISC_HOLE / 1000) ** 2) * p.RHO_STEEL) * 1000
+    z = zc + p.C_CARRIER_T
+    for k in range(4):
+        v.rect(-p.C_DISC_D / 2, z, p.C_DISC_D / 2, z + t1, fc="#8a8f96", lw=THIN, hatch="////")
+        z += t1
+    ztop = z
+    # LVDT (optional) on the beam
+    v.rect(45 - 9.5, zbeam + p.AF_BEAM_H, 45 + 9.5, zbeam + p.AF_BEAM_H + 25, fc=SENS, lw=THIN, ls="--")
+    v.line([(45, zbeam + p.AF_BEAM_H + 25), (45, zc)], lw=THICK)
+    # camera (−y), laser (+y)
+    zcam = Z_S1 + p.C_CAM_H
+    a = math.radians(p.C_CAM_TILT)
+    def rot(x, z):
+        return (p.C_CAM_Y + x * math.cos(a) - z * math.sin(a), zcam + x * math.sin(a) + z * math.cos(a))
+    box_ = [rot(-35, -40), rot(35, -40), rot(35, 40), rot(-35, 40)]
+    v.poly(box_, fc="#f3e7c9", lw=THICK)
+    lens = [rot(-14, -40), rot(14, -40), rot(14, -52), rot(-14, -52)]
+    v.poly(lens, fc="#555", lw=THIN)
+    v.rect(p.C_CAM_Y - 10, zcam + 45, -40, zbeam, fc=METAL, lw=THIN)
+    c0 = rot(0, -52)
+    for xx in (-p.D_SAMPLE / 2 - 3, p.D_SAMPLE / 2 + 3):
+        v.line([c0, (xx, z_c_top := zb0 + p.COLLAR_TOP)], lw=0.5, c="#2b62a3", ls="--")
+    yl, zl = p.C_LASER_Y, Z_S1 + p.C_LASER_H
+    v.rect(yl - 2, zb0, yl + 18, zl + 8, fc="#d9dde1", lw=THIN, ls="--")
+    v.rect(yl - 8, zl - 8, yl + 8, zl + 8, fc="#c0392b", lw=THIN, z=5)
+    v.line([(yl - 6, zl - 6), (0, Z_S1)], lw=1.0, c="#e74c3c", z=4.6)
+    v.line([(-p.D_SAMPLE / 2, Z_S1 + 0.3), (-p.C_PISTON_D / 2, Z_S1 + 0.3)], lw=1.6, c="#4a90d9", z=4.6)
+    v.line([(p.C_PISTON_D / 2, Z_S1 + 0.3), (p.D_SAMPLE / 2, Z_S1 + 0.3)], lw=1.6, c="#4a90d9", z=4.6)
+    # arrows: load moves up and down
+    for zz in (zc + 40, zc - 10):
+        pass
+    v.line([(-p.C_CARRIER_D / 2 - 12, zc - 15), (-p.C_CARRIER_D / 2 - 12, zc + 40)], lw=1.2, c=RED)
+    v.text(-p.C_CARRIER_D / 2 - 15, zc + 12, "±25", fontsize=FS_SMALL, color=RED, ha="right", va="center")
+    # dimensions
+    v.dim_v(zb0, zbeam, -bd / 2, -bd / 2 - 18, f"{col_h:g}")
+    v.dim_v(Z_S1, zbeam, 50, 72, f"{p.C_BEAM_GAP:g}")
+    v.dim_v(zb0 - bt, ztop, bd / 2 + 10, bd / 2 + 30, f"{ztop - zb0 + bt:.0f}")
+    v.dim_h(-p.C_PISTON_D / 2, p.C_PISTON_D / 2, zp, zp + 12, "⌀50 piston")
+    v.dim_h(-p.C_DISC_D / 2, p.C_DISC_D / 2, ztop, ztop + 12, "⌀120 discs")
+    # labels
+    tag(v, 0, zc + p.C_CARRIER_T + 20, 150, ztop + 25, "dead weight: Al carrier + steel discs 1 kg\n(moves up and down with the piston)", INK)
+    tag(v, 0, zbeam + 40, 150, zbeam + 55, "linear ball bushing LM12UU in the beam\n(guides only, friction < 0.05 kPa)", INK)
+    tag(v, 45, zbeam + p.AF_BEAM_H + 12, 150, zbeam + 105, "LVDT on the carrier (optional)", SENS_TXT)
+    tag(v, 0, Z_S1 + 60, 150, Z_S1 + 120, "guide rod ⌀12 h6, steel ball ⌀8 on the piston", INK)
+    tag(v, 20, zp - 5, 150, Z_S1 + 45, "partial piston Al ⌀50×20 (25 % of the area)", INK)
+    tag(v, 38, Z_S1 + 0.3, 150, Z_S1 + 5, "FREE surface: annulus 25 mm", "#2b62a3")
+    tag(v, yl, zl, 150, zl - 20, "line laser 45° (+y): one line over\nrim – free sand – piston – free sand – rim", "#c0392b")
+    tag(v, -10, Z_S1 - 45, 150, Z_S1 - 45, "M: CS645 + fibre + Pt100 (r 37.5)", "#d33682")
+    tag(v, 0, Z_S1 - p.AM_PV[1], 150, Z_S1 - 75, "PV1 under the piston (depth 75), PB1 bottom", PCOL)
+    tag(v, p.BODY_D / 2 - 5, Z_S0 + 10, 150, Z_S0 - 20, "printed cell ⌀160 (V04)", INK)
+    tag(v, 60, zb0 - 12, 150, zb0 - 45, "Al base plate 260×200×25", INK)
+    tag(v, box_[3][0], box_[3][1], -150, zcam + 60, "camera RPi HQ in a heated box,\nhung from the beam, tilted 27°", INK)
+    tag(v, -40, Z_S1 + 75, -150, Z_S1 + 40, "columns 40×80 (behind)", INK)
+    # right panel
+    A_p = math.pi / 4 * p.C_PISTON_D ** 2
+    m_fix = (math.pi / 4 * 0.05 ** 2 * 0.02 * 2700 + math.pi / 4 * 0.012 ** 2 * ((zc - z_rod0) / 1000) * p.RHO_STEEL
+             + math.pi / 4 * 0.12 ** 2 * 0.008 * 2700 + 0.002)
+    sh.heading(255, 276, "Load under the piston (⌀50 = 1963 mm²)")
+    rows = []
+    for s_ in p.C_SURCHARGES_KPA:
+        m = s_ * A_p / 1000 / 9.81
+        rest = m - m_fix
+        n1 = int(max(rest, 0) // 1.0)
+        rows.append([f"{s_:g}", f"{m:.2f}", str(n1), f"{rest - n1:.2f}"])
+    y = table(sh, 255, 272, ["kPa", "total kg", "1 kg discs", "trim kg"], rows, [24, 30, 34, 30], row_h=5.6)
+    sh.text(255, y - 4,
+            f"Moving part without discs ≈ {m_fix:.2f} kg ≈ {m_fix * 9.81 / A_p * 1000:.1f} kPa (minimum).\n"
+            "\n"
+            "How it works\n"
+            "• gravity: the whole load (piston, rod, carrier, discs) rests on the\n"
+            "  sand and moves freely up (heave) and down (thaw) – constant load\n"
+            "• the frame and the bushing only keep the rod vertical\n"
+            "• partial piston ⌀50 = loaded footing; the 25 mm annulus stays FREE\n"
+            "• camera + laser line: heave of the loaded zone (piston top) and of\n"
+            "  the free surface in one image, collar rim = reference\n"
+            "• PV1 / PB1: stress under the footing; M: unfrozen water vs. T\n"
+            "\n"
+            "Details: vypocty.md §14; 3D: 3d/E7_V09_variant_C_combined.step",
+            fontsize=FS_SMALL, va="top", linespacing=1.45)
+    sh.save(pdf, os.path.join(OUT, "E7-V09_variant_C_combined.png"))
+
+
+def sheet_c(pdf):
+    with bigger_fonts():
+        _sheet_c(pdf)
+
+
 # --- overview, sensors, freezer layout ---------------------------------------------------
 def _sheet_overview(pdf):
     sh = Sheet("E7 – overview: variant A (fixed) and B (free, open surface)", "E7-V01", "≈ 1 : 3", 1, TOTAL,
@@ -1113,5 +1232,5 @@ if __name__ == "__main__":
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E7_drawings.pdf")) as pdf:
         for fn in (sheet_overview, sheet_a_min, sheet_a_frame, sheet_cup, sheet_b_simple, sheet_b_open,
-                   sheet_sensors, sheet_layout):
+                   sheet_sensors, sheet_layout, sheet_c):
             fn(pdf)

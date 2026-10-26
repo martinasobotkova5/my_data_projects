@@ -4,7 +4,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 | soubor | obsah |
 |---|---|
-| `vykresy/E7_drawings.pdf` | 8 listů A3, anglicky: V01 přehled A a B · V02 A s víkem na táhlech · V03 A s Al rámem · V04 tištěná cela + bod M · V05 B s kotvami · V06 B otevřený povrch (kamera + laser) · V07 čidla a CR1000 · V08 mrazák |
+| `vykresy/E7_drawings.pdf` | 9 listů A3, anglicky (V09 = varianta C, kombinace): V01 přehled A a B · V02 A s víkem na táhlech · V03 A s Al rámem · V04 tištěná cela + bod M · V05 B s kotvami · V06 B otevřený povrch (kamera + laser) · V07 čidla a CR1000 · V08 mrazák |
 | `cad/E7_V04_cell.dxf` | **CAD výkres cely ⌀160 se všemi kótami** (DXF, kóty jako DIMENSION, vrstvy OUTLINE/DIM/SENSOR…; tisk A3 1 : 1,5) + PDF/PNG náhled |
 | `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, samotná cela, obě v mrazáku (+ STL a PNG náhledy) |
 | `vypocty.md` | zatížení, očekávané deformace, rozlišení LVDT, teplotní chyba stojanu, napětí v cele, závaží |
@@ -134,6 +134,18 @@ Podle výkresu M. Vrány (23. 6. 2026) a náčrtu čidel:
 - kolem dutiny stěnu **≈ 5 mm (≈ 8 perimetrů)** – samotná 3mm stěna má při 200 kPa ≈ 3 MPa, při 1 MPa ≈ 17 MPa obvodového napětí;
 - uvnitř epoxid + PTFE sprej + silikonový tuk (tření o stěnu).
 - Otvory: PV1 kabel ⌀3,5 (z = 51, 90°), PB1 drážka ve dně + otvor ⌀3,5 (288°), Pt100 kabel ⌀4 (z ≈ 125, 0°), volitelně T1/T2 ⌀2.
+
+## 1d. Varianta C – kombinace A + B: mrtvá váha na částečném pístu, volný povrch, kamera (E7-V09, `vypocty.md` §14)
+
+Spojuje hliníkový rám z varianty A a kameru s laserem z varianty B. Zatížení je **gravitační a konstantní**: celá zátěž leží na písku a s povrchem se volně pohybuje nahoru (zdvih) i dolů (tání).
+
+- **Rám** (deska 260 × 200 × 25, sloupy 40×80 × 326, příčník 80×80) zátěž **jen vede**: kuličkové pouzdro LM12UU v příčníku drží tyč ⌀12 svisle, nic nezamyká. Tření < 0,05 kPa.
+- **Částečný píst** Al ⌀50 × 20 uprostřed (25 % plochy) přes kuličku ⌀8 nese tyč, nosnou desku a ocelové kotouče ⌀120 nad příčníkem (volný zdvih ±25 mm). Pevná část ≈ 0,6 kg ≈ 3 kPa; 5 / 10 / 15 / 20 / 25 kPa = 1 / 2 / 3 / 4 / 5 kg (0–4 kotouče po 1 kg + doladění).
+- **Volný povrch:** mezikruží 25 mm kolem pístu nic nezatěžuje.
+- **Kamera** (RPi HQ, vyhřívaný box) visí pod příčníkem na straně −y, skloněná o 27°; **čárový laser** z +y pod 45° promítá jednu čáru napříč: límec – volný písek – píst – volný písek – límec. V jednom snímku je tak zdvih zatížené části (horní plocha pístu) i volného povrchu, límec je reference.
+- **Tlak pod patkou:** PV1 na ose v hloubce 75 mm, PB1 ve dně. **Bod M** jako dřív, Pt100 přesunut do mezikruží (r 37,5). Volitelně LVDT na nosné desce.
+- Výška sestavy ≈ 520 mm nad spodkem desky (mrazák ≈ 650 – změřit).
+- 3D: `3d/E7_V09_variant_C_combined.step` (+ díly v `3d/parts_V09_variant_C_combined/`).
 
 ## 2. Přitížení závažím (varianta A, E7-V01, `vypocty.md` §7)
 
@@ -346,6 +358,7 @@ Podmínky:
 | `E7_V04_cell.step` | samotná tištěná cela ⌀160 s kanálem, CS645, vláknem a Pt100 (V04) |
 | `E7_V05_variant_B_anchors.step` | B – kotvy E1–E3, 6 LVDT na Invarovém stojanu (V05) |
 | **`E7_V06_variant_B_open.step`** | **B – otevřený povrch** (V06): deska, cela, bod M, sloupek + rameno 20×20, vyhřívaný box s kamerou a objektivem, čárový laser s držákem |
+| **`E7_V09_variant_C_combined.step`** | **C – rám vede mrtvou váhu na částečném pístu ⌀50, volný povrch, kamera + laser** (V09) |
 | `E7_V08_freezer_layout.step` | obě sestavy (V03 + V06) na vaně v mrazáku (V08) |
 | `parts_V03_variant_A_frame/`, `parts_V06_variant_B_open/` | **každý díl zvlášť** jako STEP – pro výrobní výkresy jednotlivých dílů |
 

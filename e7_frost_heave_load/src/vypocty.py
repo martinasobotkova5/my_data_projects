@@ -355,3 +355,36 @@ print("**Kamera a laser v mrazáku:** oba v izolovaném boxu (XPS 30 mm) s topno
       "Ttop / bodem M ve slepé zkoušce; lepší je kamera mimo mrazák s okénkem ve víku, pokud to víko dovolí. "
       "Laser zapínat jen na snímek (každých 10 min), jinak tma; čas synchronizovat s CR1000.\n")
 print(f"**Cena:** ≈ {lo:.0f}–{hi:.0f} € bez DPH (≈ {lo * 25 / 1000:.0f}–{hi * 25 / 1000:.0f} tis. Kč).\n")
+
+# 14 --------------------------------------------------------------------------
+print("## 14. Varianta C – kombinace: Al rám vede mrtvou váhu, částečný píst, kamera nad volným povrchem\n")
+A_p = math.pi / 4 * p.C_PISTON_D ** 2
+zb0 = 0.0
+col_h = p.BODY_BOTTOM + p.H_SAMPLE + p.C_BEAM_GAP          # sloup od horního líce desky po příčník
+rod_l = p.C_BEAM_GAP - p.C_PISTON_H - p.C_BALL_D + p.AF_BEAM_H + p.C_TRAVEL + 10
+m_pist = math.pi / 4 * (p.C_PISTON_D / 1000) ** 2 * p.C_PISTON_H / 1000 * 2700
+m_rod = math.pi / 4 * (p.C_ROD_D / 1000) ** 2 * rod_l / 1000 * p.RHO_STEEL
+m_car = math.pi / 4 * (p.C_CARRIER_D / 1000) ** 2 * p.C_CARRIER_T / 1000 * 2700
+m_fix = m_pist + m_rod + m_car + 0.002
+print(f"Píst ⌀{p.C_PISTON_D:g} (plocha {A_p:.0f} mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. "
+      f"Pohyblivá část bez závaží: píst Al {m_pist * 1000:.0f} g + kulička + tyč ⌀{p.C_ROD_D:g} × {rod_l:.0f} "
+      f"{m_rod * 1000:.0f} g + Al nosná deska {m_car * 1000:.0f} g = **{m_fix:.2f} kg ≈ {m_fix * 9.81 / A_p * 1000:.1f} kPa** "
+      "(nejmenší přitížení pod pístem).\n")
+head("napětí pod pístem [kPa]", "celkem [kg]", "kotouče 1 kg", "0,5 kg", "doladit [kg]")
+for s_ in p.C_SURCHARGES_KPA:
+    m = s_ * A_p / 1000 / 9.81
+    rest = m - m_fix
+    n1 = int(max(rest, 0) // 1.0); rest -= n1
+    n2 = int(max(rest, 0) // 0.5); rest -= 0.5 * n2
+    row(f"{s_:g}", f"{m:.2f}", n1, n2, f"{rest:.2f}")
+t_disc = 1.0 / (math.pi / 4 * ((p.C_DISC_D / 1000) ** 2 - (p.C_DISC_HOLE / 1000) ** 2) * p.RHO_STEEL) * 1000
+print(f"\nKotouč ⌀{p.C_DISC_D:g}/{p.C_DISC_HOLE:g}: 1 kg = {t_disc:.1f} mm, 0,5 kg = {t_disc / 2:.1f} mm. Při 25 kPa jen ≈ 4 kotouče.\n")
+print("**Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±"
+      f"{p.C_TRAVEL:g} mm). Kuličkové pouzdro LM{p.C_ROD_D:g}UU má tření ≈ 0,002–0,005 × boční síla; při "
+      "náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,05 kPa. Kulička mezi tyčí a pístem dovolí "
+      "pístu se naklonit, tyč zůstává svislá.\n")
+print("**Co se měří:** zdvih/sednutí **pod pístem** (horní plocha pístu) a **volného povrchu** v mezikruží – obojí "
+      "jednou laserovou čárou (napříč, podél osy x; laser svítí z +y pod 45°) v jednom snímku, reference = horní hrana límce. Volitelně LVDT na nosné "
+      "desce (kontrola pohybu zátěže). Tlak pod patkou: PV1 na ose v hloubce 75 mm, PB1 u dna.\n")
+print(f"**Rozměry:** sloupy 40×80 × {col_h:.0f} mm, spodní líc příčníku {p.C_BEAM_GAP:g} mm nad pískem (místo pro kameru "
+      "a laser), závaží nad příčníkem mimo zorné pole. Pt100 přesunut do mezikruží (r 37,5) – pod pístem by překážel.\n")
