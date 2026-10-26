@@ -55,7 +55,7 @@ class Sheet:
             y += h
         ax.plot([x0 + 40, x0 + 40], [y0, y0 + 24], lw=THIN, c=INK)
         ax.plot([x0 + 110, x0 + 110], [y0, y0 + 24], lw=THIN, c=INK)
-        t = lambda x, yy, s, **k: ax.text(x, yy, s, va="center", fontsize=k.pop("fs", FS_SMALL), color=INK, **k)
+        t = lambda x, yy, s, **k: ax.text(x, yy, s, va="center", fontsize=min(k.pop("fs", FS_SMALL), 9.5), color=INK, **k)
         t(x0 + 2, y0 + 4, "scale")
         t(x0 + 22, y0 + 4, scale, fs=FS, weight="bold")
         t(x0 + 42, y0 + 4, "drawing no.")
@@ -71,7 +71,7 @@ class Sheet:
         t(x0 + 42, y0 + 20, "drawn")
         t(x0 + 60, y0 + 20, "Claude Code (draft)")
         t(x0 + 112, y0 + 20, "checked: —")
-        t(x0 + 2, y0 + 28.5, title, fs=FS + 3, weight="bold")
+        ax.text(x0 + 2, y0 + 28.5, title, va="center", fontsize=min(FS + 3, 12.5), color=INK, weight="bold")
         if subtitle:
             t(x0 + 2, y0 + 33.5, subtitle, fs=FS_SMALL)
 

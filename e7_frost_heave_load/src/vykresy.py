@@ -102,13 +102,18 @@ def solid_cell(v, top=TUBE_TOP, foot=True):
         v.rect(s_ * (R_IN - p.LINER), Z_S0, s_ * R_IN, top, fc="#f7f7f7", lw=0.3)
 
 
+TAG_BOX = True           # framed leader labels (False = plain text)
+
+
 def tag(v, x, z, tx, tz, text, color=INK, ha=None):
     a, b = v.p(x, z), v.p(tx, tz)
     v.ax.plot([a[0], b[0]], [a[1], b[1]], lw=THIN, c=color, zorder=7)
     v.ax.add_patch(Circle(a, 0.6, fc=color, ec="none", zorder=7))
     ha = ha or ("left" if b[0] >= a[0] else "right")
+    box = (dict(fc="white", ec=color, lw=0.4, pad=0.6, boxstyle="round,pad=0.25") if TAG_BOX
+           else dict(fc="white", ec="none", pad=0.4))
     v.ax.text(b[0] + (0.8 if ha == "left" else -0.8), b[1], text, fontsize=FS_SMALL, ha=ha, va="center",
-              color=color, zorder=8, bbox=dict(fc="white", ec=color, lw=0.4, pad=0.6, boxstyle="round,pad=0.25"))
+              color=color, zorder=8, bbox=box)
 
 
 def simple_rig(v, variant):
@@ -923,7 +928,7 @@ def sheet_b_open(pdf):
 def _sheet_c(pdf):
     sh = Sheet("Variant C – dead weight on a partial piston + camera", "E7-V09",
                "≈ 1 : 2.5", 9, TOTAL, "A + B combined; side view y–z; the frame only GUIDES the load")
-    v = View(sh, 118, 34, 0.42)
+    v = View(sh, 112, 34, 0.40)
     bw, bd, bt = p.AF_BASE
     zb0 = Z_S0 - p.BODY_BOTTOM
     col_h = p.BODY_BOTTOM + p.H_SAMPLE + p.C_BEAM_GAP
@@ -990,19 +995,19 @@ def _sheet_c(pdf):
     v.dim_h(-p.C_PISTON_D / 2, p.C_PISTON_D / 2, zp, zp + 12, "⌀50 piston")
     v.dim_h(-p.C_DISC_D / 2, p.C_DISC_D / 2, ztop, ztop + 12, "⌀120 discs")
     # labels
-    tag(v, 0, zc + p.C_CARRIER_T + 20, 150, ztop + 25, "dead weight: Al carrier + steel discs 1 kg\n(moves up and down with the piston)", INK)
-    tag(v, 0, zbeam + 40, 150, zbeam + 55, "linear ball bushing LM12UU in the beam\n(guides only, friction < 0.05 kPa)", INK)
-    tag(v, 45, zbeam + p.AF_BEAM_H + 12, 150, zbeam + 105, "LVDT on the carrier (optional)", SENS_TXT)
-    tag(v, 0, Z_S1 + 60, 150, Z_S1 + 120, "guide rod ⌀12 h6, steel ball ⌀8 on the piston", INK)
-    tag(v, 20, zp - 5, 150, Z_S1 + 45, "partial piston Al ⌀50×20 (25 % of the area)", INK)
-    tag(v, 38, Z_S1 + 0.3, 150, Z_S1 + 5, "FREE surface: annulus 25 mm", "#2b62a3")
-    tag(v, yl, zl, 150, zl - 20, "line laser 45° (+y): one line over\nrim – free sand – piston – free sand – rim", "#c0392b")
-    tag(v, -10, Z_S1 - 45, 150, Z_S1 - 45, "M: CS645 + fibre + Pt100 (r 37.5)", "#d33682")
-    tag(v, 0, Z_S1 - p.AM_PV[1], 150, Z_S1 - 75, "PV1 under the piston (depth 75), PB1 bottom", PCOL)
-    tag(v, p.BODY_D / 2 - 5, Z_S0 + 10, 150, Z_S0 - 20, "printed cell ⌀160 (V04)", INK)
-    tag(v, 60, zb0 - 12, 150, zb0 - 45, "Al base plate 260×200×25", INK)
-    tag(v, box_[3][0], box_[3][1], -150, zcam + 60, "camera RPi HQ in a heated box,\nhung from the beam, tilted 27°", INK)
-    tag(v, -40, Z_S1 + 75, -150, Z_S1 + 40, "columns 40×80 (behind)", INK)
+    tag(v, 0, zc + p.C_CARRIER_T + 20, 140, ztop + 25, "dead weight: carrier + discs 1 kg\n(moves up and down)", INK)
+    tag(v, 0, zbeam + 40, 140, zbeam + 55, "ball bushing LM12UU\n(guides only)", INK)
+    tag(v, 45, zbeam + p.AF_BEAM_H + 12, 140, zbeam + 105, "LVDT (optional)", SENS_TXT)
+    tag(v, 0, Z_S1 + 60, 140, Z_S1 + 120, "guide rod ⌀12, ball ⌀8", INK)
+    tag(v, 20, zp - 5, 140, Z_S1 + 45, "partial piston ⌀50×20", INK)
+    tag(v, 38, Z_S1 + 0.3, 140, Z_S1 + 5, "FREE surface (25 mm annulus)", "#2b62a3")
+    tag(v, yl, zl, 140, zl - 20, "line laser 45°: one line over\nfree sand + piston", "#c0392b")
+    tag(v, -10, Z_S1 - 45, 140, Z_S1 - 45, "M: CS645 + fibre + Pt100", "#d33682")
+    tag(v, 0, Z_S1 - p.AM_PV[1], 140, Z_S1 - 75, "PV1 (depth 75), PB1 (bottom)", PCOL)
+    tag(v, p.BODY_D / 2 - 5, Z_S0 + 10, 140, Z_S0 - 20, "printed cell ⌀160", INK)
+    tag(v, 60, zb0 - 12, 140, zb0 - 45, "Al plate 260×200×25", INK)
+    tag(v, box_[0][0], box_[0][1], -150, zcam + 10, "camera RPi HQ\nheated box\ntilted 27°", INK, ha="right")
+    tag(v, -40, Z_S1 + 75, -150, Z_S1 + 75, "columns 40×80\n(behind)", INK, ha="right")
     # right panel
     A_p = math.pi / 4 * p.C_PISTON_D ** 2
     m_fix = (math.pi / 4 * 0.05 ** 2 * 0.02 * 2700 + math.pi / 4 * 0.012 ** 2 * ((zc - z_rod0) / 1000) * p.RHO_STEEL
@@ -1033,8 +1038,13 @@ def _sheet_c(pdf):
 
 
 def sheet_c(pdf):
-    with bigger_fonts():
-        _sheet_c(pdf)
+    global TAG_BOX
+    TAG_BOX = False
+    try:
+        with bigger_fonts(11.5, 10.5):
+            _sheet_c(pdf)
+    finally:
+        TAG_BOX = True
 
 
 # --- overview, sensors, freezer layout ---------------------------------------------------
