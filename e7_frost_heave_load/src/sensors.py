@@ -140,16 +140,16 @@ B_CAM_MECH = [
 ]
 
 # --- varianta C: měření deformace 1 (kamera + laser) a 2 (LVDT) – co koupit (EUR bez DPH) --------
-C_BUY = [
-    ("CAM", "Raspberry Pi 5 (4 GB) + PSU + SD card", 1, 90, 120, "web/odhad", "– (Ethernet, NTP)"),
-    ("", "Raspberry Pi HQ Camera (IMX477, 12 MP)", 1, 55, 70, "odhad", "–"),
-    ("", "lens 8 mm C/CS-mount, low distortion", 1, 30, 70, "odhad", "–"),
-    ("LAS", "multi-line laser 650 nm, 11 parallel lines (DOE), class 2", 1, 40, 150, "odhad", "– (switched by RPi)"),
-    ("", "heated camera box: XPS 30, heater 5 W, thermostat, double glass", 1, 40, 80, "odhad", "–"),
-    ("LVDT", "RDP DCTH400AG ±10 mm, spring", 1, 581, 581, "web (Elkome)", "SE1, ±5000 mV"),
-    ("", "DIN-rail power supply ±15 V for the LVDT", 1, 40, 80, "odhad", "via relay"),
-    ("", "Campbell 4WPB100 (for the existing Pt100)", 1, 60, 120, "odhad", "DIFF1"),
-    ("Tair", "Campbell 109-L (optional)", 1, 150, 220, "odhad", "SE3, VX1"),
+C_BUY = [   # konkrétní typy (ceny 10/2026, EUR bez DPH; Kč s DPH přepočteno / 1,21 / 25) – viz nakup_cidel.md
+    ("CAM", "Raspberry Pi 5 4 GB + PSU, SD, camera cable (RPishop)", 1, 105, 120, "web (RPishop 2769 Kč)", "– (Ethernet, NTP)"),
+    ("", "Raspberry Pi HQ Camera C/CS, IMX477 (RPishop OFI060)", 1, 50, 62, "web (RPishop 1499 Kč)", "–"),
+    ("", "Arducam 8 mm CS lens F1.4, manual focus (The Pi Hut)", 1, 16, 20, "web (Pi Hut £16.40)", "–"),
+    ("LAS", "Picotronic DOE253-635-1-6(10x22), 11 lines, 635 nm, 1 mW, 5 V", 1, 92, 92, "web (Picotronic 70111842)", "– (switched by RPi)"),
+    ("", "heated camera box: XPS 30, heater 5 W, double glass", 1, 40, 80, "odhad", "–"),
+    ("LVDT", "RDP DCTH400AG ±10 mm, spring (Elkome)", 1, 581, 581, "web (Elkome)", "SE1, ±5000 mV"),
+    ("", "Mean Well HDR-15-24, 24 V DIN (floating supply) (TME)", 1, 11, 14, "web (TME)", "via relay"),
+    ("", "Campbell 4WPB100 (for the existing Pt100) (Ekotechnika)", 1, 60, 120, "odhad – na dotaz", "DIFF1"),
+    ("Tair", "Campbell 109-L (optional) (Ekotechnika)", 1, 150, 220, "odhad – na dotaz", "SE3, VX1"),
 ]
 C_MECH = [
     ("Al base plate 260 × 200 × 25 (machined)", 60, 120),
