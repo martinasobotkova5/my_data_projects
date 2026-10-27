@@ -250,21 +250,31 @@ Na povrchu písku nic neleží. Čárový laser svítí šikmo (45° od svislice
 
 ## 14. Varianta C – kombinace: Al rám vede mrtvou váhu, částečný píst, kamera nad volným povrchem
 
-Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 287 255 g + Al nosná deska 244 g = **0.61 kg ≈ 3.0 kPa** (nejmenší přitížení pod pístem).
+Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 247 219 g + Al nosná deska 244 g = **0.57 kg ≈ 2.9 kPa** (nejmenší přitížení pod pístem).
 
 | napětí pod pístem [kPa] | celkem [kg] | kotouče 1 kg | 0,5 kg | doladit [kg] |
 |---|---|---|---|---|
-| 5 | 1.00 | 0 | 0 | 0.39 |
-| 10 | 2.00 | 1 | 0 | 0.39 |
-| 15 | 3.00 | 2 | 0 | 0.40 |
-| 20 | 4.00 | 3 | 0 | 0.40 |
-| 25 | 5.00 | 4 | 0 | 0.40 |
+| 5 | 1.00 | 0 | 0 | 0.43 |
+| 10 | 2.00 | 1 | 0 | 0.43 |
+| 15 | 3.00 | 2 | 0 | 0.43 |
+| 20 | 4.00 | 3 | 0 | 0.43 |
+| 25 | 5.00 | 4 | 0 | 0.43 |
 
 Kotouč ⌀120/17: 1 kg = 11.5 mm, 0,5 kg = 5.7 mm. Při 25 kPa jen ≈ 4 kotouče.
 
-**Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±25 mm). Kuličkové pouzdro LM12UU má tření ≈ 0,002–0,005 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,05 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
+**Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±25 mm). Kluzné pouzdro igus drylin RJ4JP-01-12 (bez maziva, do −40 °C) má tření ≈ 0,1–0,25 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,02 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
 
-**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser (11 čar po 9 mm) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = horní hrana límce; (2) LVDT na nosné desce = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.
+**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser 68° (11 čar po ≈ 9.6 mm, posun čáry = 0,40 × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.
 
-**Rozměry:** sloupy 40×80 × 326 mm, spodní líc příčníku 200 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 v mezikruží (r 37,5, 315°, strana kamery) – mimo laserové čáry i píst.
+**Rozměry:** sloupy 40×80 × 326 mm, spodní líc příčníku 160 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 v mezikruží (r 37,5, 315°, strana kamery) – mimo laserové čáry i píst.
+
+## 15. Varianta C rev. B – posudek měření (10/2026)
+
+**Očekávaný zdvih:** pórovitost ≈ 0.38, θ = 0.15 → Sr ≈ 0.39; vzduch v pórech 23 % objemu, objem ledu přibude jen o 1.3 % → v uzavřeném vzorku se rozpínání vejde do pórů, zdvih in situ ≈ 0 (desítky µm nanejvýš od migrace vody). Horní mez (vše nahoru) 1,35 mm. Chcete-li měřit zdvih, zvyšte Sr ≥ 0,85 nebo přiveďte vodu zespodu.
+
+**Směr mrznutí (sim_thaw.py):** cela přímo na Al desce – vzorek zmrzne za ≈ 9 h i zespodu, poslední nezmrzlé místo 27 mm nade dnem; rev. B (XPS objímka 40 + XPS/G10 pod celou) – ≈ 14 h, poslední nezmrzlé 7 mm nade dnem → mrznutí shora. Tání ≈ 14 h → cyklus 24 h + 24 h stačí.
+
+**Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle teplot cely ze slepé zkoušky):** rev. A (bez izolace, LVDT na Al příčníku, ocelová tyč) −24…+48 µm, zbytek ≤ 12 µm; kamera vůči PETG límci 0…100 µm, zbytek ≤ 8 µm. Jen izolace bez Invaru by zbytek LVDT zhoršila na 57 µm (cela reaguje pomaleji než sloupy a tyč). Rev. B (izolace + invarový sloupek + invarová tyč) −58…0 µm, zbytek ≤ 4 µm; kamera vůči invarovému terčíku −48…0 µm, zbytek ≤ 2 µm. Zbylý drift = PETG dno 26 mm + písek → změřit slepou zkouškou s Al atrapou.
+
+**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); snímek spouští CR1000 (C5); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.
 

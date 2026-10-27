@@ -12,6 +12,7 @@
   --text: #0b0b0b; --text-2: #52514e; --muted: #7a7973; --accent: #2a78d6;
   --scene: #eceae4; --grid: #e4e2dc; --axis: #b9b7ae;
   --s-air: #2a78d6; --s-free: #eb6834; --s-under: #1baf7a; --s-m: #eda100;
+  --s-d1: #e87ba4; --s-d2: #008300; --s-d3: #6250d6; --s-d4: #e34948;
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
@@ -20,6 +21,7 @@
     --text: #f0efec; --text-2: #c3c2b7; --muted: #8f8e86; --accent: #3987e5;
     --scene: #1d1d1b; --grid: #2a2a27; --axis: #4a4a45;
     --s-air: #3987e5; --s-free: #d95926; --s-under: #199e70; --s-m: #c98500;
+    --s-d1: #d55181; --s-d2: #008300; --s-d3: #9085e9; --s-d4: #e66767;
   }
 }
 :root[data-theme="dark"] {
@@ -28,6 +30,7 @@
   --text: #f0efec; --text-2: #c3c2b7; --muted: #8f8e86; --accent: #3987e5;
   --scene: #1d1d1b; --grid: #2a2a27; --axis: #4a4a45;
   --s-air: #3987e5; --s-free: #d95926; --s-under: #199e70; --s-m: #c98500;
+  --s-d1: #d55181; --s-d2: #008300; --s-d3: #9085e9; --s-d4: #e66767;
 }
 * { box-sizing: border-box; }
 body {
@@ -81,6 +84,8 @@ button.primary { background: var(--accent); color: #fff; border-color: transpare
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--text-2); margin-bottom: 4px; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
 .legend i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.legend i.dash { background-image: linear-gradient(90deg, transparent 50%, var(--surface) 50%); background-size: 6px 3px; }
+.chartnote { font-size: 12.5px; color: var(--text-2); margin: 4px 0 0; }
 .legend b { color: var(--text); font-weight: 600; }
 canvas.chart { width: 100%; height: 220px; display: block; cursor: crosshair; }
 .tip {
@@ -102,8 +107,9 @@ summary { cursor: pointer; color: var(--text-2); }
 <body>
 <div class="wrap">
   <h1>E7 sample thawing – variant C</h1>
-  <p class="lede">Sand ⌀100 × 100 in the printed cell ⌀160, partial piston ⌀50. The surface is visible only in the annulus around the piston
-    (seen by the camera and the laser). Colour = temperature (or ice fraction): the section shows the full sample height, the surface on top. Heave is exaggerated.</p>
+  <p class="lede">Revision B: sand ⌀100 × 100 in the printed cell ⌀160 with an XPS sleeve and XPS/G10 base, so it freezes from the top.
+    Partial piston ⌀50 on an Invar guide rod; LVDT and camera reference on an Invar post. The surface is visible only in the annulus around the piston.
+    Colour = temperature (or ice fraction); the section shows the full sample height.</p>
 
   <div class="stage">
     <canvas id="c3d" aria-label="3D model of the rig with animated temperature"></canvas>
@@ -116,7 +122,7 @@ summary { cursor: pointer; color: var(--text-2); }
         <tr><td>surface under the piston</td><td id="hUnder"></td></tr>
         <tr><td>point M (depth 45)</td><td id="hM"></td></tr>
         <tr><td>frozen water fraction</td><td id="hIce"></td></tr>
-        <tr><td>heave free / piston</td><td id="hHeave"></td></tr>
+        <tr><td>rig drift, LVDT rev. A / B</td><td id="hHeave"></td></tr>
       </table>
     </div>
     <div class="cbar">
@@ -148,7 +154,10 @@ summary { cursor: pointer; color: var(--text-2); }
     <label>colour
       <select id="mode"><option value="T" selected>temperature</option><option value="ice">ice fraction</option></select>
     </label>
-    <label>heave exaggeration
+    <label>heave shown
+      <select id="heaveMode"><option value="up" selected>upper bound (all ice expansion upward)</option><option value="real">expected for Sr ≈ 0.4 (≈ 0)</option></select>
+    </label>
+    <label>exaggeration
       <select id="exag"><option value="1">×1</option><option value="10">×10</option><option value="20" selected>×20</option><option value="50">×50</option></select>
     </label>
   </div>
@@ -161,9 +170,10 @@ summary { cursor: pointer; color: var(--text-2); }
       <div class="tip" id="tipT"></div>
     </div>
     <div class="card">
-      <h2>Surface heave [mm] – ice volume only (9 %)</h2>
+      <h2>Rig thermal drift seen by the sensors [µm]</h2>
       <div class="legend" id="lgH"></div>
       <canvas class="chart" id="chH"></canvas>
+      <p class="chartnote" id="noteH"></p>
       <div class="tip" id="tipH"></div>
     </div>
   </div>
@@ -196,7 +206,7 @@ const DATA = /*__DATA__*/null;
   const iceOf = T => Math.min(1, Math.max(0, -T / 0.5));    // T in °C (freezing range −0.5…0)
 
   // ---------- derived series per frame ----------
-  const S = { free: [], under: [], m: [], ice: [], hFree: [], hPist: [], heave: [] };
+  const S = { free: [], under: [], m: [], ice: [], hFree: [], hPist: [], heave: [], dA: [], dB: [], dRim: [], dRef: [] };
   const iM = Math.min(NS - 1, Math.floor(G.pt100[0] / DR)), jM = Math.floor((G.z_sand - 45) / DZ);
   for (let f = 0; f < NF; f++) {
     const hv = new Float32Array(NS); let iceV = 0, vol = 0;
@@ -212,6 +222,7 @@ const DATA = /*__DATA__*/null;
     }
     S.under.push(a / b); S.free.push(c / d); S.m.push(cell(f, iM, jM) / 10); S.ice.push(iceV / vol);
     S.hPist.push(hp / b); S.hFree.push(hf / d); S.heave.push(hv);
+    const dr = D.drift[f]; S.dA.push(dr[0]); S.dB.push(dr[1]); S.dRim.push(dr[2]); S.dRef.push(dr[3]);
   }
   const fThaw = D.t.findIndex(t => t >= D.program.thaw_h);
 
@@ -269,38 +280,51 @@ const DATA = /*__DATA__*/null;
   }
 
   const frameGrp = new THREE.Group(), moving = new THREE.Group(); scene.add(frameGrp); scene.add(moving);
-  const [bw, bd, bt] = G.base, xc = G.col_span / 2, colH = G.z_bot + 100 + G.beam_gap, zBeam = colH;
-  scene.add(box(-bw / 2, bw / 2, -bd / 2, bd / 2, -bt, 0, matAl));
-  for (const s of [-1, 1]) frameGrp.add(box(s * xc - 20, s * xc + 20, -40, 40, 0, zBeam, matProf));
+  const ins = G.ins, [bw, bd, bt] = G.base, xc = G.col_span / 2, zBeam = G.z_bot + 100 + G.beam_gap;
+  const matInv = M(0x8c7a5b, { metalness: 0.5, roughness: 0.45 }), matXps = M(0xbcd3e6, { roughness: 0.9, side: THREE.DoubleSide });
+  scene.add(box(-bw / 2, bw / 2, -bd / 2, bd / 2, -ins - bt, -ins, matAl));
+  for (const s of [-1, 1]) frameGrp.add(box(s * xc - 20, s * xc + 20, -40, 40, -ins, zBeam, matProf));
   frameGrp.add(box(-xc - 20, xc + 20, -40, 40, zBeam, zBeam + G.beam_h, matProf));
-  frameGrp.add(cyl(9.5, 25, zBeam + G.beam_h, G.lvdt_x, 0, matSens, 24));
-  // camera (−y, tilted to the axis), bracket to the beam
+  // camera with the Raspberry Pi in one box (−y, tilted to the axis), bracket to the beam
   const [camY, camH, camTilt] = G.cam, zCam = G.z_sand + camH;
   const cam = new THREE.Group();
-  const cbody = new THREE.Mesh(new THREE.BoxGeometry(70, 80, 70), matCam); cam.add(cbody);
-  const lens = new THREE.Mesh(new THREE.CylinderGeometry(14, 14, 18, 28), matSteel); lens.position.set(0, -48, 0); cam.add(lens);
+  const cbody = new THREE.Mesh(new THREE.BoxGeometry(90, 70, 100), matCam); cam.add(cbody);
+  const lens = new THREE.Mesh(new THREE.CylinderGeometry(14, 14, 18, 28), matSteel); lens.position.set(0, -43, 0); cam.add(lens);
   cam.position.set(0, zCam, -camY); cam.rotation.x = camTilt * Math.PI / 180; frameGrp.add(cam);
-  frameGrp.add(box(-10, 10, camY - 10, -40, zCam + 45, zBeam, matAl));
-  // laser (+y, 45°) on a post from the base plate
+  frameGrp.add(box(-8, 8, camY - 8, -40, zCam + 30, zBeam, matAl));
+  // laser (+y) hanging from the beam, 68° to the surface, aimed at the axis
   const [lasY, lasH] = G.laser, zLas = G.z_sand + lasH;
-  frameGrp.add(box(-45, -25, lasY - 2, lasY + 18, 0, zLas + 8, matProf));
-  frameGrp.add(box(-25, 8, lasY + 4, lasY + 14, zLas + 8, zLas + 14, matAl));
-  const las = new THREE.Mesh(new THREE.CylinderGeometry(6, 6, 30, 20), matLaser);
-  las.position.set(0, zLas, -lasY); las.rotation.x = -Math.PI / 4; frameGrp.add(las);
-
-  // moving load: ball, rod, carrier, 4 discs, LVDT plunger (offset by piston heave)
+  frameGrp.add(box(-8, 8, 40, 43, zLas - 6, zBeam, matAl));
+  const las = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 22, 20), matLaser);
+  las.position.set(0, zLas, -lasY); las.rotation.x = -Math.atan2(lasY, lasH); frameGrp.add(las);
+  // Invar post from the base plate: arm with the LVDT under the carrier + reference target for the camera
   const zp = G.z_sand + G.h_piston, zRod0 = zp + 6, zC = zBeam + G.beam_h + 25 + 10;
+  const [invD, invX, invY] = G.invar, [lvX, lvY] = G.lvdt, [rfX, rfY] = G.ref;
+  frameGrp.add(cyl(invD / 2, zC - 35 + ins, -ins, invX, invY, matInv, 20));
+  const arm = (x0, y0, x1, y1, z0, t, mat) => {
+    const L = Math.hypot(x1 - x0, y1 - y0), m = new THREE.Mesh(new THREE.BoxGeometry(L, t, 12), mat);
+    m.position.set((x0 + x1) / 2, z0 + t / 2, -(y0 + y1) / 2); m.rotation.y = Math.atan2(y1 - y0, x1 - x0); return m;
+  };
+  frameGrp.add(arm(invX, invY, lvX, lvY, zC - 41, 6, matInv));
+  frameGrp.add(cyl(9.5, 25, zC - 35, lvX, lvY, matSens, 24));
+  frameGrp.add(arm(invX, invY, rfX, rfY, G.z_top, 3, matInv));
+  const target = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  target.rotation.x = -Math.PI / 2; target.position.set(rfX, G.z_top + 3.1, -rfY); frameGrp.add(target);
+  const tdot = new THREE.Mesh(new THREE.CircleGeometry(2.2, 20), new THREE.MeshBasicMaterial({ color: 0x111111 }));
+  tdot.rotation.x = -Math.PI / 2; tdot.position.set(rfX, G.z_top + 3.2, -rfY); frameGrp.add(tdot);
+
+  // moving load: ball, Invar guide rod, carrier, 4 discs, LVDT plunger tip (offset by piston heave)
   moving.add(new THREE.Mesh(new THREE.SphereGeometry(4, 20, 14), matSteel)); moving.children[0].position.set(0, zp + 3, 0);
-  moving.add(cyl(G.rod_d / 2, zC - zRod0, zRod0, 0, 0, matSteel, 24));
+  moving.add(cyl(G.rod_d / 2, zC - zRod0, zRod0, 0, 0, matInv, 24));
   moving.add(cyl(G.carrier[0] / 2, G.carrier[1], zC, 0, 0, matAl, 56));
   for (let k = 0; k < 4; k++) moving.add(cyl(G.disc_d / 2, 11.2, zC + G.carrier[1] + k * 11.5, 0, 0, matSteel, 56));
-  const plunger = cyl(2, zC - (zBeam + G.beam_h + 25), zBeam + G.beam_h + 25, G.lvdt_x, 0, matSteel, 12);
-  moving.add(plunger);
+  moving.add(cyl(2, 10, zC - 10, lvX, lvY, matSteel, 12));
 
   // cell body (lathe of the profile, duplicated corners → crisp edges)
   const prof = [[0, 0], [80, 0], [80, 0], [80, 130], [80, 130], [G.r_wall, 130], [G.r_wall, 130], [G.r_wall, 160], [G.r_wall, 160],
     [50, 160], [50, 160], [50, 26], [50, 26], [0, 26]].map(([r, z]) => new THREE.Vector2(r, z));
   let bodyMesh = null, pistonMesh = null, surfMesh = null;
+  const insMeshes = [];
   const matPiston = M(0xc4c8ce, { metalness: 0.5, roughness: 0.35, transparent: true, opacity: 1, side: THREE.DoubleSide });
 
   // section mesh (z = 0 plane), one quad per non-air cell, mirrored to −r
@@ -337,11 +361,30 @@ const DATA = /*__DATA__*/null;
     const ln = new THREE.Line(g, lineMat); ln.renderOrder = 3; laserGrp.add(ln); laserLines.push(ln);
   }
 
-  let cut = true, exag = 20, cur = 0;
+  let cut = true, exag = 20, cur = 0, heaveMode = "up";
   function buildStatic() {
     for (const m of [bodyMesh, pistonMesh, surfMesh]) if (m) { scene.remove(m); m.geometry.dispose(); }
     const p0 = cut ? Math.PI / 2 : 0, pl = cut ? Math.PI : Math.PI * 2;
     bodyMesh = new THREE.Mesh(new THREE.LatheGeometry(prof, 96, p0, pl), matPetg); scene.add(bodyMesh);
+    for (const m of insMeshes) { scene.remove(m); m.geometry.dispose(); }
+    insMeshes.length = 0;
+    if (ins > 0) {                                   // rev. B: XPS sleeve on the jacket + XPS slab with 3 G10 pads under the cell
+      const ro = 80 + G.sleeve, sp = [[80, 0], [ro, 0], [ro, 0], [ro, 130], [ro, 130], [80, 130], [80, 130], [80, 0]]
+        .map(([r, z]) => new THREE.Vector2(r, z));
+      insMeshes.push(new THREE.Mesh(new THREE.LatheGeometry(sp, 96, p0, pl), matXps));
+      const slab = new THREE.Mesh(new THREE.CylinderGeometry(ro, ro, ins, 96, 1, false, p0, pl), matXps);
+      slab.position.y = -ins / 2; insMeshes.push(slab);
+      if (cut) for (const [x0, x1, y0, y1] of [[80, ro, 0, 130], [-ro, -80, 0, 130], [-ro, ro, -ins, 0]]) {
+        const q = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, y1 - y0), new THREE.MeshBasicMaterial({ color: 0xa9c4da, side: THREE.DoubleSide }));
+        q.position.set((x0 + x1) / 2, (y0 + y1) / 2, -0.2); insMeshes.push(q);
+      }
+      for (let k = 0; k < 3; k++) {
+        const ang = k * 2 * Math.PI / 3, px = G.pad[1] * Math.cos(ang), py = G.pad[1] * Math.sin(ang);
+        if (cut && py < -1) continue;                // pad in the removed half
+        const pad = cyl(G.pad[0] / 2, ins, -ins, px, py, matSens, 20); pad.material = M(0x6b8e4e); insMeshes.push(pad);
+      }
+      for (const m of insMeshes) scene.add(m);
+    }
     pistonMesh = cyl(G.r_piston, G.h_piston, G.z_sand, 0, 0, matPiston, 56, p0, pl); scene.add(pistonMesh);
     // sand surface: rings r = 0…50 (step DR) × angular segments
     const nA = cut ? 48 : 96, nRv = NS + 1, g = new THREE.BufferGeometry();
@@ -368,7 +411,7 @@ const DATA = /*__DATA__*/null;
   const tmp = [0, 0, 0];
   function update(f) {
     cur = f;
-    const hv = S.heave[f], E = exag;
+    const hv = S.heave[f], E = heaveMode === "up" ? exag : 0;
     // displacement of each sand cell's lower face (cumulative ice expansion below), mm × exaggeration
     const U = [];
     for (let i = 0; i < NS; i++) {
@@ -465,7 +508,7 @@ const DATA = /*__DATA__*/null;
     document.getElementById("hUnder").textContent = fmt(S.under[f]) + " °C";
     document.getElementById("hM").textContent = fmt(S.m[f]) + " °C";
     document.getElementById("hIce").textContent = Math.round(S.ice[f] * 100) + " %";
-    document.getElementById("hHeave").textContent = `${S.hFree[f].toFixed(2)} / ${S.hPist[f].toFixed(2)} mm`;
+    document.getElementById("hHeave").textContent = `${fmt(S.dA[f], 0)} / ${fmt(S.dB[f], 0)} µm`;
   }
 
   // ---------- charts ----------
@@ -473,8 +516,9 @@ const DATA = /*__DATA__*/null;
   const CH = {
     T: { el: document.getElementById("chT"), tip: document.getElementById("tipT"), lg: document.getElementById("lgT"), y0: -11, y1: 11, ticks: [-10, -5, 0, 5, 10], unit: "°C", d: 1,
          series: [["air", "--s-air", D.air], ["free surface", "--s-free", S.free], ["under piston", "--s-under", S.under], ["point M (45 mm)", "--s-m", S.m]] },
-    H: { el: document.getElementById("chH"), tip: document.getElementById("tipH"), lg: document.getElementById("lgH"), y0: 0, y1: 1.5, ticks: [0, 0.5, 1, 1.5], unit: "mm", d: 2,
-         series: [["free surface", "--s-free", S.hFree], ["piston", "--s-under", S.hPist]] },
+    H: { el: document.getElementById("chH"), tip: document.getElementById("tipH"), lg: document.getElementById("lgH"), unit: "µm", d: 0,
+         series: [["LVDT on Al beam, steel rod (rev. A)", "--s-d1", S.dA, true], ["LVDT on Invar post + rod (rev. B)", "--s-d2", S.dB],
+                  ["camera vs PETG rim (rev. A)", "--s-d3", S.dRim, true], ["camera vs Invar target (rev. B)", "--s-d4", S.dRef]] },
   };
   let hover = null;
   function drawChart(c) {
@@ -496,10 +540,11 @@ const DATA = /*__DATA__*/null;
     g.textAlign = "center"; g.textBaseline = "top";
     for (let t = 0; t <= tEnd; t += 6) { g.fillStyle = css("--text-2"); g.fillText(t + (t === tEnd ? " h" : ""), X(t), T + ph + 6); }
     g.lineWidth = 2; g.lineJoin = "round";
-    for (const [, col, arr] of c.series) {
-      g.strokeStyle = css(col); g.beginPath();
+    for (const [, col, arr, dash] of c.series) {
+      g.strokeStyle = css(col); g.setLineDash(dash ? [6, 4] : []); g.beginPath();
       arr.forEach((v, k) => { const x = X(D.t[k]), y = Y(v); k ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke();
     }
+    g.setLineDash([]);
     const show = hover && hover.c === c ? hover.f : cur;
     g.strokeStyle = css("--text"); g.lineWidth = 1; g.setLineDash(hover && hover.c === c ? [3, 3] : []);
     g.beginPath(); g.moveTo(X(D.t[show]) + 0.5, T); g.lineTo(X(D.t[show]) + 0.5, T + ph); g.stroke(); g.setLineDash([]);
@@ -507,7 +552,7 @@ const DATA = /*__DATA__*/null;
       g.fillStyle = css(col); g.strokeStyle = css("--surface"); g.lineWidth = 2;
       g.beginPath(); g.arc(X(D.t[show]), Y(arr[show]), 4.5, 0, Math.PI * 2); g.fill(); g.stroke();
     }
-    c.lg.innerHTML = c.series.map(([n, col, arr]) => `<span><i style="background:var(${col})"></i>${n} <b>${fmt(arr[cur], c.d)}</b></span>`).join("");
+    c.lg.innerHTML = c.series.map(([n, col, arr, dash]) => `<span><i class="${dash ? "dash" : ""}" style="background-color:var(${col})"></i>${n} <b>${fmt(arr[cur], c.d)}</b></span>`).join("");
   }
   function drawCharts() { drawChart(CH.T); drawChart(CH.H); }
   for (const c of Object.values(CH)) {
@@ -527,23 +572,34 @@ const DATA = /*__DATA__*/null;
     c.el.addEventListener("click", e => { stop(); update(fAt(e)); });
   }
 
+  // drift chart: nice y range from the data
+  {
+    const all = [].concat(S.dA, S.dB, S.dRim, S.dRef), lo = Math.min(0, ...all), hi = Math.max(0, ...all);
+    const step = (hi - lo) > 120 ? 50 : 25;
+    CH.H.y0 = Math.floor(lo / step) * step - step / 2; CH.H.y1 = Math.ceil(hi / step) * step + step / 2;
+    CH.H.ticks = []; for (let v = Math.ceil(CH.H.y0 / step) * step; v <= CH.H.y1; v += step) CH.H.ticks.push(v);
+    const up = Math.max(...S.hPist).toFixed(2);
+    document.getElementById("noteH").textContent = `Dashed = rev. A, solid = rev. B. For comparison, the heave signal: ≈ 0 µm expected in the closed unsaturated sample (Sr ≈ ${(D.props.theta / D.props.porosity).toFixed(2)}), ${up} mm if all ice expansion went upward. Rev. B drift follows the cell temperature and is removed by the blank run to a few µm.`;
+  }
+
   // ---------- notes + table ----------
   const P = D.props;
   document.getElementById("assump").innerHTML = [
     `Axisymmetric heat conduction (finite volumes 2.5 × 2 mm, enthalpy method). Program: steady ${fmt(D.program.warm, 0)} °C → at 0 h air ${fmt(D.program.cold, 0)} °C → at ${D.program.thaw_h} h air ${fmt(D.program.warm, 0)} °C (air response τ ≈ 30 min).`,
     `Sand θ = ${P.theta}, λ unfrozen ${P.k_u} / frozen ${P.k_f} W/mK, latent heat ${(P.latent / 1e6).toFixed(0)} MJ/m³, freezing range −0.5…0 °C.`,
-    `PETG cell: inner tube and bottom λ 0.2 W/mK, jacket (10 % infill) λ 0.05 W/mK. Heat transfer to air ${P.h_out} W/m²K (inside the collar ${P.h_cav}, underside via the Al plate ${P.h_bot}).`,
+    `PETG cell: inner tube and bottom λ 0.2 W/mK, jacket (10 % infill) λ 0.05 W/mK. Heat transfer to air ${P.h_out} W/m²K (inside the collar ${P.h_cav}); rev. B XPS sleeve → ${P.h_side} W/m²K on the side, XPS + G10 pads → ${P.h_bot} W/m²K underneath.`,
     `Al piston ⌀50 × 20 as a single node (≈ 95 J/K), contact with the sand ${P.h_contact} W/m²K; the piston delays warming of the sand beneath it.`,
-    `Heave = 9 % expansion of the frozen water only (no ice lenses, no effect of the load), an upper estimate. The real heave is measured by camera + laser (annulus) and LVDT (piston).`,
+    `Heave in the 3D view = 9 % expansion of the frozen water, all upward (no ice lenses, no load): an upper bound. With porosity ${P.porosity} and θ ${P.theta} the pore air (${((P.porosity - P.theta) * 100).toFixed(0)} % of the volume) takes the expansion (${(P.theta * 9).toFixed(1)} %), so the expected in-situ heave is ≈ 0.`,
+    `Rig drift: frame parts as lumped elements in still air (Al column τ ≈ 23 min, rod τ ≈ 27 min, Invar post τ ≈ 38 min); α Al 23, steel 11.5, Invar 1.2, PETG 45, G10 15, sand 10 × 10⁻⁶/K.`,
   ].map(s => `<li>${s}</li>`).join("");
-  let rows = "<table><tr><th>t [h]</th><th>air</th><th>free surface</th><th>under piston</th><th>point M</th><th>ice [%]</th><th>heave free [mm]</th><th>heave piston [mm]</th></tr>";
-  for (let f = 0; f < NF; f += 4) rows += `<tr><td>${D.t[f]}</td><td>${fmt(D.air[f])}</td><td>${fmt(S.free[f])}</td><td>${fmt(S.under[f])}</td><td>${fmt(S.m[f])}</td><td>${Math.round(S.ice[f] * 100)}</td><td>${S.hFree[f].toFixed(2)}</td><td>${S.hPist[f].toFixed(2)}</td></tr>`;
+  let rows = "<table><tr><th>t [h]</th><th>air</th><th>free surface</th><th>under piston</th><th>point M</th><th>ice [%]</th><th>heave upper bound [mm]</th><th>drift LVDT A [µm]</th><th>drift LVDT B [µm]</th></tr>";
+  for (let f = 0; f < NF; f += 4) rows += `<tr><td>${D.t[f]}</td><td>${fmt(D.air[f])}</td><td>${fmt(S.free[f])}</td><td>${fmt(S.under[f])}</td><td>${fmt(S.m[f])}</td><td>${Math.round(S.ice[f] * 100)}</td><td>${S.hPist[f].toFixed(2)}</td><td>${fmt(S.dA[f], 0)}</td><td>${fmt(S.dB[f], 0)}</td></tr>`;
   document.getElementById("tbl").innerHTML = rows + "</table>";
 
   // ---------- views ----------
   const VIEWS = {
-    all: { pos: [360, 330, 430], tgt: [0, 150, 0], fov: 35 },
-    cut: { pos: [60, 175, 330], tgt: [0, 100, 0], fov: 35 },
+    all: { pos: [430, 360, 520], tgt: [0, 150, 0], fov: 35 },
+    cut: { pos: [70, 160, 420], tgt: [0, 80, 0], fov: 35 },
     cam: { pos: [0, zCam - 30, -camY + 15], tgt: [0, G.z_sand, 0], fov: 42 },
   };
   let tween = null;
@@ -576,6 +632,7 @@ const DATA = /*__DATA__*/null;
   document.getElementById("optLaser").addEventListener("change", () => update(cur));
   document.getElementById("optFrame").addEventListener("change", e => { frameGrp.visible = moving.visible = e.target.checked; });
   document.getElementById("mode").addEventListener("change", e => { mode = e.target.value; setBar(); update(cur); });
+  document.getElementById("heaveMode").addEventListener("change", e => { heaveMode = e.target.value; update(cur); });
   document.getElementById("exag").addEventListener("change", e => { exag = +e.target.value; update(cur); });
 
   function themeBg() { renderer.setClearColor(new THREE.Color(css("--scene") || "#eceae4")); drawCharts(); }

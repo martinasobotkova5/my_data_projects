@@ -360,7 +360,7 @@ print(f"**Cena:** ≈ {lo:.0f}–{hi:.0f} € bez DPH (≈ {lo * 25 / 1000:.0f}�
 print("## 14. Varianta C – kombinace: Al rám vede mrtvou váhu, částečný píst, kamera nad volným povrchem\n")
 A_p = math.pi / 4 * p.C_PISTON_D ** 2
 zb0 = 0.0
-col_h = p.BODY_BOTTOM + p.H_SAMPLE + p.C_BEAM_GAP          # sloup od horního líce desky po příčník
+col_h = p.C_INS_T + p.BODY_BOTTOM + p.H_SAMPLE + p.C_BEAM_GAP   # sloup od horního líce desky po příčník (rev. B s izolací)
 rod_l = p.C_BEAM_GAP - p.C_PISTON_H - p.C_BALL_D + p.AF_BEAM_H + p.C_TRAVEL + 10
 m_pist = math.pi / 4 * (p.C_PISTON_D / 1000) ** 2 * p.C_PISTON_H / 1000 * 2700
 m_rod = math.pi / 4 * (p.C_ROD_D / 1000) ** 2 * rod_l / 1000 * p.RHO_STEEL
@@ -380,11 +380,31 @@ for s_ in p.C_SURCHARGES_KPA:
 t_disc = 1.0 / (math.pi / 4 * ((p.C_DISC_D / 1000) ** 2 - (p.C_DISC_HOLE / 1000) ** 2) * p.RHO_STEEL) * 1000
 print(f"\nKotouč ⌀{p.C_DISC_D:g}/{p.C_DISC_HOLE:g}: 1 kg = {t_disc:.1f} mm, 0,5 kg = {t_disc / 2:.1f} mm. Při 25 kPa jen ≈ 4 kotouče.\n")
 print("**Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±"
-      f"{p.C_TRAVEL:g} mm). Kuličkové pouzdro LM{p.C_ROD_D:g}UU má tření ≈ 0,002–0,005 × boční síla; při "
-      "náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,05 kPa. Kulička mezi tyčí a pístem dovolí "
+      f"{p.C_TRAVEL:g} mm). Kluzné pouzdro igus drylin RJ4JP-01-12 (bez maziva, do −40 °C) má tření ≈ 0,1–0,25 × boční "
+      "síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,02 kPa. Kulička mezi tyčí a pístem dovolí "
       "pístu se naklonit, tyč zůstává svislá.\n")
-print("**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser (11 čar po 9 mm) → mapa výšek **celého povrchu** "
-      "⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = horní hrana límce; (2) LVDT na nosné "
-      "desce = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.\n")
+print(f"**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser {p.C_LASER_ANG:g}° ({p.C_LINES} čar po ≈ {p.C_LINE_PITCH:g} mm, "
+      "posun čáry = 0,40 × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, "
+      "reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), "
+      "rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.\n")
 print(f"**Rozměry:** sloupy 40×80 × {col_h:.0f} mm, spodní líc příčníku {p.C_BEAM_GAP:g} mm nad pískem (místo pro kameru "
       "a laser), závaží nad příčníkem mimo zorné pole. Pt100 v mezikruží (r 37,5, 315°, strana kamery) – mimo laserové čáry i píst.\n")
+
+# 15 --------------------------------------------------------------------------
+print("## 15. Varianta C rev. B – posudek měření (10/2026)\n")
+n_por, th = 0.38, 0.15
+print(f"**Očekávaný zdvih:** pórovitost ≈ {n_por}, θ = {th} → Sr ≈ {th / n_por:.2f}; vzduch v pórech {100 * (n_por - th):.0f} % "
+      f"objemu, objem ledu přibude jen o {100 * 0.09 * th:.1f} % → v uzavřeném vzorku se rozpínání vejde do pórů, "
+      "zdvih in situ ≈ 0 (desítky µm nanejvýš od migrace vody). Horní mez (vše nahoru) 1,35 mm. "
+      "Chcete-li měřit zdvih, zvyšte Sr ≥ 0,85 nebo přiveďte vodu zespodu.\n")
+print("**Směr mrznutí (sim_thaw.py):** cela přímo na Al desce – vzorek zmrzne za ≈ 9 h i zespodu, poslední nezmrzlé místo "
+      "27 mm nade dnem; rev. B (XPS objímka 40 + XPS/G10 pod celou) – ≈ 14 h, poslední nezmrzlé 7 mm nade dnem "
+      "→ mrznutí shora. Tání ≈ 14 h → cyklus 24 h + 24 h stačí.\n")
+print("**Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle teplot cely ze slepé zkoušky):** "
+      "rev. A (bez izolace, LVDT na Al příčníku, ocelová tyč) −24…+48 µm, zbytek ≤ 12 µm; kamera vůči PETG límci 0…100 µm, "
+      "zbytek ≤ 8 µm. Jen izolace bez Invaru by zbytek LVDT zhoršila na 57 µm (cela reaguje pomaleji než sloupy a tyč). "
+      "Rev. B (izolace + invarový sloupek + invarová tyč) −58…0 µm, zbytek ≤ 4 µm; kamera vůči invarovému terčíku "
+      "−48…0 µm, zbytek ≤ 2 µm. Zbylý drift = PETG dno 26 mm + písek → změřit slepou zkouškou s Al atrapou.\n")
+print("**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); "
+      "snímek spouští CR1000 (C5); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; "
+      "vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.\n")

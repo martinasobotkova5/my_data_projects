@@ -231,20 +231,36 @@ BL_LASER_X = 150.0                      # laser stranou od osy (ve výšce kamer
 # rám jen VEDE zátěž (kuličkové pouzdro), píst se s povrchem volně zvedá i klesá → konstantní zatížení
 C_PISTON_D, C_PISTON_H = 50.0, 20.0     # částečný píst (patka) ⌀50 – zakrývá 25 % plochy, zbytek volný
 C_BALL_D = 8.0                          # ocelová kulička v kuželových sedlech (píst se může naklonit)
-C_ROD_D = 12.0                          # vodicí tyč (kalená, h6) v kuličkovém pouzdře LM12UU
-C_BUSH = (21.0, 30.0)                   # LM12UU: vnější ⌀ × délka
-C_BEAM_GAP = 200.0                      # spodní líc příčníku nad povrchem písku (místo pro kameru + laser)
+C_ROD_D = 12.0                          # vodicí tyč (kalená, h6) v kluzném pouzdře igus drylin R RJ4JP-01-12 (bez maziva)
+C_BUSH = (21.0, 30.0)                   # drylin RJ4JP-01-12 = rozměry LM12UU: vnější ⌀ × délka
+C_BEAM_GAP = 160.0                      # spodní líc příčníku nad povrchem písku (rev. B: 200 → 160, vyrovná izolaci pod celou)
 C_CARRIER_D, C_CARRIER_T = 120.0, 8.0   # nosná deska závaží nad příčníkem (Al)
 C_DISC_D, C_DISC_HOLE = 120.0, 17.0     # ocelové kotouče ⌀120
 C_DISC_KG = (1.0, 0.5)                  # kotouč 1 kg a 0,5 kg
 C_TRAVEL = 25.0                         # volný zdvih / pokles zátěže
 C_SURCHARGES_KPA = (5.0, 10.0, 15.0, 20.0, 25.0)   # pod pístem
-C_CAM_Y, C_CAM_H, C_CAM_TILT = -75.0, 150.0, 27.0  # kamera stranou (−y, nad kanálem TDR), výška nad pískem, sklon k ose
-C_LASER_Y, C_LASER_H = 95.0, 95.0       # laser z protější strany (+y, 45°), čára napříč (osa x) přes límec–písek–píst–písek–límec
+C_CAM_Y, C_CAM_H, C_CAM_TILT = -85.0, 105.0, 39.0  # kamera stranou (−y), výška nad pískem, sklon k ose (rev. B)
+C_LASER_Y, C_LASER_H = 46.0, 115.0      # rev. B: laser strmě 68° z držáku na příčníku → bez stínu límce, 11 čar po ≈ 9,6 mm
 C_PT100_R, C_PT100_ANG = 37.5, 315.0    # Pt100 svisle ve volném mezikruží na straně kamery (y < 0) – mimo laserovou čáru (y ≥ 0)
 
 # --- varianta C – měření deformace jen 1 (kamera + laser) a 2 (LVDT na zátěži) --------------
-C_LENS_F = 8.0                           # objektiv 8 mm → zorné pole ≈ 130 mm (celý límec ⌀106 + okraj)
+C_LENS_F = 6.0                           # rev. B: objektiv 6 mm (kamera blíž) → zorné pole ≈ 140 mm
 C_LVDT_X = 45.0                          # LVDT na příčníku, hrot na spodní straně nosné desky
 C_SNAP_MIN = (10, 1)                     # snímek / měření: běžně 10 min, při průchodu 0 °C 1 min
-C_LINES, C_LINE_PITCH = 11, 9.0          # vícečárový laser (DOE): 11 rovnoběžných čar po 9 mm → celý povrch ⌀100
+C_LINES, C_LINE_PITCH = 11, 9.6          # vícečárový laser Picotronic DOE253 (41°): 11 čar po ≈ 9,6 mm z 124 mm → celý ⌀100
+C_LASER_ANG = 68.0                       # sklon laserové roviny od vodorovné → posun čáry Δy = Δh / tan 68° = 0,40 Δh
+
+# --- varianta C, revize B (posudek měření 10/2026) ------------------------------------------
+C_BASE = (340.0, 260.0, 25.0)            # Al deska – širší kvůli izolační objímce ⌀240
+C_COL_SPAN = 300.0                       # osová vzdálenost sloupů (vnitřní líc 130 > objímka r 120)
+C_INS_T = 40.0                           # izolace pod celou: XPS 40 + 3 podložky G10 ⌀20 × 40 (nesou celu)
+C_SLEEVE_T = 40.0                        # izolační objímka XPS 40 kolem pláště (r 80 → 120), límec volný
+C_PAD_D, C_PAD_R = 20.0, 60.0            # podložky G10 ⌀20 na r 60, 3× po 120°
+C_INVAR_D = 16.0                         # sloupek z Invaru 36 ⌀16 z desky → rameno s LVDT (bez driftu sloupů)
+C_ROD_INVAR = True                       # vodicí tyč ⌀12 z Invaru 36 (broušená) místo oceli – jinak ocel 249 mm = 57 µm / 20 K
+C_INVAR_XY = (-95.0, 95.0)               # poloha sloupku (mimo objímku, sloupy, kameru a laser)
+C_LVDT_XY = (-30.0, 48.0)                # LVDT pod nosnou deskou závaží (r 57 < 60), vedle příčníku
+C_REF_XY = (-42.0, 42.0)                 # invarový referenční terčík pro kameru ve výšce límce (r 59, mezera 6)
+ALPHA_G10_Z = 15e-6                      # G10 kolmo k vrstvám ≈ (ověřit), podložky 40 mm
+ALPHA_SAND = 10e-6                       # tepelná roztažnost písku (bez fázové změny)
+C_CYCLE_H = (24.0, 24.0)                 # mrznutí / tání [h] – podle simulace s izolací (sim_thaw.py)

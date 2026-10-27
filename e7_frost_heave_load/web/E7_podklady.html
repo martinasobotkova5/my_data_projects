@@ -48,6 +48,8 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-
 .model .t { font: 700 19px var(--f-display); }
 .model .d { color: var(--ink-2); font-size: 15px; }
 .model .go { color: var(--accent); font-weight: 600; font-size: 15px; }
+.model.review { background: var(--warn-soft); }
+.model.review .go { color: var(--warn); }
 
 .sheets { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
 .sheets figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
@@ -76,18 +78,34 @@ footer { color: var(--ink-2); font-size: 14px; border-top: 1px solid var(--rule)
 
 <div class="wrap">
   <header>
-    <div class="code">Experiment E7 · variant C · status 27 Oct 2026</div>
+    <div class="code">Experiment E7 · variant C rev. B · status 27 Oct 2026</div>
     <h1>E7 documents – freezing and thawing under load</h1>
     <p class="lede">Unsaturated sand ⌀100 × 100 mm in a 3D-printed cell ⌀160 freezes and thaws in a chest freezer (the same one as in E6).
       An aluminium frame only guides a dead weight on a partial piston ⌀50, so the load stays constant and the piston moves freely with the surface.
-      Deformation is measured by a camera with a multi-line laser (free annulus around the piston) and an LVDT (piston). Data are logged by a CR1000.</p>
+      Deformation is measured by a camera with a multi-line laser (free annulus around the piston) and an LVDT (piston). Data are logged by a CR1000.
+      Revision B follows the measurement review: the cell is insulated so it freezes from the top, and the LVDT and camera reference sit on Invar.</p>
     <div class="facts">
       <span>stress under the piston <b>5–25 kPa</b> (1–5 kg)</span>
       <span>load travel <b>±25 mm</b></span>
-      <span>program <b>+10 → −10 → +10 °C</b></span>
+      <span>cycle <b>24 h −10 °C / 24 h +10 °C</b></span>
       <span>point M: <b>TDR CS645 + Pt100 + optical fibre</b></span>
     </div>
   </header>
+
+  <section aria-labelledby="h-review">
+    <h2 id="h-review">Measurement review</h2>
+    <a class="model review" href="https://claude.ai/artifact/G3FvyDPPaPBcD7c3J1CvVe" target="_blank" rel="noopener">
+      <svg viewBox="0 0 56 56" aria-hidden="true">
+        <rect x="13" y="8" width="30" height="40" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M19 20h18M19 27h18M19 34h11" stroke="currentColor" stroke-width="2.5" fill="none"/>
+      </svg>
+      <div>
+        <div class="t">Will the deformation measurement work?</div>
+        <div class="d">One page: verdict, eight findings with the rev. B changes and their effect, the decision needed before buying (sample saturation), first steps.</div>
+        <div class="go">Open the review ↗</div>
+      </div>
+    </a>
+  </section>
 
   <section aria-labelledby="h-model">
     <h2 id="h-model">3D model of freezing and thawing</h2>
@@ -100,18 +118,18 @@ footer { color: var(--ink-2); font-size: 14px; border-top: 1px solid var(--rule)
       </svg>
       <div>
         <div class="t">E7 sample thawing – animation</div>
-        <div class="d">Temperature in the section and on the surface around the piston, thaw front, heave, camera view. The calculation is indicative.</div>
+        <div class="d">Rev. B rig with insulation and Invar post; temperature in the section and on the surface around the piston, thaw front, camera view, rig thermal drift seen by the LVDT and the camera.</div>
         <div class="go">Open the 3D model ↗</div>
       </div>
     </a>
   </section>
 
   <section aria-labelledby="h-sheets">
-    <h2 id="h-sheets">Drawings V01–V05</h2>
+    <h2 id="h-sheets">Drawings V01–V05 (rev. B)</h2>
     <p class="sub">A3, dimensions in mm. Click a sheet to open it at full resolution.</p>
     <div class="sheets">
-      <figure><a class="img" href="vykresy/E7-V01_rig_C.png" target="_blank" rel="noopener"><img src="vykresy/E7-V01_rig_C.png" alt="Drawing V01 – variant C assembly" loading="lazy"></a><figcaption><span>V01</span>Rig C: frame, piston, weights, camera, laser</figcaption></figure>
-      <figure><a class="img" href="vykresy/E7-V02_measurement.png" target="_blank" rel="noopener"><img src="vykresy/E7-V02_measurement.png" alt="Drawing V02 – deformation measurement" loading="lazy"></a><figcaption><span>V02</span>Measurement: laser triangulation and LVDT</figcaption></figure>
+      <figure><a class="img" href="vykresy/E7-V01_rig_C.png" target="_blank" rel="noopener"><img src="vykresy/E7-V01_rig_C.png" alt="Drawing V01 – variant C rev. B assembly" loading="lazy"></a><figcaption><span>V01</span>Rig C rev. B: frame, insulation, Invar post, camera, laser</figcaption></figure>
+      <figure><a class="img" href="vykresy/E7-V02_measurement.png" target="_blank" rel="noopener"><img src="vykresy/E7-V02_measurement.png" alt="Drawing V02 – deformation measurement" loading="lazy"></a><figcaption><span>V02</span>Measurement: laser at 68°, camera view, LVDT on Invar</figcaption></figure>
       <figure><a class="img" href="vykresy/E7-V03_cell.png" target="_blank" rel="noopener"><img src="vykresy/E7-V03_cell.png" alt="Drawing V03 – printed cell with point M" loading="lazy"></a><figcaption><span>V03</span>Printed cell ⌀160 with point M</figcaption></figure>
       <figure><a class="img" href="vykresy/E7-V04_sensors_costs.png" target="_blank" rel="noopener"><img src="vykresy/E7-V04_sensors_costs.png" alt="Drawing V04 – sensors, CR1000 wiring and costs" loading="lazy"></a><figcaption><span>V04</span>Sensors, CR1000 wiring, costs</figcaption></figure>
       <figure><a class="img" href="vykresy/E7-V05_freezer_layout.png" target="_blank" rel="noopener"><img src="vykresy/E7-V05_freezer_layout.png" alt="Drawing V05 – layout in the freezer" loading="lazy"></a><figcaption><span>V05</span>Layout in the chest freezer</figcaption></figure>
@@ -119,44 +137,46 @@ footer { color: var(--ink-2); font-size: 14px; border-top: 1px solid var(--rule)
   </section>
 
   <section aria-labelledby="h-buy">
-    <h2 id="h-buy">What to buy</h2>
+    <h2 id="h-buy">What to buy (rev. B)</h2>
     <p class="sub">Prices from online shops, October 2026; check them before ordering. 1 € ≈ 25 CZK. Already available: printed cell, TDR CS645 + TDR100/200, Pt100, optical fibre, CR1000.</p>
     <div class="tbl">
       <table>
         <thead><tr><th>Measurement</th><th>Item</th><th>Manufacturer / type</th><th>Price</th><th>Where to buy</th></tr></thead>
         <tbody>
-          <tr><td class="tag">camera</td><td>Camera computer</td><td>Raspberry Pi 5, 4 GB</td><td class="p">2,769 CZK incl. VAT</td><td><a href="https://www.zbozi.cz/vyrobek/raspberry-pi-5-rpi5-4gb-single/" target="_blank" rel="noopener">RPishop.cz</a></td></tr>
-          <tr><td class="tag">camera</td><td>Power supply, SD card, camera cable</td><td>official 27 W supply, 32 GB card, Camera Cable Standard–Mini 200 mm</td><td class="p est">≈ 400–600 CZK</td><td>RPishop.cz</td></tr>
+          <tr><td class="tag">camera</td><td>Camera computer (inside the camera box)</td><td>Raspberry Pi 5, 4 GB + supply, SD card, Standard–Mini cable</td><td class="p">2,769 CZK + ≈ 500 CZK</td><td><a href="https://www.zbozi.cz/vyrobek/raspberry-pi-5-rpi5-4gb-single/" target="_blank" rel="noopener">RPishop.cz</a></td></tr>
           <tr><td class="tag">camera</td><td>Camera</td><td>Raspberry Pi HQ Camera, C/CS mount, Sony IMX477 12 MP<span class="m">OFI060 – not the M12 version</span></td><td class="p">1,499 CZK incl. VAT</td><td><a href="https://rpishop.cz/mipi-kamerove-moduly/2458-raspberry-pi-hq-kamera.html" target="_blank" rel="noopener">RPishop.cz</a>, <a href="https://www.conrad.cz/cs/p/raspberry-pi-sc1220-rasp-cam-hq-modul-barevne-kamery-cmos-vhodne-pro-vyvojove-sady-raspberry-pi-2264546.html" target="_blank" rel="noopener">Conrad.cz</a></td></tr>
-          <tr><td class="tag">camera</td><td>Lens</td><td>Arducam 8 mm, CS mount, F1.4, manual focus</td><td class="p">≈ 20 €</td><td><a href="https://thepihut.com/products/cs-mount-lens-for-raspberry-pi-hq-camera-8mm-focal-length" target="_blank" rel="noopener">The Pi Hut</a>, <a href="https://welectron.com/Arducam-LN038-CS-Mount-Lens-for-Raspberry-Pi-HQ-Camera" target="_blank" rel="noopener">Welectron</a></td></tr>
-          <tr><td class="tag">laser</td><td>Multi-line laser</td><td>Picotronic DOE253-635-1-6(10x22)<span class="m">order no. 70111842 · 11 lines · 635 nm · 1 mW · 5 V · ⌀10 × 22</span></td><td class="p">91.51 € excl. VAT</td><td><a href="https://www.picotronic.de/picopage/en/product/detail/id/86333" target="_blank" rel="noopener">Picotronic (DE)</a></td></tr>
-          <tr><td class="tag">camera</td><td>Heated camera box</td><td>XPS 30 mm, 12 V / 5 W heater foil + thermostat, double-glazed window</td><td class="p est">est. 40–80 €</td><td>GM electronic, TME, DIY store</td></tr>
-          <tr><td class="tag">LVDT</td><td>Piston displacement sensor</td><td>RDP Electronics DCTH400AG<span class="m">±10 mm · spring return · built-in electronics · ±5 V output</span></td><td class="p">581 €</td><td><a href="https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor" target="_blank" rel="noopener">Elkome (FI)</a> or RDP (UK)</td></tr>
-          <tr><td class="tag">LVDT</td><td>LVDT power supply</td><td>Mean Well HDR-15-24, 24 V, DIN rail (isolated supply)</td><td class="p">≈ 11 € excl. VAT</td><td><a href="https://www.tme.com/ca/en/details/hdr-15-24/din-rail-mounting-power-supplies/mean-well/" target="_blank" rel="noopener">TME</a></td></tr>
-          <tr><td class="tag">Pt100</td><td>Pt100 input module for the CR1000</td><td>Campbell Scientific 4WPB100 (4-wire bridge)</td><td class="p est">on request, est. 60–120 €</td><td><a href="https://campbellsci.com/ekotechnika" target="_blank" rel="noopener">Ekotechnika, Černošice (CZ)</a><span class="m">tel. +420 251 640 511</span></td></tr>
-          <tr><td class="tag">air</td><td>Air temperature (optional)</td><td>Campbell Scientific 109, thermistor −50…+70 °C</td><td class="p est">on request, est. 150–220 €</td><td>Ekotechnika</td></tr>
+          <tr><td class="tag">camera</td><td>Lens</td><td>Raspberry Pi 6 mm CS wide-angle</td><td class="p est">est. 20–30 €</td><td>RPishop.cz, The Pi Hut</td></tr>
+          <tr><td class="tag">camera</td><td>Camera box, air humidity</td><td>XPS 30 + double glass (heated by the RPi); SHT45 RH/T on the RPi</td><td class="p est">est. 35–65 €</td><td>DIY store; RPishop.cz, TME</td></tr>
+          <tr><td class="tag">laser</td><td>Multi-line laser at 68°</td><td>Picotronic DOE253-635-1-6(10x22)<span class="m">order no. 70111842 · 11 lines · 635 nm · 1 mW · 5 V</span></td><td class="p">91.51 € excl. VAT</td><td><a href="https://www.picotronic.de/picopage/en/product/detail/id/86333" target="_blank" rel="noopener">Picotronic (DE)</a></td></tr>
+          <tr><td class="tag">LVDT</td><td>Piston displacement sensor</td><td>RDP Electronics DCTH400AG<span class="m">±10 mm · spring return · ±5 V output</span></td><td class="p">581 €</td><td><a href="https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor" target="_blank" rel="noopener">Elkome (FI)</a> or RDP (UK)</td></tr>
+          <tr><td class="tag">LVDT</td><td>LVDT power supply</td><td>Mean Well HDR-15-24, 24 V DIN (isolated)</td><td class="p">≈ 11 € excl. VAT</td><td><a href="https://www.tme.com/ca/en/details/hdr-15-24/din-rail-mounting-power-supplies/mean-well/" target="_blank" rel="noopener">TME</a></td></tr>
+          <tr><td class="tag">Pt100</td><td>Pt100 input module for the CR1000</td><td>Campbell Scientific 4WPB100</td><td class="p est">on request, est. 60–120 €</td><td><a href="https://campbellsci.com/ekotechnika" target="_blank" rel="noopener">Ekotechnika, Černošice (CZ)</a><span class="m">tel. +420 251 640 511</span></td></tr>
+          <tr><td class="tag">air</td><td>Air temperature (required)</td><td>Campbell Scientific 109, thermistor −50…+70 °C</td><td class="p est">on request, est. 150–220 €</td><td>Ekotechnika</td></tr>
+          <tr><td class="tag">air</td><td>Air mixing</td><td>80 mm 12 V fan</td><td class="p est">est. 10–20 €</td><td>TME, GM electronic</td></tr>
+          <tr><td class="tag">frame</td><td>Low-drift parts</td><td>igus drylin RJ4JP-01-12; Invar 36 rod ⌀12 + post ⌀16; XPS 40 sleeve and slab, 3 G10 pads</td><td class="p est">est. 140–330 €</td><td>igus, specialty metals supplier, DIY store</td></tr>
+          <tr><td class="tag">calib.</td><td>Camera calibration</td><td>shims 0.1 / 0.5 / 1.0 mm</td><td class="p est">est. 10–25 €</td><td>tool shop</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="total">Total including mechanics (frame, piston, weights) ≈ 1,370–1,870 € excl. VAT, i.e. ≈ 34–47 thousand CZK.</p>
+    <p class="total">Total including mechanics ≈ 1,520–2,210 € excl. VAT, i.e. ≈ 38–55 thousand CZK (rev. A was ≈ 1,370–1,870 €).</p>
   </section>
 
   <section aria-labelledby="h-notes">
     <h2 id="h-notes">Points to watch</h2>
     <ul class="notes">
-      <li><b>Camera:</b> the lens focuses from 0.3 m, but the camera is ≈ 0.17 m from the surface. Refocus with the back-focus ring on the HQ camera (≈ 0.2 mm shift).</li>
-      <li><b>Laser:</b> the 41° pattern gives a line spacing of ≈ 14 mm from the current position (≈ 134 mm from the centre, 45°), i.e. about 7–8 lines on ⌀100 instead of 11 at 9 mm. A 9 mm spacing needs a narrower DOE (≈ 28°) or a laser closer to the sample. Confirm with Picotronic.</li>
-      <li><b>Collar shadow:</b> with the laser at 45°, the collar (34 mm above the sand) shadows a ≈ 25 mm strip next to the wall on the laser side, where 2–3 lines are missing. A steeper laser (≈ 65–70°) almost removes the shadow but lowers the sensitivity to ≈ 0.4 × heave.</li>
-      <li><b>LVDT in the freezer:</b> sources give a lower operating limit of −40 °C or only −10 °C. Confirm operation at −10 °C with RDP or Elkome.</li>
+      <li><b>Decide first:</b> at Sr ≈ 0.4 the ice expansion fits into the pore air and the expected heave is tens of µm at most. For frost heave, raise Sr to ≥ 0.85 or supply water from below.</li>
+      <li><b>Blank run:</b> one full cycle with an Al dummy gives the rig drift against cell temperature; in rev. B the model leaves ≤ 4 µm after the correction.</li>
+      <li><b>Camera:</b> focus at ≈ 135 mm with the back-focus ring; calibrate px → mm with shims under a flat plate.</li>
+      <li><b>LVDT in the freezer:</b> sources give a lower operating limit of −40 °C or only −10 °C. Confirm with RDP or Elkome.</li>
     </ul>
   </section>
 
   <section aria-labelledby="h-q">
     <h2 id="h-q">Open questions</h2>
     <ol class="qs">
+      <li>Target saturation of the sample (see the review).</li>
       <li>TDR CS645 rod spacing: 8.9 or 9 mm? How many CS645 probes will we use?</li>
-      <li>Free height above the sand: 34 or 35 mm?</li>
-      <li>Optical fibre offset from the rod: 4.7 or 3 mm?</li>
+      <li>Free height above the sand: 34 or 35 mm? Optical fibre offset: 4.7 or 3 mm?</li>
       <li>Does the Pt100 measure at the tip or along its 25 mm length?</li>
       <li>Inside dimensions of the freezer: the rig is ≈ 598 mm tall, the estimated inside height is only ≈ 650 mm.</li>
     </ol>

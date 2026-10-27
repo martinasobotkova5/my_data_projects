@@ -4,6 +4,13 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 ## ★ Aktuální návrh: varianta C, měření deformace 1 + 2 (výkresy V01–V05)
 
+**Revize B (27. 10. 2026, podle posudku měření `E7_review.pdf`):** izolace cely (XPS objímka 40 mm, XPS 40 + 3 podložky G10
+pod celou → mrznutí shora), LVDT a referenční terčík kamery na sloupku z Invaru, vodicí tyč z Invaru v kluzném pouzdře
+igus drylin, laser pod 68° z držáku na příčníku (11 čar po 9,6 mm, bez stínu límce), RPi 5 v boxu kamery (spouštění z CR1000 C5),
+čidlo vzduchu 109 povinně, ventilátor, SHT45, vážení cely. Mezera pod příčníkem 200 → 160 mm, celková výška beze změny.
+Otevřená otázka: cílové nasycení vzorku (při Sr ≈ 0,4 je očekávaný zdvih nanejvýš desítky µm). Výpočty §15 v `vypocty.md`,
+simulace `src/sim_thaw.py` (`--bare` = původní cela pro srovnání), nákup `purchase_list.md` / `nakup_cidel.md`.
+
 | list | obsah |
 |---|---|
 | **V01** | sestava C: Al rám jen vede mrtvou váhu na částečném pístu ⌀50, volný povrch, tabulka zatížení, díly |

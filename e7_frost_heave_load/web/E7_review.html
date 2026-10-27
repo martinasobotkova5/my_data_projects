@@ -1,0 +1,143 @@
+<title>E7 Measurement Review</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one A4 sheet – verdict band, findings table (problem → rev. B change → effect), decision + next steps */
+:root {
+  --paper: #f5f6f4; --sheet: #ffffff; --ink: #15191c; --ink-2: #4c555b; --rule: #d5dad8;
+  --accent: #1d5f8a; --accent-soft: #e3eef5;
+  --ok: #0b7a3b; --ok-soft: #e2f3e8; --open: #9a5b00; --open-soft: #fbf1df;
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121517; --sheet: #1b2023; --ink: #e8ecea; --ink-2: #a9b3b8; --rule: #30383d;
+    --accent: #6fb0dc; --accent-soft: #1b2e3b; --ok: #5cc98a; --ok-soft: #15291e; --open: #e3a64a; --open-soft: #2f2615;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121517; --sheet: #1b2023; --ink: #e8ecea; --ink-2: #a9b3b8; --rule: #30383d;
+  --accent: #6fb0dc; --accent-soft: #1b2e3b; --ok: #5cc98a; --ok-soft: #15291e; --open: #e3a64a; --open-soft: #2f2615;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 14.5px/1.45 var(--f-body); margin: 0; }
+.page {
+  max-width: 900px; margin: 0 auto; padding-block: 28px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 18px;
+}
+header { display: grid; gap: 6px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; }
+.code { font: 600 11.5px var(--f-mono); letter-spacing: .08em; color: var(--accent); text-transform: uppercase; }
+h1 { font: 700 26px/1.15 var(--f-display); margin: 0; text-wrap: balance; }
+h2 { font: 700 15px/1.25 var(--f-display); margin: 0 0 6px; letter-spacing: .01em; }
+.meta { color: var(--ink-2); font-size: 13px; }
+.verdict { background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; }
+.verdict p { margin: 0; max-width: 92ch; }
+.verdict b { font-weight: 600; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 13px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px 6px 0; border-bottom: 1px solid var(--rule); }
+th { font: 600 10.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); border-bottom: 1.5px solid var(--ink); }
+td:first-child { font-weight: 600; white-space: nowrap; }
+td.num { font-variant-numeric: tabular-nums; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font: 600 10.5px var(--f-mono); letter-spacing: .03em; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+.chip.ok { color: var(--ok); background: var(--ok-soft); }
+.chip.open { color: var(--open); background: var(--open-soft); }
+.two { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; }
+.two > section { min-width: 0; }
+.decision { background: var(--open-soft); border-radius: 8px; padding: 12px 14px; }
+.decision p { margin: 0 0 6px; }
+.decision ul, .steps { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+.figs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.fig { border-top: 2px solid var(--accent); padding-top: 6px; }
+.fig .v { font: 700 20px var(--f-display); font-variant-numeric: tabular-nums; }
+.fig .l { font-size: 12px; color: var(--ink-2); }
+footer { color: var(--ink-2); font-size: 12px; border-top: 1px solid var(--rule); padding-top: 8px; display: grid; gap: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 720px) { .two, .figs { grid-template-columns: 1fr; } }
+@page { size: A4; margin: 11mm 12mm; }
+@media print {
+  body { background: #fff; font-size: 11.6px; }
+  .page { max-width: none; padding: 0; gap: 12px; }
+  h1 { font-size: 21px; } h2 { font-size: 12.5px; margin-bottom: 4px; }
+  .verdict, .decision { padding: 8px 11px; }
+  table { min-width: 0; font-size: 10.6px; } th { font-size: 8.6px; } th, td { padding: 4px 7px 4px 0; }
+  .chip { font-size: 8.6px; padding: 1px 4px; }
+  .fig .v { font-size: 16px; } .fig .l, .meta, footer { font-size: 9.8px; }
+  .two { grid-template-columns: 1.1fr 1fr; gap: 12px; } .figs { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+
+<div class="page">
+  <header>
+    <div class="code">Experiment E7 · variant C · measurement review → revision B</div>
+    <h1>Will the deformation measurement work?</h1>
+    <div class="meta">27 Oct 2026 · read as the person who will run the tests · numbers from the axisymmetric heat model (sim_thaw.py), indicative</div>
+  </header>
+
+  <section class="verdict" aria-label="Verdict">
+    <p><b>Verdict.</b> The rig will run, and temperature, TDR and Pt100 will be measured without trouble. Deformation is the delicate part:
+      in the planned unsaturated sand the expected heave is about as large as the thermal drift of the rig itself.
+      Revision B removes most of the rig-side problems. The sample side needs a decision before buying.</p>
+  </section>
+
+  <section aria-labelledby="h-find">
+    <h2 id="h-find">Findings and what revision B changes</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Topic</th><th>Problem in rev. A</th><th>Change in rev. B</th><th>Effect</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Signal size</td><td>Sr ≈ 0.39: ice adds 1.3 % volume, pore air is 23 % → in a closed sample the expansion fits into the pores</td><td>none on the rig; see decision below</td><td class="num">expected in-situ heave ≈ 0 (tens of µm at most); upper bound 1.35 mm</td><td><span class="chip open">▲ decide</span></td></tr>
+          <tr><td>Rig drift</td><td>LVDT on the Al beam with a steel rod; camera referenced to the PETG rim</td><td>Invar 36 post from the base plate carries the LVDT and a camera target; Invar guide rod</td><td class="num">per 20 K: LVDT −24…+48 → −58…0 µm, left after blank-run correction 12 → ≤ 4 µm; camera 0…100 → −48…0 µm, left 8 → ≤ 2 µm</td><td><span class="chip ok">✓ fixed</span></td></tr>
+          <tr><td>Freezing direction</td><td>cell on a 25 mm Al plate freezes from below and the sides too; last unfrozen spot 27 mm above the bottom</td><td>XPS sleeve 40 mm, XPS 40 mm + 3 G10 pads under the cell; beam gap 200 → 160 keeps the height (598 mm)</td><td class="num">freezes from the top: last unfrozen 7 mm above the bottom; 95 % frozen in 14 h (was 9 h)</td><td><span class="chip ok">✓ fixed</span></td></tr>
+          <tr><td>Laser</td><td>45° laser: collar shadows a 25 mm strip, 41° DOE gives only 7–8 lines</td><td>laser at 68° on a bracket under the beam, 124 mm from the centre</td><td class="num">no shadow, 11 lines at 9.6 mm; line shift 0.40 Δh</td><td><span class="chip ok">✓ fixed</span></td></tr>
+          <tr><td>Camera</td><td>CSI ribbon cannot pass the lid seal; separate heater near the sample</td><td>RPi 5 inside the camera box (its ≈ 5 W keep the window clear); CR1000 C5 pulse triggers the photo; 6 mm lens</td><td>Ethernet + 5 V through the seal only; same time stamps without NTP</td><td><span class="chip ok">✓ fixed</span></td></tr>
+          <tr><td>Bearing</td><td>LM12UU ball bushing: grease stiffens at −10 °C, ice at thaw → stick-slip, load not constant</td><td>igus drylin RJ4JP-01-12, dry polymer, same size</td><td class="num">load change from friction &lt; 0.02 kPa</td><td><span class="chip ok">✓ fixed</span></td></tr>
+          <tr><td>Moisture</td><td>open surface sublimates while frozen; frost and dew at the start of thaw look like heave</td><td>weigh the cell before and after each cycle; SHT45 air RH on the RPi; optional window cover over the collar</td><td>loss and frost become visible in the data</td><td><span class="chip ok">✓ added</span></td></tr>
+          <tr><td>Freezer air</td><td>on/off control swings ±2–3 K; air sensor only optional</td><td>80 mm fan; Campbell 109 air probe required</td><td>boundary condition known; smaller drift noise</td><td><span class="chip ok">✓ added</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="decision" aria-labelledby="h-dec">
+      <h2 id="h-dec">▲ Decision needed before buying</h2>
+      <p>What should E7 measure?</p>
+      <ul>
+        <li><b>Frost heave:</b> raise saturation to Sr ≥ 0.85, or supply water from below (open system). Then heave of 0.1–1 mm is realistic.</li>
+        <li><b>Thaw settlement under load at Sr 0.3–0.5:</b> keep the sample; expect tens of µm and rely on the blank-run correction.</li>
+      </ul>
+    </section>
+    <section aria-labelledby="h-next">
+      <h2 id="h-next">Before the first real cycle</h2>
+      <ol class="steps">
+        <li>Blank run: Al dummy instead of sand, one full cycle; fit drift against cell temperature.</li>
+        <li>Calibrate the camera with shims 0.1 / 0.5 / 1.0 mm under a flat plate.</li>
+        <li>Measure the freezer: rig 598 mm vs ≈ 650 mm inside.</li>
+        <li>Confirm LVDT operation at −10 °C with RDP / Elkome.</li>
+        <li>Program: 24 h at −10 °C, 24 h at +10 °C (thaw takes ≈ 14 h).</li>
+      </ol>
+    </section>
+  </div>
+
+  <section aria-labelledby="h-cost">
+    <h2 id="h-cost">Cost and resolution</h2>
+    <div class="figs">
+      <div class="fig"><div class="v">≈ 1,520–2,210 €</div><div class="l">rev. B excl. VAT (rev. A 1,365–1,870 €): + Invar parts, insulation, fan, RH sensor, shims</div></div>
+      <div class="fig"><div class="v">≤ 4 µm</div><div class="l">LVDT drift left after the blank-run correction (model), LVDT resolution ≈ 1 µm</div></div>
+      <div class="fig"><div class="v">≈ 10 µm</div><div class="l">camera height map per laser line after averaging ≈ 1000 px along the line</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Details: drawings E7-V01…V05 rev. B, purchase list, calculations §15 (vypocty.md), 3D model with drift chart:
+      <a href="https://claude.ai/artifact/MWEEN9zQqwWQfuePCFbiCd" target="_blank" rel="noopener">E7 sample thawing</a>.</div>
+    <div>Model assumptions: θ 0.15, n 0.38, λ sand 1.2 / 1.9 W/mK, h = 7 W/m²K in still air; frame parts as lumped elements. Treat all numbers as estimates to be checked by the blank run.</div>
+  </footer>
+</div>

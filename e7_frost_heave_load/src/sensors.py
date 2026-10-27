@@ -140,22 +140,27 @@ B_CAM_MECH = [
 ]
 
 # --- varianta C: měření deformace 1 (kamera + laser) a 2 (LVDT) – co koupit (EUR bez DPH) --------
-C_BUY = [   # konkrétní typy (ceny 10/2026, EUR bez DPH; Kč s DPH přepočteno / 1,21 / 25) – viz nakup_cidel.md
+C_BUY = [   # rev. B – konkrétní typy (ceny 10/2026, EUR bez DPH; Kč s DPH přepočteno / 1,21 / 25) – viz purchase_list.md
     ("CAM", "Raspberry Pi 5 4 GB + PSU, SD, camera cable (RPishop)", 1, 105, 120, "web (RPishop 2769 Kč)", "– (Ethernet, NTP)"),
-    ("", "Raspberry Pi HQ Camera C/CS, IMX477 (RPishop OFI060)", 1, 50, 62, "web (RPishop 1499 Kč)", "–"),
-    ("", "Arducam 8 mm CS lens F1.4, manual focus (The Pi Hut)", 1, 16, 20, "web (Pi Hut £16.40)", "–"),
-    ("LAS", "Picotronic DOE253-635-1-6(10x22), 11 lines, 635 nm, 1 mW, 5 V", 1, 92, 92, "web (Picotronic 70111842)", "– (switched by RPi)"),
-    ("", "heated camera box: XPS 30, heater 5 W, double glass", 1, 40, 80, "odhad", "–"),
+    ("", "Raspberry Pi HQ Camera C/CS, IMX477 (RPishop OFI060)", 1, 50, 62, "web (RPishop 1499 Kč)", "C5 trigger"),
+    ("", "Raspberry Pi 6 mm CS wide-angle lens (RPishop / Pi Hut)", 1, 20, 30, "odhad", "–"),
+    ("", "camera box XPS 30, double glass; houses the RPi 5 (no heater)", 1, 20, 40, "odhad", "–"),
+    ("", "SHT45 RH/T sensor on the RPi (I2C), freezer air", 1, 15, 25, "odhad", "– (RPi)"),
+    ("LAS", "Picotronic DOE253-635-1-6(10x22), 11 lines, 635 nm, 1 mW, 5 V", 1, 92, 92, "web (Picotronic 70111842)", "– (RPi GPIO)"),
     ("LVDT", "RDP DCTH400AG ±10 mm, spring (Elkome)", 1, 581, 581, "web (Elkome)", "SE1, ±5000 mV"),
-    ("", "Mean Well HDR-15-24, 24 V DIN (floating supply) (TME)", 1, 11, 14, "web (TME)", "via relay"),
+    ("", "Mean Well HDR-15-24, 24 V DIN (floating supply) (TME)", 1, 11, 14, "web (TME)", "C4 relay"),
     ("", "Campbell 4WPB100 (for the existing Pt100) (Ekotechnika)", 1, 60, 120, "odhad – na dotaz", "DIFF1"),
-    ("Tair", "Campbell 109-L (optional) (Ekotechnika)", 1, 150, 220, "odhad – na dotaz", "SE3, VX1"),
+    ("Tair", "Campbell 109-L, REQUIRED: air = boundary condition", 1, 150, 220, "odhad – na dotaz", "SE3, VX1"),
+    ("", "fan 80 mm 12 V, air mixing in the freezer", 1, 10, 20, "odhad", "C4 relay"),
+    ("CAL", "shims 0.1 / 0.5 / 1.0 mm (feeler gauge set) for camera px → mm", 1, 10, 25, "odhad", "–"),
 ]
 C_MECH = [
-    ("Al base plate 260 × 200 × 25 (machined)", 60, 120),
-    ("Al profiles 2× 40×80 × 326 + 80×80 × 260, core bolts", 70, 150),
-    ("LM12UU bushing + rod ⌀12 h6 × 290 + steel ball ⌀8", 25, 60),
+    ("Al base plate 340 × 260 × 25 (machined)", 80, 150),
+    ("Al profiles 2× 40×80 × 326 + 80×80 × 340, core bolts", 80, 170),
+    ("igus drylin RJ4JP-01-12 + Invar 36 rod ⌀12 ground × 250 + ball ⌀8", 60, 140),
+    ("Invar 36 post ⌀16 × 405 + arms (LVDT, camera target)", 60, 140),
+    ("XPS 40: sleeve ⌀240 × 130 + slab ⌀240; 3 G10 pads ⌀20 × 40", 20, 50),
     ("Al partial piston ⌀50 × 20 + carrier ⌀120 × 8 (machined)", 40, 80),
     ("steel discs ⌀120: 4 × 1 kg + 0.5 kg + trim washers", 40, 90),
-    ("camera bracket + laser post (profile 20×20), LVDT clamp", 25, 60),
+    ("camera bracket + laser bracket (Al strip), cable glands", 15, 40),
 ]

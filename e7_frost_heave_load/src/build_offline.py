@@ -1,4 +1,4 @@
-"""E7 – offline package for people without Claude: everything opens from a local folder in any browser.
+"""E7 – offline package (rev. B) for people without Claude: everything opens from a local folder in any browser.
 
 Builds sdileni/ with
   E7_overview.html   overview page, drawings embedded (no internet needed except web fonts)
@@ -20,11 +20,13 @@ ROOT = os.path.join(HERE, "..")
 WEB = os.path.join(ROOT, "web")
 OUT = os.path.join(ROOT, "sdileni")
 MODEL_URL = "https://claude.ai/artifact/MWEEN9zQqwWQfuePCFbiCd"
+REVIEW_URL = "https://claude.ai/artifact/G3FvyDPPaPBcD7c3J1CvVe"
 CDN = {
     "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js": "three-r128.min.js",
     "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js": "OrbitControls-r128.js",
 }
 EXTRA = [("vykresy/E7_drawings.pdf", "E7_drawings.pdf"),
+         ("E7_review.pdf", "E7_review.pdf"),
          ("purchase_list.md", "E7_purchase_list.md"),
          ("cad/E7_V04_cell.dxf", "cad/E7_V04_cell.dxf"),
          ("3d/E7_V01_variant_C.step", "3d/E7_V01_variant_C.step"),
@@ -64,20 +66,23 @@ def build():
             b64 = base64.b64encode(open(os.path.join(ROOT, "vykresy", fn), "rb").read()).decode("ascii")
             html = html.replace(f'"vykresy/{fn}"', f'"data:image/png;base64,{b64}"')
     assert MODEL_URL in html
-    html = html.replace(MODEL_URL, "E7_3D_model.html")
+    html = html.replace(MODEL_URL, "E7_3D_model.html").replace(REVIEW_URL, "E7_review.html")
     html = html.replace(" target=\"_blank\" rel=\"noopener\"><img", "><img")      # images: no new tab for data URIs
     html = html.replace("Click a sheet to open it at full resolution.", "Full-resolution sheets are in E7_drawings.pdf.")
-    html = html.replace('<footer>', '<footer>The package contains: E7_3D_model.html (3D model), E7_drawings.pdf, E7_purchase_list.md, '
+    html = html.replace('<footer>', '<footer>The package contains: E7_review.html / .pdf (one-page review), E7_3D_model.html (3D model), E7_drawings.pdf, E7_purchase_list.md, '
                         'cad/ (DXF of the cell), 3d/ (STEP for Onshape). ')
     open(os.path.join(OUT, "E7_overview.html"), "w", encoding="utf-8").write(page(html))
+    html = read(os.path.join(WEB, "E7_review.html")).replace(MODEL_URL, "E7_3D_model.html")
+    open(os.path.join(OUT, "E7_review.html"), "w", encoding="utf-8").write(page(html))
     for src, dst in EXTRA:
         os.makedirs(os.path.dirname(os.path.join(OUT, dst)) or OUT, exist_ok=True)
         shutil.copy(os.path.join(ROOT, src), os.path.join(OUT, dst))
     open(os.path.join(OUT, "README.txt"), "w", encoding="utf-8").write(
-        "Experiment E7 – variant C\n\n"
+        "Experiment E7 – variant C rev. B\n\n"
         "Unzip the package first, then open E7_overview.html in any web browser (double-click).\n"
         "3D model of freezing and thawing: E7_3D_model.html (works without internet).\n"
-        "Drawings: E7_drawings.pdf. Purchase list: E7_purchase_list.md.\n"
+        "One-page measurement review: E7_review.pdf (also E7_review.html).\n"
+        "Drawings: E7_drawings.pdf (rev. B). Purchase list: E7_purchase_list.md.\n"
         "CAD: cad/E7_V04_cell.dxf, 3D: 3d/*.step (Onshape, SolidWorks, FreeCAD).\n")
     zp = os.path.join(OUT, "E7_package.zip")
     with zipfile.ZipFile(zp, "w", zipfile.ZIP_DEFLATED) as z:
