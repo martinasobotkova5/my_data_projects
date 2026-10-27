@@ -266,7 +266,7 @@ Kotouč ⌀120/17: 1 kg = 11.5 mm, 0,5 kg = 5.7 mm. Při 25 kPa jen ≈ 4 kotou�
 
 **Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser 68° (11 čar po ≈ 9.6 mm, posun čáry = 0,40 × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.
 
-**Rozměry:** sloupy 40×80 × 326 mm, spodní líc příčníku 160 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 v mezikruží (r 37,5, 315°, strana kamery) – mimo laserové čáry i píst.
+**Rozměry:** sloupy 40×80 × 326 mm, spodní líc příčníku 160 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 jde ze strany TDR otvorem a nasedá uprostřed přímo nad horní tyčku CS645 (hloubka ≈ 33 mm) – povrch zůstává volný.
 
 ## 15. Varianta C rev. B – posudek měření (10/2026)
 

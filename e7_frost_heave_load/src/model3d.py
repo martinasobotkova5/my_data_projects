@@ -125,7 +125,7 @@ def variant_b(asm, prefix=""):
     asm.add(bridge, name=prefix + "Al bridge D220x10 (LVDT clamps)", color=C["al"])
     asm.add(radial(180, p.STAND_R - 6, p.STAND_R + 20, 230, 1.6), name=prefix + "Tstand 109SS", color=C["temp"])
 
-def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt_ang=None, ins=False):
+def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt_ang=None, ins=False, pt_port=False):
     """Variant A cell per drawing Column_one_body_version_1: body ⌀160 × 130 + collar ⌀106 to 160,
     cavity ⌀100 from z 26 (z = 0 at the underside), side port 13 wide at 67.5–94.5 (PORT_ANG).
     Point M: CS645 in the port, optical fibre, Pt100 vertical. Returns z of the underside of the core.
@@ -151,6 +151,8 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt
     for k in range(3):
         body = body.cut(radial(a, ri - 1, ri + p.CUP_WALL_IN + 1, z_top - k * t["pitch"], t["rod_d"] + 0.3))
     body = body.cut(radial_off(a, ri - 1, ri + p.CUP_WALL_IN + 1, z_top + 2, 1.5, w=p.OF_SIDE))
+    if pt_port:                                      # rev. B: Pt100 through the inner wall, on top of the top rod
+        body = body.cut(radial(a, ri - 1, ri + p.CUP_WALL_IN + 1, z_top + p.C_PT100_DZ, 3.3))
     temps = [(d, ang) for _, d, ang in p.AM_TEMPS] if temps is None else temps
     for d, ang in temps:
         body = body.cut(radial(ang, ri - 1, rb + 1, Z_S1 - d, 2.0))
@@ -173,12 +175,18 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt
                 name=f"{prefix}M TDR CS645 rod {k + 1}", color=C["steel"])
     asm.add(radial_off(a, ri - p.OF_TIP_FROM_WALL, rb + 30, z_top + 2, 1.0, w=p.OF_SIDE),
             name=prefix + "M optical fibre", color=C["fbg"])
-    pt_r = p.PT100_R if pt_r is None else pt_r
-    pa = a + 90 if pt_ang is None else pt_ang
-    xp, yp = pt_r * math.cos(math.radians(pa)), pt_r * math.sin(math.radians(pa))
-    asm.add(cyl(3.0, p.PT100_METAL, Z_S1 - p.PT100_L, xp, yp), name=prefix + "M Pt100 metal part", color=C["pt100"])
-    asm.add(cyl(2.0, p.PT100_L - p.PT100_METAL, Z_S1 - (p.PT100_L - p.PT100_METAL), xp, yp),
-            name=prefix + "M Pt100 cable", color=C["pt100"])
+    if pt_port:
+        zp = z_top + p.C_PT100_DZ
+        r_tip, r_m = ri - p.C_PT100_TIP, ri - p.C_PT100_TIP + p.PT100_METAL
+        asm.add(radial(a, r_tip, r_m, zp, 3.0), name=prefix + "M Pt100 metal part", color=C["pt100"])
+        asm.add(radial(a, r_m, rb + 30, zp, 2.0), name=prefix + "M Pt100 cable", color=C["pt100"])
+    else:
+        pt_r = p.PT100_R if pt_r is None else pt_r
+        pa = a + 90 if pt_ang is None else pt_ang
+        xp, yp = pt_r * math.cos(math.radians(pa)), pt_r * math.sin(math.radians(pa))
+        asm.add(cyl(3.0, p.PT100_METAL, Z_S1 - p.PT100_L, xp, yp), name=prefix + "M Pt100 metal part", color=C["pt100"])
+        asm.add(cyl(2.0, p.PT100_L - p.PT100_METAL, Z_S1 - (p.PT100_L - p.PT100_METAL), xp, yp),
+                name=prefix + "M Pt100 cable", color=C["pt100"])
     for i_, (d, ang) in enumerate(temps, 1):
         asm.add(radial(ang, p.T_TIP_R, rb + 8, Z_S1 - d, 1.6),
                 name=f"{prefix}T{i_} 109SS" + (" (opt.)" if opt else ""), color=C["temp"])
@@ -322,7 +330,7 @@ def variant_c(asm, prefix=""):
         a = math.radians(90 + 120 * k)
         x, y = p.C_PAD_R * math.cos(a), p.C_PAD_R * math.sin(a)
         asm.add(cyl(p.C_PAD_D, p.C_INS_T, zb0, x, y), name=f"{prefix}G10 pad D20x40 {k + 1}", color=C["g10"])
-    body_a(asm, prefix, temps=[], pv=False, pb=False, opt=False, pt_r=p.C_PT100_R, pt_ang=p.C_PT100_ANG, ins=True)
+    body_a(asm, prefix, temps=[], pv=False, pb=False, opt=False, ins=True, pt_port=True)
     # moving load: partial piston, ball, Invar guide rod, carrier, discs
     zp = Z_S1 + p.C_PISTON_H
     asm.add(cyl(p.C_PISTON_D, p.C_PISTON_H, Z_S1), name=prefix + "partial piston Al D50x20", color=C["al"])
@@ -413,7 +421,7 @@ if __name__ == "__main__":
     vc = cq.Assembly(name="E7 C - frame guides a dead weight on a partial piston, camera + laser, LVDT")
     variant_c(vc)
     mr = cq.Assembly(name="E7 cell rev. B - printed in one piece D240 (core Column_one_body_version_1)")
-    body_a(mr, temps=[], pv=False, pb=False, opt=False, pt_r=p.C_PT100_R, pt_ang=p.C_PT100_ANG, ins=True)
+    body_a(mr, temps=[], pv=False, pb=False, opt=False, ins=True, pt_port=True)
     lay = freezer_layout()
     for asm, fn in ((vc, "E7_V01_variant_C"), (mr, "E7_V03_cell"), (lay, "E7_V05_freezer_layout")):
         asm.save(os.path.join(OUT, fn + ".step"))

@@ -241,7 +241,11 @@ C_TRAVEL = 25.0                         # volný zdvih / pokles zátěže
 C_SURCHARGES_KPA = (5.0, 10.0, 15.0, 20.0, 25.0)   # pod pístem
 C_CAM_Y, C_CAM_H, C_CAM_TILT = -85.0, 105.0, 39.0  # kamera stranou (−y), výška nad pískem, sklon k ose (rev. B)
 C_LASER_Y, C_LASER_H = 46.0, 115.0      # rev. B: laser strmě 68° z držáku na příčníku → bez stínu límce, 11 čar po ≈ 9,6 mm
-C_PT100_R, C_PT100_ANG = 37.5, 315.0    # Pt100 svisle ve volném mezikruží na straně kamery (y < 0) – mimo laserovou čáru (y ≥ 0)
+C_PT100_R, C_PT100_ANG = 37.5, 315.0    # (rev. A, už neplatí) Pt100 svisle ve volném mezikruží
+# rev. B (upřesnění 10/2026): Pt100 jde ze stejné strany jako TDR – vodorovně otvorem, uprostřed (na ose TDR)
+# a nasedá přímo nad horní tyčku CS645; celé 37 mm v písku, kovová část 25 mm na konci → povrch je volný
+C_PT100_DZ = 3.5                         # osa Pt100 nad osou horní tyčky (⌀3,2/2 + ⌀3/2 + 0,4)
+C_PT100_TIP = 37.0                       # hrot od vnitřní stěny (ověřit)
 
 # --- varianta C – měření deformace jen 1 (kamera + laser) a 2 (LVDT na zátěži) --------------
 C_LENS_F = 6.0                           # rev. B: objektiv 6 mm (kamera blíž) → zorné pole ≈ 140 mm

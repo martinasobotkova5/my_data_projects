@@ -120,7 +120,7 @@ summary { cursor: pointer; color: var(--text-2); }
         <tr><td>freezer air</td><td id="hAir"></td></tr>
         <tr><td>free surface (annulus)</td><td id="hFree"></td></tr>
         <tr><td>surface under the piston</td><td id="hUnder"></td></tr>
-        <tr><td>point M (depth 45)</td><td id="hM"></td></tr>
+        <tr><td>point M, Pt100 (depth <span id="hMd">33</span>)</td><td id="hM"></td></tr>
         <tr><td>frozen water fraction</td><td id="hIce"></td></tr>
         <tr><td>rig drift, LVDT rev. A / B</td><td id="hHeave"></td></tr>
       </table>
@@ -207,7 +207,7 @@ const DATA = /*__DATA__*/null;
 
   // ---------- derived series per frame ----------
   const S = { free: [], under: [], m: [], ice: [], hFree: [], hPist: [], heave: [], dA: [], dB: [], dRim: [], dRef: [] };
-  const iM = Math.min(NS - 1, Math.floor(G.pt100[0] / DR)), jM = Math.floor((G.z_sand - 45) / DZ);
+  const iM = Math.min(NS - 1, Math.floor(G.pt100[0] / DR)), jM = Math.floor((G.z_sand - G.pt100[1]) / DZ);   // Pt100 (point M)
   for (let f = 0; f < NF; f++) {
     const hv = new Float32Array(NS); let iceV = 0, vol = 0;
     for (let i = 0; i < NS; i++) {
@@ -348,7 +348,7 @@ const DATA = /*__DATA__*/null;
     new THREE.LineBasicMaterial({ color: 0x1b1c1e }));
   scene.add(outline);
 
-  // point M marker (sensor depth 45 mm, r 37.5) on the section
+  // point M marker (Pt100 on top of the top TDR rod) on the section
   const mMark = new THREE.Mesh(new THREE.SphereGeometry(2.6, 16, 12), new THREE.MeshBasicMaterial({ color: 0x111111 }));
   scene.add(mMark);
 
@@ -515,7 +515,7 @@ const DATA = /*__DATA__*/null;
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const CH = {
     T: { el: document.getElementById("chT"), tip: document.getElementById("tipT"), lg: document.getElementById("lgT"), y0: -11, y1: 11, ticks: [-10, -5, 0, 5, 10], unit: "°C", d: 1,
-         series: [["air", "--s-air", D.air], ["free surface", "--s-free", S.free], ["under piston", "--s-under", S.under], ["point M (45 mm)", "--s-m", S.m]] },
+         series: [["air", "--s-air", D.air], ["free surface", "--s-free", S.free], ["under piston", "--s-under", S.under], [`point M (Pt100, ${Math.round(G.pt100[1])} mm)`, "--s-m", S.m]] },
     H: { el: document.getElementById("chH"), tip: document.getElementById("tipH"), lg: document.getElementById("lgH"), unit: "µm", d: 0,
          series: [["LVDT on Al beam, steel rod (rev. A)", "--s-d1", S.dA, true], ["LVDT on Invar post + rod (rev. B)", "--s-d2", S.dB],
                   ["camera vs PETG rim (rev. A)", "--s-d3", S.dRim, true], ["camera vs Invar target (rev. B)", "--s-d4", S.dRef]] },
@@ -584,6 +584,7 @@ const DATA = /*__DATA__*/null;
 
   // ---------- notes + table ----------
   const P = D.props;
+  document.getElementById("hMd").textContent = Math.round(G.pt100[1]);
   document.getElementById("assump").innerHTML = [
     `Axisymmetric heat conduction (finite volumes 2.5 × 2 mm, enthalpy method). Program: steady ${fmt(D.program.warm, 0)} °C → at 0 h air ${fmt(D.program.cold, 0)} °C → at ${D.program.thaw_h} h air ${fmt(D.program.warm, 0)} °C (air response τ ≈ 30 min).`,
     `Sand θ = ${P.theta}, λ unfrozen ${P.k_u} / frozen ${P.k_f} W/mK, latent heat ${(P.latent / 1e6).toFixed(0)} MJ/m³, freezing range −0.5…0 °C.`,

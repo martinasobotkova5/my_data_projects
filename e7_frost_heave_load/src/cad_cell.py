@@ -158,9 +158,10 @@ def section(sh, ox, oy):
         sh.rect(-RI + ox, z - T["rod_d"] / 2 + oy, -RI + T["rod_l"] + ox, z + T["rod_d"] / 2 + oy, "SENSOR")
     sh.rect(-RI - W - T["head_l"] + ox, PZ0 + 0.5 + oy, -RI - W + ox, PZ1 - 0.5 + oy, "SENSOR")
     sh.line(P(-RB - 15, zf), P(-RI + p.OF_TIP_FROM_WALL, zf), "SENSOR")
-    sh.rect(p.PT100_R - 1.5 + ox, ZS - p.PT100_L + oy, p.PT100_R + 1.5 + ox, ZS - (p.PT100_L - p.PT100_METAL) + oy,
-            "SENSOR")
-    sh.line(P(p.PT100_R, ZS - (p.PT100_L - p.PT100_METAL)), P(p.PT100_R, ZS + 8), "SENSOR")
+    zpt = RODS[0] + p.C_PT100_DZ                     # Pt100 from the port, centred on top of the top rod
+    sh.rect(ox - RI + p.C_PT100_TIP - p.PT100_METAL, oy + zpt - 1.5, ox - RI + p.C_PT100_TIP, oy + zpt + 1.5, "SENSOR")
+    sh.rect(ox - RI, oy + zpt - 1.0, ox - RI + p.C_PT100_TIP - p.PT100_METAL, oy + zpt + 1.0, "SENSOR")
+    sh.line(P(-RB - 15, zpt), P(-RI, zpt), "SENSOR")
     # ---- dimensions: heights (left)
     sh.dim_v(oy, oy + HC, ox - RB, ox - RB - 46)
     sh.dim_v(oy, oy + H, ox - RB, ox - RB - 36)
@@ -183,8 +184,8 @@ def section(sh, ox, oy):
     sh.dim_h(ox - RB, ox + RB, oy, oy - 14)
     sh.dim_h(ox - RI, ox - RI + T["rod_l"], oy + RODS[2] - 2, oy + TB + 14, "75 CS645 (meas. 77)")
     sh.dim_h(ox - RI, ox - RI + p.OF_TIP_FROM_WALL, oy + zf, oy + zf + 22, "<> fibre")
-    sh.dim_h(ox, ox + p.PT100_R, oy + ZS, oy + ZS + 7)
-    sh.dim_v(oy + ZS - p.PT100_L, oy + ZS, ox + p.PT100_R - 1.5, ox + p.PT100_R - 9, "37 Pt100")
+    sh.dim_h(ox - RI, ox - RI + p.C_PT100_TIP, oy + zpt, oy + zpt + 48, "<> Pt100 tip")
+    sh.dim_v(oy + RODS[0], oy + zpt, ox - RI + p.C_PT100_TIP, ox - RI + p.C_PT100_TIP + 8)
     sh.dim_h(ox - RI - W - T["head_l"], ox - RI - W, oy + PZ0, oy + PZ0 - 12, "19 head")
     sh.dim_h(ox - RI - W, ox - RI, oy + PZ1, oy + PZ1 + 7)
     sh.dim_r(P(RI - r, TB + r), r, 315)
@@ -209,13 +210,12 @@ def plan(sh, ox, oy):
     # sensors
     sh.rect(ox - T["rod_d"] / 2, oy - RI, ox + T["rod_d"] / 2, oy - RI + T["rod_l"], "SENSOR")
     sh.line(P(-p.OF_SIDE, -RB - 15), P(-p.OF_SIDE, -RI + p.OF_TIP_FROM_WALL), "SENSOR")
-    sh.circle(P(p.PT100_R, 0), 1.5, "SENSOR")
+    sh.rect(ox - 1.5, oy - RI + p.C_PT100_TIP - p.PT100_METAL, ox + 1.5, oy - RI + p.C_PT100_TIP, "SENSOR")
     sh.dim_d(P(0, 0), RB, 45)
     sh.dim_d(P(0, 0), RC, 135)
     sh.dim_d(P(0, 0), RI, 160)
     sh.dim_h(ox - hw, ox + hw, oy + yb, oy - RB - 14, "13 (port)")
     sh.dim_h(ox - p.OF_SIDE, ox, oy - RI + p.OF_TIP_FROM_WALL, oy - 30, "<> fibre")
-    sh.dim_h(ox, ox + p.PT100_R, oy, oy + 30, "15 Pt100")
     sh.text("PLAN  (from above)", (ox - RB, oy + RB + 30), h=TH)
     sh.text("A", P(-RB - 14, -2), h=TH)
     sh.text("A", P(RB + 8, -2), h=TH)
@@ -229,12 +229,14 @@ def port_view(sh, ox, oy):
     for z in RODS:
         sh.circle(P(0, z - PZ0), 1.75)
     sh.circle(P(-p.OF_SIDE, RODS[0] + 2 - PZ0), 0.75)
+    sh.circle(P(0, RODS[0] + p.C_PT100_DZ - PZ0), 1.65)            # Pt100 ⌀3.3 – merges with the top-rod hole
+    sh.dim_v(oy + RODS[0] - PZ0, oy + RODS[0] + p.C_PT100_DZ - PZ0, ox + 2.5, ox + p.PORT_W / 2 + 4)
     sh.dim_h(ox - p.PORT_W / 2, ox + p.PORT_W / 2, oy + hh, oy + hh + 8)
     sh.dim_v(oy, oy + hh, ox + p.PORT_W / 2, ox + p.PORT_W / 2 + 10)
     sh.dim_v(oy + RODS[2] - PZ0, oy + RODS[0] - PZ0, ox - p.PORT_W / 2, ox - p.PORT_W / 2 - 10,
              "2× 8.9")
     sh.text("VIEW M  (port from outside)", (ox - 40, oy + hh + 20), h=TH)
-    sh.text("3× ⌀3.5 rods, ⌀1.5 fibre", (ox - 40, oy - 10))
+    sh.text("3× ⌀3.5 rods, ⌀3.3 Pt100 (on the top rod), ⌀1.5 fibre", (ox - 40, oy - 10))
 
 
 def frame_and_title(sh, x0, y0):
@@ -256,11 +258,11 @@ def frame_and_title(sh, x0, y0):
              "1  General tolerance ±0.2; cavity ⌀100 ±0.1 (ream/sand after printing).",
              "2  Sensor positions (green, layer SENSOR) are for information – CS645 rods",
              "   centred in the port (pitch 8.9 ≈ 9), fibre tip 37.5 from the wall,",
-             "   Pt100 37 mm vertical, 15 from the axis. Check: Pt100 tip or length?",
+             f"   Pt100 37 mm from the port, on top of the top rod (+{p.C_PT100_DZ:g}). Tip or length?",
              f"3  Sand 100 mm (z {TB:g}–{ZS:g}), 34 mm free above for the piston / camera.",
              f"   3 G10 pads ⌀{p.C_PAD_D:g} × {O:g} in pockets ⌀{p.C_PAD_D + 0.4:g} (r {p.C_PAD_R:g}), 0.5 mm proud.",
              "4  Inside: epoxy coat + PTFE spray + silicone grease.",
-             "5  Port 13 × 27 runs through the whole wall (r 50–120); Pt100 cable ⌀4 at the top (0°).",
+             "5  Port 13 × 27 through the whole wall (r 50–120): TDR, Pt100 and fibre cables.",
              "   Print bed ≥ 250 × 250, Z ≥ 200; ≈ 1.3–1.6 kg, ≈ 40–60 h."]
     for i, s in enumerate(notes):
         sh.text(s, (x0 + 20 * S, y0 + (78 - 7 * i) * S), h=TS)

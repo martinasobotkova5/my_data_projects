@@ -187,7 +187,7 @@ def m_section(v, side=-1, labels=False, big=False):
         v.text(side * 25, z - 6, "M", fontsize=FS_SMALL, color="#d33682", ha="center", va="top", weight="bold", zorder=6)
 
 
-def m_section_a(v, labels=False, cable_up=False, pt_r=None):
+def m_section_a(v, labels=False, cable_up=False, pt_r=None, pt_port=False):
     """Point M of variant A (sketch): CS645 rods horizontal through the axis, optical fibre at the top-rod
     level (tip 37.5 from the wall), Pt100 vertical from the sand surface 15 mm beside the axis."""
     t = p.TDR_CS645
@@ -199,6 +199,15 @@ def m_section_a(v, labels=False, cable_up=False, pt_r=None):
         v.line([(-ri, z), (-ri + t["rod_l"], z)], lw=1.3, c="#555", z=5)
     v.rect(-ri - p.CUP_WALL_IN - t["head_l"], zb + p.PORT_Z0 + 0.5, -ri, zb + p.PORT_Z1 - 0.5, fc=TDRC, lw=THIN, z=5)
     v.line([(-ri, z_top + 1.8), (-ri + p.OF_TIP_FROM_WALL, z_top + 1.8)], lw=1.1, c=FBGC, z=5.2)
+    if pt_port:                                     # rev. B: Pt100 from the port side, centred on top of the top rod
+        zp = z_top + p.C_PT100_DZ
+        x_tip, x_m = -ri + p.C_PT100_TIP, -ri + p.C_PT100_TIP - p.PT100_METAL
+        v.rect(x_m, zp - 1.5, x_tip, zp + 1.5, fc=PTC, lw=0.5, z=5.3)
+        v.rect(-ri, zp - 1.0, x_m, zp + 1.0, fc="#8a7300", lw=0.3, z=5.3)
+        v.line([(-ri - p.CUP_WALL_IN - t["head_l"] - 6, zp), (-ri, zp)], lw=0.9, c="#8a7300", z=5.3)
+        if labels:
+            v.text(-ri + t["rod_l"] + 2, z_top - t["pitch"], "CS645", fontsize=FS_SMALL - 0.5, va="center", color="#333")
+        return
     ptr = p.PT100_R if pt_r is None else pt_r
     v.rect(ptr - 1.5, Z_S1 - p.PT100_L, ptr + 1.5, Z_S1 - (p.PT100_L - p.PT100_METAL), fc=PTC, lw=0.5, z=5.2)
     # Pt100 cable: up to the sand surface, in a groove under the piston, out through a ⌀4 hole in the collar

@@ -254,7 +254,8 @@ def pack(rc, zc, mat, frames, drift):
                   ref=list(p.C_REF_XY), laser_ang=p.C_LASER_ANG,
                   rod_d=p.C_ROD_D, carrier=[p.C_CARRIER_D, p.C_CARRIER_T], disc_d=p.C_DISC_D,
                   cam=[p.C_CAM_Y, p.C_CAM_H, p.C_CAM_TILT], laser=[p.C_LASER_Y, p.C_LASER_H],
-                  lines=[p.C_LINES, p.C_LINE_PITCH], pt100=[p.C_PT100_R, p.C_PT100_ANG], lvdt_x=p.C_LVDT_X,
+                  lines=[p.C_LINES, p.C_LINE_PITCH], pt100=[R_SAND - p.C_PT100_TIP + p.PT100_METAL / 2,                     # Pt100: r of the metal middle, depth
+                          Z_SAND - (Z_TOP - p.TDR_CS645["top_from_collar"] + p.C_PT100_DZ)], lvdt_x=p.C_LVDT_X,
                   port=[p.PORT_Z0, p.PORT_Z1, p.PORT_W, p.PORT_ANG], tdr_depths=[36, 45, 54]),
         props=dict(theta=THETA, k_u=PROPS["sand_u"][0], k_f=PROPS["sand_f"][0], h_out=H_OUT, h_cav=H_CAV,
                    h_bot=round(H_UNDER, 2), h_side=round(H_SIDE, 2), h_contact=H_CONTACT, latent=L_VOL,

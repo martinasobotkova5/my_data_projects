@@ -8,6 +8,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 3 podložky G10 v kapsách dna → mrznutí shora), LVDT a referenční terčík kamery na sloupku z Invaru, vodicí tyč z Invaru v kluzném pouzdře
 igus drylin, laser pod 68° z držáku na příčníku (11 čar po 9,6 mm, bez stínu límce), RPi 5 v boxu kamery (spouštění z CR1000 C5),
 čidlo vzduchu 109 povinně, ventilátor, SHT45, vážení cely. Mezera pod příčníkem 200 → 160 mm, celková výška beze změny.
+Pt100 jde ze stejné strany jako TDR a nasedá uprostřed přímo nad horní tyčku (bod M v jednom místě, povrch volný).
 Otevřená otázka: cílové nasycení vzorku (při Sr ≈ 0,4 je očekávaný zdvih nanejvýš desítky µm). Výpočty §15 v `vypocty.md`,
 simulace `src/sim_thaw.py` (`--bare` = původní cela pro srovnání), nákup `purchase_list.md` / `nakup_cidel.md`.
 

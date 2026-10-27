@@ -388,7 +388,7 @@ print(f"**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser {p.C_LA
       "reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), "
       "rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.\n")
 print(f"**Rozměry:** sloupy 40×80 × {col_h:.0f} mm, spodní líc příčníku {p.C_BEAM_GAP:g} mm nad pískem (místo pro kameru "
-      "a laser), závaží nad příčníkem mimo zorné pole. Pt100 v mezikruží (r 37,5, 315°, strana kamery) – mimo laserové čáry i píst.\n")
+      "a laser), závaží nad příčníkem mimo zorné pole. Pt100 jde ze strany TDR otvorem a nasedá uprostřed přímo nad horní tyčku CS645 (hloubka ≈ 33 mm) – povrch zůstává volný.\n")
 
 # 15 --------------------------------------------------------------------------
 print("## 15. Varianta C rev. B – posudek měření (10/2026)\n")

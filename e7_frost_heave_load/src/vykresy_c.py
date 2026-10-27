@@ -79,7 +79,7 @@ def draw_c(v):
     v.line([(-p.BODY_D / 2, ZCELL), (p.BODY_D / 2, ZCELL)], lw=THICK + 0.6, c=V.PETG, z=2.45)
     v.line([(-p.BODY_D / 2, ZCELL), (p.BODY_D / 2, ZCELL)], lw=0.4, c="#9aa5ab", ls=":", z=2.46)
     v.rect(-p.D_SAMPLE / 2, V.Z_S0, p.D_SAMPLE / 2, V.Z_S1, fc="#e9dcb8", lw=THIN)
-    V.m_section_a(v, labels=True, cable_up=True, pt_r=-p.C_PT100_R)
+    V.m_section_a(v, labels=True, cable_up=True, pt_port=True)
     # moving load
     v.rect(-p.C_PISTON_D / 2, V.Z_S1, p.C_PISTON_D / 2, ZP, fc=METAL, lw=THICK, hatch="////", z=5)
     v.circle(0, ZP + p.C_BALL_D / 2 - 1, p.C_BALL_D / 2, fc=V.STEEL, lw=THIN, z_=5.2)
@@ -246,8 +246,6 @@ def _sheet_measurement(pdf):
                 x0_ = math.sqrt(max(ri ** 2 - yr ** 2, 0))
                 x1_ = math.sqrt(rc ** 2 - yr ** 2)
                 c.line([(sgn * x0_, yr), (sgn * x1_, yr)], lw=2.2, c="#ff4d4d", z=5)
-    pa = math.radians(p.C_PT100_ANG)
-    c.circle(p.C_PT100_R * math.cos(pa), p.C_PT100_R * math.sin(pa), 1.8, fc=V.PTC, lw=0.3)
     xr_, yr_ = p.C_REF_XY
     c.rect(xr_ - 5, yr_ - 5, xr_ + 5, yr_ + 5, fc="white", lw=THIN, z=6)
     c.circle(xr_, yr_, 2, fc="#111", lw=0, z_=6.1)
@@ -341,9 +339,11 @@ def _sheet_cell(pdf):
         v.line([(-ri, z), (-ri + t["rod_l"], z)], lw=1.4, c="#555", z=5)
     v.rect(-ri - w - t["head_l"], pz0 + 0.5, -ri, pz1 - 0.5, fc=V.TDRC, lw=THIN, z=5)
     v.line([(-ri, z_top + 2), (-ri + p.OF_TIP_FROM_WALL, z_top + 2)], lw=1.2, c=V.FBGC, z=5.2)
-    xpt = p.C_PT100_R
-    v.rect(xpt - 1.5, zs - p.PT100_L, xpt + 1.5, zs - (p.PT100_L - p.PT100_METAL), fc=V.PTC, lw=0.5, z=5.2)
-    v.line([(xpt, zs - (p.PT100_L - p.PT100_METAL)), (xpt, Hc + 10)], lw=0.9, c="#8a7300", z=5.2)
+    zpt = z_top + p.C_PT100_DZ                       # Pt100 from the port, centred on top of the top rod
+    x_tip, x_m = -ri + p.C_PT100_TIP, -ri + p.C_PT100_TIP - p.PT100_METAL
+    v.rect(x_m, zpt - 1.5, x_tip, zpt + 1.5, fc=V.PTC, lw=0.5, z=5.3)
+    v.rect(-ri, zpt - 1.0, x_m, zpt + 1.0, fc="#8a7300", lw=0.3, z=5.3)
+    v.line([(-ro - 8, zpt), (-ri, zpt)], lw=0.9, c="#8a7300", z=5.3)
     v.dim_h(-ro, ro, 0, -12, f"⌀{2 * ro:g}", side="below")
     v.dim_h(-rc, rc, Hc, Hc + 10, "⌀106")
     v.dim_h(-ri, ri, Hc, Hc + 20, "⌀100")
@@ -360,8 +360,9 @@ def _sheet_cell(pdf):
     v.dim_h(0, yp, O / 2, -26, f"{yp:g}", side="below")
     V.tag(v, -ri + 30, z_top - t["pitch"], 40, 90, f"CS645: 3 rods ⌀3.2 × {t['rod_l']:g}, pitch {t['pitch']:g}")
     V.tag(v, -ri + 20, z_top + 2, -70, Hc + 34, f"optical fibre, tip {p.OF_TIP_FROM_WALL:g} from the wall", V.FBGC)
-    V.tag(v, xpt + 1.5, zs - 20, 75, Hc + 34, f"Pt100 {p.PT100_L:g} (metal {p.PT100_METAL:g}), r {xpt:g}, 315°",
-          "#8a7300")
+    V.tag(v, x_tip - 6, zpt + 1.5, 75, Hc + 34, f"Pt100 {p.PT100_L:g} (metal {p.PT100_METAL:g}) from the port,\n"
+          f"centred on the top rod (+{p.C_PT100_DZ:g}), tip {p.C_PT100_TIP:g} from the wall", "#8a7300")
+    v.dim_h(-ri, x_tip, zpt, zpt + 14, f"{p.C_PT100_TIP:g}")
     V.tag(v, -ro + 20, pz0 + 6, -10, -40, f"port 13 × 27 through the whole wall\n(TDR head {t['head_l']:g} at the inner wall)",
           V.TDRC, ha="left")
     V.tag(v, yp, O / 2, 75, -20, f"G10 pad ⌀{p.C_PAD_D:g} × {O:g} in a pocket ⌀{p.C_PAD_D + 0.4:g},\n3× at r {p.C_PAD_R:g}, 0.5 mm proud",
@@ -378,15 +379,14 @@ def _sheet_cell(pdf):
         f.circle(p.C_PAD_R * math.cos(a), p.C_PAD_R * math.sin(a), p.C_PAD_D / 2, fc="none", ec="#4d7a2a", lw=THIN, ls="--")
     f.rect(-p.PORT_W / 2, -ro, p.PORT_W / 2, -ri - w, fc="white", lw=THICK)
     f.rect(-1.6, -ri, 1.6, -ri + t["rod_l"], fc="#777", lw=0.3)
-    pa = math.radians(p.C_PT100_ANG)
-    f.circle(p.C_PT100_R * math.cos(pa), p.C_PT100_R * math.sin(pa), 2.5, fc=V.PTC, lw=THIN)
+    f.rect(-1.5, -ri + p.C_PT100_TIP - p.PT100_METAL, 1.5, -ri + p.C_PT100_TIP, fc=V.PTC, lw=0.3, z=5)
     f.circle(0, 0, p.C_PISTON_D / 2, fc="none", ec=INK, lw=THIN, ls="--")
     f.text(0, -ro - 8, "port 13 wide (TDR axis, camera side); pads dashed (underneath)", fontsize=fs(), ha="center",
            va="top", color=V.TDRC)
     sh.heading(255, 276, "Point M (existing sensors)")
     rows = [["TDR", "Campbell CS645", "3 rods 75, pitch 8.9, in the port, depth 36/45/54"],
             ["OF", "optical fibre", f"at the top rod, tip {p.OF_TIP_FROM_WALL:g} from the wall"],
-            ["Pt100", "37 mm (25 metal)", "vertical, r 37.5 at 315° (free annulus, off the laser)"]]
+            ["Pt100", "37 mm (25 metal)", f"from the port, on top of the top rod, tip {p.C_PT100_TIP:g}"]]
     y = table(sh, 255, 272, ["", "sensor", "position"], rows, [16, 36, 103], row_h=5.8)
     sh.heading(255, y - 8, "Print (one piece)")
     pr = [["size", f"⌀{2 * ro:g} × {Hc:g} mm – bed ≥ 250 × 250, Z ≥ 200"],
@@ -404,7 +404,8 @@ def _sheet_cell(pdf):
             f"• Heat model: λ infill ≈ {p.C_INS_K:g} W/mK → freezes from the top, last unfrozen\n"
             "  ≈ 13 mm above the floor; 95 % frozen in ≈ 13 h, thawed in ≈ 13 h.\n"
             "• Inside: epoxy coat + PTFE spray + silicone grease.\n"
-            "• Cables: TDR head + fibre through the port, Pt100 straight up.\n"
+            "• Cables: TDR head, Pt100 and fibre all through the port;\n"
+            "  the sand surface stays completely free (camera + laser).\n"
             "• Full dimensions: cad/E7_V04_cell.dxf.",
             fontsize=fs(), va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V03_cell.png"))
