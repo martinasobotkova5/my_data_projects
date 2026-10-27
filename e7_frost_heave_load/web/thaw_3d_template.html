@@ -107,7 +107,7 @@ summary { cursor: pointer; color: var(--text-2); }
 <body>
 <div class="wrap">
   <h1>E7 sample thawing – variant C</h1>
-  <p class="lede">Revision B: sand ⌀100 × 100 in the printed cell ⌀160 with an XPS sleeve and XPS/G10 base, so it freezes from the top.
+  <p class="lede">Revision B: sand ⌀100 × 100 in a cell printed in one piece ⌀240 × 200 – 40 mm low-infill wall and base as insulation, G10 pads underneath – so it freezes from the top.
     Partial piston ⌀50 on an Invar guide rod; LVDT and camera reference on an Invar post. The surface is visible only in the annulus around the piston.
     Colour = temperature (or ice fraction); the section shows the full sample height.</p>
 
@@ -281,7 +281,7 @@ const DATA = /*__DATA__*/null;
 
   const frameGrp = new THREE.Group(), moving = new THREE.Group(); scene.add(frameGrp); scene.add(moving);
   const ins = G.ins, [bw, bd, bt] = G.base, xc = G.col_span / 2, zBeam = G.z_bot + 100 + G.beam_gap;
-  const matInv = M(0x8c7a5b, { metalness: 0.5, roughness: 0.45 }), matXps = M(0xbcd3e6, { roughness: 0.9, side: THREE.DoubleSide });
+  const matInv = M(0x8c7a5b, { metalness: 0.5, roughness: 0.45 }), matXps = M(0x4a4e53, { roughness: 0.85, side: THREE.DoubleSide });   // printed low infill (same print as the core)
   scene.add(box(-bw / 2, bw / 2, -bd / 2, bd / 2, -ins - bt, -ins, matAl));
   for (const s of [-1, 1]) frameGrp.add(box(s * xc - 20, s * xc + 20, -40, 40, -ins, zBeam, matProf));
   frameGrp.add(box(-xc - 20, xc + 20, -40, 40, zBeam, zBeam + G.beam_h, matProf));
@@ -368,14 +368,14 @@ const DATA = /*__DATA__*/null;
     bodyMesh = new THREE.Mesh(new THREE.LatheGeometry(prof, 96, p0, pl), matPetg); scene.add(bodyMesh);
     for (const m of insMeshes) { scene.remove(m); m.geometry.dispose(); }
     insMeshes.length = 0;
-    if (ins > 0) {                                   // rev. B: XPS sleeve on the jacket + XPS slab with 3 G10 pads under the cell
+    if (ins > 0) {                                   // rev. B: low-infill wall + base printed with the core, 3 G10 pads in base pockets
       const ro = 80 + G.sleeve, sp = [[80, 0], [ro, 0], [ro, 0], [ro, 130], [ro, 130], [80, 130], [80, 130], [80, 0]]
         .map(([r, z]) => new THREE.Vector2(r, z));
       insMeshes.push(new THREE.Mesh(new THREE.LatheGeometry(sp, 96, p0, pl), matXps));
       const slab = new THREE.Mesh(new THREE.CylinderGeometry(ro, ro, ins, 96, 1, false, p0, pl), matXps);
       slab.position.y = -ins / 2; insMeshes.push(slab);
       if (cut) for (const [x0, x1, y0, y1] of [[80, ro, 0, 130], [-ro, -80, 0, 130], [-ro, ro, -ins, 0]]) {
-        const q = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, y1 - y0), new THREE.MeshBasicMaterial({ color: 0xa9c4da, side: THREE.DoubleSide }));
+        const q = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, y1 - y0), new THREE.MeshBasicMaterial({ color: 0xc9cdd1, side: THREE.DoubleSide }));
         q.position.set((x0 + x1) / 2, (y0 + y1) / 2, -0.2); insMeshes.push(q);
       }
       for (let k = 0; k < 3; k++) {
@@ -587,7 +587,7 @@ const DATA = /*__DATA__*/null;
   document.getElementById("assump").innerHTML = [
     `Axisymmetric heat conduction (finite volumes 2.5 × 2 mm, enthalpy method). Program: steady ${fmt(D.program.warm, 0)} °C → at 0 h air ${fmt(D.program.cold, 0)} °C → at ${D.program.thaw_h} h air ${fmt(D.program.warm, 0)} °C (air response τ ≈ 30 min).`,
     `Sand θ = ${P.theta}, λ unfrozen ${P.k_u} / frozen ${P.k_f} W/mK, latent heat ${(P.latent / 1e6).toFixed(0)} MJ/m³, freezing range −0.5…0 °C.`,
-    `PETG cell: inner tube and bottom λ 0.2 W/mK, jacket (10 % infill) λ 0.05 W/mK. Heat transfer to air ${P.h_out} W/m²K (inside the collar ${P.h_cav}); rev. B XPS sleeve → ${P.h_side} W/m²K on the side, XPS + G10 pads → ${P.h_bot} W/m²K underneath.`,
+    `PETG cell: inner tube and bottom λ 0.2 W/mK, jacket (10 % infill) λ 0.05 W/mK. Heat transfer to air ${P.h_out} W/m²K (inside the collar ${P.h_cav}); rev. B printed low-infill wall and base 40 mm (λ ≈ 0.06 W/mK, assumed) → ${P.h_side} W/m²K on the side, base + G10 pads → ${P.h_bot} W/m²K underneath.`,
     `Al piston ⌀50 × 20 as a single node (≈ 95 J/K), contact with the sand ${P.h_contact} W/m²K; the piston delays warming of the sand beneath it.`,
     `Heave in the 3D view = 9 % expansion of the frozen water, all upward (no ice lenses, no load): an upper bound. With porosity ${P.porosity} and θ ${P.theta} the pore air (${((P.porosity - P.theta) * 100).toFixed(0)} % of the volume) takes the expansion (${(P.theta * 9).toFixed(1)} %), so the expected in-situ heave is ≈ 0.`,
     `Rig drift: frame parts as lumped elements in still air (Al column τ ≈ 23 min, rod τ ≈ 27 min, Invar post τ ≈ 38 min); α Al 23, steel 11.5, Invar 1.2, PETG 45, G10 15, sand 10 × 10⁻⁶/K.`,

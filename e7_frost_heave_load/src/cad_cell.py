@@ -1,4 +1,5 @@
-"""CAD drawing (DXF, all dimensions) of the printed cell A – Column_one_body_version_1.
+"""CAD drawing (DXF, all dimensions) of the printed cell rev. B: printed in ONE piece ⌀240 × 200 –
+core = Column_one_body_version_1 (M. Vrána) + 40 mm low-infill wall and 40 mm base with 3 pockets for G10 pads.
 
 Run: python cad_cell.py → ../cad/E7_V04_cell.dxf + E7_V04_cell.pdf (preview).
 Model space in mm 1 : 1; the A3 frame and texts are drawn for printing at 1 : 1.5.
@@ -17,10 +18,13 @@ S = 1.5                      # print scale 1 : 1.5 on A3
 TH = 5.0 * S                 # headings 5 mm on paper
 TS = 3.0 * S                 # small text 3 mm on paper
 
-RB, RC, RI, W = p.BODY_D / 2, p.COLLAR_OD / 2, p.CAV_D / 2, p.CUP_WALL_IN
-H, HC, TB, ZS = p.BODY_H, p.COLLAR_TOP, p.BODY_BOTTOM, p.SAND_TOP
+O = p.C_INS_T                                       # printed base under the core
+RK = p.BODY_D / 2                                   # core jacket (internal, no edge in the print)
+RB, RC, RI, W = RK + p.C_SLEEVE_T, p.COLLAR_OD / 2, p.CAV_D / 2, p.CUP_WALL_IN
+H, HC, TB, ZS = p.BODY_H + O, p.COLLAR_TOP + O, p.BODY_BOTTOM + O, p.SAND_TOP + O
+PZ0, PZ1 = p.PORT_Z0 + O, p.PORT_Z1 + O
 T = p.TDR_CS645
-Z_MID = (p.PORT_Z0 + p.PORT_Z1) / 2
+Z_MID = (PZ0 + PZ1) / 2
 RODS = [Z_MID + T["pitch"], Z_MID, Z_MID - T["pitch"]]
 
 
@@ -113,13 +117,13 @@ def section(sh, ox, oy):
     sh.msp.add_arc(P(RI - r, TB + r), r, 270, 360, dxfattribs={"layer": "OUTLINE"})
     sh.line(P(RI - r, TB), P(-RI + r, TB))
     sh.msp.add_arc(P(-RI + r, TB + r), r, 180, 270, dxfattribs={"layer": "OUTLINE"})
-    sh.poly([P(-RI, TB + r), P(-RI, p.PORT_Z0)], close=False)
-    sh.poly([P(-RI, p.PORT_Z1), P(-RI, HC), P(-RC, HC), P(-RC, H), P(-RB, H), P(-RB, p.PORT_Z1)], close=False)
-    sh.line(P(-RB, p.PORT_Z0), P(-RB, 0))
+    sh.poly([P(-RI, TB + r), P(-RI, PZ0)], close=False)
+    sh.poly([P(-RI, PZ1), P(-RI, HC), P(-RC, HC), P(-RC, H), P(-RB, H), P(-RB, PZ1)], close=False)
+    sh.line(P(-RB, PZ0), P(-RB, 0))
     # port (left), through the jacket up to the 3 mm inner wall
-    sh.poly([P(-RB, p.PORT_Z0), P(-RI - W, p.PORT_Z0), P(-RI - W, p.PORT_Z1), P(-RB, p.PORT_Z1)], close=False)
-    sh.line(P(-RI - W, p.PORT_Z0), P(-RI, p.PORT_Z0))
-    sh.line(P(-RI - W, p.PORT_Z1), P(-RI, p.PORT_Z1))
+    sh.poly([P(-RB, PZ0), P(-RI - W, PZ0), P(-RI - W, PZ1), P(-RB, PZ1)], close=False)
+    sh.line(P(-RI - W, PZ0), P(-RI, PZ0))
+    sh.line(P(-RI - W, PZ1), P(-RI, PZ1))
     # inner wall lines (3 mm wall inside the 10 % jacket)
     for s_ in (-1, 1):
         sh.line(P(s_ * (RI + W), TB), P(s_ * (RI + W), H), "HIDDEN")
@@ -129,11 +133,22 @@ def section(sh, ox, oy):
         sh.rect(-RI - W + ox, z - 1.75 + oy, -RI + ox, z + 1.75 + oy)
     zf = RODS[0] + 2.0
     # hatch: right wall + bottom + left wall parts (section)
-    sh.hatch([P(RI, TB + r), P(RI, HC), P(RC, HC), P(RC, H), P(RB, H), P(RB, 0), P(-RB, 0), P(-RB, p.PORT_Z0),
-              P(-RI - W, p.PORT_Z0), P(-RI - W, p.PORT_Z0), P(-RI, p.PORT_Z0), P(-RI, TB + r), P(-RI + r, TB),
+    sh.hatch([P(RI, TB + r), P(RI, HC), P(RC, HC), P(RC, H), P(RB, H), P(RB, 0), P(-RB, 0), P(-RB, PZ0),
+              P(-RI - W, PZ0), P(-RI - W, PZ0), P(-RI, PZ0), P(-RI, TB + r), P(-RI + r, TB),
               P(RI - r, TB)])
-    sh.hatch([P(-RB, p.PORT_Z1), P(-RI - W, p.PORT_Z1), P(-RI, p.PORT_Z1), P(-RI, HC), P(-RC, HC), P(-RC, H),
+    sh.hatch([P(-RB, PZ1), P(-RI - W, PZ1), P(-RI, PZ1), P(-RI, HC), P(-RC, HC), P(-RC, H),
               P(-RB, H)])
+    # rev. B: pocket for the G10 pad at 90° (in the section plane, right), core boundary (internal)
+    pr = (p.C_PAD_D + 0.4) / 2
+    sh.rect(ox + p.C_PAD_R - pr, oy, ox + p.C_PAD_R + pr, oy + O)
+    sh.rect(ox + p.C_PAD_R - p.C_PAD_D / 2, oy - 0.5, ox + p.C_PAD_R + p.C_PAD_D / 2, oy + O, "SENSOR")
+    for s_ in (-1, 1):
+        sh.line(P(s_ * RK, O), P(s_ * RK, H), "HIDDEN")
+    sh.line(P(-RK, O), P(RK, O), "HIDDEN")
+    sh.dim_v(oy, oy + O, ox + RB, ox + RB + 26)
+    sh.dim_h(ox, ox + p.C_PAD_R, oy + O / 2, oy - 26)
+    sh.dim_h(ox + p.C_PAD_R - pr, ox + p.C_PAD_R + pr, oy + O, oy + O + 6, "<> pocket")
+    sh.text(f"low infill (gyroid 10–15 %): base z 0–{O:g}, wall r {RK:g}–{RB:g}", P(-RB, -34))
     # centre line, sand surface
     sh.line(P(0, -8), P(0, HC + 8), "CENTER")
     sh.line(P(-RI, ZS), P(RI, ZS), "SAND")
@@ -141,7 +156,7 @@ def section(sh, ox, oy):
     # sensors (layer SENSOR, for position only)
     for z in RODS:
         sh.rect(-RI + ox, z - T["rod_d"] / 2 + oy, -RI + T["rod_l"] + ox, z + T["rod_d"] / 2 + oy, "SENSOR")
-    sh.rect(-RI - W - T["head_l"] + ox, p.PORT_Z0 + 0.5 + oy, -RI - W + ox, p.PORT_Z1 - 0.5 + oy, "SENSOR")
+    sh.rect(-RI - W - T["head_l"] + ox, PZ0 + 0.5 + oy, -RI - W + ox, PZ1 - 0.5 + oy, "SENSOR")
     sh.line(P(-RB - 15, zf), P(-RI + p.OF_TIP_FROM_WALL, zf), "SENSOR")
     sh.rect(p.PT100_R - 1.5 + ox, ZS - p.PT100_L + oy, p.PT100_R + 1.5 + ox, ZS - (p.PT100_L - p.PT100_METAL) + oy,
             "SENSOR")
@@ -149,15 +164,15 @@ def section(sh, ox, oy):
     # ---- dimensions: heights (left)
     sh.dim_v(oy, oy + HC, ox - RB, ox - RB - 46)
     sh.dim_v(oy, oy + H, ox - RB, ox - RB - 36)
-    sh.dim_v(oy, oy + p.PORT_Z1, ox - RB, ox - RB - 26)
-    sh.dim_v(oy, oy + p.PORT_Z0, ox - RB, ox - RB - 16)
+    sh.dim_v(oy, oy + PZ1, ox - RB, ox - RB - 26)
+    sh.dim_v(oy, oy + PZ0, ox - RB, ox - RB - 16)
     # heights (right)
     sh.dim_v(oy, oy + TB, ox + RB, ox + RB + 12)
     sh.dim_v(oy + TB, oy + ZS, ox + RB, ox + RB + 12, "100 (sand)")
     sh.dim_v(oy + ZS, oy + HC, ox + RB, ox + RB + 12)
     sh.dim_v(oy + TB, oy + HC, ox + RB, ox + RB + 26)
     sh.dim_v(oy + H, oy + HC, ox + RC, ox + RB + 40)
-    sh.dim_v(oy + p.PORT_Z0, oy + p.PORT_Z1, ox - RB, ox - RB - 6)
+    sh.dim_v(oy + PZ0, oy + PZ1, ox - RB, ox - RB - 6)
     # rods: positions from the collar top + pitch
     sh.dim_v(oy + RODS[0], oy + HC, ox - RI + T["rod_l"], ox + 40, "<> (top rod)")
     # widths (top)
@@ -170,8 +185,8 @@ def section(sh, ox, oy):
     sh.dim_h(ox - RI, ox - RI + p.OF_TIP_FROM_WALL, oy + zf, oy + zf + 22, "<> fibre")
     sh.dim_h(ox, ox + p.PT100_R, oy + ZS, oy + ZS + 7)
     sh.dim_v(oy + ZS - p.PT100_L, oy + ZS, ox + p.PT100_R - 1.5, ox + p.PT100_R - 9, "37 Pt100")
-    sh.dim_h(ox - RI - W - T["head_l"], ox - RI - W, oy + p.PORT_Z0, oy + p.PORT_Z0 - 12, "19 head")
-    sh.dim_h(ox - RI - W, ox - RI, oy + p.PORT_Z1, oy + p.PORT_Z1 + 7)
+    sh.dim_h(ox - RI - W - T["head_l"], ox - RI - W, oy + PZ0, oy + PZ0 - 12, "19 head")
+    sh.dim_h(ox - RI - W, ox - RI, oy + PZ1, oy + PZ1 + 7)
     sh.dim_r(P(RI - r, TB + r), r, 315)
     sh.text("SECTION A–A  (along the TDR axis)", (ox - RB, oy + HC + 40), h=TH)
 
@@ -182,6 +197,10 @@ def plan(sh, ox, oy):
     for r in (RB, RC, RI):
         sh.circle(P(0, 0), r)
     sh.circle(P(0, 0), RI + W, "HIDDEN")
+    sh.circle(P(0, 0), RK, "HIDDEN")
+    for k in range(3):
+        a_ = math.radians(90 + 120 * k)
+        sh.circle(P(p.C_PAD_R * math.cos(a_), p.C_PAD_R * math.sin(a_)), (p.C_PAD_D + 0.4) / 2, "HIDDEN")
     sh.line(P(-RB - 8, 0), P(RB + 8, 0), "CENTER")
     sh.line(P(0, -RB - 8), P(0, RB + 8), "CENTER")
     hw = p.PORT_W / 2
@@ -204,15 +223,15 @@ def plan(sh, ox, oy):
 
 def port_view(sh, ox, oy):
     """VIEW M: the port from outside."""
-    hh = p.PORT_Z1 - p.PORT_Z0
+    hh = PZ1 - PZ0
     P = lambda x, z: (ox + x, oy + z)
     sh.rect(ox - p.PORT_W / 2, oy, ox + p.PORT_W / 2, oy + hh)
     for z in RODS:
-        sh.circle(P(0, z - p.PORT_Z0), 1.75)
-    sh.circle(P(-p.OF_SIDE, RODS[0] + 2 - p.PORT_Z0), 0.75)
+        sh.circle(P(0, z - PZ0), 1.75)
+    sh.circle(P(-p.OF_SIDE, RODS[0] + 2 - PZ0), 0.75)
     sh.dim_h(ox - p.PORT_W / 2, ox + p.PORT_W / 2, oy + hh, oy + hh + 8)
     sh.dim_v(oy, oy + hh, ox + p.PORT_W / 2, ox + p.PORT_W / 2 + 10)
-    sh.dim_v(oy + RODS[2] - p.PORT_Z0, oy + RODS[0] - p.PORT_Z0, ox - p.PORT_W / 2, ox - p.PORT_W / 2 - 10,
+    sh.dim_v(oy + RODS[2] - PZ0, oy + RODS[0] - PZ0, ox - p.PORT_W / 2, ox - p.PORT_W / 2 - 10,
              "2× 8.9")
     sh.text("VIEW M  (port from outside)", (ox - 40, oy + hh + 20), h=TH)
     sh.text("3× ⌀3.5 rods, ⌀1.5 fibre", (ox - 40, oy - 10))
@@ -225,10 +244,10 @@ def frame_and_title(sh, x0, y0):
     sh.rect(tx, ty, x0 + w - 10 * S, ty + 40 * S, "FRAME")
     for k in (10, 20, 30):
         sh.line((tx, ty + k * S), (x0 + w - 10 * S, ty + k * S), "FRAME")
-    rows = [("Title", "E7 – cell A, printed body ⌀160 (Column_one_body_version_1)"),
+    rows = [("Title", "E7 – cell rev. B, printed in ONE piece ⌀240 × 200"),
             ("Drawing", "E7-V04   sheet 1/1   scale 1 : 1.5 (A3)   mm"),
-            ("Material", "PETG(-CF), body 10 % infill, cavity wall ≈ 5 mm, bottom 100 %"),
-            ("Ref.", "M. Vrána 23.06.2026 + sensor sketch; drawn 2026-10-23, DRAFT")]
+            ("Material", "PETG(-CF); base + wall gyroid 10–15 %, floor 100 %"),
+            ("Ref.", "core: M. Vrána 23.06.2026; rev. B 2026-10-27, DRAFT")]
     for i, (a, b) in enumerate(rows):
         yy = ty + (35 - 10 * i) * S
         sh.text(a, (tx + 2 * S, yy - 1.8 * S), h=TS)
@@ -238,10 +257,11 @@ def frame_and_title(sh, x0, y0):
              "2  Sensor positions (green, layer SENSOR) are for information – CS645 rods",
              "   centred in the port (pitch 8.9 ≈ 9), fibre tip 37.5 from the wall,",
              "   Pt100 37 mm vertical, 15 from the axis. Check: Pt100 tip or length?",
-             "3  Sand 100 mm (z 26–126), 34 mm free above for the piston / camera.",
+             f"3  Sand 100 mm (z {TB:g}–{ZS:g}), 34 mm free above for the piston / camera.",
+             f"   3 G10 pads ⌀{p.C_PAD_D:g} × {O:g} in pockets ⌀{p.C_PAD_D + 0.4:g} (r {p.C_PAD_R:g}), 0.5 mm proud.",
              "4  Inside: epoxy coat + PTFE spray + silicone grease.",
-             "5  Holes not shown: PV1 cable ⌀3.5 (z 51, 90°), PB1 groove + ⌀3.5 (288°),",
-             "   Pt100 cable ⌀4 (z 125, 0°), optional T1/T2 ⌀2."]
+             "5  Port 13 × 27 runs through the whole wall (r 50–120); Pt100 cable ⌀4 at the top (0°).",
+             "   Print bed ≥ 250 × 250, Z ≥ 200; ≈ 1.3–1.6 kg, ≈ 40–60 h."]
     for i, s in enumerate(notes):
         sh.text(s, (x0 + 20 * S, y0 + (78 - 7 * i) * S), h=TS)
 
@@ -252,9 +272,9 @@ def main():
     sh = Sheet(doc)
     x0, y0 = 0.0, 0.0
     frame_and_title(sh, x0, y0)
-    section(sh, x0 + 175, y0 + 160)
-    plan(sh, x0 + 470, y0 + 270)
-    port_view(sh, x0 + 470, y0 + 100)
+    section(sh, x0 + 190, y0 + 180)
+    plan(sh, x0 + 490, y0 + 300)
+    port_view(sh, x0 + 455, y0 + 100)
     path = os.path.join(OUT, "E7_V04_cell.dxf")
     doc.saveas(path)
     # preview

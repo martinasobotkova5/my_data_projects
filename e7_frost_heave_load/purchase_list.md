@@ -30,12 +30,12 @@ Rev. B follows the measurement review (`E7_review.pdf`). Czech version: `nakup_c
 | Al profiles 2× 40×80 × 326 + 80×80 × 340, core bolts | 80–170 € |
 | **igus drylin RJ4JP-01-12** (dry plain bearing, same size as LM12UU) + **Invar 36 rod ⌀12 ground × 250** + steel ball ⌀8 | 60–140 € |
 | **Invar 36 post ⌀16 × 405** + arms for the LVDT and the camera target | 60–140 € |
-| **XPS 40**: sleeve ⌀240 × 130 + slab ⌀240; **3 G10 pads ⌀20 × 40** | 20–50 € |
+| **Cell printed in ONE piece ⌀240 × 200** (core + 40 mm low-infill wall and base, PETG(-CF) ≈ 1.5 kg, ≈ 40–60 h; bed ≥ 250 × 250, Z ≥ 200) + **3 G10 pads ⌀20 × 40** | 45–90 € |
 | Al partial piston ⌀50 × 20 + carrier ⌀120 × 8 | 40–80 € |
 | steel discs ⌀120: 4 × 1 kg + 0.5 kg + trim washers | 40–90 € |
 | camera and laser brackets (Al strip), cable glands | 15–40 € |
 
-Total ≈ 1,520–2,210 € excl. VAT, i.e. ≈ 38–55 thousand CZK (drawing V04). Rev. A was ≈ 1,370–1,870 €.
+Total ≈ 1,540–2,250 € excl. VAT, i.e. ≈ 39–56 thousand CZK (drawing V04). Rev. A was ≈ 1,370–1,870 €.
 Invar 36 bar: ask a specialty metals supplier (e.g. Goodfellow, or a local distributor of Invar/FeNi36).
 
 ## Notes

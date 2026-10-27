@@ -159,7 +159,7 @@ C_MECH = [
     ("Al profiles 2× 40×80 × 326 + 80×80 × 340, core bolts", 80, 170),
     ("igus drylin RJ4JP-01-12 + Invar 36 rod ⌀12 ground × 250 + ball ⌀8", 60, 140),
     ("Invar 36 post ⌀16 × 405 + arms (LVDT, camera target)", 60, 140),
-    ("XPS 40: sleeve ⌀240 × 130 + slab ⌀240; 3 G10 pads ⌀20 × 40", 20, 50),
+    ("cell printed in ONE piece ⌀240 × 200 (PETG(-CF) ≈ 1.5 kg) + 3 G10 pads ⌀20 × 40", 45, 90),
     ("Al partial piston ⌀50 × 20 + carrier ⌀120 × 8 (machined)", 40, 80),
     ("steel discs ⌀120: 4 × 1 kg + 0.5 kg + trim washers", 40, 90),
     ("camera bracket + laser bracket (Al strip), cable glands", 15, 40),

@@ -30,12 +30,12 @@ Rev. B vychází z posudku měření (`E7_review.pdf`). Anglická verze: `purcha
 | Al profily 2× 40×80 × 326 + 80×80 × 340, šrouby | 80–170 € |
 | **igus drylin RJ4JP-01-12** (kluzné pouzdro bez maziva, rozměry jako LM12UU) + **tyč Invar 36 ⌀12 broušená × 250** + kulička ⌀8 | 60–140 € |
 | **sloupek Invar 36 ⌀16 × 405** + ramena pro LVDT a terčík kamery | 60–140 € |
-| **XPS 40**: objímka ⌀240 × 130 + deska ⌀240; **3 podložky G10 ⌀20 × 40** | 20–50 € |
+| **Cela tištěná VCELKU ⌀240 × 200** (jádro + 40 mm stěna a dno z nízké výplně, PETG(-CF) ≈ 1,5 kg, ≈ 40–60 h; podložka tiskárny ≥ 250 × 250, Z ≥ 200) + **3 podložky G10 ⌀20 × 40** | 45–90 € |
 | Al částečný píst ⌀50 × 20 + nosná deska ⌀120 × 8 | 40–80 € |
 | ocelové kotouče ⌀120: 4 × 1 kg + 0,5 kg + podložky | 40–90 € |
 | držáky kamery a laseru (Al pásek), průchodky | 15–40 € |
 
-Celkem ≈ 1 520–2 210 € bez DPH, tj. ≈ 38–55 tis. Kč (výkres V04). Rev. A byla ≈ 1 370–1 870 €.
+Celkem ≈ 1 540–2 250 € bez DPH, tj. ≈ 39–56 tis. Kč (výkres V04). Rev. A byla ≈ 1 370–1 870 €.
 Invar 36 (FeNi36): poptat u dodavatele speciálních kovů (např. Goodfellow nebo tuzemský distributor).
 
 ## Poznámky

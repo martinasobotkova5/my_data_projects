@@ -17,7 +17,7 @@ from drafting import INK, METAL, RED, THICK, THIN, Sheet, View, table
 OUT = V.OUT
 TOTAL = 5
 ZCELL = V.Z_S0 - p.BODY_BOTTOM                     # underside of the cell
-ZB0 = ZCELL - p.C_INS_T                            # top of the base plate (rev. B: XPS + G10 pads in between)
+ZB0 = ZCELL - p.C_INS_T                            # top of the base plate (rev. B: printed base + G10 pads)
 COL_H = p.C_INS_T + p.BODY_BOTTOM + p.H_SAMPLE + p.C_BEAM_GAP
 ZBEAM = ZB0 + COL_H
 ZP = V.Z_S1 + p.C_PISTON_H                        # piston top
@@ -31,7 +31,7 @@ LASER = "#e74c3c"
 FREE = "#2b62a3"
 XPS = "#dbe8f3"
 G10 = "#9bbf6a"
-RO = p.BODY_D / 2 + p.C_SLEEVE_T                   # outer radius of the XPS sleeve
+RO = p.BODY_D / 2 + p.C_SLEEVE_T                   # outer radius of the one-piece printed cell
 Z_LV = ZC - 35                                     # LVDT body (25 long) under the carrier
 TAN_L = math.tan(math.radians(p.C_LASER_ANG))      # laser line shift Δy = Δh / tan 68°
 
@@ -55,21 +55,29 @@ def draw_c(v):
     """Side view (y–z through the axis) of rig C, no labels. Returns the top of the discs."""
     bw, bd, bt = p.C_BASE
     v.rect(-bd / 2, ZB0 - bt, bd / 2, ZB0, fc=METAL, hatch="////")
-    # rev. B insulation: XPS slab with G10 pads (section through two of the three pads), XPS sleeve
-    v.rect(-RO, ZB0, RO, ZCELL, fc=XPS, lw=THIN, hatch="..")
+    # rev. B: the cell is printed in one piece with its insulation (low-infill base + wall), G10 pads in pockets
+    v.rect(-RO, ZB0, RO, ZCELL, fc=V.PETG, lw=THIN, hatch="..")
     for a in (90, 210):
         yy = p.C_PAD_R * math.sin(math.radians(a)) if a == 90 else -p.C_PAD_R / 2
         v.rect(yy - p.C_PAD_D / 2, ZB0, yy + p.C_PAD_D / 2, ZCELL, fc=G10, lw=THIN, z=2.2)
     for s_ in (-1, 1):
-        v.rect(s_ * p.BODY_D / 2, ZCELL, s_ * RO, ZCELL + p.BODY_H, fc=XPS, lw=THIN, hatch="..")
+        v.rect(s_ * p.BODY_D / 2, ZCELL, s_ * RO, ZCELL + p.BODY_H, fc=V.PETG, lw=THIN, hatch="..")
+        v.line([(s_ * p.BODY_D / 2, ZCELL), (s_ * p.BODY_D / 2, ZCELL + p.BODY_H)], lw=0.4, c="#9aa5ab", ls=":", z=2.3)
+    v.poly([(-RO, ZB0), (RO, ZB0), (RO, ZCELL + p.BODY_H), (-RO, ZCELL + p.BODY_H)], fc="none", lw=THICK, z=2.4)
     for xf in (-bd / 2 + 20, bd / 2 - 20):
         v.rect(xf - 8, ZB0 - bt - 18, xf + 8, ZB0 - bt, fc=V.STEEL, lw=THIN)
-    v.rect(-40, ZB0, 40, ZBEAM, fc="#eceff1", lw=THIN, ls="--")
+    v.rect(-40, ZB0, 40, ZBEAM, fc="#eceff1", lw=THIN, ls="--", z=1.2)
     v.rect(-40, ZBEAM, 40, ZBEAM + p.AF_BEAM_H, fc="#d9dde1", lw=THICK)
     bo, bl = p.C_BUSH
     v.rect(-bo / 2, ZBEAM + (p.AF_BEAM_H - bl) / 2, bo / 2, ZBEAM + (p.AF_BEAM_H + bl) / 2, fc=V.STEEL, lw=THIN,
            hatch="xx")
     V.cup_cell(v)
+    # one piece: the core outline is not an edge of the print (draw it as a hint only)
+    for s_ in (-1, 1):
+        v.line([(s_ * p.BODY_D / 2, ZCELL), (s_ * p.BODY_D / 2, ZCELL + p.BODY_H)], lw=THICK + 0.6, c=V.PETG, z=2.45)
+        v.line([(s_ * p.BODY_D / 2, ZCELL), (s_ * p.BODY_D / 2, ZCELL + p.BODY_H)], lw=0.4, c="#9aa5ab", ls=":", z=2.46)
+    v.line([(-p.BODY_D / 2, ZCELL), (p.BODY_D / 2, ZCELL)], lw=THICK + 0.6, c=V.PETG, z=2.45)
+    v.line([(-p.BODY_D / 2, ZCELL), (p.BODY_D / 2, ZCELL)], lw=0.4, c="#9aa5ab", ls=":", z=2.46)
     v.rect(-p.D_SAMPLE / 2, V.Z_S0, p.D_SAMPLE / 2, V.Z_S1, fc="#e9dcb8", lw=THIN)
     V.m_section_a(v, labels=True, cable_up=True, pt_r=-p.C_PT100_R)
     # moving load
@@ -131,9 +139,9 @@ def _sheet_assembly(pdf):
     t(v, 20, ZP - 5, 172, V.Z_S1 + 36, "partial piston ⌀50×20")
     t(v, 38, V.Z_S1 + 0.3, 172, V.Z_S1 + 14, "FREE surface (25 mm annulus)", FREE)
     t(v, -10, V.Z_S1 - 45, 172, V.Z_S1 - 30, "M: CS645 + fibre + Pt100", "#d33682")
-    t(v, p.BODY_D / 2 - 5, V.Z_S0 + 10, 172, V.Z_S0 - 5, "printed cell ⌀160 (V03)")
-    t(v, RO - 8, ZCELL + 70, 172, V.Z_S0 - 30, "XPS sleeve 40 (collar free)", "#3a6f99")
-    t(v, 60, ZB0 + 20, 172, ZB0 + 5, "XPS 40 + 3 G10 pads ⌀20×40", "#3a6f99")
+    t(v, p.BODY_D / 2 - 5, V.Z_S0 + 10, 172, V.Z_S0 - 5, "printed cell ⌀240, one piece (V03)")
+    t(v, RO - 8, ZCELL + 70, 172, V.Z_S0 - 30, "printed wall +40 (gyroid 10–15 %)", "#3a6f99")
+    t(v, 60, ZB0 + 20, 172, ZB0 + 5, "printed base 40 + 3 G10 pads ⌀20×40", "#3a6f99")
     t(v, 100, ZB0 - 12, 172, ZB0 - 30, "Al plate 340×260×25")
     t(v, box_[0][0], box_[0][1], -150, ZCAM + 10, "(1) camera box:\nRPi HQ + 6 mm lens\n+ RPi 5 (its heat\nkeeps the window clear)",
       INK, ha="right")
@@ -155,8 +163,8 @@ def _sheet_assembly(pdf):
              ["3", "igus drylin RJ4JP-01-12 in the beam, Invar rod ⌀12"],
              ["4", "partial piston Al ⌀50×20, steel ball ⌀8"],
              ["5", "carrier Al ⌀120×8, steel discs ⌀120 (1 kg)"],
-             ["6", "printed cell ⌀160 + sand ⌀100×100 (V03)"],
-             ["7", "XPS sleeve ⌀240 × 130, XPS slab 40, 3 G10 pads"],
+             ["6", "printed cell ⌀240 × 200, ONE piece incl. insulation (V03)"],
+             ["7", "sand ⌀100×100; 3 G10 pads ⌀20×40 in the base pockets"],
              ["8", "Invar post ⌀16: LVDT arm + camera target arm"],
              ["9", "(1) camera + RPi 5 box, 11-line laser (V02)"],
              ["10", "(2) LVDT RDP DCTH400AG (V02)"],
@@ -296,79 +304,107 @@ def _sheet_measurement(pdf):
 
 # --------------------------------------------------------------------------------------------
 def _sheet_cell(pdf):
-    sh = Sheet("Printed cell ⌀160 (Column_one_body_version_1) with point M", "E7-V03", "1 : 1.25", 3, TOTAL,
-               "per drawing M. Vrána 23.06.2026; z = 0 at the underside; CAD: cad/E7_V04_cell.dxf")
+    """Rev. B: the cell printed in ONE piece – core = Column_one_body_version_1 (M. Vrána) + 40 mm low-infill wall
+    and 40 mm base with 3 pockets for the G10 pads. z = 0 at the new underside."""
+    sh = Sheet("Printed cell rev. B – one piece ⌀240 × 200 with insulation, point M", "E7-V03", "1 : 1.67", 3, TOTAL,
+               "core per M. Vrána 23.06.2026 + 40 mm printed insulation; z = 0 at the underside")
+    O = p.C_INS_T
     rb, rc, ri, w = p.BODY_D / 2, p.COLLAR_OD / 2, p.CAV_D / 2, p.CUP_WALL_IN
-    H, Hc, tb, zs = p.BODY_H, p.COLLAR_TOP, p.BODY_BOTTOM, p.SAND_TOP
+    ro = rb + p.C_SLEEVE_T
+    H, Hc, tb, zs = p.BODY_H + O, p.COLLAR_TOP + O, p.BODY_BOTTOM + O, p.SAND_TOP + O
+    pz0, pz1 = p.PORT_Z0 + O, p.PORT_Z1 + O
     t = p.TDR_CS645
     z_top = Hc - t["top_from_collar"]
-    v = View(sh, 118, 120, 0.8, "SECTION A–A  1 : 1.25 (along the TDR axis)", (118, 277))
+    v = View(sh, 118, 112, 0.6, "SECTION A–A  1 : 1.67 (along the TDR axis)", (118, 277))
     for s_ in (-1, 1):
-        v.rect(s_ * ri, tb, s_ * rb, H, fc=V.PETG, lw=THIN, hatch="..")
+        v.rect(s_ * ri, tb, s_ * ro, H, fc=V.PETG, lw=THIN, hatch="..")
         v.rect(s_ * ri, H, s_ * rc, Hc, fc=V.PETG, lw=THIN)
         v.rect(s_ * ri, tb, s_ * (ri + w), Hc, fc=V.PETG, lw=THIN)
-    v.rect(-rb, 0, rb, tb, fc=V.PETG, lw=THIN, hatch="..")
-    v.rect(-rb, 0, rb, H, fc="none", lw=THICK)
+    v.rect(-ro, 0, ro, O, fc=V.PETG, lw=THIN, hatch="..")                      # printed base (low infill)
+    v.rect(-ri - w, O, ri + w, tb, fc=V.PETG, lw=THIN)                          # floor 100 % under the cavity
+    v.rect(-ro, O, -ri - w, tb, fc=V.PETG, lw=THIN, hatch="..")
+    v.rect(ri + w, O, ro, tb, fc=V.PETG, lw=THIN, hatch="..")
+    yp = p.C_PAD_R                                                              # pad at 90° lies in the section
+    v.rect(yp - p.C_PAD_D / 2 - 0.2, 0, yp + p.C_PAD_D / 2 + 0.2, O, fc="white", lw=THIN)
+    v.rect(yp - p.C_PAD_D / 2, -0.5, yp + p.C_PAD_D / 2, O, fc=G10, lw=THIN, z=2.6)
+    v.rect(-ro, 0, ro, H, fc="none", lw=THICK)
     v.rect(-rc, H, rc, Hc, fc="none", lw=THICK)
-    v.rect(-rb - 0.3, p.PORT_Z0, -ri, p.PORT_Z1, fc="white", lw=THIN)
+    for s_ in (-1, 1):
+        v.line([(s_ * rb, O), (s_ * rb, H)], lw=0.4, c="#9aa5ab", ls=":", z=2.3)
+    v.line([(-rb, O), (rb, O)], lw=0.4, c="#9aa5ab", ls=":", z=2.3)
+    v.rect(-ro - 0.3, pz0, -ri, pz1, fc="white", lw=THIN)
     v.rect(-ri, tb, ri, zs, fc="#efe6cc", lw=0, z=1.5)
     v.line([(-ri, zs), (ri, zs)], lw=THIN, ls="--", c="#8a7a50")
     v.axis_line([(0, -6), (0, Hc + 8)])
     for k in range(3):
         z = z_top - k * t["pitch"]
         v.line([(-ri, z), (-ri + t["rod_l"], z)], lw=1.4, c="#555", z=5)
-    v.rect(-ri - w - t["head_l"], p.PORT_Z0 + 0.5, -ri, p.PORT_Z1 - 0.5, fc=V.TDRC, lw=THIN, z=5)
+    v.rect(-ri - w - t["head_l"], pz0 + 0.5, -ri, pz1 - 0.5, fc=V.TDRC, lw=THIN, z=5)
     v.line([(-ri, z_top + 2), (-ri + p.OF_TIP_FROM_WALL, z_top + 2)], lw=1.2, c=V.FBGC, z=5.2)
     xpt = p.C_PT100_R
     v.rect(xpt - 1.5, zs - p.PT100_L, xpt + 1.5, zs - (p.PT100_L - p.PT100_METAL), fc=V.PTC, lw=0.5, z=5.2)
     v.line([(xpt, zs - (p.PT100_L - p.PT100_METAL)), (xpt, Hc + 10)], lw=0.9, c="#8a7300", z=5.2)
-    v.dim_h(-rb, rb, 0, -10, "⌀160", side="below")
-    v.dim_h(-rc, rc, Hc, Hc + 9, "⌀106")
-    v.dim_h(-ri, ri, Hc, Hc + 18, "⌀100")
-    v.dim_v(0, Hc, -rb, -rb - 34, f"{Hc:g}")
-    v.dim_v(0, H, -rb, -rb - 24, f"{H:g}")
-    v.dim_v(0, p.PORT_Z1, -rb, -rb - 14, f"{p.PORT_Z1:g}")
-    v.dim_v(0, p.PORT_Z0, -rb, -rb - 6, f"{p.PORT_Z0:g}")
-    v.dim_v(0, tb, rb, rb + 8, f"{tb:g}")
-    v.dim_v(zs, Hc, rb, rb + 8, f"{Hc - zs:g}")
-    v.dim_v(tb, zs, rb, rb + 18, "100 sand")
-    v.dim_v(p.PORT_Z1, Hc, rb, rb + 30, f"{Hc - p.PORT_Z1:g}")
-    v.dim_h(-ri, -ri + t["rod_l"], tb + 6, tb + 6, f"CS645 rods {t['rod_l']:g}")
-    v.dim_h(0, xpt, zs - p.PT100_L - 4, zs - p.PT100_L - 10, f"{xpt:g}", side="below")
-    V.tag(v, -ri + 30, z_top - t["pitch"], 60, -26, f"3 rods ⌀3.2, pitch {t['pitch']:g}")
-    V.tag(v, -ri + 20, z_top + 2, -60, 152, f"optical fibre, tip {p.OF_TIP_FROM_WALL:g} from the wall", V.FBGC)
-    V.tag(v, xpt + 1.5, zs - 20, 100, 150, f"Pt100 {p.PT100_L:g} (metal {p.PT100_METAL:g})\nr {xpt:g}, 315°, cable up",
+    v.dim_h(-ro, ro, 0, -12, f"⌀{2 * ro:g}", side="below")
+    v.dim_h(-rc, rc, Hc, Hc + 10, "⌀106")
+    v.dim_h(-ri, ri, Hc, Hc + 20, "⌀100")
+    v.dim_v(0, Hc, -ro, -ro - 44, f"{Hc:g}")
+    v.dim_v(0, H, -ro, -ro - 32, f"{H:g}")
+    v.dim_v(0, pz1, -ro, -ro - 20, f"{pz1:g}")
+    v.dim_v(0, pz0, -ro, -ro - 8, f"{pz0:g}")
+    v.dim_v(0, O, ro, ro + 10, f"{O:g}")
+    v.dim_v(0, tb, ro, ro + 24, f"{tb:g}")
+    v.dim_v(tb, zs, ro, ro + 10, "100 sand")
+    v.dim_v(zs, Hc, ro, ro + 10, f"{Hc - zs:g}")
+    v.dim_v(pz1, Hc, ro, ro + 38, f"{Hc - pz1:g}")
+    v.dim_h(ri + w, ro, H, H + 10, f"{ro - ri - w:g}")
+    v.dim_h(0, yp, O / 2, -26, f"{yp:g}", side="below")
+    V.tag(v, -ri + 30, z_top - t["pitch"], 40, 90, f"CS645: 3 rods ⌀3.2 × {t['rod_l']:g}, pitch {t['pitch']:g}")
+    V.tag(v, -ri + 20, z_top + 2, -70, Hc + 34, f"optical fibre, tip {p.OF_TIP_FROM_WALL:g} from the wall", V.FBGC)
+    V.tag(v, xpt + 1.5, zs - 20, 75, Hc + 34, f"Pt100 {p.PT100_L:g} (metal {p.PT100_METAL:g}), r {xpt:g}, 315°",
           "#8a7300")
-    V.tag(v, -ri - 10, z_top - 4, -100, 175, f"TDR head {t['head_l']:g} in the port", V.TDRC, ha="left")
-    f = View(sh, 70, 52, 0.42, "PLAN  1 : 2.4", (70, 98))
-    f.circle(0, 0, rb, fc=V.PETG, lw=THICK)
+    V.tag(v, -ro + 20, pz0 + 6, -10, -40, f"port 13 × 27 through the whole wall\n(TDR head {t['head_l']:g} at the inner wall)",
+          V.TDRC, ha="left")
+    V.tag(v, yp, O / 2, 75, -20, f"G10 pad ⌀{p.C_PAD_D:g} × {O:g} in a pocket ⌀{p.C_PAD_D + 0.4:g},\n3× at r {p.C_PAD_R:g}, 0.5 mm proud",
+          "#4d7a2a")
+    V.tag(v, -ro + 15, H - 30, -ro - 40, Hc + 52, "low infill (gyroid 10–15 %) = insulation,\nprinted together with the core", INK,
+          ha="left")
+    f = View(sh, 58, 44, 0.3, "PLAN  1 : 3.3", (58, 88))
+    f.circle(0, 0, ro, fc=V.PETG, lw=THICK)
+    f.circle(0, 0, rb, fc="none", ec="#9aa5ab", lw=0.4, ls=":")
     f.circle(0, 0, rc, fc="none", lw=THIN)
     f.circle(0, 0, ri, fc="#efe6cc", lw=THIN)
-    f.rect(-p.PORT_W / 2, -rb, p.PORT_W / 2, -ri - w, fc="white", lw=THICK)
-    f.line([(0, -rb - 6), (0, ri + 10)], lw=THIN, ls=(0, (8, 2, 2, 2)), c=V.TDRC)
+    for k in range(3):
+        a = math.radians(90 + 120 * k)
+        f.circle(p.C_PAD_R * math.cos(a), p.C_PAD_R * math.sin(a), p.C_PAD_D / 2, fc="none", ec="#4d7a2a", lw=THIN, ls="--")
+    f.rect(-p.PORT_W / 2, -ro, p.PORT_W / 2, -ri - w, fc="white", lw=THICK)
     f.rect(-1.6, -ri, 1.6, -ri + t["rod_l"], fc="#777", lw=0.3)
-    f.line([(-p.OF_SIDE, -ri), (-p.OF_SIDE, -ri + p.OF_TIP_FROM_WALL)], lw=1.2, c=V.FBGC)
     pa = math.radians(p.C_PT100_ANG)
-    f.circle(p.C_PT100_R * math.cos(pa), p.C_PT100_R * math.sin(pa), 2.2, fc=V.PTC, lw=THIN)
+    f.circle(p.C_PT100_R * math.cos(pa), p.C_PT100_R * math.sin(pa), 2.5, fc=V.PTC, lw=THIN)
     f.circle(0, 0, p.C_PISTON_D / 2, fc="none", ec=INK, lw=THIN, ls="--")
-    f.line([(-ri, 0), (ri, 0)], lw=1.0, c=LASER, ls="--")
-    f.text(0, -rb - 10, "port 13 wide (TDR axis, camera side)", fontsize=fs(), ha="center", va="top", color=V.TDRC)
-    f.text(rb + 6, 0, "laser line", fontsize=fs(), va="center", color=LASER)
+    f.text(0, -ro - 8, "port 13 wide (TDR axis, camera side); pads dashed (underneath)", fontsize=fs(), ha="center",
+           va="top", color=V.TDRC)
     sh.heading(255, 276, "Point M (existing sensors)")
     rows = [["TDR", "Campbell CS645", "3 rods 75, pitch 8.9, in the port, depth 36/45/54"],
             ["OF", "optical fibre", f"at the top rod, tip {p.OF_TIP_FROM_WALL:g} from the wall"],
             ["Pt100", "37 mm (25 metal)", "vertical, r 37.5 at 315° (free annulus, off the laser)"]]
     y = table(sh, 255, 272, ["", "sensor", "position"], rows, [16, 36, 103], row_h=5.8)
+    sh.heading(255, y - 8, "Print (one piece)")
+    pr = [["size", f"⌀{2 * ro:g} × {Hc:g} mm – bed ≥ 250 × 250, Z ≥ 200"],
+          ["material", "PETG or PETG-CF, 0.2 mm layers, ≈ 1.3–1.6 kg"],
+          ["walls", "cavity wall ≈ 5 mm (≈ 8 perimeters), outer 3 perimeters"],
+          ["floor", f"z {O:g}–{tb:g} under the cavity: 100 % (stiff, flat)"],
+          ["insulation", f"base z 0–{O:g} and wall r {rb:g}–{ro:g}: gyroid 10–15 %"],
+          ["pockets", f"3× ⌀{p.C_PAD_D + 0.4:g} × {O:g} from below, r {p.C_PAD_R:g}"],
+          ["time", "≈ 40–60 h (one job)"]]
+    y = table(sh, 255, y - 12, ["item", "value"], pr, [26, 129], row_h=5.6)
     sh.text(255, y - 4,
-            "• The piston ⌀50 (dashed) covers the centre; the Pt100 sits in the free\n"
-            "  annulus on the camera side so it never crosses the laser line.\n"
-            "• Sand 100 mm (z 26–126), 34 mm free above (piston 20 + travel).\n"
-            "• Print: PETG(-CF) 0.2 mm, jacket 10 % infill = insulation; 100 % infill\n"
-            "  under the cavity, cavity wall ≈ 5 mm (≈ 8 perimeters).\n"
+            f"• Sand 100 mm (z {tb:g}–{zs:g}), {Hc - zs:g} mm free above (piston 20 + travel).\n"
+            "• The cell stands on the 3 G10 pads only (0.5 mm proud): the low-infill\n"
+            "  base insulates but carries no load → no creep in the LVDT chain.\n"
+            f"• Heat model: λ infill ≈ {p.C_INS_K:g} W/mK → freezes from the top, last unfrozen\n"
+            "  ≈ 13 mm above the floor; 95 % frozen in ≈ 13 h, thawed in ≈ 13 h.\n"
             "• Inside: epoxy coat + PTFE spray + silicone grease.\n"
             "• Cables: TDR head + fibre through the port, Pt100 straight up.\n"
-            "• Rev. B: stands on 3 G10 pads ⌀20×40 in an XPS slab; XPS sleeve 40\n"
-            "  around the jacket (collar free) → freezing from the top.\n"
             "• Full dimensions: cad/E7_V04_cell.dxf.",
             fontsize=fs(), va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V03_cell.png"))
@@ -434,7 +470,7 @@ def _sheet_layout(pdf):
         v.rect(ax + s_ * p.C_COL_SPAN / 2 - 20, ay - 40, ax + s_ * p.C_COL_SPAN / 2 + 20, ay + 40, fc="#d9dde1",
                lw=THIN, z=2.2)
     v.rect(ax - p.C_COL_SPAN / 2 - 20, ay - 40, ax + p.C_COL_SPAN / 2 + 20, ay + 40, fc="none", lw=THIN, ls="--", z=2.3)
-    v.circle(ax, ay, RO, fc=XPS, lw=THIN, z_=2.05)
+    v.circle(ax, ay, RO, fc=V.PETG, lw=THIN, z_=2.05)
     v.circle(ax, ay, p.BODY_D / 2, fc=V.PETG, lw=THIN, z_=2.1)
     v.circle(ax, ay, p.CAV_D / 2, fc="#e9dcb8", lw=THIN, z_=2.15)
     v.circle(ax, ay, p.C_DISC_D / 2, fc="none", ec=INK, lw=THIN, ls="--", z_=2.4)
@@ -452,8 +488,7 @@ def _sheet_layout(pdf):
     e.rect(tx0, 20, tx0 + p.TRAY_L, 60, fc="none", lw=THIN, z=1.3)
     e.rect(620, 0, 885, 230, fc="none", lw=THIN, ls="--", z=1.2)
     z0 = 60 + 18 + bt                                  # top of the base plate
-    e.rect(ax - RO, z0, ax + RO, z0 + p.C_INS_T, fc=XPS, lw=THIN, z=2.05)
-    e.rect(ax - RO, z0 + p.C_INS_T, ax + RO, z0 + p.C_INS_T + p.BODY_H, fc=XPS, lw=THIN, z=2.05)
+    e.rect(ax - RO, z0, ax + RO, z0 + p.C_INS_T + p.BODY_H, fc=V.PETG, lw=THIN, z=2.05)
     e.rect(ax - bw / 2, z0 - bt, ax + bw / 2, z0, fc=METAL, lw=THIN, z=2)
     for s_ in (-1, 1):
         e.rect(ax + s_ * p.C_COL_SPAN / 2 - 20, z0, ax + s_ * p.C_COL_SPAN / 2 + 20, z0 + COL_H, fc="#d9dde1", lw=THIN, z=2)
@@ -481,7 +516,7 @@ def _sheet_layout(pdf):
             "• Highest point is the disc stack; with 4 discs ≈ 50 mm under the lid –\n"
             "  measure the freezer and the tray before ordering the profiles.\n"
             "• Camera box and laser hang inside the frame – nothing outside the plate.\n"
-            "• Rev. B: +40 mm insulation under the cell, beam gap 200 → 160:\n"
+            "• Rev. B: cell printed in one piece ⌀240 × 200 (+40 base), beam gap 200 → 160:\n"
             "  the total height is unchanged.\n"
             "• 80 mm fan on the free end mixes the air; run the blank test first.",
             fontsize=fs(), va="top", linespacing=1.5)

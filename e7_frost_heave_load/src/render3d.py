@@ -62,10 +62,10 @@ if __name__ == "__main__":
     xcut = cq.Workplane("XY").box(1000, 2000, 2000, centered=(False, True, True)).val()
     a = cq.Assembly(); m.variant_c(a)
     render(a, os.path.join(m.OUT, "E7_V01_variant_C.png"), elev=18, azim=-35,
-           title="E7 C – dead weight on a partial piston, camera + laser, LVDT")
+           title="E7 C rev. B – dead weight on a partial piston, camera + laser, LVDT")
     render(a, os.path.join(m.OUT, "E7_V01_variant_C_section.png"), elev=10, azim=0, cut=xcut,
            title="E7 C – section x = 0")
     c = cq.Assembly(); m.body_a(c, temps=[], pv=False, pb=False, opt=False, pt_r=m.p.C_PT100_R, pt_ang=m.p.C_PT100_ANG)
-    render(c, os.path.join(m.OUT, "E7_V03_cell.png"), elev=20, azim=-100, title="E7 cell ⌀160 with point M")
+    render(c, os.path.join(m.OUT, "E7_V03_cell.png"), elev=20, azim=-100, title="E7 cell rev. B – printed in one piece ⌀240, point M")
     render(m.freezer_layout(), os.path.join(m.OUT, "E7_V05_freezer_layout.png"), elev=35, azim=-70,
            title="E7 – rig C in the chest freezer")

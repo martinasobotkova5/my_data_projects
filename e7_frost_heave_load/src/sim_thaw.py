@@ -7,7 +7,7 @@ in the unsaturated sand (Sr 0.3–0.5) the expansion fits into the pore air, so 
 Also computed: thermal drift of the rig as seen by the LVDT (Al beam vs Invar post) and by the camera
 (rim vs Invar reference), from lumped part temperatures.
 
-Run:  python src/sim_thaw.py          rev. B (insulated: XPS sleeve + XPS/G10 under the cell), writes the web files
+Run:  python src/sim_thaw.py          rev. B (cell printed in one piece with +40 mm low-infill wall and base), writes the web files
       python src/sim_thaw.py --bare   original cell on the Al plate, summary only (for comparison)
 """
 import json
@@ -43,12 +43,12 @@ T_S, T_L = -0.5, 0.0                  # freezing range (residual unfrozen water)
 H_OUT, H_CAV, H_BOT = 7.0, 5.0, 10.0  # W/m2K: free surfaces, inside the collar, underside (Al base plate)
 H_CONTACT = 100.0                     # sand – Al piston
 INSULATED = "--bare" not in sys.argv
-K_XPS = 0.035
-# rev. B: XPS sleeve 40 mm on the jacket (side + top ring); XPS 40 + 3 G10 pads ⌀20 under the cell
-H_SIDE = 1 / (1 / H_OUT + p.C_SLEEVE_T / 1e3 / K_XPS) if INSULATED else H_OUT
+K_INS = p.C_INS_K                    # printed low infill (assumed)
+# rev. B: cell printed in one piece with +40 mm low-infill wall (side + top ring) and +40 mm base with 3 G10 pads
+H_SIDE = 1 / (1 / H_OUT + p.C_SLEEVE_T / 1e3 / K_INS) if INSULATED else H_OUT
 _a_pad = 3 * math.pi / 4 * (p.C_PAD_D / 1e3) ** 2
 _a_bot = math.pi / 4 * (p.BODY_D / 1e3) ** 2
-_g_ins = (0.3 * _a_pad + K_XPS * (_a_bot - _a_pad)) / (p.C_INS_T / 1e3) / _a_bot      # W/m2K through pads + XPS
+_g_ins = (0.3 * _a_pad + K_INS * (_a_bot - _a_pad)) / (p.C_INS_T / 1e3) / _a_bot      # W/m2K through pads + printed base
 H_UNDER = 1 / (1 / H_BOT + 1 / _g_ins) if INSULATED else H_BOT
 POROSITY = 0.38                       # → Sr = θ / n ≈ 0.39; pore air n − θ ≫ 0.09 θ
 C_PISTON = 2700 * 900 * math.pi / 4 * (p.C_PISTON_D / 1e3) ** 2 * (p.C_PISTON_H / 1e3)   # ≈ 95 J/K

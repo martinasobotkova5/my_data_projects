@@ -398,13 +398,14 @@ print(f"**Očekávaný zdvih:** pórovitost ≈ {n_por}, θ = {th} → Sr ≈ {t
       "zdvih in situ ≈ 0 (desítky µm nanejvýš od migrace vody). Horní mez (vše nahoru) 1,35 mm. "
       "Chcete-li měřit zdvih, zvyšte Sr ≥ 0,85 nebo přiveďte vodu zespodu.\n")
 print("**Směr mrznutí (sim_thaw.py):** cela přímo na Al desce – vzorek zmrzne za ≈ 9 h i zespodu, poslední nezmrzlé místo "
-      "27 mm nade dnem; rev. B (XPS objímka 40 + XPS/G10 pod celou) – ≈ 14 h, poslední nezmrzlé 7 mm nade dnem "
-      "→ mrznutí shora. Tání ≈ 14 h → cyklus 24 h + 24 h stačí.\n")
+      "27 mm nade dnem; rev. B (cela tištěná vcelku ⌀240 × 200: +40 mm stěna a +40 mm dno z nízké výplně λ ≈ 0,06, "
+      "podložky G10 v kapsách) – 95 % zmrzne za ≈ 13 h, poslední nezmrzlé 13 mm nade dnem → mrznutí shora "
+      "(s XPS by to bylo 7 mm, s tištěným dnem 60 mm 5 mm). Tání ≈ 13 h → cyklus 24 h + 24 h stačí.\n")
 print("**Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle teplot cely ze slepé zkoušky):** "
       "rev. A (bez izolace, LVDT na Al příčníku, ocelová tyč) −24…+48 µm, zbytek ≤ 12 µm; kamera vůči PETG límci 0…100 µm, "
       "zbytek ≤ 8 µm. Jen izolace bez Invaru by zbytek LVDT zhoršila na 57 µm (cela reaguje pomaleji než sloupy a tyč). "
-      "Rev. B (izolace + invarový sloupek + invarová tyč) −58…0 µm, zbytek ≤ 4 µm; kamera vůči invarovému terčíku "
-      "−48…0 µm, zbytek ≤ 2 µm. Zbylý drift = PETG dno 26 mm + písek → změřit slepou zkouškou s Al atrapou.\n")
+      "Rev. B (izolace + invarový sloupek + invarová tyč) −59…0 µm, zbytek ≤ 6 µm; kamera vůči invarovému terčíku "
+      "−49…0 µm, zbytek ≤ 3 µm. Zbylý drift = PETG dno 26 mm + písek → změřit slepou zkouškou s Al atrapou.\n")
 print("**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); "
       "snímek spouští CR1000 (C5); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; "
       "vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.\n")

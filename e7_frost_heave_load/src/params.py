@@ -251,11 +251,15 @@ C_LINES, C_LINE_PITCH = 11, 9.6          # vícečárový laser Picotronic DOE25
 C_LASER_ANG = 68.0                       # sklon laserové roviny od vodorovné → posun čáry Δy = Δh / tan 68° = 0,40 Δh
 
 # --- varianta C, revize B (posudek měření 10/2026) ------------------------------------------
-C_BASE = (340.0, 260.0, 25.0)            # Al deska – širší kvůli izolační objímce ⌀240
+C_BASE = (340.0, 260.0, 25.0)            # Al deska – širší kvůli cele ⌀240
 C_COL_SPAN = 300.0                       # osová vzdálenost sloupů (vnitřní líc 130 > objímka r 120)
-C_INS_T = 40.0                           # izolace pod celou: XPS 40 + 3 podložky G10 ⌀20 × 40 (nesou celu)
-C_SLEEVE_T = 40.0                        # izolační objímka XPS 40 kolem pláště (r 80 → 120), límec volný
-C_PAD_D, C_PAD_R = 20.0, 60.0            # podložky G10 ⌀20 na r 60, 3× po 120°
+# rev. B: cela se tiskne VCELKU s izolací – jádro = Column_one_body_version_1 (BODY_*), k tomu dole a kolem
+# přitištěno 40 mm nízké výplně (gyroid 10–15 %); límec zůstává volný. Výsledek: ⌀240 × 200, jeden kus.
+C_INS_T = 40.0                           # přitištěné dno pod jádrem (nízká výplň), s 3 kapsami pro podložky G10
+C_SLEEVE_T = 40.0                        # přitištěná stěna kolem pláště (r 80 → 120)
+C_INS_K = 0.06                           # λ tištěné nízké výplně [W/mK] – odhad 0,05–0,08 (XPS 0,035)
+C_PAD_D, C_PAD_R = 20.0, 35.0            # podložky G10 ⌀20 × 40 v kapsách ⌀20,4 na r 35 (pod dutinou), 3× po 120°;
+                                         # vyčnívají 0,5 mm → celu nese G10, ne tištěná výplň
 C_INVAR_D = 16.0                         # sloupek z Invaru 36 ⌀16 z desky → rameno s LVDT (bez driftu sloupů)
 C_ROD_INVAR = True                       # vodicí tyč ⌀12 z Invaru 36 (broušená) místo oceli – jinak ocel 249 mm = 57 µm / 20 K
 C_INVAR_XY = (-95.0, 95.0)               # poloha sloupku (mimo objímku, sloupy, kameru a laser)

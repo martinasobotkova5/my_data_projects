@@ -100,8 +100,8 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
         <thead><tr><th>Topic</th><th>Problem in rev. A</th><th>Change in rev. B</th><th>Effect</th><th>Status</th></tr></thead>
         <tbody>
           <tr><td>Signal size</td><td>Sr ≈ 0.39: ice adds 1.3 % volume, pore air is 23 % → in a closed sample the expansion fits into the pores</td><td>none on the rig; see decision below</td><td class="num">expected in-situ heave ≈ 0 (tens of µm at most); upper bound 1.35 mm</td><td><span class="chip open">▲ decide</span></td></tr>
-          <tr><td>Rig drift</td><td>LVDT on the Al beam with a steel rod; camera referenced to the PETG rim</td><td>Invar 36 post from the base plate carries the LVDT and a camera target; Invar guide rod</td><td class="num">per 20 K: LVDT −24…+48 → −58…0 µm, left after blank-run correction 12 → ≤ 4 µm; camera 0…100 → −48…0 µm, left 8 → ≤ 2 µm</td><td><span class="chip ok">✓ fixed</span></td></tr>
-          <tr><td>Freezing direction</td><td>cell on a 25 mm Al plate freezes from below and the sides too; last unfrozen spot 27 mm above the bottom</td><td>XPS sleeve 40 mm, XPS 40 mm + 3 G10 pads under the cell; beam gap 200 → 160 keeps the height (598 mm)</td><td class="num">freezes from the top: last unfrozen 7 mm above the bottom; 95 % frozen in 14 h (was 9 h)</td><td><span class="chip ok">✓ fixed</span></td></tr>
+          <tr><td>Rig drift</td><td>LVDT on the Al beam with a steel rod; camera referenced to the PETG rim</td><td>Invar 36 post from the base plate carries the LVDT and a camera target; Invar guide rod</td><td class="num">per 20 K: LVDT −24…+48 → −59…0 µm, left after blank-run correction 12 → ≤ 6 µm; camera 0…100 → −49…0 µm, left 8 → ≤ 3 µm</td><td><span class="chip ok">✓ fixed</span></td></tr>
+          <tr><td>Freezing direction</td><td>cell on a 25 mm Al plate freezes from below and the sides too; last unfrozen spot 27 mm above the bottom</td><td>cell printed in one piece ⌀240 × 200: +40 mm low-infill wall and base (λ ≈ 0.06), 3 G10 pads in base pockets; beam gap 200 → 160 keeps the height (598 mm)</td><td class="num">freezes from the top: last unfrozen 13 mm above the bottom; 95 % frozen in 13 h (was 9 h)</td><td><span class="chip ok">✓ fixed</span></td></tr>
           <tr><td>Laser</td><td>45° laser: collar shadows a 25 mm strip, 41° DOE gives only 7–8 lines</td><td>laser at 68° on a bracket under the beam, 124 mm from the centre</td><td class="num">no shadow, 11 lines at 9.6 mm; line shift 0.40 Δh</td><td><span class="chip ok">✓ fixed</span></td></tr>
           <tr><td>Camera</td><td>CSI ribbon cannot pass the lid seal; separate heater near the sample</td><td>RPi 5 inside the camera box (its ≈ 5 W keep the window clear); CR1000 C5 pulse triggers the photo; 6 mm lens</td><td>Ethernet + 5 V through the seal only; same time stamps without NTP</td><td><span class="chip ok">✓ fixed</span></td></tr>
           <tr><td>Bearing</td><td>LM12UU ball bushing: grease stiffens at −10 °C, ice at thaw → stick-slip, load not constant</td><td>igus drylin RJ4JP-01-12, dry polymer, same size</td><td class="num">load change from friction &lt; 0.02 kPa</td><td><span class="chip ok">✓ fixed</span></td></tr>
@@ -128,7 +128,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
         <li>Calibrate the camera with shims 0.1 / 0.5 / 1.0 mm under a flat plate.</li>
         <li>Measure the freezer: rig 598 mm vs ≈ 650 mm inside.</li>
         <li>Confirm LVDT operation at −10 °C with RDP / Elkome.</li>
-        <li>Program: 24 h at −10 °C, 24 h at +10 °C (thaw takes ≈ 14 h).</li>
+        <li>Program: 24 h at −10 °C, 24 h at +10 °C (thaw takes ≈ 13 h).</li>
       </ol>
     </section>
   </div>
@@ -136,8 +136,8 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   <section aria-labelledby="h-cost">
     <h2 id="h-cost">Cost and resolution</h2>
     <div class="figs">
-      <div class="fig"><div class="v">≈ 1,520–2,210 €</div><div class="l">rev. B excl. VAT (rev. A 1,365–1,870 €): + Invar parts, insulation, fan, RH sensor, shims</div></div>
-      <div class="fig"><div class="v">≤ 4 µm</div><div class="l">LVDT drift left after the blank-run correction (model), LVDT resolution ≈ 1 µm</div></div>
+      <div class="fig"><div class="v">≈ 1,540–2,250 €</div><div class="l">rev. B excl. VAT (rev. A 1,365–1,870 €): + Invar parts, larger printed cell, fan, RH sensor, shims</div></div>
+      <div class="fig"><div class="v">≤ 6 µm</div><div class="l">LVDT drift left after the blank-run correction (model), LVDT resolution ≈ 1 µm</div></div>
       <div class="fig"><div class="v">≈ 10 µm</div><div class="l">camera height map per laser line after averaging ≈ 1000 px along the line</div></div>
     </div>
   </section>

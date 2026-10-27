@@ -83,7 +83,7 @@ footer { color: var(--ink-2); font-size: 14px; border-top: 1px solid var(--rule)
     <p class="lede">Unsaturated sand ⌀100 × 100 mm in a 3D-printed cell ⌀160 freezes and thaws in a chest freezer (the same one as in E6).
       An aluminium frame only guides a dead weight on a partial piston ⌀50, so the load stays constant and the piston moves freely with the surface.
       Deformation is measured by a camera with a multi-line laser (free annulus around the piston) and an LVDT (piston). Data are logged by a CR1000.
-      Revision B follows the measurement review: the cell is insulated so it freezes from the top, and the LVDT and camera reference sit on Invar.</p>
+      Revision B follows the measurement review: the cell is printed in one piece ⌀240 × 200 with a 40 mm low-infill wall and base as insulation, so it freezes from the top; the LVDT and camera reference sit on Invar.</p>
     <div class="facts">
       <span>stress under the piston <b>5–25 kPa</b> (1–5 kg)</span>
       <span>load travel <b>±25 mm</b></span>
@@ -118,7 +118,7 @@ footer { color: var(--ink-2); font-size: 14px; border-top: 1px solid var(--rule)
       </svg>
       <div>
         <div class="t">E7 sample thawing – animation</div>
-        <div class="d">Rev. B rig with insulation and Invar post; temperature in the section and on the surface around the piston, thaw front, camera view, rig thermal drift seen by the LVDT and the camera.</div>
+        <div class="d">Rev. B rig with the one-piece printed cell and Invar post; temperature in the section and on the surface around the piston, thaw front, camera view, rig thermal drift seen by the LVDT and the camera.</div>
         <div class="go">Open the 3D model ↗</div>
       </div>
     </a>
@@ -128,9 +128,9 @@ footer { color: var(--ink-2); font-size: 14px; border-top: 1px solid var(--rule)
     <h2 id="h-sheets">Drawings V01–V05 (rev. B)</h2>
     <p class="sub">A3, dimensions in mm. Click a sheet to open it at full resolution.</p>
     <div class="sheets">
-      <figure><a class="img" href="vykresy/E7-V01_rig_C.png" target="_blank" rel="noopener"><img src="vykresy/E7-V01_rig_C.png" alt="Drawing V01 – variant C rev. B assembly" loading="lazy"></a><figcaption><span>V01</span>Rig C rev. B: frame, insulation, Invar post, camera, laser</figcaption></figure>
+      <figure><a class="img" href="vykresy/E7-V01_rig_C.png" target="_blank" rel="noopener"><img src="vykresy/E7-V01_rig_C.png" alt="Drawing V01 – variant C rev. B assembly" loading="lazy"></a><figcaption><span>V01</span>Rig C rev. B: frame, one-piece cell, Invar post, camera, laser</figcaption></figure>
       <figure><a class="img" href="vykresy/E7-V02_measurement.png" target="_blank" rel="noopener"><img src="vykresy/E7-V02_measurement.png" alt="Drawing V02 – deformation measurement" loading="lazy"></a><figcaption><span>V02</span>Measurement: laser at 68°, camera view, LVDT on Invar</figcaption></figure>
-      <figure><a class="img" href="vykresy/E7-V03_cell.png" target="_blank" rel="noopener"><img src="vykresy/E7-V03_cell.png" alt="Drawing V03 – printed cell with point M" loading="lazy"></a><figcaption><span>V03</span>Printed cell ⌀160 with point M</figcaption></figure>
+      <figure><a class="img" href="vykresy/E7-V03_cell.png" target="_blank" rel="noopener"><img src="vykresy/E7-V03_cell.png" alt="Drawing V03 – printed cell with point M" loading="lazy"></a><figcaption><span>V03</span>Cell printed in one piece ⌀240 × 200, point M</figcaption></figure>
       <figure><a class="img" href="vykresy/E7-V04_sensors_costs.png" target="_blank" rel="noopener"><img src="vykresy/E7-V04_sensors_costs.png" alt="Drawing V04 – sensors, CR1000 wiring and costs" loading="lazy"></a><figcaption><span>V04</span>Sensors, CR1000 wiring, costs</figcaption></figure>
       <figure><a class="img" href="vykresy/E7-V05_freezer_layout.png" target="_blank" rel="noopener"><img src="vykresy/E7-V05_freezer_layout.png" alt="Drawing V05 – layout in the freezer" loading="lazy"></a><figcaption><span>V05</span>Layout in the chest freezer</figcaption></figure>
     </div>
@@ -153,19 +153,19 @@ footer { color: var(--ink-2); font-size: 14px; border-top: 1px solid var(--rule)
           <tr><td class="tag">Pt100</td><td>Pt100 input module for the CR1000</td><td>Campbell Scientific 4WPB100</td><td class="p est">on request, est. 60–120 €</td><td><a href="https://campbellsci.com/ekotechnika" target="_blank" rel="noopener">Ekotechnika, Černošice (CZ)</a><span class="m">tel. +420 251 640 511</span></td></tr>
           <tr><td class="tag">air</td><td>Air temperature (required)</td><td>Campbell Scientific 109, thermistor −50…+70 °C</td><td class="p est">on request, est. 150–220 €</td><td>Ekotechnika</td></tr>
           <tr><td class="tag">air</td><td>Air mixing</td><td>80 mm 12 V fan</td><td class="p est">est. 10–20 €</td><td>TME, GM electronic</td></tr>
-          <tr><td class="tag">frame</td><td>Low-drift parts</td><td>igus drylin RJ4JP-01-12; Invar 36 rod ⌀12 + post ⌀16; XPS 40 sleeve and slab, 3 G10 pads</td><td class="p est">est. 140–330 €</td><td>igus, specialty metals supplier, DIY store</td></tr>
+          <tr><td class="tag">frame</td><td>Low-drift parts</td><td>igus drylin RJ4JP-01-12; Invar 36 rod ⌀12 + post ⌀16; 3 G10 pads ⌀20 × 40</td><td class="p est">est. 130–300 €</td><td>igus, specialty metals supplier</td></tr>
           <tr><td class="tag">calib.</td><td>Camera calibration</td><td>shims 0.1 / 0.5 / 1.0 mm</td><td class="p est">est. 10–25 €</td><td>tool shop</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="total">Total including mechanics ≈ 1,520–2,210 € excl. VAT, i.e. ≈ 38–55 thousand CZK (rev. A was ≈ 1,370–1,870 €).</p>
+    <p class="total">Total including mechanics ≈ 1,540–2,250 € excl. VAT, i.e. ≈ 39–56 thousand CZK (rev. A was ≈ 1,370–1,870 €).</p>
   </section>
 
   <section aria-labelledby="h-notes">
     <h2 id="h-notes">Points to watch</h2>
     <ul class="notes">
       <li><b>Decide first:</b> at Sr ≈ 0.4 the ice expansion fits into the pore air and the expected heave is tens of µm at most. For frost heave, raise Sr to ≥ 0.85 or supply water from below.</li>
-      <li><b>Blank run:</b> one full cycle with an Al dummy gives the rig drift against cell temperature; in rev. B the model leaves ≤ 4 µm after the correction.</li>
+      <li><b>Blank run:</b> one full cycle with an Al dummy gives the rig drift against cell temperature; in rev. B the model leaves ≤ 6 µm after the correction.</li>
       <li><b>Camera:</b> focus at ≈ 135 mm with the back-focus ring; calibrate px → mm with shims under a flat plate.</li>
       <li><b>LVDT in the freezer:</b> sources give a lower operating limit of −40 °C or only −10 °C. Confirm with RDP or Elkome.</li>
     </ul>

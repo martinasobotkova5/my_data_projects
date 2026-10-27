@@ -125,14 +125,24 @@ def variant_b(asm, prefix=""):
     asm.add(bridge, name=prefix + "Al bridge D220x10 (LVDT clamps)", color=C["al"])
     asm.add(radial(180, p.STAND_R - 6, p.STAND_R + 20, 230, 1.6), name=prefix + "Tstand 109SS", color=C["temp"])
 
-def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt_ang=None):
+def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt_ang=None, ins=False):
     """Variant A cell per drawing Column_one_body_version_1: body ⌀160 × 130 + collar ⌀106 to 160,
     cavity ⌀100 from z 26 (z = 0 at the underside), side port 13 wide at 67.5–94.5 (PORT_ANG).
-    Point M: CS645 in the port, optical fibre, Pt100 vertical. Returns z of the underside."""
+    Point M: CS645 in the port, optical fibre, Pt100 vertical. Returns z of the underside of the core.
+    ins=True: rev. B, printed in ONE piece with +C_SLEEVE_T low-infill wall and a +C_INS_T base with 3 pockets
+    for the G10 pads (⌀240 × 200 overall); the port runs through the whole wall."""
     zb = Z_S0 - p.BODY_BOTTOM
     rb, rc, ri = p.BODY_D / 2, p.COLLAR_OD / 2, p.CAV_D / 2
+    ro = rb + (p.C_SLEEVE_T if ins else 0.0)
     body = cyl(p.BODY_D, p.BODY_H, zb).union(cyl(p.COLLAR_OD, p.COLLAR_TOP - p.BODY_H, zb + p.BODY_H))
+    if ins:
+        body = body.union(cyl(2 * ro, p.BODY_H + p.C_INS_T, zb - p.C_INS_T))
+        for k in range(3):
+            a_ = math.radians(90 + 120 * k)
+            body = body.cut(cyl(p.C_PAD_D + 0.4, p.C_INS_T, zb - p.C_INS_T, p.C_PAD_R * math.cos(a_),
+                                p.C_PAD_R * math.sin(a_)))
     body = body.cut(cyl(p.CAV_D, p.COLLAR_TOP - p.BODY_BOTTOM, zb + p.BODY_BOTTOM))
+    rb = ro
     port = box(ri + p.CUP_WALL_IN, rb + 1, -p.PORT_W / 2, p.PORT_W / 2, zb + p.PORT_Z0, zb + p.PORT_Z1)
     body = body.cut(port.rotate((0, 0, 0), (0, 0, 1), p.PORT_ANG))
     t = p.TDR_CS645
@@ -150,7 +160,8 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt
     xb, yb = 25 * math.cos(math.radians(p.AM_PB[2])), 25 * math.sin(math.radians(p.AM_PB[2]))
     if pb:
         body = body.cut(cyl(8.2, 1.6, Z_S0 - 1.6, xb, yb))
-    asm.add(body, name=prefix + "cell body PETG D160 (Column_one_body_version_1)", color=C["petg"])
+    asm.add(body, name=prefix + ("cell PETG D240x200 one piece, rev. B (core Column_one_body_version_1)" if ins
+                                 else "cell body PETG D160 (Column_one_body_version_1)"), color=C["petg"])
     if pb:
         asm.add(cyl(8, 1.5, Z_S0 - 1.5, xb, yb), name=prefix + "PB1 TML PDA-PA (flush)", color=C["pressure"])
     asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0), name=prefix + "unsaturated sand D100x100", color=C["sand"])
@@ -306,18 +317,12 @@ def variant_c(asm, prefix=""):
             name=prefix + f"cross-beam 80x80 x{2 * xc + 40:g}", color=C["profile"])
     asm.add(tube(bush_od, p.C_ROD_D + 0.1, bush_l, zbeam + (p.AF_BEAM_H - bush_l) / 2),
             name=prefix + "plain bearing igus drylin RJ4JP-01-12", color=C["ptfe"])
-    # insulation: XPS slab with 3 G10 pads under the cell, XPS sleeve around the jacket (collar free)
-    ro = p.BODY_D / 2 + p.C_SLEEVE_T
-    slab = cyl(2 * ro, p.C_INS_T, zb0)
+    # cell printed in one piece with its insulation; 3 G10 pads ⌀20 × 40 in pockets of the printed base carry it
     for k in range(3):
         a = math.radians(90 + 120 * k)
         x, y = p.C_PAD_R * math.cos(a), p.C_PAD_R * math.sin(a)
-        slab = slab.cut(cyl(p.C_PAD_D, p.C_INS_T, zb0, x, y))
         asm.add(cyl(p.C_PAD_D, p.C_INS_T, zb0, x, y), name=f"{prefix}G10 pad D20x40 {k + 1}", color=C["g10"])
-    asm.add(slab, name=prefix + f"XPS slab D{2 * ro:g}x40 under the cell", color=C["ins"])
-    asm.add(tube(2 * ro, p.BODY_D + 0.5, p.BODY_H, zc0), name=prefix + f"XPS sleeve D{2 * ro:g}/160 x{p.BODY_H:g}",
-            color=C["ins"])
-    body_a(asm, prefix, temps=[], pv=False, pb=False, opt=False, pt_r=p.C_PT100_R, pt_ang=p.C_PT100_ANG)
+    body_a(asm, prefix, temps=[], pv=False, pb=False, opt=False, pt_r=p.C_PT100_R, pt_ang=p.C_PT100_ANG, ins=True)
     # moving load: partial piston, ball, Invar guide rod, carrier, discs
     zp = Z_S1 + p.C_PISTON_H
     asm.add(cyl(p.C_PISTON_D, p.C_PISTON_H, Z_S1), name=prefix + "partial piston Al D50x20", color=C["al"])
@@ -407,8 +412,8 @@ if __name__ == "__main__":
     os.makedirs(ARCH, exist_ok=True)
     vc = cq.Assembly(name="E7 C - frame guides a dead weight on a partial piston, camera + laser, LVDT")
     variant_c(vc)
-    mr = cq.Assembly(name="E7 cell - Column_one_body_version_1")
-    body_a(mr, temps=[], pv=False, pb=False, opt=False, pt_r=p.C_PT100_R, pt_ang=p.C_PT100_ANG)
+    mr = cq.Assembly(name="E7 cell rev. B - printed in one piece D240 (core Column_one_body_version_1)")
+    body_a(mr, temps=[], pv=False, pb=False, opt=False, pt_r=p.C_PT100_R, pt_ang=p.C_PT100_ANG, ins=True)
     lay = freezer_layout()
     for asm, fn in ((vc, "E7_V01_variant_C"), (mr, "E7_V03_cell"), (lay, "E7_V05_freezer_layout")):
         asm.save(os.path.join(OUT, fn + ".step"))
