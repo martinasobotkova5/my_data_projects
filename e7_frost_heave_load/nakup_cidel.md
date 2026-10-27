@@ -22,20 +22,18 @@ Rev. B vychází z posudku měření (`E7_review.pdf`). Anglická verze: `purcha
 | 11 | Promíchání vzduchu v truhle | ventilátor 80 mm 12 V (ložisko do mrazu) | odhad 10–20 € | TME, GM electronic |
 | 12 | Kalibrace kamery | podložky 0,1 / 0,5 / 1,0 mm (spároměrky) | odhad 10–25 € | nářadí |
 
-## Mechanika (rev. B, odhad)
+## Mechanika (rev. B2 – objednatelná bez obrábění; podrobně po obchodech v `objednavka.md`)
 
 | Co | Cena |
 |----|------|
-| Al deska 340 × 260 × 25 (obrobená) | 80–150 € |
-| Al profily 2× 40×80 × 326 + 80×80 × 340, šrouby | 80–170 € |
-| **igus drylin RJ4JP-01-12** (kluzné pouzdro bez maziva, rozměry jako LM12UU) + **tyč Invar 36 ⌀12 broušená × 250** + kulička ⌀8 | 60–140 € |
-| **sloupek Invar 36 ⌀16 × 405** + ramena pro LVDT a terčík kamery | 60–140 € |
-| **Cela tištěná VCELKU ⌀240 × 200** (jádro + 40 mm stěna a dno z nízké výplně, PETG(-CF) ≈ 1,5 kg, ≈ 40–60 h; podložka tiskárny ≥ 250 × 250, Z ≥ 200) + **3 podložky G10 ⌀20 × 40** | 45–90 € |
-| Al částečný píst ⌀50 × 20 + nosná deska ⌀120 × 8 | 40–80 € |
-| ocelové kotouče ⌀120: 4 × 1 kg + 0,5 kg + podložky | 40–90 € |
-| držáky kamery a laseru (Al pásek), průchodky | 15–40 € |
+| Laser: Al 10 základní deska 340×260 a horní deska 340×80, nosná deska ⌀120, 2 kotouče pístu ⌀50; ocelové kotouče ⌀117,5 × 12 (4×) a × 6 (1×) | 100–190 € |
+| Profily 40×80 drážka 8 × 326 (2×), 8 úhelníků, T-matice, 3 nohy M8 (Enprag) | 60–110 € |
+| igus RJ4JP-01-12, stavěcí kroužek DIN 705-A 12, kulička 5/16", šrouby | 25–50 € |
+| Invar 36: tyč ⌀12 × 289 a sloupek ⌀16 × 357, řez na délku (Evek) | 80–160 € |
+| Cela tištěná VCELKU ⌀240 × 200 (PETG-CF ≈ 1,5 kg) + 3 podložky G10 ⌀20 × 40 (elektroizolanty.cz) | 45–90 € |
+| Tištěné díly P01–P08: pouzdro ložiska, ramena LVDT a terčíku, patka sloupku, držák laseru, box kamery | 10–25 € |
 
-Celkem ≈ 1 540–2 250 € bez DPH, tj. ≈ 39–56 tis. Kč (výkres V04). Rev. A byla ≈ 1 370–1 870 €.
+Celkem ≈ 1 450–1 980 € bez DPH, tj. ≈ 36–50 tis. Kč (výkres V04). Rev. A byla ≈ 1 370–1 870 €.
 Invar 36 (FeNi36): poptat u dodavatele speciálních kovů (např. Goodfellow nebo tuzemský distributor).
 
 ## Poznámky

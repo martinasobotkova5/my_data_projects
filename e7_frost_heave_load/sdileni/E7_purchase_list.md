@@ -22,20 +22,18 @@ Rev. B follows the measurement review (`E7_review.pdf`). Czech version: `nakup_c
 | 11 | Air mixing in the freezer | 80 mm 12 V fan (low-temperature bearing) | est. 10–20 € | TME, GM electronic |
 | 12 | Camera calibration | shims 0.1 / 0.5 / 1.0 mm (feeler gauge set) | est. 10–25 € | tool shop |
 
-## Mechanics (rev. B, estimates)
+## Mechanics (rev. B2 – orderable, no machining; full shop-by-shop list in `objednavka.md`)
 
 | Item | Price |
 |------|-------|
-| Al base plate 340 × 260 × 25 (machined) | 80–150 € |
-| Al profiles 2× 40×80 × 326 + 80×80 × 340, core bolts | 80–170 € |
-| **igus drylin RJ4JP-01-12** (dry plain bearing, same size as LM12UU) + **Invar 36 rod ⌀12 ground × 250** + steel ball ⌀8 | 60–140 € |
-| **Invar 36 post ⌀16 × 405** + arms for the LVDT and the camera target | 60–140 € |
-| **Cell printed in ONE piece ⌀240 × 200** (core + 40 mm low-infill wall and base, PETG(-CF) ≈ 1.5 kg, ≈ 40–60 h; bed ≥ 250 × 250, Z ≥ 200) + **3 G10 pads ⌀20 × 40** | 45–90 € |
-| Al partial piston ⌀50 × 20 + carrier ⌀120 × 8 | 40–80 € |
-| steel discs ⌀120: 4 × 1 kg + 0.5 kg + trim washers | 40–90 € |
-| camera and laser brackets (Al strip), cable glands | 15–40 € |
+| Laser-cut: Al 10 base plate 340×260 and top plate 340×80, carrier ⌀120, 2 piston discs ⌀50; steel discs ⌀117.5 × 12 (4×) and × 6 (1×) | 100–190 € |
+| Profiles 40×80 slot 8 × 326 (2×), 8 angle brackets, T-nuts, 3 levelling feet M8 (Enprag) | 60–110 € |
+| igus RJ4JP-01-12, shaft collar DIN 705-A 12, ball 5/16", screws | 25–50 € |
+| Invar 36: rod ⌀12 × 289 and post ⌀16 × 357, cut to length (Evek) | 80–160 € |
+| Cell printed in ONE piece ⌀240 × 200 (PETG-CF ≈ 1.5 kg) + 3 G10 pads ⌀20 × 40 (elektroizolanty.cz) | 45–90 € |
+| Printed parts P01–P08: bearing housing, LVDT and target arms, post foot, laser holder, camera box | 10–25 € |
 
-Total ≈ 1,540–2,250 € excl. VAT, i.e. ≈ 39–56 thousand CZK (drawing V04). Rev. A was ≈ 1,370–1,870 €.
+Total ≈ 1,450–1,980 € excl. VAT, i.e. ≈ 36–50 thousand CZK (drawing V04). Rev. A was ≈ 1,370–1,870 €.
 Invar 36 bar: ask a specialty metals supplier (e.g. Goodfellow, or a local distributor of Invar/FeNi36).
 
 ## Notes

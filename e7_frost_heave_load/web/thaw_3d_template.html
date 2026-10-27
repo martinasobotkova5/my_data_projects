@@ -284,7 +284,9 @@ const DATA = /*__DATA__*/null;
   const matInv = M(0x8c7a5b, { metalness: 0.5, roughness: 0.45 }), matXps = M(0x4a4e53, { roughness: 0.85, side: THREE.DoubleSide });   // printed low infill (same print as the core)
   scene.add(box(-bw / 2, bw / 2, -bd / 2, bd / 2, -ins - bt, -ins, matAl));
   for (const s of [-1, 1]) frameGrp.add(box(s * xc - 20, s * xc + 20, -40, 40, -ins, zBeam, matProf));
-  frameGrp.add(box(-xc - 20, xc + 20, -40, 40, zBeam, zBeam + G.beam_h, matProf));
+  frameGrp.add(box(-xc - 20, xc + 20, -G.top[1] / 2, G.top[1] / 2, zBeam, zBeam + G.top[2], matAl));   // laser-cut top plate
+  frameGrp.add(box(-G.housing[0] / 2, G.housing[0] / 2, -G.housing[1] / 2, G.housing[1] / 2, zBeam + G.top[2],
+                   zBeam + G.top[2] + G.housing[2], M(0x34373b)));                                         // printed bearing housing
   // camera with the Raspberry Pi in one box (−y, tilted to the axis), bracket to the beam
   const [camY, camH, camTilt] = G.cam, zCam = G.z_sand + camH;
   const cam = new THREE.Group();
@@ -300,25 +302,27 @@ const DATA = /*__DATA__*/null;
   // Invar post from the base plate: arm with the LVDT under the carrier + reference target for the camera
   const zp = G.z_sand + G.h_piston, zRod0 = zp + 6, zC = zBeam + G.beam_h + 25 + 10;
   const [invD, invX, invY] = G.invar, [lvX, lvY] = G.lvdt, [rfX, rfY] = G.ref;
-  frameGrp.add(cyl(invD / 2, zC - 35 + ins, -ins, invX, invY, matInv, 20));
+  const lvB = G.lvdt_body, zLvTop = zC - 12, zArm = zLvTop - lvB[1];
+  frameGrp.add(cyl(invD / 2, zArm + 12 + ins, -ins, invX, invY, matInv, 20));
   const arm = (x0, y0, x1, y1, z0, t, mat) => {
     const L = Math.hypot(x1 - x0, y1 - y0), m = new THREE.Mesh(new THREE.BoxGeometry(L, t, 12), mat);
     m.position.set((x0 + x1) / 2, z0 + t / 2, -(y0 + y1) / 2); m.rotation.y = Math.atan2(y1 - y0, x1 - x0); return m;
   };
-  frameGrp.add(arm(invX, invY, lvX, lvY, zC - 41, 6, matInv));
-  frameGrp.add(cyl(9.5, 25, zC - 35, lvX, lvY, matSens, 24));
-  frameGrp.add(arm(invX, invY, rfX, rfY, G.z_top, 3, matInv));
+  frameGrp.add(arm(invX, invY, lvX, lvY, zArm, 12, M(0x34373b)));
+  frameGrp.add(cyl(lvB[0] / 2, lvB[1], zArm, lvX, lvY, matSens, 24));
+  frameGrp.add(arm(invX, invY, rfX, rfY, G.z_top, 8, M(0x34373b)));
   const target = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-  target.rotation.x = -Math.PI / 2; target.position.set(rfX, G.z_top + 3.1, -rfY); frameGrp.add(target);
+  target.rotation.x = -Math.PI / 2; target.position.set(rfX, G.z_top + 8.1, -rfY); frameGrp.add(target);
   const tdot = new THREE.Mesh(new THREE.CircleGeometry(2.2, 20), new THREE.MeshBasicMaterial({ color: 0x111111 }));
-  tdot.rotation.x = -Math.PI / 2; tdot.position.set(rfX, G.z_top + 3.2, -rfY); frameGrp.add(tdot);
+  tdot.rotation.x = -Math.PI / 2; tdot.position.set(rfX, G.z_top + 8.2, -rfY); frameGrp.add(tdot);
 
   // moving load: ball, Invar guide rod, carrier, 4 discs, LVDT plunger tip (offset by piston heave)
   moving.add(new THREE.Mesh(new THREE.SphereGeometry(4, 20, 14), matSteel)); moving.children[0].position.set(0, zp + 3, 0);
   moving.add(cyl(G.rod_d / 2, zC - zRod0, zRod0, 0, 0, matInv, 24));
   moving.add(cyl(G.carrier[0] / 2, G.carrier[1], zC, 0, 0, matAl, 56));
-  for (let k = 0; k < 4; k++) moving.add(cyl(G.disc_d / 2, 11.2, zC + G.carrier[1] + k * 11.5, 0, 0, matSteel, 56));
-  moving.add(cyl(2, 10, zC - 10, lvX, lvY, matSteel, 12));
+  for (let k = 0; k < 4; k++) moving.add(cyl(G.disc_d / 2, G.disc_t - 0.3, zC + G.carrier[1] + k * G.disc_t, 0, 0, matSteel, 56));
+  moving.add(cyl(12, 10, zC - 10, 0, 0, matSteel, 24));                                  // shaft collar
+  moving.add(cyl(2, 12, zC - 12, lvX, lvY, matSteel, 12));                                // LVDT plunger
 
   // cell body (lathe of the profile, duplicated corners → crisp edges)
   const prof = [[0, 0], [80, 0], [80, 0], [80, 130], [80, 130], [G.r_wall, 130], [G.r_wall, 130], [G.r_wall, 160], [G.r_wall, 160],

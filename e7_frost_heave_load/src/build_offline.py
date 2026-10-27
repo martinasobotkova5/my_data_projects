@@ -28,6 +28,7 @@ CDN = {
 EXTRA = [("vykresy/E7_drawings.pdf", "E7_drawings.pdf"),
          ("E7_review.pdf", "E7_review.pdf"),
          ("purchase_list.md", "E7_purchase_list.md"),
+         ("objednavka.md", "E7_objednavka_CZ.md"),
          ("cad/E7_V04_cell.dxf", "cad/E7_V04_cell.dxf"),
          ("3d/E7_V01_variant_C.step", "3d/E7_V01_variant_C.step"),
          ("3d/E7_V03_cell.step", "3d/E7_V03_cell.step"),
@@ -77,12 +78,14 @@ def build():
     for src, dst in EXTRA:
         os.makedirs(os.path.dirname(os.path.join(OUT, dst)) or OUT, exist_ok=True)
         shutil.copy(os.path.join(ROOT, src), os.path.join(OUT, dst))
+    shutil.copytree(os.path.join(ROOT, "vyroba"), os.path.join(OUT, "vyroba"))          # DXF (laser) + STL/STEP (print)
     open(os.path.join(OUT, "README.txt"), "w", encoding="utf-8").write(
         "Experiment E7 – variant C rev. B\n\n"
         "Unzip the package first, then open E7_overview.html in any web browser (double-click).\n"
         "3D model of freezing and thawing: E7_3D_model.html (works without internet).\n"
         "One-page measurement review: E7_review.pdf (also E7_review.html).\n"
-        "Drawings: E7_drawings.pdf (rev. B). Purchase list: E7_purchase_list.md.\n"
+        "Drawings: E7_drawings.pdf (rev. B2, sheets V01–V06). Purchase list: E7_purchase_list.md;\n"
+        "order by shop + assembly (Czech): E7_objednavka_CZ.md. Manufacturing files: vyroba/laser (DXF), vyroba/tisk (STL).\n"
         "CAD: cad/E7_V04_cell.dxf, 3D: 3d/*.step (Onshape, SolidWorks, FreeCAD).\n")
     zp = os.path.join(OUT, "E7_package.zip")
     with zipfile.ZipFile(zp, "w", zipfile.ZIP_DEFLATED) as z:

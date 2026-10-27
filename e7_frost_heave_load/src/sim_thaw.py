@@ -194,9 +194,9 @@ def run():
     Vs = V[is_sand]
     ins = p.C_INS_T if INSULATED else 0.0
     z_beam = ins + Z_BOT + 100 + p.C_BEAM_GAP                     # above the base plate
-    z_c = z_beam + p.AF_BEAM_H + p.C_TRAVEL + 10                    # carrier underside
+    z_c = z_beam + p.C_BEAM_H + p.C_TRAVEL + 10                     # carrier underside (top plate + housing)
     L_rod = z_c - (ins + Z_SAND + H_PIST + 6)
-    L_inv = z_c - 35                                                # Invar post: base plate → LVDT clamp
+    L_inv = z_c - 12 - p.C_LVDT_BODY[1] + 12                        # Invar post: base plate → LVDT arm top
     drift = []
     for s in range(steps + 1):
         t_h = s * DT / 3600
@@ -248,7 +248,8 @@ def pack(rc, zc, mat, frames, drift):
         nr=NR, nz=NZ, dr=DR, dz=DZ,
         geom=dict(r_sand=R_SAND, r_wall=R_WALL, r_body=p.BODY_D / 2, r_collar=p.COLLAR_OD / 2,
                   z_bot=Z_BOT, z_sand=Z_SAND, z_jacket=Z_JACKET, z_top=Z_TOP, r_piston=R_PIST, h_piston=H_PIST,
-                  base=list(p.C_BASE), col_span=p.C_COL_SPAN, beam_gap=p.C_BEAM_GAP, beam_h=p.AF_BEAM_H,
+                  base=list(p.C_BASE), col_span=p.C_COL_SPAN, beam_gap=p.C_BEAM_GAP, beam_h=p.C_BEAM_H, top=list(p.C_TOP), housing=list(p.C_HOUSING),
+                  lvdt_body=list(p.C_LVDT_BODY), disc_t=p.C_DISC_T,
                   ins=p.C_INS_T if INSULATED else 0, sleeve=p.C_SLEEVE_T if INSULATED else 0,
                   pad=[p.C_PAD_D, p.C_PAD_R], invar=[p.C_INVAR_D, *p.C_INVAR_XY], lvdt=list(p.C_LVDT_XY),
                   ref=list(p.C_REF_XY), laser_ang=p.C_LASER_ANG,

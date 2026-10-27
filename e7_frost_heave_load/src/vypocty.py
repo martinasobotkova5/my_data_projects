@@ -361,7 +361,7 @@ print("## 14. Varianta C – kombinace: Al rám vede mrtvou váhu, částečný 
 A_p = math.pi / 4 * p.C_PISTON_D ** 2
 zb0 = 0.0
 col_h = p.C_INS_T + p.BODY_BOTTOM + p.H_SAMPLE + p.C_BEAM_GAP   # sloup od horního líce desky po příčník (rev. B s izolací)
-rod_l = p.C_BEAM_GAP - p.C_PISTON_H - p.C_BALL_D + p.AF_BEAM_H + p.C_TRAVEL + 10
+rod_l = p.C_BEAM_GAP - p.C_PISTON_H - p.C_BALL_D + p.C_BEAM_H + p.C_TRAVEL + 10
 m_pist = math.pi / 4 * (p.C_PISTON_D / 1000) ** 2 * p.C_PISTON_H / 1000 * 2700
 m_rod = math.pi / 4 * (p.C_ROD_D / 1000) ** 2 * rod_l / 1000 * p.RHO_STEEL
 m_car = math.pi / 4 * (p.C_CARRIER_D / 1000) ** 2 * p.C_CARRIER_T / 1000 * 2700

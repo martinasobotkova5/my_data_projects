@@ -4,6 +4,8 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 ## ★ Aktuální návrh: varianta C, měření deformace 1 + 2 (výkresy V01–V05)
 
+**Revize B2 (27. 10. 2026):** sestava jen z koupených, laserem řezaných a 3D tištěných dílů (bez obrábění) – objednávka po obchodech a postup sestavení v `objednavka.md`, výrobní list V06, DXF v `vyroba/laser`, STL v `vyroba/tisk`.
+
 **Revize B (27. 10. 2026, podle posudku měření `E7_review.pdf`):** cela tištěná vcelku ⌀240 × 200 s izolací (+40 mm stěna a dno z nízké výplně,
 3 podložky G10 v kapsách dna → mrznutí shora), LVDT a referenční terčík kamery na sloupku z Invaru, vodicí tyč z Invaru v kluzném pouzdře
 igus drylin, laser pod 68° z držáku na příčníku (11 čar po 9,6 mm, bez stínu límce), RPi 5 v boxu kamery (spouštění z CR1000 C5),

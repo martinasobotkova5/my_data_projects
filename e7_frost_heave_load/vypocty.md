@@ -250,17 +250,17 @@ Na povrchu písku nic neleží. Čárový laser svítí šikmo (45° od svislice
 
 ## 14. Varianta C – kombinace: Al rám vede mrtvou váhu, částečný píst, kamera nad volným povrchem
 
-Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 247 219 g + Al nosná deska 244 g = **0.57 kg ≈ 2.9 kPa** (nejmenší přitížení pod pístem).
+Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 213 189 g + Al nosná deska 305 g = **0.60 kg ≈ 3.0 kPa** (nejmenší přitížení pod pístem).
 
 | napětí pod pístem [kPa] | celkem [kg] | kotouče 1 kg | 0,5 kg | doladit [kg] |
 |---|---|---|---|---|
-| 5 | 1.00 | 0 | 0 | 0.43 |
-| 10 | 2.00 | 1 | 0 | 0.43 |
-| 15 | 3.00 | 2 | 0 | 0.43 |
-| 20 | 4.00 | 3 | 0 | 0.43 |
-| 25 | 5.00 | 4 | 0 | 0.43 |
+| 5 | 1.00 | 0 | 0 | 0.40 |
+| 10 | 2.00 | 1 | 0 | 0.40 |
+| 15 | 3.00 | 2 | 0 | 0.40 |
+| 20 | 4.00 | 3 | 0 | 0.40 |
+| 25 | 5.00 | 4 | 0 | 0.40 |
 
-Kotouč ⌀120/17: 1 kg = 11.5 mm, 0,5 kg = 5.7 mm. Při 25 kPa jen ≈ 4 kotouče.
+Kotouč ⌀117.5/17: 1 kg = 12.0 mm, 0,5 kg = 6.0 mm. Při 25 kPa jen ≈ 4 kotouče.
 
 **Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±25 mm). Kluzné pouzdro igus drylin RJ4JP-01-12 (bez maziva, do −40 °C) má tření ≈ 0,1–0,25 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,02 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
 
