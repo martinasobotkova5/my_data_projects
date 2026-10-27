@@ -1,5 +1,0 @@
-Experiment E7 – varianta C
-
-Otevřete E7_podklady.html v libovolném prohlížeči (dvojklik).
-3D model mrznutí a tání: E7_model_3D.html (funguje i bez internetu).
-Výkresy: E7_vykresy.pdf. CAD: cad/E7_V04_cell.dxf, 3D: 3d/*.step (Onshape, SolidWorks, FreeCAD).
