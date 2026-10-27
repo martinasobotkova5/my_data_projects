@@ -1,0 +1,166 @@
+<title>Podklady E7 – varianta C</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column like a technical report; drawing sheets as a grid of A3 thumbnails */
+:root {
+  --paper: #f5f6f4; --sheet: #ffffff; --ink: #15191c; --ink-2: #4c555b; --rule: #d5dad8;
+  --accent: #1d5f8a; --accent-soft: #e3eef5; --warn: #9a5b00; --warn-soft: #fbf1df;
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121517; --sheet: #1b2023; --ink: #e8ecea; --ink-2: #a9b3b8; --rule: #30383d;
+    --accent: #6fb0dc; --accent-soft: #1b2e3b; --warn: #e3a64a; --warn-soft: #2f2615; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121517; --sheet: #1b2023; --ink: #e8ecea; --ink-2: #a9b3b8; --rule: #30383d;
+  --accent: #6fb0dc; --accent-soft: #1b2e3b; --warn: #e3a64a; --warn-soft: #2f2615; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 17px/1.55 var(--f-body); margin: 0; }
+.wrap {
+  max-width: 1080px; margin: 0 auto; padding-block: 36px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 44px;
+}
+header { display: grid; gap: 10px; }
+.code { font: 600 13px var(--f-mono); letter-spacing: .08em; color: var(--accent); text-transform: uppercase; }
+h1 { font: 700 clamp(28px, 4.4vw, 40px)/1.15 var(--f-display); margin: 0; text-wrap: balance; }
+h2 { font: 700 22px/1.25 var(--f-display); margin: 0 0 4px; text-wrap: balance; }
+.lede { color: var(--ink-2); margin: 0; max-width: 68ch; }
+section { display: grid; gap: 14px; min-width: 0; }
+.sub { color: var(--ink-2); margin: 0; max-width: 68ch; }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 22px; font: 14px var(--f-mono); color: var(--ink-2); }
+.facts b { color: var(--ink); font-weight: 600; }
+
+.model {
+  display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center;
+  background: var(--accent-soft); border-radius: 10px; padding: 18px 20px; text-decoration: none; color: var(--ink);
+}
+.model:hover .go { text-decoration: underline; }
+.model svg { width: 56px; height: 56px; }
+.model .t { font: 700 19px var(--f-display); }
+.model .d { color: var(--ink-2); font-size: 15px; }
+.model .go { color: var(--accent); font-weight: 600; font-size: 15px; }
+
+.sheets { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.sheets figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
+.sheets a.img { display: block; background: #fff; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+.sheets img { display: block; width: 100%; aspect-ratio: 420 / 297; object-fit: contain; max-width: 100%; }
+.sheets figcaption { font-size: 15px; display: flex; gap: 8px; align-items: baseline; }
+.sheets figcaption span { font: 600 13px var(--f-mono); color: var(--accent); }
+
+.tbl { overflow-x: auto; border-top: 2px solid var(--ink); }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 10px 9px 0; border-bottom: 1px solid var(--rule); }
+th { font: 600 12px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+td.p { white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+td .m { display: block; font: 13px var(--f-mono); color: var(--ink-2); margin-top: 2px; }
+.tag { font: 600 12px var(--f-mono); color: var(--accent); }
+.est { font-weight: 400; color: var(--ink-2); }
+.total { font-weight: 600; margin: 4px 0 0; }
+
+.notes { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.notes li { background: var(--warn-soft); border-radius: 8px; padding: 12px 14px; max-width: 80ch; }
+.notes b { color: var(--warn); }
+.qs { margin: 0; padding-left: 22px; display: grid; gap: 6px; max-width: 72ch; }
+footer { color: var(--ink-2); font-size: 14px; border-top: 1px solid var(--rule); padding-top: 14px; }
+@media (max-width: 520px) { .model { grid-template-columns: 1fr; } body { font-size: 16px; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="code">Experiment E7 · varianta C · stav 27. 10. 2026</div>
+    <h1>Podklady E7 – mrznutí a tání pod zatížením</h1>
+    <p class="lede">Nenasycený písek ⌀100 × 100 mm v tištěné cele ⌀160 zmrzne a roztaje v truhlicovém mrazáku (stejném jako u E6).
+      Hliníkový rám jen vede závaží na částečném pístu ⌀50. Zatížení je tak stálé a píst se volně pohybuje s povrchem.
+      Deformaci měří kamera s vícečárovým laserem (volné mezikruží kolem pístu) a LVDT (píst). Data ukládá CR1000.</p>
+    <div class="facts">
+      <span>zatížení pod pístem <b>5–25 kPa</b> (1–5 kg)</span>
+      <span>zdvih zátěže <b>±25 mm</b></span>
+      <span>program <b>+10 → −10 → +10 °C</b></span>
+      <span>bod M: <b>TDR CS645 + Pt100 + optické vlákno</b></span>
+    </div>
+  </header>
+
+  <section aria-labelledby="h-model">
+    <h2 id="h-model">3D model mrznutí a tání</h2>
+    <a class="model" href="https://claude.ai/artifact/MWEEN9zQqwWQfuePCFbiCd" target="_blank" rel="noopener">
+      <svg viewBox="0 0 56 56" aria-hidden="true">
+        <rect x="14" y="10" width="28" height="38" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/>
+        <rect x="16.5" y="24" width="23" height="21.5" fill="#6da7ec"/>
+        <rect x="16.5" y="18" width="23" height="6" fill="#ee8f86"/>
+        <rect x="22" y="12.5" width="12" height="5.5" fill="#9aa3ab"/>
+      </svg>
+      <div>
+        <div class="t">Tání vzorku E7 – animace</div>
+        <div class="d">Teplota v řezu a na povrchu kolem pístu, fronta tání, zdvih, pohled kamery. Výpočet je orientační.</div>
+        <div class="go">Otevřít 3D model ↗</div>
+      </div>
+    </a>
+  </section>
+
+  <section aria-labelledby="h-sheets">
+    <h2 id="h-sheets">Výkresy V01–V05</h2>
+    <p class="sub">A3, kóty v mm. Kliknutím otevřete list v plném rozlišení.</p>
+    <div class="sheets">
+      <figure><a class="img" href="vykresy/E7-V01_rig_C.png" target="_blank" rel="noopener"><img src="vykresy/E7-V01_rig_C.png" alt="Výkres V01 – sestava varianty C" loading="lazy"></a><figcaption><span>V01</span>Sestava C: rám, píst, závaží, kamera, laser</figcaption></figure>
+      <figure><a class="img" href="vykresy/E7-V02_measurement.png" target="_blank" rel="noopener"><img src="vykresy/E7-V02_measurement.png" alt="Výkres V02 – měření deformace" loading="lazy"></a><figcaption><span>V02</span>Měření: laserová triangulace a LVDT</figcaption></figure>
+      <figure><a class="img" href="vykresy/E7-V03_cell.png" target="_blank" rel="noopener"><img src="vykresy/E7-V03_cell.png" alt="Výkres V03 – tištěná cela s bodem M" loading="lazy"></a><figcaption><span>V03</span>Tištěná cela ⌀160 s bodem M</figcaption></figure>
+      <figure><a class="img" href="vykresy/E7-V04_sensors_costs.png" target="_blank" rel="noopener"><img src="vykresy/E7-V04_sensors_costs.png" alt="Výkres V04 – čidla, zapojení CR1000 a náklady" loading="lazy"></a><figcaption><span>V04</span>Čidla, zapojení CR1000, náklady</figcaption></figure>
+      <figure><a class="img" href="vykresy/E7-V05_freezer_layout.png" target="_blank" rel="noopener"><img src="vykresy/E7-V05_freezer_layout.png" alt="Výkres V05 – umístění v mrazáku" loading="lazy"></a><figcaption><span>V05</span>Umístění v truhlicovém mrazáku</figcaption></figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-buy">
+    <h2 id="h-buy">Co koupit</h2>
+    <p class="sub">Ceny z e-shopů 10/2026, před objednáním je ověřte. 1 € ≈ 25 Kč. Už máme: tištěnou celu, TDR CS645 + TDR100/200, Pt100, optické vlákno, CR1000.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Měření</th><th>Co</th><th>Výrobce / typ</th><th>Cena</th><th>Kde koupit</th></tr></thead>
+        <tbody>
+          <tr><td class="tag">kamera</td><td>Počítač ke kameře</td><td>Raspberry Pi 5, 4 GB</td><td class="p">2 769 Kč s DPH</td><td><a href="https://www.zbozi.cz/vyrobek/raspberry-pi-5-rpi5-4gb-single/" target="_blank" rel="noopener">RPishop.cz</a></td></tr>
+          <tr><td class="tag">kamera</td><td>Zdroj, SD karta, kabel ke kameře</td><td>oficiální zdroj 27 W, karta 32 GB, Camera Cable Standard–Mini 200 mm</td><td class="p est">≈ 400–600 Kč</td><td>RPishop.cz</td></tr>
+          <tr><td class="tag">kamera</td><td>Kamera</td><td>Raspberry Pi HQ Camera, C/CS-mount, Sony IMX477 12 MP<span class="m">OFI060 – ne verze M12</span></td><td class="p">1 499 Kč s DPH</td><td><a href="https://rpishop.cz/mipi-kamerove-moduly/2458-raspberry-pi-hq-kamera.html" target="_blank" rel="noopener">RPishop.cz</a>, <a href="https://www.conrad.cz/cs/p/raspberry-pi-sc1220-rasp-cam-hq-modul-barevne-kamery-cmos-vhodne-pro-vyvojove-sady-raspberry-pi-2264546.html" target="_blank" rel="noopener">Conrad.cz</a></td></tr>
+          <tr><td class="tag">kamera</td><td>Objektiv</td><td>Arducam 8 mm, CS-mount, F1.4, ruční ostření</td><td class="p">≈ 20 €</td><td><a href="https://thepihut.com/products/cs-mount-lens-for-raspberry-pi-hq-camera-8mm-focal-length" target="_blank" rel="noopener">The Pi Hut</a>, <a href="https://welectron.com/Arducam-LN038-CS-Mount-Lens-for-Raspberry-Pi-HQ-Camera" target="_blank" rel="noopener">Welectron</a></td></tr>
+          <tr><td class="tag">laser</td><td>Vícečárový laser</td><td>Picotronic DOE253-635-1-6(10x22)<span class="m">obj. č. 70111842 · 11 čar · 635 nm · 1 mW · 5 V · ⌀10 × 22</span></td><td class="p">91,51 € bez DPH</td><td><a href="https://www.picotronic.de/picopage/en/product/detail/id/86333" target="_blank" rel="noopener">Picotronic (DE)</a></td></tr>
+          <tr><td class="tag">kamera</td><td>Vyhřívaný box kamery</td><td>XPS 30 mm, topná fólie 12 V / 5 W + termostat, okénko 2× sklo</td><td class="p est">odhad 40–80 €</td><td>GM electronic, TME, hobby market</td></tr>
+          <tr><td class="tag">LVDT</td><td>Snímač zdvihu pístu</td><td>RDP Electronics DCTH400AG<span class="m">±10 mm · pružina · vestavěná elektronika · výstup ±5 V</span></td><td class="p">581 €</td><td><a href="https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor" target="_blank" rel="noopener">Elkome (FI)</a> nebo RDP (UK)</td></tr>
+          <tr><td class="tag">LVDT</td><td>Napájení LVDT</td><td>Mean Well HDR-15-24, 24 V, DIN lišta (izolovaný zdroj)</td><td class="p">≈ 11 € bez DPH</td><td><a href="https://www.tme.com/ca/en/details/hdr-15-24/din-rail-mounting-power-supplies/mean-well/" target="_blank" rel="noopener">TME</a></td></tr>
+          <tr><td class="tag">Pt100</td><td>Modul pro Pt100 do CR1000</td><td>Campbell Scientific 4WPB100 (4vodičový můstek)</td><td class="p est">na dotaz, odhad 60–120 €</td><td><a href="https://campbellsci.com/ekotechnika" target="_blank" rel="noopener">Ekotechnika, Černošice</a><span class="m">tel. 251 640 511</span></td></tr>
+          <tr><td class="tag">vzduch</td><td>Teplota vzduchu (volitelně)</td><td>Campbell Scientific 109, termistor −50…+70 °C</td><td class="p est">na dotaz, odhad 150–220 €</td><td>Ekotechnika</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="total">Celkem i s mechanikou (rám, píst, závaží) ≈ 1 370–1 870 € bez DPH, tedy ≈ 34–47 tis. Kč.</p>
+  </section>
+
+  <section aria-labelledby="h-notes">
+    <h2 id="h-notes">Na co si dát pozor</h2>
+    <ul class="notes">
+      <li><b>Kamera:</b> objektiv ostří od 0,3 m, kamera je ≈ 0,17 m od povrchu. Doostří se kroužkem zadní ohniskové vzdálenosti na HQ kameře (posun ≈ 0,2 mm).</li>
+      <li><b>Laser:</b> úhel vzoru 41° dá ze současné polohy (≈ 134 mm od středu, 45°) rozteč ≈ 14 mm, tedy asi 7–8 čar na ⌀100 místo 11 po 9 mm. Pro 9 mm je potřeba užší DOE (≈ 28°) nebo laser blíž. Ověřit u Picotronicu.</li>
+      <li><b>Stín límce:</b> při laseru pod 45° límec (34 mm nad pískem) zastíní u stěny na straně laseru pruh ≈ 25 mm, kde chybí 2–3 čáry. Strmější laser (≈ 65–70°) stín téměř odstraní, ale sníží citlivost na ≈ 0,4 × zdvih.</li>
+      <li><b>LVDT v mrazáku:</b> zdroje uvádějí spodní provozní teplotu −40 °C i jen −10 °C. Provoz při −10 °C ověřit u RDP nebo Elkome.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-q">
+    <h2 id="h-q">Otevřené otázky</h2>
+    <ol class="qs">
+      <li>Rozteč tyčí TDR CS645: 8,9 nebo 9 mm? Kolik sond CS645 použijeme?</li>
+      <li>Volná výška nad pískem: 34 nebo 35 mm?</li>
+      <li>Odsazení optického vlákna od tyče: 4,7 nebo 3 mm?</li>
+      <li>Měří Pt100 na špičce, nebo po délce 25 mm?</li>
+      <li>Vnitřní rozměry mrazáku: sestava je vysoká ≈ 598 mm, odhad vnitřní výšky je jen ≈ 650 mm.</li>
+    </ol>
+  </section>
+
+  <footer>Zdrojové soubory (Python, DXF, STEP pro Onshape, PDF výkresů): GitHub repozitář my_data_projects, větev claude/infiltration-experiment-schema-j4t481, složka e7_frost_heave_load.</footer>
+</div>
