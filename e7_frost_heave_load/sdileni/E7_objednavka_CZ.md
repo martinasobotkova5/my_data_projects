@@ -105,6 +105,21 @@ Kde: Picotronic (DE), Elkome (FI), [Ekotechnika Černošice](https://campbellsci
 | Campbell 4WPB100 | modul pro 4vodičové Pt100 | 1 | ≈ 60–120 € | poptat – tel. +420 251 640 511 |
 | Campbell 109-L, kabel 3 m | teplota vzduchu (povinně) | 1 | ≈ 150–220 € | poptat |
 
+## 8a · České firmy / české zastoupení pro kameru, laser a LVDT (alternativy k bodu 8)
+
+Kde: vybrat jednu možnost v každém řádku; u jiného průměru těla LVDT / laseru upravit svěrku P02 / držák P05
+
+| položka | specifikace | ks | cena | stav |
+|---|---|---|---|---|
+| Kamera: Raspberry Pi HQ + 6 mm objektiv + RPi 5 | [RPishop.cz](https://rpishop.cz/mipi-kamerove-moduly/2458-raspberry-pi-hq-kamera.html) – oficiální Raspberry Pi Approved Reseller, České Budějovice; Raspberry Pi prodává i [Alza](https://www.alza.cz/18852654-v3978.htm) | 1 | 1 499 + 2 769 Kč | ověřeno |
+| Kamera (průmyslová varianta) | [ATEsystem Ostrava](https://eshop.atesystem.cz/c/2158/prumyslove-kamery) – výhradní distributor Basler pro ČR a SK, objektivy Computar/Tamron, osvětlení Smart View (CZ); potřebuje PC | 1 | poptat | info |
+| Laser 11 rovnoběžných čar: Laser Components FLEXPOINT + DOE 11 čar | [Distrelec CZ – průmyslové laserové moduly Laser Components](https://www.distrelec.cz/cs/pf/1633857); DOE 5/7/11/25/65 čar ([katalog](https://media.distrelec.com/Web/Downloads/_t/ds/flexpoint_eng_tds.pdf)); modul ⌀11,5 → držák P05 na ⌀11,7 | 1 | poptat | info |
+| Laser (jednoduchý, česky) | [laser-shop.cz](https://laser-shop.cz/115-laserove-moduly-prumyslove/) – čárové moduly 650 nm (1 čára) a mřížka 8 × 8; 11 rovnoběžných čar nemají |  |  | info |
+| LVDT: Micro-Epsilon induSENSOR DTA-10D (±10 mm) + kontrolér MSC7401 (analog U/I) | [Micro-Epsilon Czech Republic, Bechyně](https://www.micro-epsilon.cz/displacement-position-sensors/inductive-sensor-lvdt/Spannhubsensor/) – česká pobočka výrobce, info@micro-epsilon.cz | 1 | poptat | doporučeno |
+| LVDT: Omega LD620-10 (±10 mm, ±5 V DC, napájení 10–30 V) | [DwyerOmega CZ](https://www.jakar.cz/p/lvdt-linearni-snimac-polohy-s-ac-vystupem/6465) – stejné zapojení jako RDP DCTH (DC vstup i výstup), tělo ⌀19 | 1 | ≈ 1 000 USD (US ceník) | poptat |
+| LVDT pro laboratoře (geotechnika) | [Labtech – stroje pro zkušebnictví](https://www.strojeprozkusebnictvi.cz/lvdt-snimac-polohy.html) – autorizovaný distributor, poptat ±10 mm s DC výstupem | 1 | poptat | info |
+| LVDT Solartron | [RS Components CZ](https://cz.rs-online.com/web/b/solartron-metrology) – sondy ±10 mm; AC verze potřebují převodník | 1 | ≈ 390 € (PT ceník) | info |
+
 ## 9 · Spotřební materiál
 
 Kde: Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)
