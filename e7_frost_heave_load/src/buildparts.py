@@ -71,7 +71,7 @@ LASER = [_carrier(), _piston(True), _piston(False),
 # --- T-slot profiles (slot 8, item/Bosch compatible): only cut to length, one Ø14 hole in the top beam --------
 PROFILES = [
     dict(no="E7-T01", name="sloup / column", section=(40.0, 80.0), L=COL_H, qty=2, note="řez kolmý, oba stejně"),
-    dict(no="E7-T02", name="podélník základny / base rail", section=(40.0, 40.0), L=2 * 130.0, qty=2,
+    dict(no="E7-T02", name="podélník základny / base rail", section=(40.0, 40.0), L=p.C_BASE[1], qty=2,
          note="pod sloupy, osa x = ±150"),
     dict(no="E7-T03", name="příčka základny / base cross bar", section=(80.0, 40.0), L=2 * (p.C_RAIL_X - 20), qty=1,
          note=f"naplocho mezi podélníky, osa y = {p.C_CROSS_Y[0]:g}; nese 3 podložky G10"),
@@ -302,10 +302,45 @@ def camera_hanger():
     return flange.union(arm).union(pad).cut(_cam_place(keep_out))   # arm trimmed to clear box and lid
 
 
+# --- pomůcky pro přípravu a výměnu vzorku (tisk) ---------------------------------------------------------
+SCREED_DEPTH = p.COLLAR_TOP - p.SAND_TOP          # 34 – povrch písku pod horní hranou límce
+PARK_LIFT = 30.0                                  # o kolik se tyč zvedne při výměně cely
+PARK_H = (Z_COLLAR - Z_TOP) + PARK_LIFT           # výška vidlice na horní ploše T04
+
+
+def centering_cap():
+    """P09 – středicí víčko: nasadí se na límec plné cely (⌀106), tyč ⌀12 projde středem → cela je souosá
+    s vedením; podkova (drážka 12,6) – po vystředění se vysune do strany. z 0 … 10."""
+    s = cq.Workplane("XY").circle(66).extrude(10)
+    s = s.cut(cq.Workplane("XY").circle(p.COLLAR_OD / 2 + 0.3).extrude(6))          # nasazení na límec
+    s = s.cut(cq.Workplane("XY").circle(p.C_ROD_D / 2 + 0.2).extrude(10))           # tyč
+    s = s.cut(cq.Workplane("XY").center(0, -35).rect(p.C_ROD_D + 0.6, 70).extrude(10))   # podkova
+    return s
+
+
+def screed():
+    """P10 – stěrka povrchu: příčka 124 × 16 × 6 leží na límci, břit 99 × 3 sahá 34 mm pod jeho hranu;
+    otáčením se srovná povrch písku přesně do výšky SAND_TOP. Lokální z = 0 je horní hrana límce."""
+    bar = cq.Workplane("XY").box(124, 16, 6, centered=(True, True, False))
+    blade = cq.Workplane("XY").box(p.CAV_D - 1.0, 3, SCREED_DEPTH, centered=(True, True, False)).translate((0, 0, -SCREED_DEPTH))
+    grip = cq.Workplane("XY").box(16, 16, 30, centered=(True, True, False)).translate((0, 0, 6))
+    return bar.union(blade).union(grip)
+
+
+def parking_fork():
+    """P11 – parkovací vidlice: postaví se na T04 kolem tyče pod stavěcí kroužek → tyč zůstane zvednutá
+    o 30 mm nad límcem cely, cela se dá vyjmout. 40 × 60 × PARK_H, drážka 12,6."""
+    s = cq.Workplane("XY").box(40, 60, PARK_H, centered=(True, True, False))
+    s = s.cut(cq.Workplane("XY").center(0, -15).rect(p.C_ROD_D + 0.6, 30).extrude(PARK_H))
+    s = s.cut(cq.Workplane("XY").circle(p.C_ROD_D / 2 + 0.3).extrude(PARK_H))
+    return s
+
+
 PRINT = [("E7-P01_bearing_housing", housing, 1), ("E7-P02_lvdt_arm", lvdt_arm, 1),
          ("E7-P03_target_arm", target_arm, 1), ("E7-P04_post_foot", post_foot, 1),
          ("E7-P05_laser_holder", laser_holder, 1), ("E7-P06_camera_box", camera_box, 1),
-         ("E7-P07_camera_box_lid", camera_box_lid, 1), ("E7-P08_camera_hanger", camera_hanger, 1)]
+         ("E7-P07_camera_box_lid", camera_box_lid, 1), ("E7-P08_camera_hanger", camera_hanger, 1),
+         ("E7-P09_centering_cap", centering_cap, 1), ("E7-P10_screed", screed, 1), ("E7-P11_parking_fork", parking_fork, 1)]
 
 
 def export_all():

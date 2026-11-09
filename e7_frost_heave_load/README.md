@@ -4,13 +4,15 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 ## ★ Aktuální návrh: varianta C, měření deformace 1 + 2 (výkresy V01–V05)
 
+**Statika, CR850 a postup (9. 11. 2026):** rám ověřen na únosnost (rezerva > 20×), rozhoduje stabilita → podélníky 320 mm, nohy ±140 (`vypocty.md` §17); datalogger CR850 – plán kanálů §18; rizika měření a postup přípravy, vložení a výměny vzorku v `postup_zkousky.md` (nové tištěné pomůcky P09 středicí víčko, P10 stěrka, P11 parkovací vidlice); poptávka rámu u ENPRAG v `poptavka_ramu.md`.
+
 **Revize B3 (9. 11. 2026):** celý rám z hliníkových T-profilů drážka 8 řezaných na délku – 2 podélníky 40×40, příčka 40×80 (nese 3 podložky G10), 2 sloupy 40×80, horní příčník 40×80 s jediným otvorem ⌀14; pouzdro ložiska visí pod příčníkem, spoje úhelníky a vkládací T-matice. Laserem řezané desky L01/L02 odpadly. Výkresy profilů T01–T04 ve `vyroba/vykresy`.
 
 **Revize B2 (27. 10. 2026):** sestava jen z koupených, laserem řezaných a 3D tištěných dílů (bez obrábění) – objednávka po obchodech a postup sestavení v `objednavka.md`, výrobní list V06, DXF v `vyroba/laser`, STL v `vyroba/tisk`.
 
 **Revize B (27. 10. 2026, podle posudku měření `E7_review.pdf`):** cela tištěná vcelku ⌀240 × 200 s izolací (+40 mm stěna a dno z nízké výplně,
 3 podložky G10 v kapsách dna → mrznutí shora), LVDT a referenční terčík kamery na sloupku z Invaru, vodicí tyč z Invaru v kluzném pouzdře
-igus drylin, laser pod 68° z držáku na příčníku (11 čar po 9,6 mm, bez stínu límce), RPi 5 v boxu kamery (spouštění z CR1000 C5),
+igus drylin, laser pod 68° z držáku na příčníku (11 čar po 9,6 mm, bez stínu límce), RPi 5 v boxu kamery (spouštění z CR850 C4),
 čidlo vzduchu 109 povinně, ventilátor, SHT45, vážení cely. Mezera pod příčníkem 200 → 160 mm, celková výška beze změny.
 Pt100 jde ze stejné strany jako TDR a nasedá uprostřed přímo nad horní tyčku (bod M v jednom místě, povrch volný).
 Rozhodnuto 9. 11. 2026: nasycení vzorku Sr = 0,5 (θ ≈ 0,19) → zdvih nanejvýš desítky µm, měří se hlavně sednutí při tání; Pt100 osa 3,5 mm nad horní tyčkou, hrot 30 mm od stěny. Výpočty §15 v `vypocty.md`,
@@ -21,7 +23,7 @@ simulace `src/sim_thaw.py` (`--bare` = původní cela pro srovnání), nákup `p
 | **V01** | sestava C: Al rám jen vede mrtvou váhu na částečném pístu ⌀50, volný povrch, tabulka zatížení, díly |
 | **V02** | měření deformace: (1) kamera + vícečárový laser 11 čar → mapa výšek **celého povrchu**, (2) LVDT na zátěži; vyhodnocení a postup |
 | **V03** | tištěná cela ⌀160 s bodem M (CS645, vlákno, Pt100 v mezikruží mimo laser) |
-| **V04** | čidla ke koupi, zapojení CR1000, ceny (≈ 1,3–2,1 tis. €) |
+| **V04** | čidla ke koupi, zapojení CR850, ceny (≈ 1,3–2,1 tis. €) |
 | **V05** | rig C v mrazáku, kontrola výšky |
 
 - Žádné tlakové snímače ani kotvy – zatížení je známá mrtvá váha, deformace se měří jen (1) a (2).
@@ -37,7 +39,7 @@ Regenerace výkresů: `cd src && python vykresy_c.py` (aktuální sada), `python
 | `3d/*.step` | 3D sestavy pro Onshape: varianta A, varianta B, samotná cela, obě v mrazáku (+ STL a PNG náhledy) |
 | `vypocty.md` | zatížení, očekávané deformace, rozlišení LVDT, teplotní chyba stojanu, napětí v cele, závaží |
 | `src/params.py` | všechny rozměry a předpoklady |
-| `src/sensors.py` | výběr čidel a plán kanálů CR1000 |
+| `src/sensors.py` | výběr čidel a plán kanálů (varianta C: CR850, §18 v `vypocty.md`) |
 | `src/vykresy.py`, `src/vypocty.py`, `src/model3d.py`, `src/render3d.py` | generátory |
 
 > Kapitoly 2–3 a 6–8 popisují i starší řešení varianty A (závaží, vícekroužková/plná cela); aktuální návrh je v kap. 1a–1c, 4a, 5, 5a a na výkresech V01–V08.

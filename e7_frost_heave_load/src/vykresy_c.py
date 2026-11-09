@@ -176,24 +176,24 @@ def _sheet_assembly(pdf):
     bw, bd, bt = p.C_BASE
     v.dim_v(ZB0, ZBEAM, -bd / 2, -bd / 2 - 18, f"{COL_H:g}")
     v.dim_v(V.Z_S1, ZBEAM, 50, 72, f"{p.C_BEAM_GAP:g}")
-    v.dim_v(ZB0 - bt, ztop, bd / 2 + 10, bd / 2 + 30, f"{ztop - ZB0 + bt:.0f}")
+    v.dim_v(ZB0 - bt, ztop, bd / 2 + 4, bd / 2 + 18, f"{ztop - ZB0 + bt:.0f}")
     v.dim_h(-p.C_PISTON_D / 2, p.C_PISTON_D / 2, ZP, ZP + 12, "⌀50 piston")
     v.dim_h(-p.C_DISC_D / 2, p.C_DISC_D / 2, ztop, ztop + 12, f"⌀{p.C_DISC_D:g} discs")
     t = V.tag
-    t(v, 0, ZC + p.C_CARRIER_T + 20, 172, ztop + 25, "dead weight: carrier + discs 1 kg\n(moves up and down)")
-    t(v, 0, ZBEAM + 40, 172, ZBEAM + 50, "igus drylin RJ4JP-01-12 in a printed housing\nunder the top beam (T-profile 40×80, ⌀14)")
-    t(v, p.C_LVDT_XY[1], Z_LV + 30, 172, ZBEAM + 95, "(2) LVDT on a printed arm of the Invar post", V.SENS_TXT)
-    t(v, 0, V.Z_S1 + 90, 172, ZBEAM + 15, "guide rod Invar 36 ⌀12, ball ⌀8", "#5b4a99")
-    t(v, p.C_INVAR_XY[1], V.Z_S1 + 60, 172, V.Z_S1 + 120, f"Invar post ⌀16 (x = {p.C_INVAR_XY[0]:g})\nin a printed foot on the base rail", "#5b4a99")
-    t(v, p.C_REF_XY[1], ZCELL + p.COLLAR_TOP + 4, 172, V.Z_S1 + 85, "Invar target = camera reference", "#5b4a99")
-    t(v, YL, ZL, 172, V.Z_S1 + 60, "(1) laser 68°, 11 lines", "#c0392b")
-    t(v, 20, ZP - 5, 172, V.Z_S1 + 36, "partial piston ⌀50×20")
-    t(v, 38, V.Z_S1 + 0.3, 172, V.Z_S1 + 14, "FREE surface (25 mm annulus)", FREE)
-    t(v, -10, V.Z_S1 - 45, 172, V.Z_S1 - 30, "M: CS645 + fibre + Pt100", "#d33682")
-    t(v, p.BODY_D / 2 - 5, V.Z_S0 + 10, 172, V.Z_S0 - 5, "printed cell ⌀240, one piece (V03)")
-    t(v, RO - 8, ZCELL + 70, 172, V.Z_S0 - 30, "printed wall +40 (gyroid 10–15 %)", "#3a6f99")
-    t(v, 60, ZB0 + 20, 172, ZB0 + 5, "printed base 40 + 3 G10 pads ⌀20×40", "#3a6f99")
-    t(v, p.C_CROSS_Y[0] + 30, ZB0 - 20, 172, ZB0 - 30, "base: T-profile rails 40×40\n+ cross bar 40×80")
+    t(v, 0, ZC + p.C_CARRIER_T + 20, 180, ztop + 25, "dead weight: carrier + discs 1 kg\n(moves up and down)")
+    t(v, 0, ZBEAM + 40, 180, ZBEAM + 50, "igus RJ4JP-01-12 in a printed housing\nunder the top beam (40×80, ⌀14)")
+    t(v, p.C_LVDT_XY[1], Z_LV + 30, 180, ZBEAM + 95, "(2) LVDT on an arm of the Invar post", V.SENS_TXT)
+    t(v, 0, V.Z_S1 + 90, 180, ZBEAM + 15, "guide rod Invar 36 ⌀12, ball ⌀8", "#5b4a99")
+    t(v, p.C_INVAR_XY[1], V.Z_S1 + 60, 180, V.Z_S1 + 120, f"Invar post ⌀16 (x = {p.C_INVAR_XY[0]:g})\nin a printed foot on the base rail", "#5b4a99")
+    t(v, p.C_REF_XY[1], ZCELL + p.COLLAR_TOP + 4, 180, V.Z_S1 + 85, "Invar target = camera reference", "#5b4a99")
+    t(v, YL, ZL, 180, V.Z_S1 + 60, "(1) laser 68°, 11 lines", "#c0392b")
+    t(v, 20, ZP - 5, 180, V.Z_S1 + 36, "partial piston ⌀50×20")
+    t(v, 38, V.Z_S1 + 0.3, 180, V.Z_S1 + 14, "FREE surface (25 mm annulus)", FREE)
+    t(v, -10, V.Z_S1 - 45, 180, V.Z_S1 - 30, "M: CS645 + fibre + Pt100", "#d33682")
+    t(v, p.BODY_D / 2 - 5, V.Z_S0 + 10, 180, V.Z_S0 - 5, "printed cell ⌀240, one piece (V03)")
+    t(v, RO - 8, ZCELL + 70, 180, V.Z_S0 - 30, "printed wall +40 (gyroid 10–15 %)", "#3a6f99")
+    t(v, 60, ZB0 + 20, 180, ZB0 + 5, "printed base 40 + 3 G10 pads", "#3a6f99")
+    t(v, p.C_CROSS_Y[0] + 30, ZB0 - 20, 180, ZB0 - 30, "base: T-profile rails 40×40\n+ cross bar 40×80")
     t(v, box_[0][0], box_[0][1], -150, ZCAM + 10, "(1) camera box:\nRPi HQ + 6 mm lens\n+ RPi 5 (its heat\nkeeps the window clear)",
       INK, ha="right")
     t(v, -40, ZBEAM + 40, -150, ZBEAM + 40, "columns 40×80\n(behind)", INK, ha="right")
@@ -330,7 +330,7 @@ def _sheet_measurement(pdf):
     # right panel
     sh.heading(255, 276, "What is measured")
     rows = [["(1) camera + 11 lines", "map h(x, y) of the whole surface", "≈ 10 µm", "every 10 / 1 min"],
-            ["(2) LVDT", "carrier = piston", "≈ 1 µm", "CR1000, 10 / 1 min"],
+            ["(2) LVDT", "carrier = piston", "≈ 1 µm", "CR850, 10 / 1 min"],
             ["Invar target", "camera / frame drift", "≈ 10 µm", "every photo"]]
     y = table(sh, 255, 272, ["method", "signal", "resolution", "interval"], rows, [38, 56, 22, 36], row_h=5.6)
     sh.heading(255, y - 10, "Evaluation per freeze–thaw cycle")
@@ -350,9 +350,9 @@ def _sheet_measurement(pdf):
             "2  calibrate (1): shims 0.1 / 0.5 / 1.0 mm under a flat plate,\n"
             "   camera px → mm for free sand and piston top\n"
             f"3  load, 24 h at +10 °C, then zero (1) and (2)\n"
-            f"4  cycle {p.C_CYCLE_H[0]:g} h −10 °C / {p.C_CYCLE_H[1]:g} h +10 °C (fan on); CR1000 C5 pulse\n"
+            f"4  cycle {p.C_CYCLE_H[0]:g} h −10 °C / {p.C_CYCLE_H[1]:g} h +10 °C (fan on); CR850 C4 pulse\n"
             "   triggers the photo; laser on only for the photo\n"
-            "5  weigh the cell before / after each cycle; log air RH\n"
+            "5  weigh a witness dish each cycle (not the cell); log air RH\n"
             "6  Sr = 0.5 (θ 0.19): expected heave tens of µm, upper bound 1.7 mm;\n"
             "   the main signal is the thaw settlement under the load",
             fontsize=fs(), va="top", linespacing=1.45)
@@ -472,39 +472,39 @@ def _sheet_cell(pdf):
 
 # --------------------------------------------------------------------------------------------
 def _sheet_sensors(pdf):
-    sh = Sheet("Sensors, CR1000 wiring and costs", "E7-V04", "–", 4, TOTAL,
+    sh = Sheet("Sensors, CR850 wiring and costs", "E7-V04", "–", 4, TOTAL,
                "existing = already in the lab; prices ≈ EUR excl. VAT, * = dealer price found, rest estimated")
     sh.heading(28, 278, "To buy")
     rows = []
     for tg_, what, n, a, b, src, ch in sn.C_BUY:
         price = f"{n * a}" if a == b else f"{n * a}–{n * b}"
         rows.append([tg_ or "  +", what, price + (" *" if src.startswith("web") else ""), ch])
-    y = table(sh, 28, 274, ["tag", "item", "EUR", "CR1000"], rows, [18, 112, 26, 52], row_h=5.6)
+    y = table(sh, 28, 274, ["tag", "item", "EUR", "CR850"], rows, [18, 112, 26, 52], row_h=5.6)
     sh.heading(28, y - 8, "Mechanics (estimate)")
     rows = [[what, f"{a}–{b}"] for what, a, b in sn.C_MECH]
     y2 = table(sh, 28, y - 12, ["item", "EUR"], rows, [130, 26], row_h=5.6)
     lo = sum(n * a for _, _, n, a, b, _, _ in sn.C_BUY) + sum(a for _, a, b in sn.C_MECH)
     hi = sum(n * b for _, _, n, a, b, _, _ in sn.C_BUY) + sum(b for _, a, b in sn.C_MECH)
     sh.text(28, y2 - 5, f"Total ≈ {lo}–{hi} EUR excl. VAT (≈ {lo * 25 / 1000:.0f}–{hi * 25 / 1000:.0f} tis. Kč). "
-            "Already available: printed cell, CS645 + TDR100/200, Pt100, optical fibre, CR1000.",
+            "Already available: printed cell, CS645 + TDR100/200, Pt100, optical fibre, CR850.",
             fontsize=fs(), weight="bold")
-    sh.heading(255, 278, "CR1000 channel plan")
-    ch = [["SE1", "(2) LVDT", "VoltSE ±5000 mV"],
-          ["DIFF1", "Pt100 via 4WPB100", "BrHalf4W, VX2 2500 mV"],
-          ["SE3", "Tair 109 (required)", "Therm109, VX1"],
+    sh.heading(255, 278, "CR850 channel plan (6 SE / 3 DIFF, C1–C4)")
+    ch = [["DIFF1", "(2) LVDT", "VoltDiff ±5000 mV, avg 20–50"],
+          ["DIFF2", "Pt100 via 4WPB100", "BrHalf4W, VX2 2500 mV"],
+          ["SE5", "Tair 109 (required)", "Therm109, VX1"],
           ["C1–C3", "TDR100/200 → CS645", "SDM"],
-          ["C4", "relay: LVDT supply", "on for the scan"],
-          ["C5", "pulse → RPi GPIO (opto)", "triggers photo + laser"],
+          ["C4", "pulse → RPi GPIO (opto)", "triggers photo + laser"],
+          ["12 V", "fan; LVDT own 24 V supply", "both always on"],
           ["–", "(1) camera + RH sensor", "RPi 5 in the camera box"],
           ["–", "optical fibre", "own reader"]]
     y = table(sh, 255, 274, ["terminal", "connected to", "measurement"], ch, [24, 56, 75], row_h=5.6)
     sh.text(255, y - 4,
             "Notes\n"
-            "• CR1000 and TDR outside; RPi 5 inside the camera box\n"
+            "• CR850 and TDR outside; RPi 5 inside the camera box\n"
             "  (no CSI ribbon through the seal, its ≈ 5 W heat the box).\n"
             "  Through the lid seal: Ethernet, 5 V, LVDT, sensor cables.\n"
             "• Scan 10 min, 1 min around 0 °C; the photo is triggered\n"
-            "  by the CR1000 (C5) → same time stamps without NTP.\n"
+            "  by the CR850 (C4) → same time stamps without NTP.\n"
             "• Fan in the freezer evens out the on/off air swings.\n"
             "• No pressure cells: the load is a known dead weight.",
             fontsize=fs(), va="top", linespacing=1.45)
@@ -514,7 +514,7 @@ def _sheet_sensors(pdf):
 # --------------------------------------------------------------------------------------------
 def _sheet_layout(pdf):
     sh = Sheet("Rig C rev. B3 in the chest freezer", "E7-V05", "1 : 5", 5, TOTAL,
-               "same freezer as E6 (≈ 900 × 550 × 650, to be measured); CR1000 outside the freezer")
+               "same freezer as E6 (≈ 900 × 550 × 650, to be measured); CR850 outside the freezer")
     k = 0.2
     v = View(sh, 35, 160, k)
     v.text(10, 535, "PLAN  1 : 5", fontsize=V.FS + 1, weight="bold", va="top")
@@ -646,9 +646,9 @@ def _sheet_parts(pdf):
     d = pr["E7-T02"]
     v = View(sh, 95, 148, K, f"T02 BASE RAIL 40×40 × {d['L']:g}, 2×", (95, 162))
     plan(v, d["L"], 40)
-    for x in (-110, 110):
+    for x in (-p.C_FOOT_Y, p.C_FOOT_Y):
         v.circle(x, 0, 4, fc="none", ec=RED, lw=0.5, ls="--", z_=4.5)
-    v.dim_h(-110, 110, -20, -30, "220 (feet M8, bottom slot)", side="below")
+    v.dim_h(-p.C_FOOT_Y, p.C_FOOT_Y, -20, -30, f"{2 * p.C_FOOT_Y:g} (feet M8, bottom slot)", side="below")
     v.dim_h(-d["L"] / 2, d["L"] / 2, -20, -46, f"{d['L']:g}", side="below")
     end(210, 148, 40, 40)
     # T01 columns

@@ -1,7 +1,7 @@
 # E7 – variant C rev. B: what to buy (sensors, manufacturer, price, supplier)
 
 Prices from online shops, October 2026; check them before ordering. 1 € ≈ 25 CZK.
-Already available: printed cell, TDR CS645 + TDR100/200, Pt100, optical fibre, CR1000.
+Already available: printed cell, TDR CS645 + TDR100/200, Pt100, optical fibre, CR850.
 Rev. B follows the measurement review (`E7_review.pdf`). Czech version: `nakup_cidel.md`.
 
 ## Sensors and electronics
@@ -17,7 +17,7 @@ Rev. B follows the measurement review (`E7_review.pdf`). Czech version: `nakup_c
 | 6 | Multi-line laser | Picotronic DOE253-635-1-6(10x22), order no. 70111842: 11 lines, 635 nm, 1 mW, 5 V | 91.51 € excl. VAT | [Picotronic (DE)](https://www.picotronic.de/picopage/en/product/detail/id/86333) |
 | 7 | LVDT (piston) | RDP Electronics DCTH400AG: ±10 mm, spring return, ±5 V output | 581 € | [Elkome (FI)](https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor) or RDP (UK) |
 | 8 | LVDT power supply | Mean Well HDR-15-24, 24 V DIN (isolated) | ≈ 11 € excl. VAT | [TME](https://www.tme.com/ca/en/details/hdr-15-24/din-rail-mounting-power-supplies/mean-well/) |
-| 9 | Pt100 module for the CR1000 | Campbell Scientific 4WPB100 | on request (est. 60–120 €) | [Ekotechnika, Černošice](https://campbellsci.com/ekotechnika), tel. +420 251 640 511 |
+| 9 | Pt100 module for the CR850 | Campbell Scientific 4WPB100 | on request (est. 60–120 €) | [Ekotechnika, Černošice](https://campbellsci.com/ekotechnika), tel. +420 251 640 511 |
 | 10 | Air temperature (**required**: boundary condition) | Campbell Scientific 109, 3 m cable | on request (est. 150–220 €) | Ekotechnika |
 | 11 | Air mixing in the freezer | 80 mm 12 V fan (low-temperature bearing) | est. 10–20 € | TME, GM electronic |
 | 12 | Camera calibration | shims 0.1 / 0.5 / 1.0 mm (feeler gauge set) | est. 10–25 € | tool shop |
@@ -33,7 +33,7 @@ Rev. B follows the measurement review (`E7_review.pdf`). Czech version: `nakup_c
 | Cell printed in ONE piece ⌀240 × 200 (PETG-CF ≈ 1.5 kg) + 3 G10 pads ⌀20 × 40 (elektroizolanty.cz) | 45–90 € |
 | Printed parts P01–P08: bearing housing, LVDT and target arms, post foot, laser holder, camera box | 10–25 € |
 
-Total ≈ 1,450–1,980 € excl. VAT, i.e. ≈ 36–50 thousand CZK (drawing V04). Rev. A was ≈ 1,370–1,870 €.
+Total ≈ 1,460–1,990 € excl. VAT, i.e. ≈ 36–50 thousand CZK (drawing V04). Rev. A was ≈ 1,370–1,870 €.
 Invar 36 bar: ask a specialty metals supplier (e.g. Goodfellow, or a local distributor of Invar/FeNi36).
 
 ## Notes
@@ -41,7 +41,7 @@ Invar 36 bar: ask a specialty metals supplier (e.g. Goodfellow, or a local distr
   focus with the back-focus ring. The RPi 5 sits in the box, so only Ethernet and 5 V pass the lid seal.
 - **Laser:** in rev. B it hangs from the beam at 68° (y 46, 115 mm above the sand, ≈ 124 mm from the centre):
   the 41° pattern then gives 11 lines at ≈ 9.6 mm on ⌀100 and the collar casts no shadow. Confirm the pattern size with Picotronic.
-- **LVDT:** single isolated 24 V supply; ±5 V output straight into the CR1000. Confirm operation at −10 °C with RDP/Elkome.
-- **4WPB100** only if your Pt100 is 4-wire and read directly by the CR1000.
+- **LVDT:** single isolated 24 V supply; ±5 V output straight into the CR850. Confirm operation at −10 °C with RDP/Elkome.
+- **4WPB100** only if your Pt100 is 4-wire and read directly by the CR850.
 - **Sample (decided 9 Nov 2026):** Sr = 0.5 (θ ≈ 0.19). Expected heave is tens of µm at most; E7 measures mainly the thaw settlement under load.
 - **Recommended suppliers:** RPishop.cz (camera, RPi 5), Picotronic (laser DOE253), Elkome (LVDT RDP DCTH400AG) – the holders P02/P05 are drawn for these; Micro-Epsilon CZ as a comparison quote for the LVDT.

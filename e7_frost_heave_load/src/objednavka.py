@@ -26,11 +26,16 @@ SHOPS = [
        d["qty"], "", "") for d in bp.LASER]
      + [("—", "Hliník 10 mm: ověřit, že ho laser zvládne; jinak stejné DXF na vodní paprsek. Ocel 12 mm: "
               "kotouče převážit, ±0,5 mm tloušťky = ±4 % hmotnosti", "", "≈ 70–140 € celkem", "odhad")]),
-    ("2 · Hliníkové T-profily (drážka 8) a spojovací díly rámu – celý rám",
-     "[Enprag](https://www.enprag.cz/hlinikove-profily/c-6027) (drážka 8, kompatibilní s item/Bosch, řez na míru – "
-     "do poznámky napsat délky a kusy podle tabulky, u T04 požádat o vyvrtání ⌀14); alternativa "
+    ("2 · Hliníkové T-profily (drážka 8) a spojovací díly rámu – celý rám jako jedna sada",
+     "**doporučeno: [ENPRAG, s.r.o., Praha 5](https://www.enprag.cz/hlinikove-profily/c-6027)** (česká firma, IČO 62743741, "
+     "K Holyni 833/42, tel. +420 224 942 663, zdarma 800 888 868) – profily drážka 8 (kompatibilní s item/Bosch) "
+     "nařeže podle zadání, dodá je s návodem k montáži a výrobním výkresem, nebo jako **kompletně sestavenou konstrukci**, "
+     "návrh s 3D vizualizací zdarma; poslat výkresy T01–T04 (`vyroba/vykresy`) a tabulku níže, požádat o vyvrtání ⌀14 "
+     "v T04 a o celou sadu spojovacího materiálu (poptávka: `poptavka_ramu.md`). Alternativy: "
+     "[Alutec K&K s.r.o.](https://katalog.aluteckk.cz/kategorie-produktu/modul-40-drazka-8/) (český výrobce, modul 40 "
+     "drážka 8, délka na zakázku, úhelníky, matice), [Profimet](https://profimet.cz/sluzby/) (profily dle výkresu), "
      "[eProfily.cz](https://www.eprofily.cz/hlinikovy-profil-80x40-s-drazkou-8-mm/kat3007.html). Na Alze konstrukční "
-     "profily nejsou. Výkresy: `vyroba/vykresy/E7-T01…T04`",
+     "profily nejsou.",
      [(f"{d['no'][3:]} profil {min(d['section']):g}×{max(d['section']):g} drážka 8 – {d['name'].split(' / ')[0]}",
        f"řez na délku {d['L']:g} mm, kolmý řez ±0,2" + ("; uprostřed svislý otvor ⌀14 skrz" if d["no"] == "E7-T04" else ""),
        d["qty"], "31,43 €/m bez DPH (+ řez)" if max(d["section"]) == 80 else "≈ 15–20 €/m (+ řez)",
@@ -42,7 +47,7 @@ SHOPS = [
         ("T-matice drážka 8, M8, vkládací (otočná)", "úhelníky (24) + nohy (4) + 4 rezerva", 32, "≈ 1 €/ks", "odhad"),
         ("T-matice drážka 8, M5, vkládací (otočná)", "pouzdro P01 (4), patka P04 (2), držák laseru P05 (2), závěs kamery P08 (2) + 2 rezerva",
          12, "≈ 1 €/ks", "odhad"),
-        ("Stavitelná noha M8 (talíř ⌀30–40)", "do T-matic ve spodní drážce podélníků T02 (y ±110)", 4, "≈ 3–5 €/ks", "odhad"),
+        ("Stavitelná noha M8 (talíř ⌀30–40)", f"do T-matic ve spodní drážce podélníků T02 (y ±{p.C_FOOT_Y:g})", 4, "≈ 3–5 €/ks", "odhad"),
         ("Krytka čela 40×80 / 40×40 (volitelně)", "konce příčníku a podélníků", 6, "≈ 0,5 €/ks", "odhad")]),
     ("3 · Invar 36 (tyče řezané na délku)",
      "**česky:** [Kovohutě Rokycany](http://www.koro.cz/produkty/nikl-a-slitiny-niklu/) – FeNi36 (1.3912) tyče ⌀10–200 mm, "
@@ -75,7 +80,7 @@ SHOPS = [
       ("—", "spojovací materiál celkem", "", "≈ 15–25 €", "odhad")]),
     ("6 · 3D tisk (vlastní tiskárna)",
      "[Prusament PETG Carbon Fiber](https://www.prusa3d.com/product/prusament-petg-carbon-fiber-black-1kg/) (Prusa, CZ)",
-     [("Prusament PETG Carbon Fiber 1 kg", "cela ≈ 1,3–1,6 kg + díly P01–P08 ≈ 0,3 kg", 2, "≈ 55 €/ks", "ověřeno (USD cena)"),
+     [("Prusament PETG Carbon Fiber 1 kg", "cela ≈ 1,3–1,6 kg + díly P01–P11 ≈ 0,5 kg", 2, "≈ 55 €/ks", "ověřeno (USD cena)"),
       ("Tiskárna pro celu", "podložka ≥ 250 × 250, výška ≥ 200 (Prusa XL, Bambu X1/P1S); Prusa MK4/Core One nestačí",
        "", "", "info"),
       ("Sklo do okénka boxu kamery", "50 × 50 × 2 mm (sklo z fotorámečku / sklenářství) nebo plexi 2 mm", 1, "≈ 1–3 €", "odhad")]),
@@ -90,7 +95,7 @@ SHOPS = [
       ("Ventilátor 80 mm 12 V + zdroj 12 V", "promíchání vzduchu (běží trvale)", 1, "≈ 10–20 €", "odhad"),
       ("Mean Well HDR-15-24 (24 V DIN)", "napájení LVDT (trvale zapnuté)", 1, "≈ 11 € bez DPH", "ověřeno (TME)"),
       ("Kabelová vývodka PG7 + Ethernet kabel 3 m", "box kamery", 1, "≈ 5 €", "odhad"),
-      ("Optočlen / relé modul 5 V pro spouštění snímku", "CR1000 C5 → GPIO RPi", 1, "≈ 3–5 €", "odhad")]),
+      ("Optočlen / relé modul 5 V pro spouštění snímku", "CR850 C4 → GPIO RPi", 1, "≈ 3–5 €", "odhad")]),
     ("8 · Čidla ze zahraničí a Campbell",
      "Picotronic (DE), Elkome (FI), [Ekotechnika Černošice](https://campbellsci.com/ekotechnika) (Campbell pro ČR)",
      [("Laser Picotronic DOE253-635-1-6(10x22), obj. č. 70111842",
@@ -126,7 +131,7 @@ SHOPS = [
        "(DC vstup i výstup), tělo ⌀19", 1, "≈ 1 000 USD (US ceník)", "poptat"),
       ("LVDT: HBM WA/10 mm (±10 mm, pružinový hrot)",
        "[HBP měřicí technika s.r.o., Praha 4](https://www.hbm.cz/en/produkty/kategorie/wa/) – zastoupení HBK/HBM, "
-       "tel. +420 224 921 861, hbmcz@hbm.cz; pasivní indukční snímač – potřebuje zesilovač s nosnou frekvencí, ne přímo CR1000", 1,
+       "tel. +420 224 921 861, hbmcz@hbm.cz; pasivní indukční snímač – potřebuje zesilovač s nosnou frekvencí, ne přímo CR850", 1,
        "poptat", "info"),
       ("LVDT pro laboratoře (geotechnika)", "[Labtech – stroje pro zkušebnictví](https://www.strojeprozkusebnictvi.cz/lvdt-snimac-polohy.html) "
        "– autorizovaný distributor, poptat ±10 mm s DC výstupem", 1, "poptat", "info"),
@@ -137,28 +142,37 @@ SHOPS = [
      [("Dvousložkový epoxid", "nátěr dutiny cely + slepení pístu (L04 + L05)", 1, "≈ 10–15 €", "odhad"),
       ("PTFE sprej + silikonová vazelína (Molykote 111)", "stěna dutiny", 1, "≈ 15–25 €", "odhad"),
       ("Spároměr 0,05–1,00 mm", "kalibrace kamery (0,1 / 0,5 / 1,0 mm)", 1, "≈ 5–10 €", "odhad"),
-      ("Bílá matná samolepka / papír 12 × 12", "terčík na rameno P03", 1, "", "")]),
+      ("Bílá matná samolepka / papír 12 × 12", "terčík na rameno P03", 1, "", ""),
+      ("Ocelové kolíky / hřebíky ⌀3 × 40 (4 ks) + ocelová tyčinka ⌀3 × 120", "zátky otvorů pro tyčky TDR a Pt100 při "
+       "hutnění; předvrtání kanálků před zasunutím čidel", 1, "≈ 3 €", "odhad"),
+      ("Kontrolní miska ⌀100 × 20 (sklo / nerez)", "„svědek“ odpařování: stejný písek, váží se každý cyklus (cela se neváží)",
+       1, "≈ 5 €", "odhad"),
+      ("Pěch ⌀95 (ocel / PETG) + kovové pravítko", "hutnění po vrstvách 20 mm mimo rám na rovné podložce", 1, "≈ 10 €", "odhad"),
+      ("Příchytky kabelů do drážky 8 + stahovací pásky", "kabely TDR / Pt100 / vlákna k podélníku – netahají za celu", 4,
+       "≈ 1 €/ks", "odhad")]),
 ]
 
 ASSEMBLY = [
-    "Vytiskněte celu (V03) a díly P01–P08 (`vyroba/tisk/*.stl`, PETG-CF, 0,2 mm, 3 perimetry, 40 % gyroid; cela podle V03). "
+    "Vytiskněte celu (V03) a díly P01–P11 (`vyroba/tisk/*.stl`, PETG-CF, 0,2 mm, 3 perimetry, 40 % gyroid; cela podle V03). "
     "Dutinu cely natřete epoxidem, po vytvrzení PTFE sprej + tenká vrstva silikonové vazelíny.",
     "Píst: kotouče L05 (spodní) a L04 (horní, otvor ⌀6) slepte epoxidem, soustředně.",
-    "Základ: 2 podélníky T02 (40×40 × 260, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = "
+    f"Základ: 2 podélníky T02 (40×40 × {p.C_BASE[1]:g}, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = "
     f"{p.C_CROSS_Y[0]:g}".replace(".", ",") + ") – 4 úhelníky, M8×16 do vkládacích T-matic. Do spodní drážky podélníků 4 stavitelné nohy M8 "
-    "(y ±110). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).",
+    f"(y ±{p.C_FOOT_Y:g}). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).",
     f"Sloupy T01 (40×80 × {bp.COL_H:g}) postavte na podélníky (osa x = ±150, uprostřed délky) a připojte 2 úhelníky "
     "na stranách ±y (M8×16 + T-matice). Srovnejte do pravého úhlu, dotáhněte.",
     "Pouzdro P01 přišroubujte zespodu na horní příčník T04 (4× M5×35 do T-matic ve spodních drážkách), souose s otvorem ⌀14; "
     "vložte igus RJ4JP-01-12 a stáhněte svěrný šroub M4.",
     "Příčník T04 položte naplocho na sloupy, 2 úhelníky na vnitřní straně každého sloupu (pod příčníkem). "
     "Otvor ⌀14 musí být nad středem cely – srovnejte podle olovnice nebo trnu ⌀12 v pouzdře, pak dotáhněte.",
-    "Celu (s čidly bodu M) postavte na podložky G10 – kapsy ve dně na podložky; kontrola: cela se nedotýká rámu.",
+    "Připravte vzorek mimo rám podle `postup_zkousky.md` (vlhčení, hutnění po vrstvách se zátkami v otvorech čidel, "
+    "srovnání stěrkou P10, zasunutí čidel). Celu postavte na podložky G10 – kapsy ve dně na podložky; cela se nedotýká rámu.",
     "Invarový sloupek ⌀16 postavte do patky P04 (2× M5×20 do T-matic v horní drážce pravého podélníku, y = "
     f"{p.C_INVAR_XY[1]:g}); sloupek stojí na dně patky, svěrku dotáhněte. "
     "Nasaďte rameno P03 (terčík ve výšce horní hrany límce) a rameno P02 s LVDT.",
-    "Písek nasypte a zhutněte po vrstvách (V02, postup), navrch položte píst, do otvoru ⌀6 kuličku 5/16\".",
-    "Invarovou tyč zasuňte shora pouzdrem až na kuličku. Na tyč stavěcí kroužek, na něj nosná deska L03 a kotouče L06/L07. "
+    "Navrch písku položte píst, do otvoru ⌀6 kuličku 5/16\". Na límec nasaďte středicí víčko P09 (rameno P03 natočené stranou).",
+    "Invarovou tyč zasuňte shora pouzdrem víčkem P09 až na kuličku – posunutím cely ji vystřeďte, víčko vysuňte do strany, "
+    "rameno P03 vraťte na značku. Na tyč stavěcí kroužek, na něj nosná deska L03 a kotouče L06/L07. "
     f"Kroužek nastavte tak, aby nosná deska byla {bp.ZC - bp.Z_TOP:g} mm nad horní plochou příčníku T04 "
     f"(spodní hrana kroužku {bp.Z_COLLAR - bp.Z_TOP:g} mm nad ním = zdvih ±{p.C_TRAVEL:g}).",
     "LVDT posuňte ve svěrce P02, až je jádro uprostřed rozsahu (výstup ≈ 0 V), dotáhněte.",
@@ -174,7 +188,7 @@ def main():
          "Vše, co je potřeba koupit, nechat vyrobit podle rozměrů a sestavit. Sestava je navržená tak, aby **nebylo "
          "potřeba soustružit ani frézovat**: celý rám je z T-profilů drážka 8, které se jen řežou na délku (jediný "
          "otvor ⌀14 v horním příčníku), kotouče se řežou laserem podle DXF, zbytek se tiskne. Výkresy: V01–V06 (`vykresy/E7_drawings.pdf`), výrobní soubory: `vyroba/laser` (DXF) a `vyroba/tisk` (STL/STEP).",
-         "", "**Už máte:** CR1000, TDR100/200 + CS645, Pt100, optické vlákno + čtečku, truhlicový mrazák s regulátorem (E6).", "",
+         "", "**Už máte:** CR850, TDR100/200 + CS645, Pt100, optické vlákno + čtečku, truhlicový mrazák s regulátorem (E6).", "",
          f"Ceny: „ověřeno“ = nalezeno na webu prodejce v 10/2026 (ověřte před objednáním), „odhad/poptat“ = cenu je třeba zjistit. 1 € ≈ {EUR:g} Kč.", ""]
     for title, shop, rows in SHOPS:
         L += [f"## {title}", "", f"Kde: {shop}", "", "| položka | specifikace | ks | cena | stav |", "|---|---|---|---|---|"]
@@ -189,7 +203,7 @@ def main():
           "- kontrola kolizí v 3D sestavě (model3d.py): bez kolizí", "",
           "## Postup sestavení", ""]
     L += [f"{i}. {s}" for i, s in enumerate(ASSEMBLY, 1)]
-    L += ["", "Celkem (V04): čidla a elektronika + mechanika ≈ 1 450–1 980 € bez DPH, tj. ≈ 36–50 tis. Kč.", ""]
+    L += ["", "Celkem (V04): čidla a elektronika + mechanika ≈ 1 460–1 990 € bez DPH, tj. ≈ 36–50 tis. Kč.", ""]
     open(OUT, "w", encoding="utf-8").write("\n".join(L))
     print("ok", OUT)
 

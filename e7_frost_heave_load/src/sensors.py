@@ -142,23 +142,23 @@ B_CAM_MECH = [
 # --- varianta C: měření deformace 1 (kamera + laser) a 2 (LVDT) – co koupit (EUR bez DPH) --------
 C_BUY = [   # rev. B – konkrétní typy (ceny 10/2026, EUR bez DPH; Kč s DPH přepočteno / 1,21 / 25) – viz purchase_list.md
     ("CAM", "Raspberry Pi 5 4 GB + PSU, SD, camera cable (RPishop)", 1, 105, 120, "web (RPishop 2769 Kč)", "– (Ethernet, NTP)"),
-    ("", "Raspberry Pi HQ Camera C/CS, IMX477 (RPishop OFI060)", 1, 50, 62, "web (RPishop 1499 Kč)", "C5 trigger"),
+    ("", "Raspberry Pi HQ Camera C/CS, IMX477 (RPishop OFI060)", 1, 50, 62, "web (RPishop 1499 Kč)", "C4 trigger"),
     ("", "Raspberry Pi 6 mm CS wide-angle lens (RPishop / Pi Hut)", 1, 20, 30, "odhad", "–"),
     ("", "camera box XPS 30, double glass; houses the RPi 5 (no heater)", 1, 20, 40, "odhad", "–"),
     ("", "SHT45 RH/T sensor on the RPi (I2C), freezer air", 1, 15, 25, "odhad", "– (RPi)"),
     ("LAS", "Picotronic DOE253-635-1-6(10x22), 11 lines, 635 nm, 1 mW, 5 V", 1, 92, 92, "web (Picotronic 70111842)", "– (RPi GPIO)"),
-    ("LVDT", "RDP DCTH400AG ±10 mm, spring (Elkome)", 1, 581, 581, "web (Elkome)", "SE1, ±5000 mV"),
-    ("", "Mean Well HDR-15-24, 24 V DIN (floating supply) (TME)", 1, 11, 14, "web (TME)", "C4 relay"),
-    ("", "Campbell 4WPB100 (for the existing Pt100) (Ekotechnika)", 1, 60, 120, "odhad – na dotaz", "DIFF1"),
-    ("Tair", "Campbell 109-L, REQUIRED: air = boundary condition", 1, 150, 220, "odhad – na dotaz", "SE3, VX1"),
-    ("", "fan 80 mm 12 V, air mixing in the freezer", 1, 10, 20, "odhad", "C4 relay"),
+    ("LVDT", "RDP DCTH400AG ±10 mm, spring (Elkome)", 1, 581, 581, "web (Elkome)", "DIFF1, ±5000 mV"),
+    ("", "Mean Well HDR-15-24, 24 V DIN (floating supply) (TME)", 1, 11, 14, "web (TME)", "always on"),
+    ("", "Campbell 4WPB100 (for the existing Pt100) (Ekotechnika)", 1, 60, 120, "odhad – na dotaz", "DIFF2"),
+    ("Tair", "Campbell 109-L, REQUIRED: air = boundary condition", 1, 150, 220, "odhad – na dotaz", "SE5, VX1"),
+    ("", "fan 80 mm 12 V, air mixing in the freezer", 1, 10, 20, "odhad", "12 V, always on"),
     ("CAL", "shims 0.1 / 0.5 / 1.0 mm (feeler gauge set) for camera px → mm", 1, 10, 25, "odhad", "–"),
 ]
 C_MECH = [   # rev. B3 – only bought, laser-cut and printed parts (see objednavka.md)
     ("laser: carrier ⌀140, 2 piston discs; steel discs ⌀117.5", 70, 140),
-    ("T-profiles slot 8: 40×80 × 1.21 m, 40×40 × 0.52 m cut; 12 brackets, 44 T-nuts, 4 feet M8", 100, 170),
+    ("T-profiles slot 8 cut (ENPRAG), 12 brackets, 44 T-nuts, 4 feet", 100, 170),
     ("igus RJ4JP-01-12, shaft collar 12, ball 5/16\", screws M3–M8", 25, 50),
     ("Invar 36: rod ⌀12 × 265 + post ⌀16 × 330 (Evek, cut to length)", 80, 160),
-    ("cell printed in ONE piece ⌀240 × 200 (PETG(-CF) ≈ 1.5 kg) + 3 G10 pads ⌀20 × 40", 45, 90),
-    ("printed parts: housing, arms, foot, laser holder, camera box (PETG-CF)", 10, 25),
+    ("cell ⌀240 × 200 printed in one piece + 3 G10 pads", 45, 90),
+    ("printed parts P01–P11 (holders, camera box, sample aids)", 12, 30),
 ]

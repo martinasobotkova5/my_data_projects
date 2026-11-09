@@ -2,7 +2,7 @@
 
 Vše, co je potřeba koupit, nechat vyrobit podle rozměrů a sestavit. Sestava je navržená tak, aby **nebylo potřeba soustružit ani frézovat**: celý rám je z T-profilů drážka 8, které se jen řežou na délku (jediný otvor ⌀14 v horním příčníku), kotouče se řežou laserem podle DXF, zbytek se tiskne. Výkresy: V01–V06 (`vykresy/E7_drawings.pdf`), výrobní soubory: `vyroba/laser` (DXF) a `vyroba/tisk` (STL/STEP).
 
-**Už máte:** CR1000, TDR100/200 + CS645, Pt100, optické vlákno + čtečku, truhlicový mrazák s regulátorem (E6).
+**Už máte:** CR850, TDR100/200 + CS645, Pt100, optické vlákno + čtečku, truhlicový mrazák s regulátorem (E6).
 
 Ceny: „ověřeno“ = nalezeno na webu prodejce v 10/2026 (ověřte před objednáním), „odhad/poptat“ = cenu je třeba zjistit. 1 € ≈ 25 Kč.
 
@@ -19,21 +19,21 @@ Kde: [grupol.cz](https://grupol.cz/) – nahrát DXF, cena hned; alternativy [Za
 | E7-L07_disc_0.5kg | steel S235JR, tl. 6 mm – soubor `vyroba/laser/E7-L07_disc_0.5kg_6mm.dxf` | 1 |  |  |
 | — | Hliník 10 mm: ověřit, že ho laser zvládne; jinak stejné DXF na vodní paprsek. Ocel 12 mm: kotouče převážit, ±0,5 mm tloušťky = ±4 % hmotnosti |  | ≈ 70–140 € celkem | odhad |
 
-## 2 · Hliníkové T-profily (drážka 8) a spojovací díly rámu – celý rám
+## 2 · Hliníkové T-profily (drážka 8) a spojovací díly rámu – celý rám jako jedna sada
 
-Kde: [Enprag](https://www.enprag.cz/hlinikove-profily/c-6027) (drážka 8, kompatibilní s item/Bosch, řez na míru – do poznámky napsat délky a kusy podle tabulky, u T04 požádat o vyvrtání ⌀14); alternativa [eProfily.cz](https://www.eprofily.cz/hlinikovy-profil-80x40-s-drazkou-8-mm/kat3007.html). Na Alze konstrukční profily nejsou. Výkresy: `vyroba/vykresy/E7-T01…T04`
+Kde: **doporučeno: [ENPRAG, s.r.o., Praha 5](https://www.enprag.cz/hlinikove-profily/c-6027)** (česká firma, IČO 62743741, K Holyni 833/42, tel. +420 224 942 663, zdarma 800 888 868) – profily drážka 8 (kompatibilní s item/Bosch) nařeže podle zadání, dodá je s návodem k montáži a výrobním výkresem, nebo jako **kompletně sestavenou konstrukci**, návrh s 3D vizualizací zdarma; poslat výkresy T01–T04 (`vyroba/vykresy`) a tabulku níže, požádat o vyvrtání ⌀14 v T04 a o celou sadu spojovacího materiálu (poptávka: `poptavka_ramu.md`). Alternativy: [Alutec K&K s.r.o.](https://katalog.aluteckk.cz/kategorie-produktu/modul-40-drazka-8/) (český výrobce, modul 40 drážka 8, délka na zakázku, úhelníky, matice), [Profimet](https://profimet.cz/sluzby/) (profily dle výkresu), [eProfily.cz](https://www.eprofily.cz/hlinikovy-profil-80x40-s-drazkou-8-mm/kat3007.html). Na Alze konstrukční profily nejsou.
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
 | T01 profil 40×80 drážka 8 – sloup | řez na délku 306 mm, kolmý řez ±0,2 | 2 | 31,43 €/m bez DPH (+ řez) | ověřeno (Enprag EN) |
-| T02 profil 40×40 drážka 8 – podélník základny | řez na délku 260 mm, kolmý řez ±0,2 | 2 | ≈ 15–20 €/m (+ řez) | odhad |
+| T02 profil 40×40 drážka 8 – podélník základny | řez na délku 320 mm, kolmý řez ±0,2 | 2 | ≈ 15–20 €/m (+ řez) | odhad |
 | T03 profil 40×80 drážka 8 – příčka základny | řez na délku 260 mm, kolmý řez ±0,2 | 1 | 31,43 €/m bez DPH (+ řez) | ověřeno (Enprag EN) |
 | T04 profil 40×80 drážka 8 – horní příčník | řez na délku 340 mm, kolmý řez ±0,2; uprostřed svislý otvor ⌀14 skrz | 1 | 31,43 €/m bez DPH (+ řez) | ověřeno (Enprag EN) |
-| — | celkem 40×80: 1,21 m, 40×40: 0,52 m |  |  |  |
+| — | celkem 40×80: 1,21 m, 40×40: 0,64 m |  |  |  |
 | Úhelník 40×40 drážka 8 (Zn) s krytkou | 4 příčka ↔ podélníky, 4 sloupy ↔ podélníky, 4 sloupy ↔ příčník | 12 | ≈ 3–6 €/ks | odhad |
 | T-matice drážka 8, M8, vkládací (otočná) | úhelníky (24) + nohy (4) + 4 rezerva | 32 | ≈ 1 €/ks | odhad |
 | T-matice drážka 8, M5, vkládací (otočná) | pouzdro P01 (4), patka P04 (2), držák laseru P05 (2), závěs kamery P08 (2) + 2 rezerva | 12 | ≈ 1 €/ks | odhad |
-| Stavitelná noha M8 (talíř ⌀30–40) | do T-matic ve spodní drážce podélníků T02 (y ±110) | 4 | ≈ 3–5 €/ks | odhad |
+| Stavitelná noha M8 (talíř ⌀30–40) | do T-matic ve spodní drážce podélníků T02 (y ±140) | 4 | ≈ 3–5 €/ks | odhad |
 | Krytka čela 40×80 / 40×40 (volitelně) | konce příčníku a podélníků | 6 | ≈ 0,5 €/ks | odhad |
 
 ## 3 · Invar 36 (tyče řezané na délku)
@@ -78,7 +78,7 @@ Kde: [Prusament PETG Carbon Fiber](https://www.prusa3d.com/product/prusament-pet
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
-| Prusament PETG Carbon Fiber 1 kg | cela ≈ 1,3–1,6 kg + díly P01–P08 ≈ 0,3 kg | 2 | ≈ 55 €/ks | ověřeno (USD cena) |
+| Prusament PETG Carbon Fiber 1 kg | cela ≈ 1,3–1,6 kg + díly P01–P11 ≈ 0,5 kg | 2 | ≈ 55 €/ks | ověřeno (USD cena) |
 | Tiskárna pro celu | podložka ≥ 250 × 250, výška ≥ 200 (Prusa XL, Bambu X1/P1S); Prusa MK4/Core One nestačí |  |  | info |
 | Sklo do okénka boxu kamery | 50 × 50 × 2 mm (sklo z fotorámečku / sklenářství) nebo plexi 2 mm | 1 | ≈ 1–3 € | odhad |
 
@@ -96,7 +96,7 @@ Kde: [RPishop.cz](https://rpishop.cz/), [LaskaKit](https://www.laskakit.cz/), [G
 | Ventilátor 80 mm 12 V + zdroj 12 V | promíchání vzduchu (běží trvale) | 1 | ≈ 10–20 € | odhad |
 | Mean Well HDR-15-24 (24 V DIN) | napájení LVDT (trvale zapnuté) | 1 | ≈ 11 € bez DPH | ověřeno (TME) |
 | Kabelová vývodka PG7 + Ethernet kabel 3 m | box kamery | 1 | ≈ 5 € | odhad |
-| Optočlen / relé modul 5 V pro spouštění snímku | CR1000 C5 → GPIO RPi | 1 | ≈ 3–5 € | odhad |
+| Optočlen / relé modul 5 V pro spouštění snímku | CR850 C4 → GPIO RPi | 1 | ≈ 3–5 € | odhad |
 
 ## 8 · Čidla ze zahraničí a Campbell
 
@@ -121,7 +121,7 @@ Kde: vybrat jednu možnost v každém řádku; u jiného průměru těla LVDT / 
 | Laser (jednoduchý, česky) | [laser-shop.cz](https://laser-shop.cz/115-laserove-moduly-prumyslove/) – čárové moduly 650 nm (1 čára) a mřížka 8 × 8; 11 rovnoběžných čar nemají |  |  | info |
 | LVDT: Micro-Epsilon induSENSOR DTA-10D (±10 mm) + kontrolér MSC7401 (analog U/I) | [Micro-Epsilon Czech Republic, Bechyně](https://www.micro-epsilon.cz/displacement-position-sensors/inductive-sensor-lvdt/Spannhubsensor/) – česká pobočka výrobce, info@micro-epsilon.cz | 1 | poptat | doporučeno |
 | LVDT: Omega LD620-10 (±10 mm, ±5 V DC, napájení 10–30 V) | [DwyerOmega CZ](https://www.jakar.cz/p/lvdt-linearni-snimac-polohy-s-ac-vystupem/6465) – stejné zapojení jako RDP DCTH (DC vstup i výstup), tělo ⌀19 | 1 | ≈ 1 000 USD (US ceník) | poptat |
-| LVDT: HBM WA/10 mm (±10 mm, pružinový hrot) | [HBP měřicí technika s.r.o., Praha 4](https://www.hbm.cz/en/produkty/kategorie/wa/) – zastoupení HBK/HBM, tel. +420 224 921 861, hbmcz@hbm.cz; pasivní indukční snímač – potřebuje zesilovač s nosnou frekvencí, ne přímo CR1000 | 1 | poptat | info |
+| LVDT: HBM WA/10 mm (±10 mm, pružinový hrot) | [HBP měřicí technika s.r.o., Praha 4](https://www.hbm.cz/en/produkty/kategorie/wa/) – zastoupení HBK/HBM, tel. +420 224 921 861, hbmcz@hbm.cz; pasivní indukční snímač – potřebuje zesilovač s nosnou frekvencí, ne přímo CR850 | 1 | poptat | info |
 | LVDT pro laboratoře (geotechnika) | [Labtech – stroje pro zkušebnictví](https://www.strojeprozkusebnictvi.cz/lvdt-snimac-polohy.html) – autorizovaný distributor, poptat ±10 mm s DC výstupem | 1 | poptat | info |
 | LVDT Solartron | [RS Components CZ](https://cz.rs-online.com/web/b/solartron-metrology) – sondy ±10 mm; AC verze potřebují převodník | 1 | ≈ 390 € (PT ceník) | info |
 
@@ -135,6 +135,10 @@ Kde: Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)
 | PTFE sprej + silikonová vazelína (Molykote 111) | stěna dutiny | 1 | ≈ 15–25 € | odhad |
 | Spároměr 0,05–1,00 mm | kalibrace kamery (0,1 / 0,5 / 1,0 mm) | 1 | ≈ 5–10 € | odhad |
 | Bílá matná samolepka / papír 12 × 12 | terčík na rameno P03 | 1 |  |  |
+| Ocelové kolíky / hřebíky ⌀3 × 40 (4 ks) + ocelová tyčinka ⌀3 × 120 | zátky otvorů pro tyčky TDR a Pt100 při hutnění; předvrtání kanálků před zasunutím čidel | 1 | ≈ 3 € | odhad |
+| Kontrolní miska ⌀100 × 20 (sklo / nerez) | „svědek“ odpařování: stejný písek, váží se každý cyklus (cela se neváží) | 1 | ≈ 5 € | odhad |
+| Pěch ⌀95 (ocel / PETG) + kovové pravítko | hutnění po vrstvách 20 mm mimo rám na rovné podložce | 1 | ≈ 10 € | odhad |
+| Příchytky kabelů do drážky 8 + stahovací pásky | kabely TDR / Pt100 / vlákna k podélníku – netahají za celu | 4 | ≈ 1 €/ks | odhad |
 
 ## Rozměry pro kontrolu (z modelu)
 
@@ -145,16 +149,16 @@ Kde: Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)
 
 ## Postup sestavení
 
-1. Vytiskněte celu (V03) a díly P01–P08 (`vyroba/tisk/*.stl`, PETG-CF, 0,2 mm, 3 perimetry, 40 % gyroid; cela podle V03). Dutinu cely natřete epoxidem, po vytvrzení PTFE sprej + tenká vrstva silikonové vazelíny.
+1. Vytiskněte celu (V03) a díly P01–P11 (`vyroba/tisk/*.stl`, PETG-CF, 0,2 mm, 3 perimetry, 40 % gyroid; cela podle V03). Dutinu cely natřete epoxidem, po vytvrzení PTFE sprej + tenká vrstva silikonové vazelíny.
 2. Píst: kotouče L05 (spodní) a L04 (horní, otvor ⌀6) slepte epoxidem, soustředně.
-3. Základ: 2 podélníky T02 (40×40 × 260, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = 8,75) – 4 úhelníky, M8×16 do vkládacích T-matic. Do spodní drážky podélníků 4 stavitelné nohy M8 (y ±110). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).
+3. Základ: 2 podélníky T02 (40×40 × 320, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = 8,75) – 4 úhelníky, M8×16 do vkládacích T-matic. Do spodní drážky podélníků 4 stavitelné nohy M8 (y ±140). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).
 4. Sloupy T01 (40×80 × 306) postavte na podélníky (osa x = ±150, uprostřed délky) a připojte 2 úhelníky na stranách ±y (M8×16 + T-matice). Srovnejte do pravého úhlu, dotáhněte.
 5. Pouzdro P01 přišroubujte zespodu na horní příčník T04 (4× M5×35 do T-matic ve spodních drážkách), souose s otvorem ⌀14; vložte igus RJ4JP-01-12 a stáhněte svěrný šroub M4.
 6. Příčník T04 položte naplocho na sloupy, 2 úhelníky na vnitřní straně každého sloupu (pod příčníkem). Otvor ⌀14 musí být nad středem cely – srovnejte podle olovnice nebo trnu ⌀12 v pouzdře, pak dotáhněte.
-7. Celu (s čidly bodu M) postavte na podložky G10 – kapsy ve dně na podložky; kontrola: cela se nedotýká rámu.
+7. Připravte vzorek mimo rám podle `postup_zkousky.md` (vlhčení, hutnění po vrstvách se zátkami v otvorech čidel, srovnání stěrkou P10, zasunutí čidel). Celu postavte na podložky G10 – kapsy ve dně na podložky; cela se nedotýká rámu.
 8. Invarový sloupek ⌀16 postavte do patky P04 (2× M5×20 do T-matic v horní drážce pravého podélníku, y = 108); sloupek stojí na dně patky, svěrku dotáhněte. Nasaďte rameno P03 (terčík ve výšce horní hrany límce) a rameno P02 s LVDT.
-9. Písek nasypte a zhutněte po vrstvách (V02, postup), navrch položte píst, do otvoru ⌀6 kuličku 5/16".
-10. Invarovou tyč zasuňte shora pouzdrem až na kuličku. Na tyč stavěcí kroužek, na něj nosná deska L03 a kotouče L06/L07. Kroužek nastavte tak, aby nosná deska byla 37 mm nad horní plochou příčníku T04 (spodní hrana kroužku 25 mm nad ním = zdvih ±25).
+9. Navrch písku položte píst, do otvoru ⌀6 kuličku 5/16". Na límec nasaďte středicí víčko P09 (rameno P03 natočené stranou).
+10. Invarovou tyč zasuňte shora pouzdrem víčkem P09 až na kuličku – posunutím cely ji vystřeďte, víčko vysuňte do strany, rameno P03 vraťte na značku. Na tyč stavěcí kroužek, na něj nosná deska L03 a kotouče L06/L07. Kroužek nastavte tak, aby nosná deska byla 37 mm nad horní plochou příčníku T04 (spodní hrana kroužku 25 mm nad ním = zdvih ±25).
 11. LVDT posuňte ve svěrce P02, až je jádro uprostřed rozsahu (výstup ≈ 0 V), dotáhněte.
 12. Laser do držáku P05 (2× M5×12 do boční drážky T04, +y), kameru + RPi 5 do boxu P06/P07 (sklo do drážky, kabel přes PG7), box na závěs P08 (2× M5×12 do boční drážky T04, −y). Laser natočte, aby čáry ležely napříč přes celý povrch ⌀100; kameru zaostřete (zadní ohnisková vzdálenost).
 13. Slepá zkouška s hliníkovou atrapou (V02) → kalibrace podložkami → první cyklus.

@@ -257,9 +257,10 @@ C_LINES, C_LINE_PITCH = 11, 9.6          # vícečárový laser Picotronic DOE25
 C_LASER_ANG = 68.0                       # sklon laserové roviny od vodorovné → posun čáry Δy = Δh / tan 68° = 0,40 Δh
 
 # --- varianta C, revize B (posudek měření 10/2026) ------------------------------------------
-C_BASE = (340.0, 260.0, 40.0)            # rev. B3: základna z T-profilů 40×40 drážka 8 (2 podélníky + 3 příčky), výška 40
+C_BASE = (340.0, 320.0, 40.0)            # rev. B3: základna z T-profilů drážka 8 (2 podélníky 40×40 × 320 + příčka 40×80), výška 40
+C_FOOT_Y = 140.0                         # stavitelné nohy M8 v y = ±140 (stabilita proti překlopení, §17)
 C_PROFILE = 40.0                         # T-profil 40×40 drážka 8 (item/Bosch kompatibilní)
-C_RAIL_X = 150.0                         # podélníky základny pod sloupy (osa x = ±150, délka 260 ve směru y)
+C_RAIL_X = 150.0                         # podélníky základny pod sloupy (osa x = ±150, délka C_BASE[1] ve směru y)
 C_CROSS_Y = (8.75,)                      # příčka základny = T-profil 40×80 naplocho (y −31,25 … 48,75) pod 3 podložkami G10
 # --- rev. B2 „objednatelná“ sestava: jen nakoupené, laserem řezané a 3D tištěné díly -------------
 C_TOP = (340.0, 80.0, 40.0)              # rev. B3: horní příčník = T-profil 40×80 naplocho na sloupech, 1 otvor ⌀14 uprostřed

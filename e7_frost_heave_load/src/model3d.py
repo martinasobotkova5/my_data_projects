@@ -315,10 +315,10 @@ def variant_c(asm, prefix=""):
     lp = {d["name"]: d for d in bp.LASER}
     # base frame: 2 rails 40×40 (along y) under the columns, one cross bar 40×80 flat between them
     for s_ in (-1, 1):
-        rail = bp.profile_solid((40, 40), 260).rotate((0, 0, 0), (0, 0, 1), 90).translate((s_ * p.C_RAIL_X, 0, zb0 - 40))
-        asm.add(rail, name=f"{prefix}T02 base rail 40x40 x260 {'L' if s_ < 0 else 'R'}", color=C["profile"])
+        rail = bp.profile_solid((40, 40), p.C_BASE[1]).rotate((0, 0, 0), (0, 0, 1), 90).translate((s_ * p.C_RAIL_X, 0, zb0 - 40))
+        asm.add(rail, name=f"{prefix}T02 base rail 40x40 x{p.C_BASE[1]:g} {'L' if s_ < 0 else 'R'}", color=C["profile"])
         for sy in (-1, 1):
-            asm.add(cyl(30, 4, zb0 - 40 - 22, s_ * p.C_RAIL_X, sy * 110).union(cyl(8, 22, zb0 - 40 - 22, s_ * p.C_RAIL_X, sy * 110)),
+            asm.add(cyl(30, 4, zb0 - 40 - 22, s_ * p.C_RAIL_X, sy * p.C_FOOT_Y).union(cyl(8, 22, zb0 - 40 - 22, s_ * p.C_RAIL_X, sy * p.C_FOOT_Y)),
                     name=f"{prefix}levelling foot M8 {'L' if s_ < 0 else 'R'}{sy:+d}", color=C["steel"])
     lcb = 2 * (p.C_RAIL_X - 20)
     yc = p.C_CROSS_Y[0]

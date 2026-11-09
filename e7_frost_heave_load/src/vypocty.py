@@ -408,7 +408,7 @@ print("**Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle te
       "Rev. B (izolace + invarový sloupek + invarová tyč) −59…0 µm, zbytek ≤ 6 µm; kamera vůči invarovému terčíku "
       "−49…0 µm, zbytek ≤ 3 µm. Zbylý drift = PETG dno 26 mm + písek → změřit slepou zkouškou s Al atrapou.\n")
 print("**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); "
-      "snímek spouští CR1000 (C5); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; "
+      "snímek spouští datalogger (CR850: C4); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; "
       "vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.\n")
 
 # 16 --------------------------------------------------------------------------
@@ -421,3 +421,83 @@ print("**Rám:** jen hliníkové T-profily drážka 8 řezané na délku – 2 p
 print(f"**Pt100 (potvrzeno):** vodorovně ze strany TDR, osa {p.C_PT100_DZ:g} mm nad osou horní tyčky CS645, "
       f"hrot {p.C_PT100_TIP:g} mm od vnitřní stěny.\n")
 print(f"**Vzorek (rozhodnuto):** Sr = {p.SR_TARGET:g}, θ = {p.SR_TARGET * p.POROSITY:.2f} (n ≈ {p.POROSITY}).\n")
+
+# 17 --------------------------------------------------------------------------
+print("## 17. Rám z T-profilů – únosnost, tuhost a stabilita (rev. B3, 11/2026)\n")
+E_AL, F_AL = 70000.0, 160.0                       # MPa; EN AW-6063 T66, f0,2 ≈ 200 MPa → návrhově 160 MPa
+# průřezy – konzervativní odhady pro lehké profily drážka 8 (Enprag KA-4080 2,2 kg/m; ověřit v technickém listu)
+PROF = {"40x80": dict(m=2.2, I_s=45e4, I_w=12e4, W_w=6.0e3), "40x40": dict(m=1.5, I_s=7e4, I_w=7e4, W_w=3.5e3)}
+g = 9.81
+L_beam = p.C_COL_SPAN                             # rozpětí příčníku osa–osa sloupů (konzervativně)
+L_cross = 2 * p.C_RAIL_X                          # rozpětí příčky základny
+col_h = p.C_INS_T + p.BODY_BOTTOM + p.H_SAMPLE + p.C_BEAM_GAP
+m_frame = PROF["40x80"]["m"] * (2 * col_h + 2 * (p.C_RAIL_X - 20) + p.C_TOP[0]) / 1000 + PROF["40x40"]["m"] * 2 * p.C_BASE[1] / 1000 + 12 * 0.05 + 0.2
+m_dead = 25.0 * math.pi / 4 * p.C_PISTON_D ** 2 / 1000 / g + 0.5   # mrtvá váha pro 25 kPa + půlkilový kotouč
+th = p.SR_TARGET * p.POROSITY
+m_sand = 1600 * (1 + th / 1.6) * math.pi / 4 * 0.1 ** 2 * 0.1
+m_cell = 1.5
+m_other = 0.54 + 0.5 + 0.3                        # Invarový sloupek, box kamery s RPi, tištěné díly
+m_tot = m_frame + m_dead + m_sand + m_cell + m_other
+rows = []
+
+
+def beam(F, L, sec, axis="w"):
+    I = PROF[sec]["I_" + axis]; W = PROF[sec]["W_w"] if axis == "w" else PROF[sec]["I_s"] / 40
+    M = F * L / 4
+    return M / W, F * L ** 3 / (48 * E_AL * I) * 1000          # MPa, µm
+
+
+F2 = m_dead * g
+sig, d = beam(1.5 * F2, L_beam, "40x80")
+rows.append(("ZS2 mimořádný: celá mrtvá váha na příčníku T04 (kroužek dosedne)", f"{F2:.0f} N uprostřed", f"σ = {sig:.1f} MPa, průhyb {d / 1.5:.1f} µm"))
+F3 = 500.0
+sig, d = beam(1.5 * F3, L_beam, "40x80")
+rows.append(("ZS3 nesprávné použití: 500 N svisle na T04 (opření, odložená závaží)", "500 N uprostřed", f"σ = {sig:.1f} MPa, průhyb {d / 1.5:.0f} µm"))
+F1 = (m_cell + m_sand + m_dead + 0.1) * g
+sig, d = beam(1.5 * F1, L_cross, "40x80")
+rows.append(("ZS1 provoz: cela + písek + závaží na příčce T03 (3 podložky u středu)", f"{F1:.0f} N", f"σ = {sig:.1f} MPa, průhyb {d / 1.5:.1f} µm"))
+d_disc = beam(g, L_cross, "40x80")[1]
+rows.append(("změna zatížení o 1 kg kotouč → změna průhybu T03 (jde do LVDT)", f"{g:.1f} N", f"{d_disc:.2f} µm"))
+Ncr = math.pi ** 2 * E_AL * PROF["40x80"]["I_w"] / (2 * col_h) ** 2      # sloup jako konzola (K = 2)
+rows.append(("sloup 40×80 tlak (ZS3) vs. Eulerova kritická síla (konzola)", f"{1.5 * F3 / 2:.0f} N", f"N_cr = {Ncr / 1000:.0f} kN"))
+rows.append(("úhelník 40 drážka 8, smyk na 1 úhelník (příčka T03, 4 ks)", f"{F1 / 4:.0f} N",
+             "tření spoje M8 (předpětí ≈ 6 kN × 0,2) ≈ 1,2 kN → bez prokluzu"))
+rows.append(("T-matice M5 pouzdra P01 (4 ks) – zatěžuje je jen tření v pouzdře", "< 1 N", "typ. únosnost T-matice M5 ≥ 500 N"))
+z_floor = -(22 + p.C_BASE[2])                     # spodek noh vůči horní ploše rámu
+h_push = col_h + p.C_TOP[2] - z_floor
+for half, lab in ((110.0, "rev. B3 původně (podélníky 260, nohy ±110)"), (p.C_FOOT_Y, f"nyní (podélníky {p.C_BASE[1]:g}, nohy ±{p.C_FOOT_Y:g})")):
+    H = m_tot * g * half / h_push
+    rows.append((f"překlopení ve směru y – vodorovná síla na T04, {lab}", f"G = {m_tot * g:.0f} N", f"H_krit ≈ {H:.0f} N"))
+Hx = m_tot * g * p.C_RAIL_X / h_push
+rows.append(("překlopení ve směru x (nohy ±150)", "", f"H_krit ≈ {Hx:.0f} N"))
+print(f"Hmotnosti: rám {m_frame:.1f} kg, mrtvá váha až {m_dead:.1f} kg, písek {m_sand:.2f} kg (Sr {p.SR_TARGET:g}), cela {m_cell} kg, "
+      f"ostatní {m_other:.1f} kg → celkem ≈ {m_tot:.1f} kg. Výška tlaku na T04 nad podlahou {h_push:.0f} mm. "
+      "Průřezy: konzervativní odhady pro lehké profily drážka 8 (40×80: I_slabá ≈ 12 cm⁴, 40×40: I ≈ 7 cm⁴) – ověřit "
+      "v technickém listu dodavatele. Součinitel zatížení 1,5, návrhová pevnost 160 MPa.\n")
+print("| stav | zatížení | výsledek |\n|---|---|---|")
+for r in rows:
+    print("| " + " | ".join(r) + " |")
+print("\n**Závěr:** napětí v profilech jsou desetiny až jednotky MPa (rezerva > 20×), průhyby jednotky µm. Rám zátěž jen vede, "
+      "takže jeho únosnost nerozhoduje; profil 40×80 je zvolen kvůli tuhosti spojů a ploše pro úhelníky, ne kvůli pevnosti. "
+      "**Rozhoduje stabilita proti překlopení:** s nožkami ±110 by stačil vodorovný tlak ≈ 40 N na horní příčník (např. při "
+      f"nasazování kotoučů). Proto podélníky {p.C_BASE[1]:g} mm a nohy ±{p.C_FOOT_Y:g}; v mrazáku rám stojí ve vaně (opře se o stěnu), "
+      "mimo mrazák manipulovat se závažím jen při přidrženém rámu. Prokluz spojů pod konstantním zatížením nehrozí; "
+      "při výměně kotoučů se změní průhyb příčky T03 o < 1 µm (jde do LVDT, zanedbatelné).\n")
+
+# 18 --------------------------------------------------------------------------
+print("## 18. Datalogger CR850 místo CR1000 (11/2026)\n")
+print("CR850 (= CR800 s klávesnicí a displejem): 6 SE / 3 DIFF analogových vstupů, buzení VX1–VX2, porty C1–C4 "
+      "(SDM jen na C1–C3) a výstup 12 V. Stačí, ale port C5 chybí → spouštění snímku na C4, zdroj LVDT a ventilátor "
+      "trvale zapnuté (bez relé). LVDT měřit diferenciálně: rozsah ±5000 mV, rozlišení ≈ 0,67 mV = 1,3 µm při 0,5 V/mm, "
+      "průměrováním 20–50 vzorků ≈ 0,5 µm.\n")
+print("| svorka CR850 | připojeno | měření |\n|---|---|---|")
+for r in (("DIFF1 (1H/1L)", "(2) LVDT DCTH400AG", "VoltDiff ±5000 mV, průměr 20–50 vzorků"),
+          ("DIFF2 (2H/2L) + VX2", "Pt100 přes 4WPB100", "BrHalf4W, 2500 mV"),
+          ("SE5 + VX1", "Tair Campbell 109", "Therm109"),
+          ("SE6", "rezerva (např. kontrola napájení LVDT přes dělič)", "VoltSE"),
+          ("C1–C3", "TDR100/TDR200 → CS645", "SDM"),
+          ("C4", "impuls → optočlen → GPIO RPi", "spouští snímek + laser"),
+          ("12 V", "ventilátor 80 mm (trvale)", "–"),
+          ("–", "LVDT napájen z vlastního zdroje 24 V (trvale)", "teplotně ustálené čidlo")):
+    print("| " + " | ".join(r) + " |")
+print()

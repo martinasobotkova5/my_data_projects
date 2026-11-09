@@ -322,6 +322,12 @@ PRINT_NOTES = {
     "E7-P06_camera_box": ["okénko ⌀34 + drážka 51 × 51 × 2,5 pro sklo 50 × 50 × 2",
                           "4× ⌀2,6 (M2,5) pro HQ kameru (30 × 30); vývodka PG7 ⌀12,4", "úchyt 2× ⌀4,4 (M4)"],
     "E7-P07_camera_box_lid": ["sloupky pro RPi 5 (58 × 49, M2,5)", "víko zapadá 4 mm do boxu"],
+    "E7-P09_centering_cap": ["nasadit na límec plné cely (⌀106,6 × 6), tyč ⌀12 projde otvorem ⌀12,4 → cela souosá s vedením",
+                             "podkova: po vystředění vysunout do strany; tisk 100 % výplň, rovinnost dosedací plochy"],
+    "E7-P10_screed": ["příčka leží na límci, břit sahá přesně 34 mm pod jeho hranu (= povrch písku 100 mm)",
+                      "otáčet kolem osy, přebytek písku odebrat; břit tisknout naležato, 100 % výplň"],
+    "E7-P11_parking_fork": [f"postavit na horní plochu T04 kolem tyče pod stavěcí kroužek: tyč zvednutá o {bp.PARK_LIFT:g} mm",
+                            "pak lze celu vyjmout (směr +y, rameno terčíku P03 natočit stranou)"],
     "E7-P08_camera_hanger": ["2× ⌀5,5 (M5×12) do T-matic v boční drážce příčníku T04 (−y)", "box kamery přišroubovat 2× M4"],
 }
 

@@ -1,7 +1,7 @@
 # E7 – varianta C rev. B: co koupit (čidla, výrobce, cena, kde)
 
 Ceny podle e-shopů 10/2026; před objednáním ověřte. Přepočet 1 € ≈ 25 Kč.
-Už máte: tištěnou celu, TDR CS645 + TDR100/200, Pt100, optické vlákno, CR1000.
+Už máte: tištěnou celu, TDR CS645 + TDR100/200, Pt100, optické vlákno, CR850.
 Rev. B vychází z posudku měření (`E7_review.pdf`). Anglická verze: `purchase_list.md`.
 
 ## Čidla a elektronika
@@ -17,7 +17,7 @@ Rev. B vychází z posudku měření (`E7_review.pdf`). Anglická verze: `purcha
 | 6 | Vícečárový laser | Picotronic DOE253-635-1-6(10x22), obj. č. 70111842: 11 čar, 635 nm, 1 mW, 5 V | 91,51 € bez DPH | [Picotronic (DE)](https://www.picotronic.de/picopage/en/product/detail/id/86333) |
 | 7 | LVDT (píst) | RDP Electronics DCTH400AG: ±10 mm, pružina, výstup ±5 V | 581 € | [Elkome (FI)](https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor) nebo RDP (UK) |
 | 8 | Napájení LVDT | Mean Well HDR-15-24, 24 V DIN (izolovaný) | ≈ 11 € bez DPH | [TME](https://www.tme.com/ca/en/details/hdr-15-24/din-rail-mounting-power-supplies/mean-well/) |
-| 9 | Modul pro Pt100 do CR1000 | Campbell Scientific 4WPB100 | na dotaz (odhad 60–120 €) | [Ekotechnika, Černošice](https://campbellsci.com/ekotechnika), tel. 251 640 511 |
+| 9 | Modul pro Pt100 do CR850 | Campbell Scientific 4WPB100 | na dotaz (odhad 60–120 €) | [Ekotechnika, Černošice](https://campbellsci.com/ekotechnika), tel. 251 640 511 |
 | 10 | Teplota vzduchu (**povinně** – okrajová podmínka) | Campbell Scientific 109, kabel 3 m | na dotaz (odhad 150–220 €) | Ekotechnika |
 | 11 | Promíchání vzduchu v truhle | ventilátor 80 mm 12 V (ložisko do mrazu) | odhad 10–20 € | TME, GM electronic |
 | 12 | Kalibrace kamery | podložky 0,1 / 0,5 / 1,0 mm (spároměrky) | odhad 10–25 € | nářadí |
@@ -33,7 +33,7 @@ Rev. B vychází z posudku měření (`E7_review.pdf`). Anglická verze: `purcha
 | Cela tištěná VCELKU ⌀240 × 200 (PETG-CF ≈ 1,5 kg) + 3 podložky G10 ⌀20 × 40 (elektroizolanty.cz) | 45–90 € |
 | Tištěné díly P01–P08: pouzdro ložiska, ramena LVDT a terčíku, patka sloupku, držák laseru, box kamery | 10–25 € |
 
-Celkem ≈ 1 450–1 980 € bez DPH, tj. ≈ 36–50 tis. Kč (výkres V04). Rev. A byla ≈ 1 370–1 870 €.
+Celkem ≈ 1 460–1 990 € bez DPH, tj. ≈ 36–50 tis. Kč (výkres V04). Rev. A byla ≈ 1 370–1 870 €.
 Invar 36 (FeNi36): poptat u dodavatele speciálních kovů (např. Goodfellow nebo tuzemský distributor).
 
 ## Poznámky
@@ -41,7 +41,7 @@ Invar 36 (FeNi36): poptat u dodavatele speciálních kovů (např. Goodfellow ne
   RPi 5 je v boxu, takže těsněním víka vede jen Ethernet a 5 V.
 - **Laser:** v rev. B visí z příčníku pod 68° (y 46, 115 mm nad pískem, ≈ 124 mm od středu): vzor 41° dá 11 čar po ≈ 9,6 mm
   na ⌀100 a límec nestíní. Velikost vzoru ověřit u Picotronicu.
-- **LVDT:** jeden izolovaný zdroj 24 V; výstup ±5 V přímo do CR1000. Provoz při −10 °C ověřit u RDP/Elkome.
-- **4WPB100** jen pokud je Pt100 čtyřvodičová a měří se přímo CR1000.
+- **LVDT:** jeden izolovaný zdroj 24 V; výstup ±5 V přímo do CR850. Provoz při −10 °C ověřit u RDP/Elkome.
+- **4WPB100** jen pokud je Pt100 čtyřvodičová a měří se přímo CR850.
 - **Vzorek (rozhodnuto 9. 11. 2026):** Sr = 0,5 (θ ≈ 0,19). Zdvih nanejvýš desítky µm, E7 měří hlavně sednutí při tání pod zatížením.
 - **Doporučení dodavatelé:** RPishop.cz (kamera, RPi 5), Picotronic (laser DOE253), Elkome (LVDT RDP DCTH400AG) – držák P05 a rameno P02 jsou nakreslené přesně pro ně; Micro-Epsilon CZ poptat jako srovnání pro LVDT.

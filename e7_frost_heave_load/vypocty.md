@@ -276,7 +276,7 @@ Kotouč ⌀117.5/17: 1 kg = 12.0 mm, 0,5 kg = 6.0 mm. Při 25 kPa jen ≈ 4 koto
 
 **Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle teplot cely ze slepé zkoušky):** rev. A (bez izolace, LVDT na Al příčníku, ocelová tyč) −24…+48 µm, zbytek ≤ 12 µm; kamera vůči PETG límci 0…100 µm, zbytek ≤ 8 µm. Jen izolace bez Invaru by zbytek LVDT zhoršila na 57 µm (cela reaguje pomaleji než sloupy a tyč). Rev. B (izolace + invarový sloupek + invarová tyč) −59…0 µm, zbytek ≤ 6 µm; kamera vůči invarovému terčíku −49…0 µm, zbytek ≤ 3 µm. Zbylý drift = PETG dno 26 mm + písek → změřit slepou zkouškou s Al atrapou.
 
-**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); snímek spouští CR1000 (C5); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.
+**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); snímek spouští datalogger (CR850: C4); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.
 
 ## 16. Varianta C rev. B3 – rám z T-profilů (11/2026)
 
@@ -285,4 +285,38 @@ Kotouč ⌀117.5/17: 1 kg = 12.0 mm, 0,5 kg = 6.0 mm. Při 25 kPa jen ≈ 4 koto
 **Pt100 (potvrzeno):** vodorovně ze strany TDR, osa 3.5 mm nad osou horní tyčky CS645, hrot 30 mm od vnitřní stěny.
 
 **Vzorek (rozhodnuto):** Sr = 0.5, θ = 0.19 (n ≈ 0.38).
+
+## 17. Rám z T-profilů – únosnost, tuhost a stabilita (rev. B3, 11/2026)
+
+Hmotnosti: rám 4.4 kg, mrtvá váha až 5.5 kg, písek 1.41 kg (Sr 0.5), cela 1.5 kg, ostatní 1.3 kg → celkem ≈ 14.2 kg. Výška tlaku na T04 nad podlahou 408 mm. Průřezy: konzervativní odhady pro lehké profily drážka 8 (40×80: I_slabá ≈ 12 cm⁴, 40×40: I ≈ 7 cm⁴) – ověřit v technickém listu dodavatele. Součinitel zatížení 1,5, návrhová pevnost 160 MPa.
+
+| stav | zatížení | výsledek |
+|---|---|---|
+| ZS2 mimořádný: celá mrtvá váha na příčníku T04 (kroužek dosedne) | 54 N uprostřed | σ = 1.0 MPa, průhyb 3.6 µm |
+| ZS3 nesprávné použití: 500 N svisle na T04 (opření, odložená závaží) | 500 N uprostřed | σ = 9.4 MPa, průhyb 33 µm |
+| ZS1 provoz: cela + písek + závaží na příčce T03 (3 podložky u středu) | 83 N | σ = 1.6 MPa, průhyb 5.6 µm |
+| změna zatížení o 1 kg kotouč → změna průhybu T03 (jde do LVDT) | 9.8 N | 0.66 µm |
+| sloup 40×80 tlak (ZS3) vs. Eulerova kritická síla (konzola) | 375 N | N_cr = 221 kN |
+| úhelník 40 drážka 8, smyk na 1 úhelník (příčka T03, 4 ks) | 21 N | tření spoje M8 (předpětí ≈ 6 kN × 0,2) ≈ 1,2 kN → bez prokluzu |
+| T-matice M5 pouzdra P01 (4 ks) – zatěžuje je jen tření v pouzdře | < 1 N | typ. únosnost T-matice M5 ≥ 500 N |
+| překlopení ve směru y – vodorovná síla na T04, rev. B3 původně (podélníky 260, nohy ±110) | G = 139 N | H_krit ≈ 37 N |
+| překlopení ve směru y – vodorovná síla na T04, nyní (podélníky 320, nohy ±140) | G = 139 N | H_krit ≈ 48 N |
+| překlopení ve směru x (nohy ±150) |  | H_krit ≈ 51 N |
+
+**Závěr:** napětí v profilech jsou desetiny až jednotky MPa (rezerva > 20×), průhyby jednotky µm. Rám zátěž jen vede, takže jeho únosnost nerozhoduje; profil 40×80 je zvolen kvůli tuhosti spojů a ploše pro úhelníky, ne kvůli pevnosti. **Rozhoduje stabilita proti překlopení:** s nožkami ±110 by stačil vodorovný tlak ≈ 40 N na horní příčník (např. při nasazování kotoučů). Proto podélníky 320 mm a nohy ±140; v mrazáku rám stojí ve vaně (opře se o stěnu), mimo mrazák manipulovat se závažím jen při přidrženém rámu. Prokluz spojů pod konstantním zatížením nehrozí; při výměně kotoučů se změní průhyb příčky T03 o < 1 µm (jde do LVDT, zanedbatelné).
+
+## 18. Datalogger CR850 místo CR1000 (11/2026)
+
+CR850 (= CR800 s klávesnicí a displejem): 6 SE / 3 DIFF analogových vstupů, buzení VX1–VX2, porty C1–C4 (SDM jen na C1–C3), 12 V a spínaný SW12. Stačí, ale port C5 chybí → spouštění snímku na C4, zdroj LVDT a ventilátor trvale zapnuté (bez relé). LVDT měřit diferenciálně: rozsah ±5000 mV, rozlišení ≈ 0,67 mV = 1,3 µm při 0,5 V/mm, průměrováním 20–50 vzorků ≈ 0,5 µm.
+
+| svorka CR850 | připojeno | měření |
+|---|---|---|
+| DIFF1 (1H/1L) | (2) LVDT DCTH400AG | VoltDiff ±5000 mV, průměr 20–50 vzorků |
+| DIFF2 (2H/2L) + VX2 | Pt100 přes 4WPB100 | BrHalf4W, 2500 mV |
+| SE5 + VX1 | Tair Campbell 109 | Therm109 |
+| SE6 | rezerva (např. kontrola napájení LVDT přes dělič) | VoltSE |
+| C1–C3 | TDR100/TDR200 → CS645 | SDM |
+| C4 | impuls → optočlen → GPIO RPi | spouští snímek + laser |
+| 12 V | ventilátor 80 mm (trvale) | – |
+| – | LVDT napájen z vlastního zdroje 24 V (trvale) | teplotně ustálené čidlo |
 
