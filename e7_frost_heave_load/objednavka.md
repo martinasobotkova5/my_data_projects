@@ -38,7 +38,7 @@ Kde: [Enprag](https://www.enprag.cz/hlinikove-profily/c-6027) (drážka 8, kompa
 
 ## 3 · Invar 36 (tyče řezané na délku)
 
-Kde: [Evek – Invar 36 kulatina](https://evek.vip/slitina-niklu/451-ty%C4%8D-invar36-%C3%B8-2mm-70mm-13912-ty%C4%8D-kulat%C3%A1-nilo-36-alloy-36-uns-k93600.html) (1.3912, česky, řez na míru)
+Kde: **česky:** [Kovohutě Rokycany](http://www.koro.cz/produkty/nikl-a-slitiny-niklu/) – FeNi36 (1.3912) tyče ⌀10–200 mm, délky 1–5 m, sales@koro.cz – poptat 2 krátké kusy nebo řez; jinak [Evek – Invar 36 kulatina](https://evek.vip/slitina-niklu/451-ty%C4%8D-invar36-%C3%B8-2mm-70mm-13912-ty%C4%8D-kulat%C3%A1-nilo-36-alloy-36-uns-k93600.html) (1.3912, česky, řez na míru)
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
@@ -56,7 +56,7 @@ Kde: [Elektroizolanty Praha – tyče G10](https://www.elektroizolanty.cz/elektr
 
 ## 5 · Ložisko, kroužek, kulička, šrouby
 
-Kde: [igus.cz](https://www.igus.cz) nebo [TME](https://www.tme.eu/cz/) (igus drylin); [Fabory CZ – stavěcí kroužky](https://www.fabory.com/cs/Fasteners/Washers-and-Rings/Adjusting-rings/c/011001); šrouby Hornbach / Fabory; kulička v cyklo obchodě
+Kde: igus v ČR: [HENNLICH s.r.o., Litoměřice](https://www.igus.eu/Contact/general/CZ) – skladový distributor, tel. +420 416 711 333; nebo [TME](https://www.tme.eu/cz/) (igus drylin); [Fabory CZ – stavěcí kroužky](https://www.fabory.com/cs/Fasteners/Washers-and-Rings/Adjusting-rings/c/011001); šrouby Hornbach / Fabory; kulička v cyklo obchodě
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
@@ -117,10 +117,11 @@ Kde: vybrat jednu možnost v každém řádku; u jiného průměru těla LVDT / 
 |---|---|---|---|---|
 | Kamera: Raspberry Pi HQ + 6 mm objektiv + RPi 5 | [RPishop.cz](https://rpishop.cz/mipi-kamerove-moduly/2458-raspberry-pi-hq-kamera.html) – oficiální Raspberry Pi Approved Reseller, České Budějovice; Raspberry Pi prodává i [Alza](https://www.alza.cz/18852654-v3978.htm) | 1 | 1 499 + 2 769 Kč | ověřeno |
 | Kamera (průmyslová varianta) | [ATEsystem Ostrava](https://eshop.atesystem.cz/c/2158/prumyslove-kamery) – výhradní distributor Basler pro ČR a SK, objektivy Computar/Tamron, osvětlení Smart View (CZ); potřebuje PC | 1 | poptat | info |
-| Laser 11 rovnoběžných čar: Laser Components FLEXPOINT + DOE 11 čar | [Distrelec CZ – průmyslové laserové moduly Laser Components](https://www.distrelec.cz/cs/pf/1633857); DOE 5/7/11/25/65 čar ([katalog](https://media.distrelec.com/Web/Downloads/_t/ds/flexpoint_eng_tds.pdf)); modul ⌀11,5 → držák P05 na ⌀11,7 | 1 | poptat | info |
+| Laser 11 rovnoběžných čar: Laser Components FLEXPOINT FP-DOE s DOE-233 (11 čar) | český e-shop [TME](https://www.tme.eu/cz/) (řada FLEXPOINT) nebo [Distrelec CZ](https://www.distrelec.cz/cs/pf/1633857); obě firmy jsou zahraniční, česky prodávající; český výrobce ani distributor 11čárového laseru nenalezen; DOE 5/7/11/25/65 čar ([katalog](https://media.distrelec.com/Web/Downloads/_t/ds/flexpoint_eng_tds.pdf)); modul ⌀11,5 → držák P05 na ⌀11,7 | 1 | poptat | info |
 | Laser (jednoduchý, česky) | [laser-shop.cz](https://laser-shop.cz/115-laserove-moduly-prumyslove/) – čárové moduly 650 nm (1 čára) a mřížka 8 × 8; 11 rovnoběžných čar nemají |  |  | info |
 | LVDT: Micro-Epsilon induSENSOR DTA-10D (±10 mm) + kontrolér MSC7401 (analog U/I) | [Micro-Epsilon Czech Republic, Bechyně](https://www.micro-epsilon.cz/displacement-position-sensors/inductive-sensor-lvdt/Spannhubsensor/) – česká pobočka výrobce, info@micro-epsilon.cz | 1 | poptat | doporučeno |
 | LVDT: Omega LD620-10 (±10 mm, ±5 V DC, napájení 10–30 V) | [DwyerOmega CZ](https://www.jakar.cz/p/lvdt-linearni-snimac-polohy-s-ac-vystupem/6465) – stejné zapojení jako RDP DCTH (DC vstup i výstup), tělo ⌀19 | 1 | ≈ 1 000 USD (US ceník) | poptat |
+| LVDT: HBM WA/10 mm (±10 mm, pružinový hrot) | [HBP měřicí technika s.r.o., Praha 4](https://www.hbm.cz/en/produkty/kategorie/wa/) – zastoupení HBK/HBM, tel. +420 224 921 861, hbmcz@hbm.cz; pasivní indukční snímač – potřebuje zesilovač s nosnou frekvencí, ne přímo CR1000 | 1 | poptat | info |
 | LVDT pro laboratoře (geotechnika) | [Labtech – stroje pro zkušebnictví](https://www.strojeprozkusebnictvi.cz/lvdt-snimac-polohy.html) – autorizovaný distributor, poptat ±10 mm s DC výstupem | 1 | poptat | info |
 | LVDT Solartron | [RS Components CZ](https://cz.rs-online.com/web/b/solartron-metrology) – sondy ±10 mm; AC verze potřebují převodník | 1 | ≈ 390 € (PT ceník) | info |
 
