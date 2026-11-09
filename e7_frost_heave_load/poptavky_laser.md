@@ -1,0 +1,75 @@
+# E7 – poptávky laseru (TME, Picotronic)
+
+Doplňte údaje v hranatých závorkách. Parametry odpovídají sestavě rev. B3 (laser 124 mm nad pískem, 50 mm od osy,
+68° k povrchu → vzdálenost k povrchu ≈ 134 mm; 11 čar po 9,6 mm přes celý povrch ⌀100).
+
+---
+
+## 1 · TME (česky) – Laser Components FLEXPOINT s DOE 11 čar
+
+**Komu:** TME – obchodní oddělení pro ČR (kontaktní formulář nebo e-mail na tme.eu/cz)
+**Předmět:** Poptávka – laserový modul Laser Components FLEXPOINT FP-DOE, 11 rovnoběžných čar
+
+Dobrý den,
+
+pro laboratorní měření deformace povrchu vzorku zeminy (laserová triangulace s kamerou) poptáváme laserový modul
+Laser Components řady FLEXPOINT s difrakční optikou pro 11 rovnoběžných čar (podle katalogového listu FLEXPOINT DOE
+Series, DOE-233), 1 ks.
+
+Požadované parametry:
+- vzor: 11 rovnoběžných čar (DOE-233 nebo ekvivalent), úhel mezi sousedními čarami ≈ 3,8–4°, celkový rozptyl ≈ 40°;
+- délka každé čáry (vějíř) alespoň 45° – na vzdálenost 134 mm musí čára pokrýt ≥ 110 mm;
+- vlnová délka 635–660 nm (červená), výkon ≤ 1 mW (laserová třída 2);
+- zaostřitelný, ostrost na vzdálenost ≈ 130–140 mm;
+- průměr pouzdra 11,5 mm (standardní FLEXPOINT), napájení 5 V DC nebo 4,5–30 V DC;
+- provoz v mrazicím boxu −10 až +10 °C, vlhký vzduch – prosíme o potvrzení rozsahu provozních teplot.
+
+Prosíme o:
+1. potvrzení, zda je tato konfigurace dostupná, a objednací kód;
+2. cenu za 1 ks bez DPH a cenu dopravy do ČR;
+3. dodací lhůtu;
+4. katalogový list s přesnými úhly DOE (úhel mezi čarami, délka čáry) a s rozsahem provozních teplot;
+5. případně nabídku nejbližší alternativy z Vašeho sortimentu, pokud DOE 11 čar nevedete.
+
+Fakturační údaje: [Fakulta stavební ČVUT v Praze, katedra …, Thákurova 7, 166 29 Praha 6; IČO …, DIČ …]
+Kontakt: [jméno a příjmení, telefon, e-mail]
+
+Děkuji a s pozdravem
+[jméno a příjmení]
+[katedra], Fakulta stavební ČVUT v Praze
+
+---
+
+## 2 · Picotronic GmbH (anglicky) – DOE253, 11 čar
+
+**To:** Picotronic GmbH, Koblenz (sales contact / contact form on picotronic.de)
+**Subject:** Request for quotation – DOE laser module 11 lines, DOE253-635-1-6(10x22), order no. 70111842
+
+Dear Sir or Madam,
+
+for a laboratory test (laser triangulation of a soil sample surface with a camera inside a chest freezer) we would like
+to order the following laser module:
+
+- **DOE253-635-1-6(10x22), order no. 70111842** – 11 parallel lines, 635 nm, 1 mW, 5 V, housing ⌀10 × 22 mm;
+- quantity: 1 pc (please quote 2 pcs as well – one spare).
+
+Our geometry: the laser is 134 mm from the surface at 68° to it; we need 11 lines about 9.6 mm apart on the surface
+(angle between adjacent lines ≈ 3.8–4°) and each line at least 110 mm long at 134 mm (fan angle ≥ 45°).
+
+Could you please confirm:
+1. the exact angle between adjacent lines and the fan angle (line length) of DOE253, and whether the focus can be
+   set to ≈ 130–140 mm (or which focus distance you would recommend / preset at the factory);
+2. the operating temperature range – the module will run at −10 °C to +10 °C in humid air;
+3. the price excluding VAT, shipping costs to the Czech Republic and the delivery time;
+4. whether you accept an order from a public university in the EU with VAT ID (reverse charge) and payment by invoice.
+
+Invoice address: [Czech Technical University in Prague, Faculty of Civil Engineering, Department …,
+Thákurova 7, 166 29 Prague 6, Czech Republic; VAT ID CZ…]
+Contact: [name, phone, e-mail]
+
+If DOE253 is not suitable for this geometry, we would be grateful for a recommendation of another module from your
+range (11 parallel lines, red, ≤ 1 mW, ⌀10–12 mm housing).
+
+Thank you in advance and kind regards,
+[name]
+[Department], Faculty of Civil Engineering, Czech Technical University in Prague
