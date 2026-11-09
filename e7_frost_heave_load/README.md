@@ -12,7 +12,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 **Revize B (27. 10. 2026, podle posudku měření `E7_review.pdf`):** cela tištěná vcelku ⌀240 × 200 s izolací (+40 mm stěna a dno z nízké výplně,
 3 podložky G10 v kapsách dna → mrznutí shora), LVDT a referenční terčík kamery na sloupku z Invaru, vodicí tyč z Invaru v kluzném pouzdře
-igus drylin, laser pod 68° z držáku na příčníku (11 čar po 9,6 mm, bez stínu límce), RPi 5 v boxu kamery (spouštění z CR850 C4),
+igus drylin, laser pod 68° z držáku na příčníku (11 čar po 9,6 mm, bez stínu límce), RPi 5 v boxu kamery (snímky podle hodin NTP),
 čidlo vzduchu 109 povinně, ventilátor, SHT45, vážení cely. Mezera pod příčníkem 200 → 160 mm, celková výška beze změny.
 Pt100 jde ze stejné strany jako TDR a nasedá uprostřed přímo nad horní tyčku (bod M v jednom místě, povrch volný).
 Rozhodnuto 9. 11. 2026: nasycení vzorku Sr = 0,5 (θ ≈ 0,19) → zdvih nanejvýš desítky µm, měří se hlavně sednutí při tání; Pt100 osa 3,5 mm nad horní tyčkou, hrot 30 mm od stěny. Výpočty §15 v `vypocty.md`,

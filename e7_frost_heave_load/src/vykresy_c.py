@@ -350,8 +350,8 @@ def _sheet_measurement(pdf):
             "2  calibrate (1): shims 0.1 / 0.5 / 1.0 mm under a flat plate,\n"
             "   camera px → mm for free sand and piston top\n"
             f"3  load, 24 h at +10 °C, then zero (1) and (2)\n"
-            f"4  cycle {p.C_CYCLE_H[0]:g} h −10 °C / {p.C_CYCLE_H[1]:g} h +10 °C (fan on); CR850 C4 pulse\n"
-            "   triggers the photo; laser on only for the photo\n"
+            f"4  cycle {p.C_CYCLE_H[0]:g} h −10 °C / {p.C_CYCLE_H[1]:g} h +10 °C (fan on); RPi photo timer\n"
+            "   (NTP); laser on only for the photo\n"
             "5  weigh a witness dish each cycle (not the cell); log air RH\n"
             "6  Sr = 0.5 (θ 0.19): expected heave tens of µm, upper bound 1.7 mm;\n"
             "   the main signal is the thaw settlement under the load",
@@ -488,13 +488,13 @@ def _sheet_sensors(pdf):
     sh.text(28, y2 - 5, f"Total ≈ {lo}–{hi} EUR excl. VAT (≈ {lo * 25 / 1000:.0f}–{hi * 25 / 1000:.0f} tis. Kč). "
             "Already available: printed cell, CS645 + TDR100/200, Pt100, optical fibre, CR850.",
             fontsize=fs(), weight="bold")
-    sh.heading(255, 278, "CR850 channel plan (6 SE / 3 DIFF, C1–C4)")
+    sh.heading(255, 278, "CR850 + AM16/32B channel plan")
     ch = [["DIFF1", "(2) LVDT", "VoltDiff ±5000 mV, avg 20–50"],
           ["DIFF2", "Pt100 via 4WPB100", "BrHalf4W, VX2 2500 mV"],
-          ["SE5", "Tair 109 (required)", "Therm109, VX1"],
+          ["SE5+VX2", "MUX COM (2×32): thermistors", "Tair 109 + rig / cell temps"],
           ["C1–C3", "TDR100/200 → CS645", "SDM"],
-          ["C4", "pulse → RPi GPIO (opto)", "triggers photo + laser"],
-          ["12 V", "fan; LVDT own 24 V supply", "both always on"],
+          ["C4 / VX1", "MUX RES / MUX CLK", "PortSet / ExciteV pulse"],
+          ["12 V", "MUX, fan; LVDT own 24 V", "always on"],
           ["–", "(1) camera + RH sensor", "RPi 5 in the camera box"],
           ["–", "optical fibre", "own reader"]]
     y = table(sh, 255, 274, ["terminal", "connected to", "measurement"], ch, [24, 56, 75], row_h=5.6)
@@ -503,8 +503,10 @@ def _sheet_sensors(pdf):
             "• CR850 and TDR outside; RPi 5 inside the camera box\n"
             "  (no CSI ribbon through the seal, its ≈ 5 W heat the box).\n"
             "  Through the lid seal: Ethernet, 5 V, LVDT, sensor cables.\n"
-            "• Scan 10 min, 1 min around 0 °C; the photo is triggered\n"
-            "  by the CR850 (C4) → same time stamps without NTP.\n"
+            "• Scan 10 min, 1 min around 0 °C; the RPi takes the photo\n"
+            "  on its NTP clock (no free port on the CR850).\n"
+            "• MUX: Tair, air at surface, cell base + wall, Invar post,\n"
+            "  beams → drift correction; option: 4 probes in the sand.\n"
             "• Fan in the freezer evens out the on/off air swings.\n"
             "• No pressure cells: the load is a known dead weight.",
             fontsize=fs(), va="top", linespacing=1.45)

@@ -96,7 +96,7 @@ Kde: [RPishop.cz](https://rpishop.cz/), [LaskaKit](https://www.laskakit.cz/), [G
 | Ventilátor 80 mm 12 V + zdroj 12 V | promíchání vzduchu (běží trvale) | 1 | ≈ 10–20 € | odhad |
 | Mean Well HDR-15-24 (24 V DIN) | napájení LVDT (trvale zapnuté) | 1 | ≈ 11 € bez DPH | ověřeno (TME) |
 | Kabelová vývodka PG7 + Ethernet kabel 3 m | box kamery | 1 | ≈ 5 € | odhad |
-| Optočlen / relé modul 5 V pro spouštění snímku | CR850 C4 → GPIO RPi | 1 | ≈ 3–5 € | odhad |
+| NTC termistor 10 kΩ (epoxid / nerezová jímka ⌀3) + odpor 10 kΩ 0,1 % | na multiplexor: dno a stěna cely, sloupek, příčníky, vzduch (6 ks) + volitelně 4 do písku | 10 | ≈ 3–8 €/ks | odhad |
 
 ## 8 · Čidla ze zahraničí a Campbell
 
@@ -163,4 +163,4 @@ Kde: Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)
 12. Laser do držáku P05 (2× M5×12 do boční drážky T04, +y), kameru + RPi 5 do boxu P06/P07 (sklo do drážky, kabel přes PG7), box na závěs P08 (2× M5×12 do boční drážky T04, −y). Laser natočte, aby čáry ležely napříč přes celý povrch ⌀100; kameru zaostřete (zadní ohnisková vzdálenost).
 13. Slepá zkouška s hliníkovou atrapou (V02) → kalibrace podložkami → první cyklus.
 
-Celkem (V04): čidla a elektronika + mechanika ≈ 1 450–1 980 € bez DPH, tj. ≈ 36–50 tis. Kč.
+Celkem (V04): čidla a elektronika + mechanika ≈ 1 460–1 990 € bez DPH, tj. ≈ 36–50 tis. Kč.

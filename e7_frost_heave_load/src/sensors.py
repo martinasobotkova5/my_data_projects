@@ -142,7 +142,7 @@ B_CAM_MECH = [
 # --- varianta C: měření deformace 1 (kamera + laser) a 2 (LVDT) – co koupit (EUR bez DPH) --------
 C_BUY = [   # rev. B – konkrétní typy (ceny 10/2026, EUR bez DPH; Kč s DPH přepočteno / 1,21 / 25) – viz purchase_list.md
     ("CAM", "Raspberry Pi 5 4 GB + PSU, SD, camera cable (RPishop)", 1, 105, 120, "web (RPishop 2769 Kč)", "– (Ethernet, NTP)"),
-    ("", "Raspberry Pi HQ Camera C/CS, IMX477 (RPishop OFI060)", 1, 50, 62, "web (RPishop 1499 Kč)", "C4 trigger"),
+    ("", "Raspberry Pi HQ Camera C/CS, IMX477 (RPishop OFI060)", 1, 50, 62, "web (RPishop 1499 Kč)", "– (NTP timer)"),
     ("", "Raspberry Pi 6 mm CS wide-angle lens (RPishop / Pi Hut)", 1, 20, 30, "odhad", "–"),
     ("", "camera box XPS 30, double glass; houses the RPi 5 (no heater)", 1, 20, 40, "odhad", "–"),
     ("", "SHT45 RH/T sensor on the RPi (I2C), freezer air", 1, 15, 25, "odhad", "– (RPi)"),
@@ -150,8 +150,9 @@ C_BUY = [   # rev. B – konkrétní typy (ceny 10/2026, EUR bez DPH; Kč s DPH 
     ("LVDT", "RDP DCTH400AG ±10 mm, spring (Elkome)", 1, 581, 581, "web (Elkome)", "DIFF1, ±5000 mV"),
     ("", "Mean Well HDR-15-24, 24 V DIN (floating supply) (TME)", 1, 11, 14, "web (TME)", "always on"),
     ("", "Campbell 4WPB100 (for the existing Pt100) (Ekotechnika)", 1, 60, 120, "odhad – na dotaz", "DIFF2"),
-    ("Tair", "Campbell 109-L, REQUIRED: air = boundary condition", 1, 150, 220, "odhad – na dotaz", "SE5, VX1"),
+    ("Tair", "Campbell 109-L, REQUIRED: air = boundary condition", 1, 150, 220, "odhad – na dotaz", "MUX ch 1"),
     ("", "fan 80 mm 12 V, air mixing in the freezer", 1, 10, 20, "odhad", "12 V, always on"),
+    ("T", "NTC 10k thermistors + 10k 0.1 % resistors (rig, cell, air; 4 optional in sand)", 10, 3, 8, "odhad", "MUX ch 2–11"),
     ("CAL", "shims 0.1 / 0.5 / 1.0 mm (feeler gauge set) for camera px → mm", 1, 10, 25, "odhad", "–"),
 ]
 C_MECH = [   # rev. B3 – only bought, laser-cut and printed parts (see objednavka.md)

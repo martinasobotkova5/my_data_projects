@@ -408,7 +408,7 @@ print("**Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle te
       "Rev. B (izolace + invarový sloupek + invarová tyč) −59…0 µm, zbytek ≤ 6 µm; kamera vůči invarovému terčíku "
       "−49…0 µm, zbytek ≤ 3 µm. Zbylý drift = PETG dno 26 mm + písek → změřit slepou zkouškou s Al atrapou.\n")
 print("**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); "
-      "snímek spouští datalogger (CR850: C4); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; "
+      "RPi fotí podle hodin NTP (CR850 nemá volný port); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; "
       "vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.\n")
 
 # 16 --------------------------------------------------------------------------
@@ -485,19 +485,27 @@ print("\n**Závěr:** napětí v profilech jsou desetiny až jednotky MPa (rezer
       "při výměně kotoučů se změní průhyb příčky T03 o < 1 µm (jde do LVDT, zanedbatelné).\n")
 
 # 18 --------------------------------------------------------------------------
-print("## 18. Datalogger CR850 místo CR1000 (11/2026)\n")
+print("## 18. Datalogger CR850 + multiplexor AM16/32B (11/2026)\n")
 print("CR850 (= CR800 s klávesnicí a displejem): 6 SE / 3 DIFF analogových vstupů, buzení VX1–VX2, porty C1–C4 "
-      "(SDM jen na C1–C3) a výstup 12 V. Stačí, ale port C5 chybí → spouštění snímku na C4, zdroj LVDT a ventilátor "
-      "trvale zapnuté (bez relé). LVDT měřit diferenciálně: rozsah ±5000 mV, rozlišení ≈ 0,67 mV = 1,3 µm při 0,5 V/mm, "
-      "průměrováním 20–50 vzorků ≈ 0,5 µm.\n")
+      "(při SDM jsou C1–C3 vyhrazené pro TDR) a výstup 12 V. Multiplexor potřebuje RES na řídicím portu a CLK na "
+      "řídicím portu **nebo na budicím kanálu** (manuál AM16/32B) → RES = C4, CLK = VX1. Na spouštění snímku port "
+      "nezbude: RPi fotí podle vlastních hodin synchronizovaných NTP, hodiny CR850 synchronizuje LoggerNet (odchylka "
+      "< 1 s, při intervalu 1–10 min zanedbatelné). Zdroj LVDT a ventilátor trvale zapnuté. LVDT diferenciálně: rozsah "
+      "±5000 mV, rozlišení ≈ 0,67 mV = 1,3 µm při 0,5 V/mm, průměrováním 20–50 vzorků ≈ 0,5 µm.\n")
 print("| svorka CR850 | připojeno | měření |\n|---|---|---|")
 for r in (("DIFF1 (1H/1L)", "(2) LVDT DCTH400AG", "VoltDiff ±5000 mV, průměr 20–50 vzorků"),
           ("DIFF2 (2H/2L) + VX2", "Pt100 přes 4WPB100", "BrHalf4W, 2500 mV"),
-          ("SE5 + VX1", "Tair Campbell 109", "Therm109"),
-          ("SE6", "rezerva (např. kontrola napájení LVDT přes dělič)", "VoltSE"),
+          ("SE5 + VX2", "AM16/32B COM (režim 2×32): signál / buzení termistorů", "Therm109 / BrHalf přes MUX"),
+          ("SE6", "rezerva (kontrola napájení LVDT přes dělič)", "VoltSE"),
           ("C1–C3", "TDR100/TDR200 → CS645", "SDM"),
-          ("C4", "impuls → optočlen → GPIO RPi", "spouští snímek + laser"),
-          ("12 V", "ventilátor 80 mm (trvale)", "–"),
-          ("–", "LVDT napájen z vlastního zdroje 24 V (trvale)", "teplotně ustálené čidlo")):
+          ("C4", "AM16/32B RES", "PortSet"),
+          ("VX1", "AM16/32B CLK", "ExciteV pulz"),
+          ("12 V + G", "AM16/32B napájení, ventilátor 80 mm (trvale)", "–"),
+          ("–", "LVDT z vlastního zdroje 24 V (trvale), RPi snímá podle NTP", "–")):
     print("| " + " | ".join(r) + " |")
-print()
+print("\n**Kanály multiplexoru (2×32, termistory 2 vodiče + společná zem):** 1 Tair 109 (povinně), 2 vzduch ve výšce "
+      "povrchu, 3 dno cely (otvor v tištěném dnu pod dutinou), 4 vnější stěna cely, 5 invarový sloupek, 6 horní příčník "
+      "T04, 7 příčka T03 → teploty pro korekci driftu ze slepé zkoušky (dnes se teplota dna a rámu neměří); "
+      "volitelně 8–11 teplotní profil písku 10 / 25 / 70 / 90 mm pod povrchem (4 radiální otvory ⌀3,4 ve stěně cely, "
+      "hroty 25 mm od stěny) → poloha čáry 0 °C (hloubka promrznutí) v čase; zbytek rezerva. Čidla: NTC 10 kΩ v epoxidu "
+      "nebo v nerezové jímce ⌀3 s doplňkovým odporem 10 kΩ 0,1 % na svorce MUX, kalibrace v ledové lázni (±0,1 K).\n")
