@@ -65,7 +65,9 @@ TRAY_L, TRAY_W = 530.0, 340.0
 INS = 25.0              # izolace kolem cely
 
 # --- varianta A: nenasycený písek, tlaky uvnitř vzorku -----------------------------
-SAND = dict(name="unsaturated sand", d50=0.3, Sr=(0.3, 0.5), theta=(0.10, 0.18))
+SAND = dict(name="unsaturated sand", d50=0.3, Sr=(0.3, 0.5), theta=(0.10, 0.19))
+SR_TARGET = 0.5                          # cílové nasycení vzorku E7 (rozhodnuto 9. 11. 2026)
+POROSITY = 0.38                          # předpoklad, θ = Sr · n = 0,19
 SURCHARGE_A_KPA = 25.0       # výchozí = maximální přitížení závažím
 # vložené tlakové buňky: (tag, měří, hloubka pod povrchem [mm], r [mm], úhel [°])
 #   "v" = leží vodorovně → svislé napětí; "h" = stojí svisle, čelem k ose → radiální napětí
@@ -244,8 +246,8 @@ C_LASER_Y, C_LASER_H = 50.0, 124.0      # rev. B3 (držák na čele T-profilu, 6
 C_PT100_R, C_PT100_ANG = 37.5, 315.0    # (rev. A, už neplatí) Pt100 svisle ve volném mezikruží
 # rev. B (upřesnění 10/2026): Pt100 jde ze stejné strany jako TDR – vodorovně otvorem, uprostřed (na ose TDR)
 # a nasedá přímo nad horní tyčku CS645; celé 37 mm v písku, kovová část 25 mm na konci → povrch je volný
-C_PT100_DZ = 3.5                         # osa Pt100 nad osou horní tyčky (⌀3,2/2 + ⌀3/2 + 0,4)
-C_PT100_TIP = 37.0                       # hrot od vnitřní stěny (ověřit)
+C_PT100_DZ = 3.5                         # osa Pt100 nad osou horní tyčky (potvrzeno 9. 11. 2026)
+C_PT100_TIP = 30.0                       # hrot 30 mm od vnitřní stěny (potvrzeno 9. 11. 2026)
 
 # --- varianta C – měření deformace jen 1 (kamera + laser) a 2 (LVDT na zátěži) --------------
 C_LENS_F = 6.0                           # rev. B: objektiv 6 mm (kamera blíž) → zorné pole ≈ 140 mm

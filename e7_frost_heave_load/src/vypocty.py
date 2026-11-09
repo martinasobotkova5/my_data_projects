@@ -391,16 +391,17 @@ print(f"**Rozměry:** sloupy 40×80 × {col_h:.0f} mm, spodní líc příčníku
       "a laser), závaží nad příčníkem mimo zorné pole. Pt100 jde ze strany TDR otvorem a nasedá uprostřed přímo nad horní tyčku CS645 (hloubka ≈ 33 mm) – povrch zůstává volný.\n")
 
 # 15 --------------------------------------------------------------------------
-print("## 15. Varianta C rev. B – posudek měření (10/2026)\n")
-n_por, th = 0.38, 0.15
-print(f"**Očekávaný zdvih:** pórovitost ≈ {n_por}, θ = {th} → Sr ≈ {th / n_por:.2f}; vzduch v pórech {100 * (n_por - th):.0f} % "
+print("## 15. Varianta C rev. B – posudek měření (10/2026, přepočteno pro Sr = 0,5 v 11/2026)\n")
+n_por, sr = p.POROSITY, p.SR_TARGET
+th = sr * n_por
+print(f"**Očekávaný zdvih (rozhodnuto Sr = {sr:g}):** pórovitost ≈ {n_por}, θ = {th:.2f}; vzduch v pórech {100 * (n_por - th):.0f} % "
       f"objemu, objem ledu přibude jen o {100 * 0.09 * th:.1f} % → v uzavřeném vzorku se rozpínání vejde do pórů, "
-      "zdvih in situ ≈ 0 (desítky µm nanejvýš od migrace vody). Horní mez (vše nahoru) 1,35 mm. "
-      "Chcete-li měřit zdvih, zvyšte Sr ≥ 0,85 nebo přiveďte vodu zespodu.\n")
-print("**Směr mrznutí (sim_thaw.py):** cela přímo na Al desce – vzorek zmrzne za ≈ 9 h i zespodu, poslední nezmrzlé místo "
-      "27 mm nade dnem; rev. B (cela tištěná vcelku ⌀240 × 200: +40 mm stěna a +40 mm dno z nízké výplně λ ≈ 0,06, "
-      "podložky G10 v kapsách) – 95 % zmrzne za ≈ 13 h, poslední nezmrzlé 13 mm nade dnem → mrznutí shora "
-      "(s XPS by to bylo 7 mm, s tištěným dnem 60 mm 5 mm). Tání ≈ 13 h → cyklus 24 h + 24 h stačí.\n")
+      f"zdvih in situ ≈ 0 (desítky µm nanejvýš od migrace vody). Horní mez (vše nahoru) {0.09 * th * p.H_SAMPLE:.2f} mm. "
+      "E7 tedy měří hlavně sednutí při tání pod zatížením; pro měření zdvihu by bylo nutné Sr ≥ 0,85 nebo voda zespodu.\n")
+print("**Směr mrznutí (sim_thaw.py, Sr 0,5):** cela přímo na Al desce – 95 % zmrzne za ≈ 10,5 h i zespodu, poslední "
+      "nezmrzlé místo 35 mm nade dnem; rev. B (cela tištěná vcelku ⌀240 × 200: +40 mm stěna a +40 mm dno z nízké výplně "
+      "λ ≈ 0,06, podložky G10 v kapsách) – 95 % zmrzne za ≈ 15 h, celý vzorek za ≈ 16 h, poslední nezmrzlé 13 mm nade dnem "
+      "→ mrznutí shora. Tání ≈ 15 h → cyklus 24 h + 24 h stačí (rezerva ≈ 8 h).\n")
 print("**Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle teplot cely ze slepé zkoušky):** "
       "rev. A (bez izolace, LVDT na Al příčníku, ocelová tyč) −24…+48 µm, zbytek ≤ 12 µm; kamera vůči PETG límci 0…100 µm, "
       "zbytek ≤ 8 µm. Jen izolace bez Invaru by zbytek LVDT zhoršila na 57 µm (cela reaguje pomaleji než sloupy a tyč). "
@@ -409,3 +410,14 @@ print("**Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle te
 print("**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); "
       "snímek spouští CR1000 (C5); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; "
       "vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.\n")
+
+# 16 --------------------------------------------------------------------------
+print("## 16. Varianta C rev. B3 – rám z T-profilů (11/2026)\n")
+print("**Rám:** jen hliníkové T-profily drážka 8 řezané na délku – 2 podélníky 40×40 × 260, příčka 40×80 × 260 naplocho "
+      "(nese 3 podložky G10), 2 sloupy 40×80, horní příčník 40×80 × 340 s jediným otvorem ⌀14; pouzdro ložiska visí "
+      f"pod příčníkem, mezera nad pískem {p.C_BEAM_GAP:g} mm. Hliníkové desky L01/L02 odpadly. Rám zátěž jen vede, "
+      "měření se k rámu nevztahuje (LVDT i terčík kamery jsou na invarovém sloupku), takže drift po korekci zůstává "
+      "≤ 6 µm (LVDT) a ≤ 3 µm (kamera).\n")
+print(f"**Pt100 (potvrzeno):** vodorovně ze strany TDR, osa {p.C_PT100_DZ:g} mm nad osou horní tyčky CS645, "
+      f"hrot {p.C_PT100_TIP:g} mm od vnitřní stěny.\n")
+print(f"**Vzorek (rozhodnuto):** Sr = {p.SR_TARGET:g}, θ = {p.SR_TARGET * p.POROSITY:.2f} (n ≈ {p.POROSITY}).\n")

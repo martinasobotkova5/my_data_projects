@@ -258,7 +258,7 @@ def frame_and_title(sh, x0, y0):
              "1  General tolerance ±0.2; cavity ⌀100 ±0.1 (ream/sand after printing).",
              "2  Sensor positions (green, layer SENSOR) are for information – CS645 rods",
              "   centred in the port (pitch 8.9 ≈ 9), fibre tip 37.5 from the wall,",
-             f"   Pt100 37 mm from the port, on top of the top rod (+{p.C_PT100_DZ:g}). Tip or length?",
+             f"   Pt100 tip {p.C_PT100_TIP:g} mm from the wall, axis +{p.C_PT100_DZ:g} above the top rod (confirmed).",
              f"3  Sand 100 mm (z {TB:g}–{ZS:g}), 34 mm free above for the piston / camera.",
              f"   3 G10 pads ⌀{p.C_PAD_D:g} × {O:g} in pockets ⌀{p.C_PAD_D + 0.4:g} (r {p.C_PAD_R:g}), 0.5 mm proud.",
              "4  Inside: epoxy coat + PTFE spray + silicone grease.",

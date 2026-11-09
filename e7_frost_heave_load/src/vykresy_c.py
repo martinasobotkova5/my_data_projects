@@ -353,7 +353,8 @@ def _sheet_measurement(pdf):
             f"4  cycle {p.C_CYCLE_H[0]:g} h −10 °C / {p.C_CYCLE_H[1]:g} h +10 °C (fan on); CR1000 C5 pulse\n"
             "   triggers the photo; laser on only for the photo\n"
             "5  weigh the cell before / after each cycle; log air RH\n"
-            "6  expected heave for Sr ≈ 0.4 is small (tens of µm) – decide Sr first",
+            "6  Sr = 0.5 (θ 0.19): expected heave tens of µm, upper bound 1.7 mm;\n"
+            "   the main signal is the thaw settlement under the load",
             fontsize=fs(), va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V02_measurement.png"))
 
@@ -418,7 +419,7 @@ def _sheet_cell(pdf):
     v.dim_h(0, yp, O / 2, -26, f"{yp:g}", side="below")
     V.tag(v, -ri + 30, z_top - t["pitch"], 40, 90, f"CS645: 3 rods ⌀3.2 × {t['rod_l']:g}, pitch {t['pitch']:g}")
     V.tag(v, -ri + 20, z_top + 2, -70, Hc + 34, f"optical fibre, tip {p.OF_TIP_FROM_WALL:g} from the wall", V.FBGC)
-    V.tag(v, x_tip - 6, zpt + 1.5, 75, Hc + 34, f"Pt100 {p.PT100_L:g} (metal {p.PT100_METAL:g}) from the port,\n"
+    V.tag(v, x_tip - 6, zpt + 1.5, 75, Hc + 34, f"Pt100 horizontal from the port (metal {p.PT100_METAL:g}),\n"
           f"centred on the top rod (+{p.C_PT100_DZ:g}), tip {p.C_PT100_TIP:g} from the wall", "#8a7300")
     v.dim_h(-ri, x_tip, zpt, zpt + 14, f"{p.C_PT100_TIP:g}")
     V.tag(v, -ro + 20, pz0 + 6, -10, -40, f"port 13 × 27 through the whole wall\n(TDR head {t['head_l']:g} at the inner wall)",
@@ -444,7 +445,7 @@ def _sheet_cell(pdf):
     sh.heading(255, 276, "Point M (existing sensors)")
     rows = [["TDR", "Campbell CS645", "3 rods 75, pitch 8.9, in the port, depth 36/45/54"],
             ["OF", "optical fibre", f"at the top rod, tip {p.OF_TIP_FROM_WALL:g} from the wall"],
-            ["Pt100", "37 mm (25 metal)", f"from the port, on top of the top rod, tip {p.C_PT100_TIP:g}"]]
+            ["Pt100", "Pt100, 4-wire", f"from the port, +{p.C_PT100_DZ:g} above the top rod, tip {p.C_PT100_TIP:g} from wall"]]
     y = table(sh, 255, 272, ["", "sensor", "position"], rows, [16, 36, 103], row_h=5.8)
     sh.heading(255, y - 8, "Print (one piece)")
     pr = [["size", f"⌀{2 * ro:g} × {Hc:g} mm – bed ≥ 250 × 250, Z ≥ 200"],
@@ -460,7 +461,7 @@ def _sheet_cell(pdf):
             "• The cell stands on the 3 G10 pads only (0.5 mm proud): the low-infill\n"
             "  base insulates but carries no load → no creep in the LVDT chain.\n"
             f"• Heat model: λ infill ≈ {p.C_INS_K:g} W/mK → freezes from the top, last unfrozen\n"
-            "  ≈ 13 mm above the floor; 95 % frozen in ≈ 13 h, thawed in ≈ 13 h.\n"
+            "  ≈ 13 mm above the floor; at Sr 0.5: 95 % frozen in ≈ 15 h, thawed in ≈ 15 h.\n"
             "• Inside: epoxy coat + PTFE spray + silicone grease.\n"
             "• Cables: TDR head, Pt100 and fibre all through the port;\n"
             "  the sand surface stays completely free (camera + laser).\n"

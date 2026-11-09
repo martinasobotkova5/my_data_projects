@@ -3,7 +3,7 @@ enthalpy method). Feeds the animated 3D model web/E7_thaw_3d.html (template web/
 
 Illustrative – thermal properties are ASSUMED (table PROPS below), heat transfer coefficients estimated for
 still air in a chest freezer. Heave = in-situ expansion of pore water (9 %) only, no ice lenses → upper bound;
-in the unsaturated sand (Sr 0.3–0.5) the expansion fits into the pore air, so the expected in-situ heave is ≈ 0.
+in the unsaturated sand (Sr 0.5) the expansion fits into the pore air, so the expected in-situ heave is ≈ 0.
 Also computed: thermal drift of the rig as seen by the LVDT (Al beam vs Invar post) and by the camera
 (rim vs Invar reference), from lumped part temperatures.
 
@@ -31,10 +31,10 @@ Z_BOT, Z_SAND, Z_JACKET, Z_TOP = p.BODY_BOTTOM, p.SAND_TOP, p.BODY_H, p.COLLAR_T
 R_PIST, H_PIST = p.C_PISTON_D / 2, p.C_PISTON_H
 
 # ---- assumed properties -------------------------------------------------------------------------------
-THETA = 0.15                          # volumetric water content (SAND theta 0.10–0.18)
+THETA = p.SR_TARGET * p.POROSITY       # volumetric water content: Sr 0.5 × n 0.38 = 0.19
 PROPS = {                             # k [W/mK], C [J/m3K]
-    "sand_u": (1.2, 1.91e6),          # unfrozen: ρd 1600 × 800 + θ × 4.18e6
-    "sand_f": (1.9, 1.57e6),          # frozen: ice instead of water
+    "sand_u": (1.3, 1600 * 800 + THETA * 4.18e6),   # unfrozen: ρd 1600 × 800 + θ × 4.18e6 (≈ 2.07e6)
+    "sand_f": (2.0, 1600 * 800 + THETA * 1.93e6),   # frozen: ice instead of water (≈ 1.65e6)
     "petg": (0.20, 1.60e6),           # inner tube, bottom (100 % infill)
     "jacket": (0.05, 0.20e6),         # outer body, 10 % infill (insulation)
 }
@@ -50,7 +50,7 @@ _a_pad = 3 * math.pi / 4 * (p.C_PAD_D / 1e3) ** 2
 _a_bot = math.pi / 4 * (p.BODY_D / 1e3) ** 2
 _g_ins = (0.3 * _a_pad + K_INS * (_a_bot - _a_pad)) / (p.C_INS_T / 1e3) / _a_bot      # W/m2K through pads + printed base
 H_UNDER = 1 / (1 / H_BOT + 1 / _g_ins) if INSULATED else H_BOT
-POROSITY = 0.38                       # → Sr = θ / n ≈ 0.39; pore air n − θ ≫ 0.09 θ
+POROSITY = p.POROSITY                 # Sr = θ / n = 0.5; pore air n − θ = 0.19 ≫ 0.09 θ = 0.017
 C_PISTON = 2700 * 900 * math.pi / 4 * (p.C_PISTON_D / 1e3) ** 2 * (p.C_PISTON_H / 1e3)   # ≈ 95 J/K
 A_PISTON_AIR = math.pi * (R_PIST / 1e3) ** 2 + 2 * math.pi * (R_PIST / 1e3) * (H_PIST / 1e3)
 EXPANSION = 0.09                      # water → ice

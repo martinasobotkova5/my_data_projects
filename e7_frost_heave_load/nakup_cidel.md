@@ -43,4 +43,5 @@ Invar 36 (FeNi36): poptat u dodavatele speciálních kovů (např. Goodfellow ne
   na ⌀100 a límec nestíní. Velikost vzoru ověřit u Picotronicu.
 - **LVDT:** jeden izolovaný zdroj 24 V; výstup ±5 V přímo do CR1000. Provoz při −10 °C ověřit u RDP/Elkome.
 - **4WPB100** jen pokud je Pt100 čtyřvodičová a měří se přímo CR1000.
-- **Před nákupem:** rozhodnout nasycení vzorku (viz posudek). Při Sr ≈ 0,4 bude zdvih nanejvýš desítky µm.
+- **Vzorek (rozhodnuto 9. 11. 2026):** Sr = 0,5 (θ ≈ 0,19). Zdvih nanejvýš desítky µm, E7 měří hlavně sednutí při tání pod zatížením.
+- **Doporučení dodavatelé:** RPishop.cz (kamera, RPi 5), Picotronic (laser DOE253), Elkome (LVDT RDP DCTH400AG) – držák P05 a rameno P02 jsou nakreslené přesně pro ně; Micro-Epsilon CZ poptat jako srovnání pro LVDT.

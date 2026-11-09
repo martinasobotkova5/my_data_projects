@@ -43,4 +43,5 @@ Invar 36 bar: ask a specialty metals supplier (e.g. Goodfellow, or a local distr
   the 41° pattern then gives 11 lines at ≈ 9.6 mm on ⌀100 and the collar casts no shadow. Confirm the pattern size with Picotronic.
 - **LVDT:** single isolated 24 V supply; ±5 V output straight into the CR1000. Confirm operation at −10 °C with RDP/Elkome.
 - **4WPB100** only if your Pt100 is 4-wire and read directly by the CR1000.
-- **Before buying:** decide the saturation of the sample (see the review). At Sr ≈ 0.4 the expected heave is tens of µm at most.
+- **Sample (decided 9 Nov 2026):** Sr = 0.5 (θ ≈ 0.19). Expected heave is tens of µm at most; E7 measures mainly the thaw settlement under load.
+- **Recommended suppliers:** RPishop.cz (camera, RPi 5), Picotronic (laser DOE253), Elkome (LVDT RDP DCTH400AG) – the holders P02/P05 are drawn for these; Micro-Epsilon CZ as a comparison quote for the LVDT.

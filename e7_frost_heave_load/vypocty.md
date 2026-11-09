@@ -77,7 +77,7 @@ Rozdílná roztažnost cela/vzorek: α PETG-CF ≈ 30–60·10⁻⁶ 1/K → zm�
 
 ## 6. Varianta A – zdvih pod přitížením
 
-Horní mez při θ 0.18: 9 % × θ × 100 mm ≈ **1.6 mm**; v nenasyceném písku podstatně méně (viz §2). LVDT ±10 mm stačí s rezervou.
+Horní mez při θ 0.19: 9 % × θ × 100 mm ≈ **1.7 mm**; v nenasyceném písku podstatně méně (viz §2). LVDT ±10 mm stačí s rezervou.
 
 ## 7. Varianta A – přitížení závažím (max. 25 kPa)
 
@@ -250,15 +250,15 @@ Na povrchu písku nic neleží. Čárový laser svítí šikmo (45° od svislice
 
 ## 14. Varianta C – kombinace: Al rám vede mrtvou váhu, částečný píst, kamera nad volným povrchem
 
-Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 213 189 g + Al nosná deska 305 g = **0.60 kg ≈ 3.0 kPa** (nejmenší přitížení pod pístem).
+Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 189 168 g + Al nosná deska 416 g = **0.69 kg ≈ 3.5 kPa** (nejmenší přitížení pod pístem).
 
 | napětí pod pístem [kPa] | celkem [kg] | kotouče 1 kg | 0,5 kg | doladit [kg] |
 |---|---|---|---|---|
-| 5 | 1.00 | 0 | 0 | 0.40 |
-| 10 | 2.00 | 1 | 0 | 0.40 |
-| 15 | 3.00 | 2 | 0 | 0.40 |
-| 20 | 4.00 | 3 | 0 | 0.40 |
-| 25 | 5.00 | 4 | 0 | 0.40 |
+| 5 | 1.00 | 0 | 0 | 0.31 |
+| 10 | 2.00 | 1 | 0 | 0.31 |
+| 15 | 3.00 | 2 | 0 | 0.31 |
+| 20 | 4.00 | 3 | 0 | 0.31 |
+| 25 | 5.00 | 4 | 0 | 0.31 |
 
 Kotouč ⌀117.5/17: 1 kg = 12.0 mm, 0,5 kg = 6.0 mm. Při 25 kPa jen ≈ 4 kotouče.
 
@@ -266,15 +266,23 @@ Kotouč ⌀117.5/17: 1 kg = 12.0 mm, 0,5 kg = 6.0 mm. Při 25 kPa jen ≈ 4 koto
 
 **Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser 68° (11 čar po ≈ 9.6 mm, posun čáry = 0,40 × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.
 
-**Rozměry:** sloupy 40×80 × 326 mm, spodní líc příčníku 160 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 jde ze strany TDR otvorem a nasedá uprostřed přímo nad horní tyčku CS645 (hloubka ≈ 33 mm) – povrch zůstává volný.
+**Rozměry:** sloupy 40×80 × 306 mm, spodní líc příčníku 140 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 jde ze strany TDR otvorem a nasedá uprostřed přímo nad horní tyčku CS645 (hloubka ≈ 33 mm) – povrch zůstává volný.
 
-## 15. Varianta C rev. B – posudek měření (10/2026)
+## 15. Varianta C rev. B – posudek měření (10/2026, přepočteno pro Sr = 0,5 v 11/2026)
 
-**Očekávaný zdvih:** pórovitost ≈ 0.38, θ = 0.15 → Sr ≈ 0.39; vzduch v pórech 23 % objemu, objem ledu přibude jen o 1.3 % → v uzavřeném vzorku se rozpínání vejde do pórů, zdvih in situ ≈ 0 (desítky µm nanejvýš od migrace vody). Horní mez (vše nahoru) 1,35 mm. Chcete-li měřit zdvih, zvyšte Sr ≥ 0,85 nebo přiveďte vodu zespodu.
+**Očekávaný zdvih (rozhodnuto Sr = 0.5):** pórovitost ≈ 0.38, θ = 0.19; vzduch v pórech 19 % objemu, objem ledu přibude jen o 1.7 % → v uzavřeném vzorku se rozpínání vejde do pórů, zdvih in situ ≈ 0 (desítky µm nanejvýš od migrace vody). Horní mez (vše nahoru) 1.71 mm. E7 tedy měří hlavně sednutí při tání pod zatížením; pro měření zdvihu by bylo nutné Sr ≥ 0,85 nebo voda zespodu.
 
-**Směr mrznutí (sim_thaw.py):** cela přímo na Al desce – vzorek zmrzne za ≈ 9 h i zespodu, poslední nezmrzlé místo 27 mm nade dnem; rev. B (cela tištěná vcelku ⌀240 × 200: +40 mm stěna a +40 mm dno z nízké výplně λ ≈ 0,06, podložky G10 v kapsách) – 95 % zmrzne za ≈ 13 h, poslední nezmrzlé 13 mm nade dnem → mrznutí shora (s XPS by to bylo 7 mm, s tištěným dnem 60 mm 5 mm). Tání ≈ 13 h → cyklus 24 h + 24 h stačí.
+**Směr mrznutí (sim_thaw.py, Sr 0,5):** cela přímo na Al desce – 95 % zmrzne za ≈ 10,5 h i zespodu, poslední nezmrzlé místo 35 mm nade dnem; rev. B (cela tištěná vcelku ⌀240 × 200: +40 mm stěna a +40 mm dno z nízké výplně λ ≈ 0,06, podložky G10 v kapsách) – 95 % zmrzne za ≈ 15 h, celý vzorek za ≈ 16 h, poslední nezmrzlé 13 mm nade dnem → mrznutí shora. Tání ≈ 15 h → cyklus 24 h + 24 h stačí (rezerva ≈ 8 h).
 
 **Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle teplot cely ze slepé zkoušky):** rev. A (bez izolace, LVDT na Al příčníku, ocelová tyč) −24…+48 µm, zbytek ≤ 12 µm; kamera vůči PETG límci 0…100 µm, zbytek ≤ 8 µm. Jen izolace bez Invaru by zbytek LVDT zhoršila na 57 µm (cela reaguje pomaleji než sloupy a tyč). Rev. B (izolace + invarový sloupek + invarová tyč) −59…0 µm, zbytek ≤ 6 µm; kamera vůči invarovému terčíku −49…0 µm, zbytek ≤ 3 µm. Zbylý drift = PETG dno 26 mm + písek → změřit slepou zkouškou s Al atrapou.
 
 **Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); snímek spouští CR1000 (C5); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.
+
+## 16. Varianta C rev. B3 – rám z T-profilů (11/2026)
+
+**Rám:** jen hliníkové T-profily drážka 8 řezané na délku – 2 podélníky 40×40 × 260, příčka 40×80 × 260 naplocho (nese 3 podložky G10), 2 sloupy 40×80, horní příčník 40×80 × 340 s jediným otvorem ⌀14; pouzdro ložiska visí pod příčníkem, mezera nad pískem 140 mm. Hliníkové desky L01/L02 odpadly. Rám zátěž jen vede, měření se k rámu nevztahuje (LVDT i terčík kamery jsou na invarovém sloupku), takže drift po korekci zůstává ≤ 6 µm (LVDT) a ≤ 3 µm (kamera).
+
+**Pt100 (potvrzeno):** vodorovně ze strany TDR, osa 3.5 mm nad osou horní tyčky CS645, hrot 30 mm od vnitřní stěny.
+
+**Vzorek (rozhodnuto):** Sr = 0.5, θ = 0.19 (n ≈ 0.38).
 

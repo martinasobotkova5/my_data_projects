@@ -97,7 +97,9 @@ SHOPS = [
        "ověřeno – [Elkome](https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor)"),
       ("Campbell 4WPB100", "modul pro 4vodičové Pt100", 1, "≈ 60–120 €", "poptat – tel. +420 251 640 511"),
       ("Campbell 109-L, kabel 3 m", "teplota vzduchu (povinně)", 1, "≈ 150–220 €", "poptat")]),
-    ("8a · České firmy / české zastoupení pro kameru, laser a LVDT (alternativy k bodu 8)",
+    ("8a · České firmy / české zastoupení pro kameru, laser a LVDT (alternativy k bodu 8; doporučeno zůstat u bodu 8 – "
+     "RPishop.cz, Picotronic, Elkome – rameno P02 a držák P05 jsou nakreslené přesně pro tato čidla; Micro-Epsilon CZ "
+     "poptat jako srovnání)",
      "vybrat jednu možnost v každém řádku; u jiného průměru těla LVDT / laseru upravit svěrku P02 / držák P05",
      [("Kamera: Raspberry Pi HQ + 6 mm objektiv + RPi 5",
        "[RPishop.cz](https://rpishop.cz/mipi-kamerove-moduly/2458-raspberry-pi-hq-kamera.html) – oficiální Raspberry Pi "
