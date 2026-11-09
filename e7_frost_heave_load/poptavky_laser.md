@@ -73,3 +73,39 @@ range (11 parallel lines, red, ≤ 1 mW, ⌀10–12 mm housing).
 Thank you in advance and kind regards,
 [name]
 [Department], Faculty of Civil Engineering, Czech Technical University in Prague
+
+---
+
+## 3 · LASER COMPONENTS Germany GmbH (anglicky) – výrobce FLEXPOINT, DOE 11 čar
+
+**To:** LASER COMPONENTS Germany GmbH, Werner-von-Siemens-Str. 15, 82140 Olching, Germany – **info@lasercomponents.com**,
+tel. +49 8142 2864-0 ([FLEXPOINT](https://lasercomponents.com/de-en/products/emitters/laser-modules/flexpoint-laser-modules))
+**Subject:** Request for quotation – FLEXPOINT FP-DOE laser module, 11 parallel lines (DOE-233), 1 pc
+
+Dear Sir or Madam,
+
+for a laboratory test at a university (laser triangulation of a soil sample surface with a camera inside a chest
+freezer) we would like to request a quotation for one FLEXPOINT laser module with a diffractive optical element for
+11 parallel lines (DOE-233 according to your FLEXPOINT DOE Series datasheet, or an equivalent pattern).
+
+Requirements:
+- pattern: 11 parallel lines, angle between adjacent lines ≈ 3.8–4°, total spread ≈ 40°;
+- each line at least 110 mm long at a distance of 134 mm (fan angle ≥ 45°);
+- wavelength 635–660 nm (red), output ≤ 1 mW (laser class 2);
+- focusable, focus set to ≈ 130–140 mm (the laser is 134 mm from the surface at 68° to it);
+- standard housing ⌀11.5 mm, supply 5 V DC (or a wide-range input);
+- operation at −10 °C to +10 °C in humid air.
+
+Could you please send:
+1. the exact order code of the suitable configuration;
+2. the price for 1 pc (and for 2 pcs) excluding VAT, shipping costs to the Czech Republic and the delivery time;
+3. the datasheet with the DOE angles (line spacing, line length) and the operating temperature range;
+4. the name of your distributor for the Czech Republic, if orders from the Czech Republic are handled by a distributor.
+
+Invoice address: [Czech Technical University in Prague, Faculty of Civil Engineering, Department …,
+Thákurova 7, 166 29 Prague 6, Czech Republic; VAT ID CZ…]
+Contact: [name, phone, e-mail]
+
+Thank you in advance and kind regards,
+[name]
+[Department], Faculty of Civil Engineering, Czech Technical University in Prague
