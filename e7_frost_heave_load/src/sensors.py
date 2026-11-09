@@ -154,11 +154,11 @@ C_BUY = [   # rev. B – konkrétní typy (ceny 10/2026, EUR bez DPH; Kč s DPH 
     ("", "fan 80 mm 12 V, air mixing in the freezer", 1, 10, 20, "odhad", "C4 relay"),
     ("CAL", "shims 0.1 / 0.5 / 1.0 mm (feeler gauge set) for camera px → mm", 1, 10, 25, "odhad", "–"),
 ]
-C_MECH = [   # rev. B2 – only bought, laser-cut and printed parts (see objednavka.md)
-    ("laser: Al 10 base + top plate, carrier, piston discs; steel discs", 100, 190),
-    ("profiles 2× 40×80 slot 8 × 326, 8 angle brackets, T-nuts, 3 feet M8", 60, 110),
+C_MECH = [   # rev. B3 – only bought, laser-cut and printed parts (see objednavka.md)
+    ("laser: carrier ⌀140, 2 piston discs; steel discs ⌀117.5", 70, 140),
+    ("T-profiles slot 8: 40×80 × 1.21 m, 40×40 × 0.52 m cut; 12 brackets, 44 T-nuts, 4 feet M8", 100, 170),
     ("igus RJ4JP-01-12, shaft collar 12, ball 5/16\", screws M3–M8", 25, 50),
-    ("Invar 36: rod ⌀12 × 289 + post ⌀16 × 357 (Evek, cut to length)", 80, 160),
+    ("Invar 36: rod ⌀12 × 265 + post ⌀16 × 330 (Evek, cut to length)", 80, 160),
     ("cell printed in ONE piece ⌀240 × 200 (PETG(-CF) ≈ 1.5 kg) + 3 G10 pads ⌀20 × 40", 45, 90),
     ("printed parts: housing, arms, foot, laser holder, camera box (PETG-CF)", 10, 25),
 ]

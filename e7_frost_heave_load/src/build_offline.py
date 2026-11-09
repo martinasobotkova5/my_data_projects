@@ -84,7 +84,7 @@ def build():
         "Unzip the package first, then open E7_overview.html in any web browser (double-click).\n"
         "3D model of freezing and thawing: E7_3D_model.html (works without internet).\n"
         "One-page measurement review: E7_review.pdf (also E7_review.html).\n"
-        "Drawings: E7_drawings.pdf (rev. B2, sheets V01–V06). Purchase list: E7_purchase_list.md;\n"
+        "Drawings: E7_drawings.pdf (rev. B3, sheets V01–V06). Purchase list: E7_purchase_list.md;\n"
         "order by shop + assembly (Czech): E7_objednavka_CZ.md. Manufacturing files: vyroba/laser (DXF), vyroba/tisk (STL).\n"
         "CAD: cad/E7_V04_cell.dxf, 3D: 3d/*.step (Onshape, SolidWorks, FreeCAD).\n")
     zp = os.path.join(OUT, "E7_package.zip")

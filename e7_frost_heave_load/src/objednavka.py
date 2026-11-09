@@ -1,4 +1,4 @@
-"""E7 rig C rev. B2 – objednávka po obchodech (CZ) + postup sestavení.
+"""E7 rig C rev. B3 – objednávka po obchodech (CZ) + postup sestavení.
 
 Délky a počty se berou z params.py / buildparts.py, takže po změně rozměrů stačí spustit znovu:
     python objednavka.py      → ../objednavka.md
@@ -13,6 +13,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "objednavka.md")
 EUR = 25.0          # Kč / €
 
+_m80 = sum(d["L"] * d["qty"] for d in bp.PROFILES if max(d["section"]) == 80) / 1000
+_m40 = sum(d["L"] * d["qty"] for d in bp.PROFILES if max(d["section"]) == 40) / 1000
+_lp = {d["name"]: d for d in bp.LASER}
+
 # (obchod, odkaz, [(položka, specifikace / co napsat do objednávky, ks, cena, stav)])
 SHOPS = [
     ("1 · Laserové řezání podle DXF (jedna objednávka)",
@@ -21,15 +25,25 @@ SHOPS = [
      [(f"{d['name']}", f"{d['mat'].split(' (')[0]}, tl. {d['t']:g} mm – soubor `vyroba/laser/{d['name']}_{d['t']:g}mm.dxf`",
        d["qty"], "", "") for d in bp.LASER]
      + [("—", "Hliník 10 mm: ověřit, že ho laser zvládne; jinak stejné DXF na vodní paprsek. Ocel 12 mm: "
-              "kotouče převážit, ±0,5 mm tloušťky = ±4 % hmotnosti", "", "≈ 100–190 € celkem", "odhad")]),
-    ("2 · Hliníkové profily a spojovací díly rámu",
-     "[Enprag](https://www.enprag.cz/hlinikove-profily/c-6027) (drážka 8, kompatibilní s item/Bosch, řez na míru); "
-     "alternativa [eProfily.cz](https://www.eprofily.cz/hlinikovy-profil-80x40-s-drazkou-8-mm/kat3007.html)",
-     [("Profil 40×80 drážka 8 (Enprag KA-4080H)", f"řez na délku {bp.COL_H:g} mm, kolmý řez ±0,2", 2,
-       "31,43 €/m bez DPH (+ řez)", "ověřeno (Enprag EN)"),
-      ("Úhelník 40×40 drážka 8 (Zn) s krytkou", "sloupy ↔ deska základny a horní deska", 8, "≈ 3–6 €/ks", "odhad"),
-      ("T-matice drážka 8, M8 (pérová / otočná)", "+ 4 rezervní", 12, "≈ 1 €/ks", "odhad"),
-      ("Stavitelná noha M8 (talíř ⌀30–40)", "do otvorů ⌀8,5 v základní desce + 2 matice M8", 3, "≈ 3–5 €/ks", "odhad")]),
+              "kotouče převážit, ±0,5 mm tloušťky = ±4 % hmotnosti", "", "≈ 70–140 € celkem", "odhad")]),
+    ("2 · Hliníkové T-profily (drážka 8) a spojovací díly rámu – celý rám",
+     "[Enprag](https://www.enprag.cz/hlinikove-profily/c-6027) (drážka 8, kompatibilní s item/Bosch, řez na míru – "
+     "do poznámky napsat délky a kusy podle tabulky, u T04 požádat o vyvrtání ⌀14); alternativa "
+     "[eProfily.cz](https://www.eprofily.cz/hlinikovy-profil-80x40-s-drazkou-8-mm/kat3007.html). Na Alze konstrukční "
+     "profily nejsou. Výkresy: `vyroba/vykresy/E7-T01…T04`",
+     [(f"{d['no'][3:]} profil {min(d['section']):g}×{max(d['section']):g} drážka 8 – {d['name'].split(' / ')[0]}",
+       f"řez na délku {d['L']:g} mm, kolmý řez ±0,2" + ("; uprostřed svislý otvor ⌀14 skrz" if d["no"] == "E7-T04" else ""),
+       d["qty"], "31,43 €/m bez DPH (+ řez)" if max(d["section"]) == 80 else "≈ 15–20 €/m (+ řez)",
+       "ověřeno (Enprag EN)" if max(d["section"]) == 80 else "odhad")
+      for d in bp.PROFILES]
+     + [("—", f"celkem 40×80: {_m80:.2f} m, 40×40: {_m40:.2f} m".replace(".", ","), "", "", ""),
+        ("Úhelník 40×40 drážka 8 (Zn) s krytkou", "4 příčka ↔ podélníky, 4 sloupy ↔ podélníky, 4 sloupy ↔ příčník", 12,
+         "≈ 3–6 €/ks", "odhad"),
+        ("T-matice drážka 8, M8, vkládací (otočná)", "úhelníky (24) + nohy (4) + 4 rezerva", 32, "≈ 1 €/ks", "odhad"),
+        ("T-matice drážka 8, M5, vkládací (otočná)", "pouzdro P01 (4), patka P04 (2), držák laseru P05 (2), závěs kamery P08 (2) + 2 rezerva",
+         12, "≈ 1 €/ks", "odhad"),
+        ("Stavitelná noha M8 (talíř ⌀30–40)", "do T-matic ve spodní drážce podélníků T02 (y ±110)", 4, "≈ 3–5 €/ks", "odhad"),
+        ("Krytka čela 40×80 / 40×40 (volitelně)", "konce příčníku a podélníků", 6, "≈ 0,5 €/ks", "odhad")]),
     ("3 · Invar 36 (tyče řezané na délku)",
      "[Evek – Invar 36 kulatina](https://evek.vip/slitina-niklu/451-ty%C4%8D-invar36-%C3%B8-2mm-70mm-13912-ty%C4%8D-kulat%C3%A1-nilo-36-alloy-36-uns-k93600.html) "
      "(1.3912, česky, řez na míru)",
@@ -48,10 +62,10 @@ SHOPS = [
      [("igus drylin RJ4JP-01-12", "kluzné pouzdro ⌀12 (⌀21 × 30), bez maziva, do −40 °C", 1, "≈ 2–5 €", "odhad"),
       ("Stavěcí kroužek DIN 705-A 12 (⌀22 × 12, šroub M6)", "pod nosnou desku závaží (+1 rezerva)", 2, "≈ 2–4 €/ks", "odhad"),
       ("Ocelová ložisková kulička 5/16\" (7,94 mm)", "cyklo kuličky, balení", 1, "≈ 1–3 €", "odhad"),
-      ("Imbus ISO 4762 M8×16 + podložka", "úhelníky do T-matic", 8, "", "sada"),
-      ("Šroub M8×25 + matice + 2 podložky", "úhelníky ↔ desky (drážky v deskách)", 8, "", "sada"),
-      ("Šroub M5×45 + matice + podložky", "pouzdro ložiska ↔ horní deska", 4, "", "sada"),
-      ("Šroub M5×20 + matice + podložky", "patka sloupku (2), držák laseru (2), závěs kamery (2)", 6, "", "sada"),
+      ("Imbus ISO 4762 M8×16 + podložka", "úhelníky do T-matic", 24, "", "sada"),
+      ("Imbus ISO 4762 M5×35 + podložka", "pouzdro ložiska P01 ↔ T-matice ve spodní drážce T04", 4, "", "sada"),
+      ("Imbus ISO 4762 M5×20 + podložka", "patka sloupku P04 ↔ T-matice v podélníku", 2, "", "sada"),
+      ("Imbus ISO 4762 M5×12 + podložka", "držák laseru P05 a závěs kamery P08 ↔ boční drážky T04", 4, "", "sada"),
       ("Šroub M4×20 + matice", "box kamery ↔ závěs, svěrky", 4, "", "sada"),
       ("Šroub M3×20 + matice, červík M3×6", "svěrky ramen (3), aretace laseru (1)", 4, "", "sada"),
       ("Šroubky M2,5×6 + distanční sloupky 10 mm", "HQ kamera (4) a RPi 5 (4) v boxu", 8, "", "sada"),
@@ -120,30 +134,36 @@ ASSEMBLY = [
     "Vytiskněte celu (V03) a díly P01–P08 (`vyroba/tisk/*.stl`, PETG-CF, 0,2 mm, 3 perimetry, 40 % gyroid; cela podle V03). "
     "Dutinu cely natřete epoxidem, po vytvrzení PTFE sprej + tenká vrstva silikonové vazelíny.",
     "Píst: kotouče L05 (spodní) a L04 (horní, otvor ⌀6) slepte epoxidem, soustředně.",
-    "Základní deska L01: zašroubujte 3 stavitelné nohy M8 (matice z obou stran). Na desku položte 3 podložky G10 do vyznačených kružnic.",
-    "Sloupy 40×80: do boční drážky (±y) zasuňte T-matice, přišroubujte úhelníky (M8×16) a úhelníky přišroubujte "
-    "k L01 přes drážky (M8×25 + matice). Sloupy srovnejte do pravého úhlu (úhelník), dotáhněte.",
-    "Horní deska L02: úhelníky na vnitřní stranu sloupů, deska na ně (M8×25 + matice přes drážky). "
-    "Otvor ⌀14 musí být nad středem cely – srovnejte podle olovnice nebo trnu ⌀12 z pouzdra.",
-    "Pouzdro P01 přišroubujte na L02 (4× M5×45), vložte igus RJ4JP-01-12, stáhněte svěrný šroub M4.",
-    "Celu (s čidly bodu M) postavte na podložky G10 – kapsy ve dně na podložky; kontrola: cela se nedotýká desky.",
-    "Invarový sloupek ⌀16 postavte do patky P04 (2× M5×20 do L01), sloupek stojí přímo na desce, svěrku dotáhněte. "
+    "Základ: 2 podélníky T02 (40×40 × 260, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = "
+    f"{p.C_CROSS_Y[0]:g}".replace(".", ",") + ") – 4 úhelníky, M8×16 do vkládacích T-matic. Do spodní drážky podélníků 4 stavitelné nohy M8 "
+    "(y ±110). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).",
+    f"Sloupy T01 (40×80 × {bp.COL_H:g}) postavte na podélníky (osa x = ±150, uprostřed délky) a připojte 2 úhelníky "
+    "na stranách ±y (M8×16 + T-matice). Srovnejte do pravého úhlu, dotáhněte.",
+    "Pouzdro P01 přišroubujte zespodu na horní příčník T04 (4× M5×35 do T-matic ve spodních drážkách), souose s otvorem ⌀14; "
+    "vložte igus RJ4JP-01-12 a stáhněte svěrný šroub M4.",
+    "Příčník T04 položte naplocho na sloupy, 2 úhelníky na vnitřní straně každého sloupu (pod příčníkem). "
+    "Otvor ⌀14 musí být nad středem cely – srovnejte podle olovnice nebo trnu ⌀12 v pouzdře, pak dotáhněte.",
+    "Celu (s čidly bodu M) postavte na podložky G10 – kapsy ve dně na podložky; kontrola: cela se nedotýká rámu.",
+    "Invarový sloupek ⌀16 postavte do patky P04 (2× M5×20 do T-matic v horní drážce pravého podélníku, y = "
+    f"{p.C_INVAR_XY[1]:g}); sloupek stojí na dně patky, svěrku dotáhněte. "
     "Nasaďte rameno P03 (terčík ve výšce horní hrany límce) a rameno P02 s LVDT.",
     "Písek nasypte a zhutněte po vrstvách (V02, postup), navrch položte píst, do otvoru ⌀6 kuličku 5/16\".",
     "Invarovou tyč zasuňte shora pouzdrem až na kuličku. Na tyč stavěcí kroužek, na něj nosná deska L03 a kotouče L06/L07. "
-    f"Kroužek nastavte tak, aby nosná deska byla {p.C_TRAVEL + 10:g} mm nad horní hranou pouzdra (zdvih ±{p.C_TRAVEL:g}).",
+    f"Kroužek nastavte tak, aby nosná deska byla {bp.ZC - bp.Z_TOP:g} mm nad horní plochou příčníku T04 "
+    f"(spodní hrana kroužku {bp.Z_COLLAR - bp.Z_TOP:g} mm nad ním = zdvih ±{p.C_TRAVEL:g}).",
     "LVDT posuňte ve svěrce P02, až je jádro uprostřed rozsahu (výstup ≈ 0 V), dotáhněte.",
-    "Laser do držáku P05 (M5 do L02), kameru + RPi 5 do boxu P06/P07 (sklo do drážky, kabel přes PG7), box na závěs P08 (M5 do L02). "
+    "Laser do držáku P05 (2× M5×12 do boční drážky T04, +y), kameru + RPi 5 do boxu P06/P07 (sklo do drážky, kabel přes PG7), "
+    "box na závěs P08 (2× M5×12 do boční drážky T04, −y). "
     "Laser natočte, aby čáry ležely napříč přes celý povrch ⌀100; kameru zaostřete (zadní ohnisková vzdálenost).",
     "Slepá zkouška s hliníkovou atrapou (V02) → kalibrace podložkami → první cyklus.",
 ]
 
 
 def main():
-    L = ["# E7 – varianta C rev. B2: objednávka a sestavení", "",
+    L = ["# E7 – varianta C rev. B3: objednávka a sestavení", "",
          "Vše, co je potřeba koupit, nechat vyrobit podle rozměrů a sestavit. Sestava je navržená tak, aby **nebylo "
-         "potřeba soustružit ani frézovat**: profily se jen řežou na délku, plechy se řežou laserem podle DXF, zbytek se "
-         "tiskne. Výkresy: V01–V06 (`vykresy/E7_drawings.pdf`), výrobní soubory: `vyroba/laser` (DXF) a `vyroba/tisk` (STL/STEP).",
+         "potřeba soustružit ani frézovat**: celý rám je z T-profilů drážka 8, které se jen řežou na délku (jediný "
+         "otvor ⌀14 v horním příčníku), kotouče se řežou laserem podle DXF, zbytek se tiskne. Výkresy: V01–V06 (`vykresy/E7_drawings.pdf`), výrobní soubory: `vyroba/laser` (DXF) a `vyroba/tisk` (STL/STEP).",
          "", "**Už máte:** CR1000, TDR100/200 + CS645, Pt100, optické vlákno + čtečku, truhlicový mrazák s regulátorem (E6).", "",
          f"Ceny: „ověřeno“ = nalezeno na webu prodejce v 10/2026 (ověřte před objednáním), „odhad/poptat“ = cenu je třeba zjistit. 1 € ≈ {EUR:g} Kč.", ""]
     for title, shop, rows in SHOPS:
@@ -153,8 +173,9 @@ def main():
         L.append("")
     L += ["## Rozměry pro kontrolu (z modelu)", "",
           f"- sloupy {bp.COL_H:g} mm, Invarová tyč {bp.ROD_L} mm, Invarový sloupek {bp.POST_L:.0f} mm",
-          f"- nosná deska závaží {bp.ZC - bp.ZB0:.0f} mm nad základní deskou; horní deska {bp.ZBEAM - bp.ZB0:.0f} mm",
-          f"- kotouč {p.C_DISC_D:g} × {p.C_DISC_T:g} mm = {bp.disc_mass(bp.LASER[5]):.2f} kg, poloviční {bp.disc_mass(bp.LASER[6]):.2f} kg",
+          f"- nosná deska závaží {bp.ZC - bp.ZB0:.0f} mm nad horní plochou rámu; spodní líc příčníku {bp.ZBEAM - bp.ZB0:.0f} mm",
+          f"- kotouč {p.C_DISC_D:g} × {p.C_DISC_T:g} mm = {bp.disc_mass(_lp['E7-L06_disc_1kg']):.2f} kg, "
+          f"poloviční {bp.disc_mass(_lp['E7-L07_disc_0.5kg']):.2f} kg",
           "- kontrola kolizí v 3D sestavě (model3d.py): bez kolizí", "",
           "## Postup sestavení", ""]
     L += [f"{i}. {s}" for i, s in enumerate(ASSEMBLY, 1)]

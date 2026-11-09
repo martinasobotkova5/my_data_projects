@@ -1,4 +1,4 @@
-# E7 rev. B2 – výrobní výkresy v Onshape
+# E7 rev. B3 – výrobní výkresy v Onshape
 
 V této složce jsou dvě sady podkladů. Obě jde nahrát do Onshape:
 
@@ -9,7 +9,7 @@ V této složce jsou dvě sady podkladů. Obě jde nahrát do Onshape:
 | DXF pro řezání | `laser/*.dxf` (jen obrys a otvory 1 : 1) | posílá se přímo do laserového řezání |
 
 ## A) Nativní výkres z 3D dílu (doporučeno)
-1. Onshape → **Create → Document** „E7 rig C rev. B2“.
+1. Onshape → **Create → Document** „E7 rig C rev. B3“.
 2. **Import** (šipka nahoru vlevo dole) → vybrat STEP díly z `laser/` a `tisk/` (najednou). Onshape z nich vytvoří Part Studia.
 3. U každého dílu: pravým tlačítkem na kartu Part Studia → **Create drawing** → šablona **ISO, A4 landscape, mm** → Onshape vloží pohledy.
 4. Kóty: **Dimension** (lineární / průměr), u desek **Ordinate dimension** od rohu (stejný výchozí bod ◎ jako v tabulkách otvorů v PDF).
@@ -20,8 +20,9 @@ V této složce jsou dvě sady podkladů. Obě jde nahrát do Onshape:
 2. Jednotky při importu: **mm**. Kóty zůstanou editovatelné.
 
 ## Seznam listů
-L01 základní deska · L02 horní deska · L03 nosná deska · L04/L05 kotouče pístu · L06/L07 závaží ·
-B01 Invarová tyč · B02 Invarový sloupek · B03 podložka G10 · B04 sloup 40×80 ·
+T01 sloup 40×80 · T02 podélník základny 40×40 · T03 příčka základny 40×80 · T04 horní příčník 40×80 s otvorem ⌀14 ·
+L03 nosná deska · L04/L05 kotouče pístu · L06/L07 závaží (L01/L02 v rev. B3 odpadly – rám je celý z T-profilů) ·
+B01 Invarová tyč · B02 Invarový sloupek · B03 podložka G10 ·
 P01 pouzdro ložiska · P02 rameno LVDT · P03 rameno terčíku · P04 patka sloupku · P05 držák laseru ·
 P06/P07 box kamery + víko · P08 závěs kamery · cela: `../cad/E7_V04_cell.dxf` + V03.
 

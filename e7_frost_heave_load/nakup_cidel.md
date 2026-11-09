@@ -22,14 +22,14 @@ Rev. B vychází z posudku měření (`E7_review.pdf`). Anglická verze: `purcha
 | 11 | Promíchání vzduchu v truhle | ventilátor 80 mm 12 V (ložisko do mrazu) | odhad 10–20 € | TME, GM electronic |
 | 12 | Kalibrace kamery | podložky 0,1 / 0,5 / 1,0 mm (spároměrky) | odhad 10–25 € | nářadí |
 
-## Mechanika (rev. B2 – objednatelná bez obrábění; podrobně po obchodech v `objednavka.md`)
+## Mechanika (rev. B3 – rám z T-profilů, objednatelná bez obrábění; podrobně po obchodech v `objednavka.md`)
 
 | Co | Cena |
 |----|------|
-| Laser: Al 10 základní deska 340×260 a horní deska 340×80, nosná deska ⌀120, 2 kotouče pístu ⌀50; ocelové kotouče ⌀117,5 × 12 (4×) a × 6 (1×) | 100–190 € |
-| Profily 40×80 drážka 8 × 326 (2×), 8 úhelníků, T-matice, 3 nohy M8 (Enprag) | 60–110 € |
+| Laser: nosná deska ⌀140, 2 kotouče pístu ⌀50 (Al 10); ocelové kotouče ⌀117,5 × 12 (4×) a × 6 (1×) | 70–140 € |
+| T-profily drážka 8 řezané na délku (Enprag): 2 sloupy 40×80 × 306, horní příčník 40×80 × 340 (otvor ⌀14), příčka základny 40×80 × 260, 2 podélníky 40×40 × 260; 12 úhelníků, 44 vkládacích T-matic, 4 nohy M8 | 100–170 € |
 | igus RJ4JP-01-12, stavěcí kroužek DIN 705-A 12, kulička 5/16", šrouby | 25–50 € |
-| Invar 36: tyč ⌀12 × 289 a sloupek ⌀16 × 357, řez na délku (Evek) | 80–160 € |
+| Invar 36: tyč ⌀12 × 265 a sloupek ⌀16 × 330, řez na délku (Evek) | 80–160 € |
 | Cela tištěná VCELKU ⌀240 × 200 (PETG-CF ≈ 1,5 kg) + 3 podložky G10 ⌀20 × 40 (elektroizolanty.cz) | 45–90 € |
 | Tištěné díly P01–P08: pouzdro ložiska, ramena LVDT a terčíku, patka sloupku, držák laseru, box kamery | 10–25 € |
 

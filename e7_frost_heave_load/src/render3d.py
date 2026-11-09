@@ -62,7 +62,7 @@ if __name__ == "__main__":
     xcut = cq.Workplane("XY").box(1000, 2000, 2000, centered=(False, True, True)).val()
     a = cq.Assembly(); m.variant_c(a)
     render(a, os.path.join(m.OUT, "E7_V01_variant_C.png"), elev=18, azim=-35,
-           title="E7 C rev. B – dead weight on a partial piston, camera + laser, LVDT")
+           title="E7 C rev. B3 (T-profile frame) – dead weight on a partial piston, camera + laser, LVDT")
     render(a, os.path.join(m.OUT, "E7_V01_variant_C_section.png"), elev=10, azim=0, cut=xcut,
            title="E7 C – section x = 0")
     c = cq.Assembly(); m.body_a(c, temps=[], pv=False, pb=False, opt=False, pt_r=m.p.C_PT100_R, pt_ang=m.p.C_PT100_ANG)

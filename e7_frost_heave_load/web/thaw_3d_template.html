@@ -282,11 +282,13 @@ const DATA = /*__DATA__*/null;
   const frameGrp = new THREE.Group(), moving = new THREE.Group(); scene.add(frameGrp); scene.add(moving);
   const ins = G.ins, [bw, bd, bt] = G.base, xc = G.col_span / 2, zBeam = G.z_bot + 100 + G.beam_gap;
   const matInv = M(0x8c7a5b, { metalness: 0.5, roughness: 0.45 }), matXps = M(0x4a4e53, { roughness: 0.85, side: THREE.DoubleSide });   // printed low infill (same print as the core)
-  scene.add(box(-bw / 2, bw / 2, -bd / 2, bd / 2, -ins - bt, -ins, matAl));
+  // rev. B3 frame from T-slot profiles (slot 8): 2 base rails 40×40, cross bar 40×80 flat, 2 columns 40×80, top beam 40×80
+  for (const s of [-1, 1]) scene.add(box(s * G.rail_x - 20, s * G.rail_x + 20, -bd / 2, bd / 2, -ins - bt, -ins, matProf));
+  scene.add(box(-G.rail_x + 20, G.rail_x - 20, G.cross_y - 40, G.cross_y + 40, -ins - bt, -ins, matProf));
   for (const s of [-1, 1]) frameGrp.add(box(s * xc - 20, s * xc + 20, -40, 40, -ins, zBeam, matProf));
-  frameGrp.add(box(-xc - 20, xc + 20, -G.top[1] / 2, G.top[1] / 2, zBeam, zBeam + G.top[2], matAl));   // laser-cut top plate
-  frameGrp.add(box(-G.housing[0] / 2, G.housing[0] / 2, -G.housing[1] / 2, G.housing[1] / 2, zBeam + G.top[2],
-                   zBeam + G.top[2] + G.housing[2], M(0x34373b)));                                         // printed bearing housing
+  frameGrp.add(box(-G.top[0] / 2, G.top[0] / 2, -G.top[1] / 2, G.top[1] / 2, zBeam, zBeam + G.top[2], matProf));   // top beam
+  frameGrp.add(box(-G.housing[0] / 2, G.housing[0] / 2, -G.housing[1] / 2, G.housing[1] / 2, zBeam - G.housing[2],
+                   zBeam, M(0x34373b)));                                                                   // printed bearing housing (hangs)
   // camera with the Raspberry Pi in one box (−y, tilted to the axis), bracket to the beam
   const [camY, camH, camTilt] = G.cam, zCam = G.z_sand + camH;
   const cam = new THREE.Group();
@@ -299,7 +301,7 @@ const DATA = /*__DATA__*/null;
   frameGrp.add(box(-8, 8, 40, 43, zLas - 6, zBeam, matAl));
   const las = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 22, 20), matLaser);
   las.position.set(0, zLas, -lasY); las.rotation.x = -Math.atan2(lasY, lasH); frameGrp.add(las);
-  // Invar post from the base plate: arm with the LVDT under the carrier + reference target for the camera
+  // Invar post from the base rail: arm with the LVDT under the carrier + reference target for the camera
   const zp = G.z_sand + G.h_piston, zRod0 = zp + 6, zC = zBeam + G.beam_h + 25 + 10;
   const [invD, invX, invY] = G.invar, [lvX, lvY] = G.lvdt, [rfX, rfY] = G.ref;
   const lvB = G.lvdt_body, zLvTop = zC - 12, zArm = zLvTop - lvB[1];

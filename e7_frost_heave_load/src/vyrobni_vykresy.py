@@ -1,4 +1,4 @@
-"""E7 rev. B2 – výrobní výkresy jednotlivých dílů (DXF s kótami + PDF), pro dílnu i pro import do Onshape.
+"""E7 rev. B3 – výrobní výkresy jednotlivých dílů (DXF s kótami + PDF), pro dílnu i pro import do Onshape.
 
 Pohledy se počítají přesně z 3D modelu dílu (skryté hrany HLR, OpenCASCADE), kóty jsou skutečné DIMENSION
 entity (v Onshape / AutoCAD / LibreCAD je lze upravovat). Otvory se čtou z modelu a vypisují se do tabulky
@@ -144,7 +144,7 @@ class Drawing:
         rows = [(f"{i['no']}  {i['name']}", f"ks: {i['qty']}"),
                 (f"materiál: {i['mat']}", f"měřítko {scale_txt}"),
                 ("nekótované tolerance ISO 2768-mK, hrany odjehlit 0,3", "rozměry v mm"),
-                ("E7 – zatěžovací zkouška mrznutí a tání, varianta C rev. B2", f"{TODAY}  návrh")]
+                ("E7 – zatěžovací zkouška mrznutí a tání, varianta C rev. B3", f"{TODAY}  návrh")]
         for k, (a, b) in enumerate(rows):
             yy = y0 + h - (k + 1) * 8 * S + 2.4 * S
             self.text(a, (x0 + 2 * S, yy), h=3.6 if k == 0 else 3.0)
@@ -186,7 +186,7 @@ class Drawing:
             ax.axis("off")
             fig.set_size_inches(297 / 25.4, 210 / 25.4)
             pdf.savefig(fig, facecolor="white")
-            if name in ("E7-L01_base_plate", "E7-P01_bearing_housing", "E7-B01_invar_rod"):
+            if name in ("E7-T04_top_beam", "E7-P01_bearing_housing", "E7-B01_invar_rod"):
                 fig.savefig(os.path.join(OUT, name + ".png"), dpi=150, facecolor="white")
             plt.close(fig)
         return path
@@ -276,22 +276,53 @@ def sheet_bar(no, name, mat, d, L, qty, notes, pdf, chamfer=0.5, profile=None):
     return D.save(no + "_" + name.split(",")[0].replace(" ", "_"), pdf)
 
 
+def sheet_profile(prof, pdf):
+    """T-slot profile slot 8: cut to length; the top beam T04 also gets the ⌀14 hole."""
+    w, h = prof["section"]
+    L = prof["L"]
+    hole = prof["no"] == "E7-T04"
+    s = bp.profile_solid((w, h), L, hole=hole)
+    S = pick_scale(L + 80, w + h + 110)
+    sec = f"{min(w, h):g}×{max(w, h):g}"
+    D = Drawing(dict(no=prof["no"], name=prof["name"].split(" / ")[0] + f", profil {sec} drážka 8",
+                     mat=f"Al profil {sec} drážka 8 (item / Bosch kompatibilní), elox", qty=prof["qty"]), S)
+    ox, oy = 25 * S, 92 * S
+    bf, _ = D.view(s, "front", ox, oy, label="ZEPŘEDU")
+    bt, circ = D.view(s, "top", ox, bf[3] + 22 * S, label=None, hidden=False)
+    D.text("SHORA" + (" (otvor ⌀14 skrz)" if hole else ""), (bt[0], bt[3] + (17 if hole else 4) * S), h=3.5)
+    D.view(s, "right", bf[2] + 25 * S, oy, label="ŘEZ / ČELO", dims=False)
+    D.dim_h(bf[2] + 25 * S, bf[2] + 25 * S + w, oy, oy - 8 * S)
+    D.dim_v(oy, oy + h, bf[2] + 25 * S + w, bf[2] + 25 * S + w + 8 * S)
+    notes = [f"řez na délku {L:g} ±0,2, řez kolmý ≤ 0,1; {prof['qty']} ks" + (" – všechny stejně" if prof["qty"] > 1 else ""),
+             prof["note"], "bez dalšího obrábění; spoje úhelníky 40 drážka 8 + T-matice M8 (vkládací)"]
+    if hole:
+        cx, cy = (bt[0] + bt[2]) / 2, (bt[1] + bt[3]) / 2
+        D.dim_h(bt[0], cx, bt[3], bt[3] + 10 * S, f"{L / 2:g}")
+        D.dim_d((cx, cy), 7.0, 45, text="⌀14")
+        notes += ["otvor ⌀14 svisle skrz celý profil (40 mm), uprostřed délky i šířky, stojanová vrtačka",
+                  "spodní drážky: 4 T-matice M5 pro pouzdro P01 (rozteč 38 × 40, souměrně k otvoru)",
+                  "boční drážky: T-matice M5 – držák laseru P05 (+y), závěs kamery P08 (−y)"]
+    D.notes(notes, 25 * S, oy - 20 * S)
+    D.title_block(scale_txt(S))
+    return D.save(prof["no"] + "_" + prof["name"].split(" / ")[-1].replace(" ", "_"), pdf)
+
+
 PRINT_NOTES = {
     "E7-P01_bearing_housing": ["otvor ⌀21,2 hl. 32 pro igus RJ4JP-01-12 (lisovat rukou, svěrka M4)",
                                "spodem ⌀14 průchozí pro tyč; 4× ⌀5,5 (M5×45) se zahloubením ⌀10 × 5",
-                               "rozteč 38 × 38 = otvory v horní desce L02"],
+                               "rozteč 38 × 40 = T-matice M5 ve spodních drážkách příčníku T04, pouzdro visí pod ním"],
     "E7-P02_lvdt_arm": ["svěrka ⌀16,3 na Invarový sloupek, svěrka ⌀20,9 na LVDT DCTH (⌀20,6)",
                         "drážky 1,6 + šroub M3 (svěrky)", "výška ramene 12"],
     "E7-P03_target_arm": ["svěrka ⌀16,3 na sloupek; plocha 14 × 14 pro bílý terčík (samolepka)",
                           "osadit tak, aby horní plocha byla ve výšce horní hrany límce cely"],
-    "E7-P04_post_foot": ["otvor ⌀16,3 – sloupek stojí přímo na základní desce, patka ho jen drží",
-                         "2× ⌀5,5 (M5×20) do L01, zahloubení ⌀10 × 6; svěrka M3"],
+    "E7-P04_post_foot": ["otvor ⌀16,3 se dnem 3 mm (přemostí drážku) – sloupek stojí na dně patky",
+                         "2× ⌀5,5 (M5×20) do T-matic v horní drážce podélníku T02, zahloubení ⌀10 × 6; svěrka M3"],
     "E7-P05_laser_holder": [f"otvor ⌀10,2 pod úhlem {p.C_LASER_ANG:g}° pro laser ⌀10; červík M3",
-                            "2× ⌀5,5 (M5×20) do horní desky L02 (y +30)"],
+                            "2× ⌀5,5 (M5×12) do T-matic v boční drážce příčníku T04 (+y)"],
     "E7-P06_camera_box": ["okénko ⌀34 + drážka 51 × 51 × 2,5 pro sklo 50 × 50 × 2",
                           "4× ⌀2,6 (M2,5) pro HQ kameru (30 × 30); vývodka PG7 ⌀12,4", "úchyt 2× ⌀4,4 (M4)"],
     "E7-P07_camera_box_lid": ["sloupky pro RPi 5 (58 × 49, M2,5)", "víko zapadá 4 mm do boxu"],
-    "E7-P08_camera_hanger": ["2× ⌀5,5 (M5×20) do horní desky L02 (y −30)", "box kamery přišroubovat 2× M4"],
+    "E7-P08_camera_hanger": ["2× ⌀5,5 (M5×12) do T-matic v boční drážce příčníku T04 (−y)", "box kamery přišroubovat 2× M4"],
 }
 
 
@@ -329,15 +360,13 @@ def main():
                                "čela kolmá k ose, sražení 0,5 × 45° oba konce",
                                "spodní čelo dosedá na kuličku 5/16\"; nahoře stavěcí kroužek DIN 705-A 12"], pdf))
         made.append(sheet_bar("E7-B02", "invar post, sloupek ⌀16", "Invar 36 (1.3912), tyč ⌀16", 16, round(bp.POST_L), 1,
-                              ["čela kolmá k ose (sloupek stojí na desce), sražení 0,5 × 45°",
+                              ["čela kolmá k ose (sloupek stojí ve dně patky P04 na podélníku), sražení 0,5 × 45°",
                                "svěrky P02 a P03 se nasunou shora, P04 drží patu"], pdf))
         made.append(sheet_bar("E7-B03", "G10 pad, podložka ⌀20", "sklotextit G10 / FR4, tyč ⌀20", 20, p.C_INS_T, 3,
                               ["3 kusy, délka 40 ±0,05, čela rovnoběžná ≤ 0,05 (všechny 3 stejně)",
                                "v kapsách ⌀20,4 ve dně cely, vyčnívají 0,5 mm"], pdf, chamfer=0.3))
-        made.append(sheet_bar("E7-B04", "column, sloup 40×80", "Al profil 40×80 drážka 8 (item kompatibilní)", 0,
-                              bp.COL_H, 2,
-                              [f"jen řez na délku {bp.COL_H:g} ±0,2, řez kolmý ≤ 0,1 (oba sloupy stejně)",
-                               "bez obrábění; připojení úhelníky 40 drážka 8 + T-matice M8"], pdf, profile=(80, 40)))
+        for prof in bp.PROFILES:
+            made.append(sheet_profile(prof, pdf))
         for name, fn, q in bp.PRINT:
             made.append(sheet_print(name, fn, q, pdf))
     print(len(made), "sheets →", OUT)

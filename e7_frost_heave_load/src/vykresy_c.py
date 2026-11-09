@@ -52,10 +52,58 @@ def cam_rot(x, z):
     return (p.C_CAM_Y + x * math.cos(a) - z * math.sin(a), ZCAM + x * math.sin(a) + z * math.cos(a))
 
 
+PROF = "#d9dde1"
+
+
+def tsec(v, y0, z0, w, h, hole=0.0, z=2.0):
+    """Section of a T-slot profile slot 8 (simplified): hatched body, 8 × 4 slot notches on every 40 mm face
+    module, optional vertical through hole ⌀`hole` in the middle (top beam)."""
+    v.rect(y0, z0, y0 + w, z0 + h, fc=PROF, lw=THICK, hatch="////", z=z)
+    for k in range(int(round(w / 40))):
+        yc = y0 + 20 + 40 * k
+        v.rect(yc - 4, z0 + h - 4, yc + 4, z0 + h, fc="white", lw=THIN, z=z + 0.05)
+        v.rect(yc - 4, z0, yc + 4, z0 + 4, fc="white", lw=THIN, z=z + 0.05)
+    for k in range(int(round(h / 40))):
+        zc = z0 + 20 + 40 * k
+        v.rect(y0, zc - 4, y0 + 4, zc + 4, fc="white", lw=THIN, z=z + 0.05)
+        v.rect(y0 + w - 4, zc - 4, y0 + w, zc + 4, fc="white", lw=THIN, z=z + 0.05)
+    if hole:
+        yc = y0 + w / 2
+        v.rect(yc - hole / 2, z0, yc + hole / 2, z0 + h, fc="white", lw=THIN, z=z + 0.05)
+
+
+def xsec(solid):
+    """Polygons (y, z) of the section of a solid with the plane x = 0: [(outer, [inner, ...]), ...]."""
+    import cadquery as cq
+    slab = cq.Workplane("XY").box(0.02, 2000, 2000)
+    cut = solid.intersect(slab)
+    out = []
+    for f in cut.faces().vals():
+        if f.normalAt().x < 0.99:
+            continue
+        pts = lambda w_: [(q.y, q.z) for q in w_.discretize(0.5)] if hasattr(w_, "discretize") else []
+        ow = f.outerWire()
+        out.append(([(q.y, q.z) for q in ow.positions([i / 200 for i in range(201)])],
+                    [[(q.y, q.z) for q in iw.positions([i / 100 for i in range(101)])] for iw in f.innerWires()]))
+    return out
+
+
+def draw_xsec(v, solid, fc, hatch=None, z=4.7):
+    for outer, inner in xsec(solid):
+        v.poly(outer, fc=fc, lw=THIN, hatch=hatch, z=z)
+        for w_ in inner:
+            v.poly(w_, fc="white", lw=THIN, z=z + 0.05)
+
+
 def draw_c(v):
     """Side view (y–z through the axis) of rig C, no labels. Returns the top of the discs."""
+    import buildparts as bp
     bw, bd, bt = p.C_BASE
-    v.rect(-bd / 2, ZB0 - bt, bd / 2, ZB0, fc=METAL, hatch="////")
+    # rev. B3 base frame of T-profiles: rail 40×40 (behind, along y), cross bar 40×80 flat cut at x = 0
+    v.rect(-bd / 2, ZB0 - bt, bd / 2, ZB0, fc="#eceff1", lw=THIN, z=1.1)
+    for yy in (-bd / 2 + 16, bd / 2 - 16):
+        v.line([(yy, ZB0 - bt), (yy, ZB0)], lw=0.4, c="#9aa5ab", z=1.15)
+    tsec(v, p.C_CROSS_Y[0] - 40, ZB0 - bt, 80, 40)
     # rev. B: the cell is printed in one piece with its insulation (low-infill base + wall), G10 pads in pockets
     v.rect(-RO, ZB0, RO, ZCELL, fc=V.PETG, lw=THIN, hatch="..")
     for a in (90, 210):
@@ -68,12 +116,11 @@ def draw_c(v):
     for xf in (-bd / 2 + 20, bd / 2 - 20):
         v.rect(xf - 8, ZB0 - bt - 18, xf + 8, ZB0 - bt, fc=V.STEEL, lw=THIN)
     v.rect(-40, ZB0, 40, ZBEAM, fc="#eceff1", lw=THIN, ls="--", z=1.2)
-    v.rect(-p.C_TOP[1] / 2, ZBEAM, p.C_TOP[1] / 2, ZBEAM + p.C_TOP[2], fc=METAL, lw=THICK, hatch="////")   # top plate
-    zh = ZBEAM + p.C_TOP[2]
-    v.rect(-p.C_HOUSING[1] / 2, zh, p.C_HOUSING[1] / 2, zh + p.C_HOUSING[2], fc=V.PETG, lw=THIN, hatch="..")
+    tsec(v, -p.C_TOP[1] / 2, ZBEAM, p.C_TOP[1], p.C_TOP[2], hole=14.0)                 # top beam 40×80, ⌀14
+    zh = ZBEAM - p.C_HOUSING[2]                                                      # housing hangs below
+    v.rect(-p.C_HOUSING[1] / 2, zh, p.C_HOUSING[1] / 2, ZBEAM, fc=V.PETG, lw=THIN, hatch="..")
     bo, bl = p.C_BUSH
-    v.rect(-bo / 2, zh + 4.5, bo / 2, zh + 4.5 + bl, fc=V.STEEL, lw=THIN,
-           hatch="xx")
+    v.rect(-bo / 2, zh + 4, bo / 2, zh + 4 + bl, fc=V.STEEL, lw=THIN, hatch="xx")
     V.cup_cell(v)
     # one piece: the core outline is not an edge of the print (draw it as a hint only)
     for s_ in (-1, 1):
@@ -94,7 +141,8 @@ def draw_c(v):
         z += T1
     # (2) LVDT on an arm of the Invar post (x = −95, beside the sleeve), plunger on the carrier underside
     yl_, yi, yr = p.C_LVDT_XY[1], p.C_INVAR_XY[1], p.C_REF_XY[1]
-    v.rect(yi - p.C_INVAR_D / 2, ZB0, yi + p.C_INVAR_D / 2, Z_LV + 12, fc=V.INVAR, lw=THIN, z=4.8)
+    v.rect(yi - 22, ZB0, yi + 22, ZB0 + 20, fc=V.PETG, lw=THIN, hatch="..", z=4.75)              # post foot P04
+    v.rect(yi - p.C_INVAR_D / 2, ZB0 + bp.POST_FLOOR, yi + p.C_INVAR_D / 2, Z_LV + 12, fc=V.INVAR, lw=THIN, z=4.8)
     v.rect(yl_, Z_LV, yi, Z_LV + 12, fc=V.PETG, lw=THIN, z=4.8)                       # printed arm
     v.rect(yl_ - LVD / 2, Z_LV, yl_ + LVD / 2, Z_LV + LVL, fc=V.SENS, lw=THIN, z=4.9)
     v.line([(yl_, Z_LV + LVL), (yl_, ZC)], lw=THICK, z=4.9)
@@ -105,11 +153,11 @@ def draw_c(v):
     box_ = [cam_rot(-50, -35), cam_rot(50, -35), cam_rot(50, 35), cam_rot(-50, 35)]
     v.poly(box_, fc="#f3e7c9", lw=THICK)
     v.poly([cam_rot(-14, -35), cam_rot(14, -35), cam_rot(14, -47), cam_rot(-14, -47)], fc="#555", lw=THIN)
-    v.rect(p.C_CAM_Y - 8, ZCAM + 30, -40, ZBEAM, fc=METAL, lw=THIN)
+    draw_xsec(v, bp.camera_hanger().translate((0, 0, ZBEAM)), V.PETG, hatch="..")
     c0 = cam_rot(0, -47)
     for xx in (-p.COLLAR_OD / 2 - 2, p.COLLAR_OD / 2 + 2):
         v.line([c0, (xx, ZCELL + p.COLLAR_TOP)], lw=0.5, c=FREE, ls="--")
-    v.rect(40, ZL - 6, 43, ZBEAM, fc=METAL, lw=THIN)
+    draw_xsec(v, bp.laser_holder().translate((0, 0, ZBEAM)), V.PETG, hatch="..", z=4.5)
     v.rect(YL - 5, ZL - 5, YL + 5, ZL + 5, fc="#c0392b", lw=THIN, z=5)
     v.line([(YL, ZL), (0, V.Z_S1)], lw=1.0, c=LASER, z=4.6)
     for s_ in (-1, 1):
@@ -121,8 +169,8 @@ def draw_c(v):
 
 # --------------------------------------------------------------------------------------------
 def _sheet_assembly(pdf):
-    sh = Sheet("Rig C rev. B – dead weight on a partial piston, free surface", "E7-V01", "≈ 1 : 2.5", 1, TOTAL,
-               "side view y–z through the axis; the Al frame only GUIDES the load; rev. B per measurement review")
+    sh = Sheet("Rig C rev. B3 – dead weight on a partial piston, free surface", "E7-V01", "≈ 1 : 2.5", 1, TOTAL,
+               "side view y–z through the axis; the T-profile frame only GUIDES the load")
     v = View(sh, 112, 34, 0.40)
     ztop, box_ = draw_c(v)
     bw, bd, bt = p.C_BASE
@@ -133,10 +181,10 @@ def _sheet_assembly(pdf):
     v.dim_h(-p.C_DISC_D / 2, p.C_DISC_D / 2, ztop, ztop + 12, f"⌀{p.C_DISC_D:g} discs")
     t = V.tag
     t(v, 0, ZC + p.C_CARRIER_T + 20, 172, ztop + 25, "dead weight: carrier + discs 1 kg\n(moves up and down)")
-    t(v, 0, ZBEAM + 40, 172, ZBEAM + 50, "igus drylin RJ4JP-01-12 in a printed\nhousing on the laser-cut top plate")
+    t(v, 0, ZBEAM + 40, 172, ZBEAM + 50, "igus drylin RJ4JP-01-12 in a printed housing\nunder the top beam (T-profile 40×80, ⌀14)")
     t(v, p.C_LVDT_XY[1], Z_LV + 30, 172, ZBEAM + 95, "(2) LVDT on a printed arm of the Invar post", V.SENS_TXT)
     t(v, 0, V.Z_S1 + 90, 172, ZBEAM + 15, "guide rod Invar 36 ⌀12, ball ⌀8", "#5b4a99")
-    t(v, p.C_INVAR_XY[1], V.Z_S1 + 60, 172, V.Z_S1 + 120, f"Invar post ⌀16 (x = {p.C_INVAR_XY[0]:g})\nfrom the base plate", "#5b4a99")
+    t(v, p.C_INVAR_XY[1], V.Z_S1 + 60, 172, V.Z_S1 + 120, f"Invar post ⌀16 (x = {p.C_INVAR_XY[0]:g})\nin a printed foot on the base rail", "#5b4a99")
     t(v, p.C_REF_XY[1], ZCELL + p.COLLAR_TOP + 4, 172, V.Z_S1 + 85, "Invar target = camera reference", "#5b4a99")
     t(v, YL, ZL, 172, V.Z_S1 + 60, "(1) laser 68°, 11 lines", "#c0392b")
     t(v, 20, ZP - 5, 172, V.Z_S1 + 36, "partial piston ⌀50×20")
@@ -145,7 +193,7 @@ def _sheet_assembly(pdf):
     t(v, p.BODY_D / 2 - 5, V.Z_S0 + 10, 172, V.Z_S0 - 5, "printed cell ⌀240, one piece (V03)")
     t(v, RO - 8, ZCELL + 70, 172, V.Z_S0 - 30, "printed wall +40 (gyroid 10–15 %)", "#3a6f99")
     t(v, 60, ZB0 + 20, 172, ZB0 + 5, "printed base 40 + 3 G10 pads ⌀20×40", "#3a6f99")
-    t(v, 100, ZB0 - 12, 172, ZB0 - 30, f"Al plate {p.C_BASE[0]:g}×{p.C_BASE[1]:g}×{p.C_BASE[2]:g} (laser)")
+    t(v, p.C_CROSS_Y[0] + 30, ZB0 - 20, 172, ZB0 - 30, "base: T-profile rails 40×40\n+ cross bar 40×80")
     t(v, box_[0][0], box_[0][1], -150, ZCAM + 10, "(1) camera box:\nRPi HQ + 6 mm lens\n+ RPi 5 (its heat\nkeeps the window clear)",
       INK, ha="right")
     t(v, -40, ZBEAM + 40, -150, ZBEAM + 40, "columns 40×80\n(behind)", INK, ha="right")
@@ -161,11 +209,11 @@ def _sheet_assembly(pdf):
     sh.text(255, y - 3, f"moving part without discs ≈ {mf:.2f} kg ≈ {mf * 9.81 / A_P * 1000:.1f} kPa (minimum)",
             fontsize=fs())
     sh.heading(255, y - 14, "Parts")
-    parts = [["1", f"Al base plate {bw:g}×{bd:g}×{bt:g}, 3 levelling feet"],
-             ["2", f"2 columns 40×80 slot 8 × {COL_H:g}, 8 angle brackets; top plate {p.C_TOP[0]:g}×{p.C_TOP[1]:g}×{p.C_TOP[2]:g}"],
+    parts = [["1", f"base: 2 rails 40×40 × {bd:g} + cross bar 40×80 × {2 * (p.C_RAIL_X - 20):g}, 4 levelling feet M8"],
+             ["2", f"2 columns 40×80 × {COL_H:g}; top beam 40×80 × {p.C_TOP[0]:g} (⌀14); 12 angle brackets"],
              ["3", "igus RJ4JP-01-12 in a printed housing; Invar rod ⌀12"],
              ["4", "piston ⌀50×20 = 2 laser-cut Al discs, ball 5/16\""],
-             ["5", f"carrier Al ⌀120×10 on a shaft collar; discs ⌀{p.C_DISC_D:g}×12 = 1 kg"],
+             ["5", f"carrier Al ⌀{p.C_CARRIER_D:g}×10 on a shaft collar; discs ⌀{p.C_DISC_D:g}×12 = 1 kg"],
              ["6", "printed cell ⌀240 × 200, ONE piece incl. insulation (V03)"],
              ["7", "sand ⌀100×100; 3 G10 pads ⌀20×40 in the base pockets"],
              ["8", "Invar post ⌀16: LVDT arm + camera target arm"],
@@ -258,27 +306,27 @@ def _sheet_measurement(pdf):
     V.tag(c, 40, -9, 75, 18, "free sand: 11 profiles", INK)
     V.tag(c, 10, 6, 75, -2, "piston top (light red)", INK)
     V.tag(c, -20, -50, 75, -35, f"heave Δh: lines shift by {1 / TAN_L:.2f} Δh", INK)
-    # (c) LVDT – heights from the underside of the top plate
+    # (c) LVDT – heights from the underside of the top beam
     l_ = View(sh, 200, 190, 0.38, "(c) LVDT ON INVAR POST  1 : 2.6", (198, 252))
     yl_, yi = p.C_LVDT_XY[1], p.C_INVAR_XY[1]
     tp, hh = p.C_TOP[2], p.C_HOUSING[2]
     zc_ = p.C_BEAM_H + p.C_TRAVEL + 10
-    l_.rect(-p.C_TOP[1] / 2, 0, p.C_TOP[1] / 2, tp, fc=METAL, lw=THICK, hatch="////")
-    l_.rect(-p.C_HOUSING[1] / 2, tp, p.C_HOUSING[1] / 2, tp + hh, fc=V.PETG, lw=THIN, hatch="..")
-    l_.rect(-p.C_ROD_D / 2, -20, p.C_ROD_D / 2, zc_ + 30, fc=V.INVAR, lw=THIN)
+    tsec(l_, -p.C_TOP[1] / 2, 0, p.C_TOP[1], tp, hole=14.0)
+    l_.rect(-p.C_HOUSING[1] / 2, -hh, p.C_HOUSING[1] / 2, 0, fc=V.PETG, lw=THIN, hatch="..")
+    l_.rect(-p.C_ROD_D / 2, -hh - 20, p.C_ROD_D / 2, zc_ + 30, fc=V.INVAR, lw=THIN, z=2.2)
     l_.rect(-12, zc_ - 10, 12, zc_, fc=V.STEEL, lw=THIN)
     l_.rect(-60, zc_, 60, zc_ + p.C_CARRIER_T, fc=METAL, lw=THIN, hatch="////")
     za = zc_ - 12 - LVL
-    l_.rect(yi - 8, -20, yi + 8, za + 12, fc=V.INVAR, lw=THIN)
+    l_.rect(yi - 8, -hh - 20, yi + 8, za + 12, fc=V.INVAR, lw=THIN)
     l_.rect(yl_, za, yi, za + 12, fc=V.PETG, lw=THIN)
     l_.rect(yl_ - LVD / 2, za, yl_ + LVD / 2, za + LVL, fc=V.SENS, lw=THIN)
     l_.line([(yl_, za + LVL), (yl_, zc_)], lw=THICK)
     l_.dim_v(za + LVL, zc_, yl_ + 14, yl_ + 26, "12 (±10 range)")
     l_.dim_v(zc_ - 10, zc_, -40, -52, f"{p.C_TRAVEL:g}+ travel" if False else "collar")
     V.tag(l_, yl_, za + 30, -60, -62, "LVDT DCTH400AG ⌀20.6 in a\nprinted clamp arm", V.SENS_TXT, ha="left")
-    V.tag(l_, yi, 0, -60, -92, "Invar post ⌀16 from the base plate\n(frame and rod drift bypassed)", "#5b4a99", ha="left")
+    V.tag(l_, yi, -40, -60, -100, "Invar post ⌀16 from the base rail\n(frame and rod drift bypassed)", "#5b4a99", ha="left")
     V.tag(l_, -50, zc_ + 3, -60, -38, "carrier on a shaft collar (Invar rod)", INK, ha="left")
-    V.tag(l_, 20, tp + hh - 6, 70, tp + hh + 40, "printed housing + igus RJ4JP-01-12\non the laser-cut top plate", INK)
+    V.tag(l_, -20, -hh / 2, -60, tp + 95, "top beam T-profile 40×80, ⌀14;\nprinted housing + igus RJ4JP-01-12\nhangs below it (4× M5 in T-nuts)", INK, ha="left")
     # right panel
     sh.heading(255, 276, "What is measured")
     rows = [["(1) camera + 11 lines", "map h(x, y) of the whole surface", "≈ 10 µm", "every 10 / 1 min"],
@@ -464,7 +512,7 @@ def _sheet_sensors(pdf):
 
 # --------------------------------------------------------------------------------------------
 def _sheet_layout(pdf):
-    sh = Sheet("Rig C rev. B in the chest freezer", "E7-V05", "1 : 5", 5, TOTAL,
+    sh = Sheet("Rig C rev. B3 in the chest freezer", "E7-V05", "1 : 5", 5, TOTAL,
                "same freezer as E6 (≈ 900 × 550 × 650, to be measured); CR1000 outside the freezer")
     k = 0.2
     v = View(sh, 35, 160, k)
@@ -476,7 +524,10 @@ def _sheet_layout(pdf):
     v.text(752, 60, "floor step (if present)", fontsize=fs() - 1, ha="center")
     bw, bd, bt = p.C_BASE
     ax, ay = tx0 + p.TRAY_L / 2, ty0 + p.TRAY_W / 2
-    v.rect(ax - bw / 2, ay - bd / 2, ax + bw / 2, ay + bd / 2, fc=METAL, lw=THIN, z=2)
+    for s_ in (-1, 1):                                                               # base rails 40×40
+        v.rect(ax + s_ * p.C_RAIL_X - 20, ay - bd / 2, ax + s_ * p.C_RAIL_X + 20, ay + bd / 2, fc=PROF, lw=THIN, z=2)
+    v.rect(ax - p.C_RAIL_X + 20, ay + p.C_CROSS_Y[0] - 40, ax + p.C_RAIL_X - 20, ay + p.C_CROSS_Y[0] + 40, fc=PROF,
+           lw=THIN, z=2)                                                             # cross bar 40×80
     for s_ in (-1, 1):
         v.rect(ax + s_ * p.C_COL_SPAN / 2 - 20, ay - 40, ax + s_ * p.C_COL_SPAN / 2 + 20, ay + 40, fc="#d9dde1",
                lw=THIN, z=2.2)
@@ -498,9 +549,9 @@ def _sheet_layout(pdf):
     e.rect(25, 0, 610, 20, fc="#3a3a3a", lw=0, z=1.2)
     e.rect(tx0, 20, tx0 + p.TRAY_L, 60, fc="none", lw=THIN, z=1.3)
     e.rect(620, 0, 885, 230, fc="none", lw=THIN, ls="--", z=1.2)
-    z0 = 60 + 18 + bt                                  # top of the base plate
+    z0 = 60 + 18 + bt                                  # top of the base frame
     e.rect(ax - RO, z0, ax + RO, z0 + p.C_INS_T + p.BODY_H, fc=V.PETG, lw=THIN, z=2.05)
-    e.rect(ax - bw / 2, z0 - bt, ax + bw / 2, z0, fc=METAL, lw=THIN, z=2)
+    e.rect(ax - bw / 2, z0 - bt, ax + bw / 2, z0, fc=PROF, lw=THIN, z=2)
     for s_ in (-1, 1):
         e.rect(ax + s_ * p.C_COL_SPAN / 2 - 20, z0, ax + s_ * p.C_COL_SPAN / 2 + 20, z0 + COL_H, fc="#d9dde1", lw=THIN, z=2)
     e.rect(ax - p.C_COL_SPAN / 2 - 20, z0 + COL_H, ax + p.C_COL_SPAN / 2 + 20, z0 + COL_H + p.C_TOP[2], fc="#d9dde1",
@@ -516,19 +567,19 @@ def _sheet_layout(pdf):
     e.dim_v(0, top, ax + bw / 2 + 10, ax + bw / 2 + 50, f"{top:.0f}")
     e.dim_v(0, p.FRZ_H, p.FRZ_L, p.FRZ_L + 25, f"≈ {p.FRZ_H:g}")
     sh.heading(255, 278, "Fit check")
-    rows = [["base plate", f"{bw:g} × {bd:g}", "tray ≈ 530 × 340", "OK"],
-            ["rig height", "plate + frame + discs", f"{top - 60:.0f} above tray", "check"],
+    rows = [["base frame", f"{bw:g} × {bd:g}", "tray ≈ 530 × 340", "OK"],
+            ["rig height", "frame + discs", f"{top - 60:.0f} above tray", "check"],
             ["highest point", "above freezer floor", f"{top:.0f}", f"≈ {p.FRZ_H - top:.0f} spare"],
             ["load travel", "± 25 mm above the beam", f"max {top + 25:.0f}", "lid closes?"]]
     table(sh, 255, 274, ["item", "size", "value", "status"], rows, [30, 50, 40, 35], row_h=5.6)
     sh.text(255, 242,
             "Notes\n"
             "• The free end of the freezer stays empty (cable bundle, a second rig).\n"
-            "• Highest point is the disc stack; with 4 discs ≈ 50 mm under the lid –\n"
+            f"• Highest point is the disc stack; with 4 discs ≈ {p.FRZ_H - top:.0f} mm under the lid –\n"
             "  measure the freezer and the tray before ordering the profiles.\n"
-            "• Camera box and laser hang inside the frame – nothing outside the plate.\n"
-            "• Rev. B: cell printed in one piece ⌀240 × 200 (+40 base), beam gap 200 → 160:\n"
-            "  the total height is unchanged.\n"
+            "• Camera box and laser hang inside the frame – nothing outside the base.\n"
+            "• Rev. B3: frame of T-slot profiles; the bearing housing hangs under the top\n"
+            f"  beam, beam gap {p.C_BEAM_GAP:g} mm above the sand → the rig is lower than rev. B.\n"
             "• 80 mm fan on the free end mixes the air; run the blank test first.",
             fontsize=fs(), va="top", linespacing=1.5)
     sh.save(pdf, os.path.join(OUT, "E7-V05_freezer_layout.png"))
@@ -537,86 +588,111 @@ def _sheet_layout(pdf):
 
 # --------------------------------------------------------------------------------------------
 def _sheet_parts(pdf):
-    """Parts made to order: laser-cut plates (DXF in vyroba/laser), cut bars, 3D-printed parts (STL in vyroba/tisk)."""
+    """Parts made to order: T-slot profiles cut to length, laser-cut discs (DXF in vyroba/laser), cut bars,
+    3D-printed parts (STL in vyroba/tisk)."""
     import buildparts as bp
-    sh = Sheet("Parts for manufacture – laser, cut bars, 3D print (rev. B2)", "E7-V06", "1 : 3", 6, TOTAL,
-               "DXF 1 : 1 in vyroba/laser, STL/STEP in vyroba/tisk; no machining")
+    sh = Sheet("Parts to make – T-profiles, laser, bars, 3D print (rev. B3)", "E7-V06", "1 : 3", 6, TOTAL,
+               "profiles only cut to length, one ⌀14 hole in T04; DXF in vyroba/laser, STL in vyroba/tisk")
     lp = {d["name"]: d for d in bp.LASER}
+    K = 0.33
 
-    def draw(v, d, dims=True):
-        if "rect" in d:
-            w, h, r = d["rect"]
-            v.rect(-w / 2, -h / 2, w / 2, h / 2, fc=METAL, lw=THICK)
-        else:
-            v.circle(0, 0, d["circle"] / 2, fc=METAL if d["mat"].startswith("Al") else "#8a8f96", lw=THICK)
+    def draw(v, d):
+        v.circle(0, 0, d["circle"] / 2, fc=METAL if d["mat"].startswith("Al") else "#8a8f96", lw=THICK)
         for x, y, dd in d["holes"]:
             v.circle(x, y, dd / 2, fc="white", lw=THIN, z_=4)
-        for x0, y0, x1, y1, ww in d["slots"]:
-            a = math.atan2(y1 - y0, x1 - x0)
-            nx, ny = -math.sin(a) * ww / 2, math.cos(a) * ww / 2
-            v.poly([(x0 + nx, y0 + ny), (x1 + nx, y1 + ny), (x1 - nx, y1 - ny), (x0 - nx, y0 - ny)], fc="white",
-                   lw=THIN, z=4)
-        for x, y, dd in d["engrave"]:
-            v.circle(x, y, dd / 2, fc="none", ec=RED, lw=0.4, ls="--", z_=4.5)
 
-    # L01 base plate
-    d = lp["E7-L01_base_plate"]
-    v = View(sh, 95, 205, 0.33, f"L01 BASE PLATE  {d['mat']}, t = {d['t']:g}, 1×", (95, 262))
-    draw(v, d)
-    bw, bd, _ = d["rect"][0], d["rect"][1], 0
-    v.dim_h(-bw / 2, bw / 2, -bd / 2, -bd / 2 - 14, f"{bw:g}", side="below")
-    v.dim_v(-bd / 2, bd / 2, -bw / 2, -bw / 2 - 14, f"{bd:g}")
-    v.dim_h(-150, 150, -110, -bd / 2 - 30, "300 (feet ⌀8.5)", side="below")
-    v.dim_v(-110, 110, bw / 2, bw / 2 + 12, "220")
-    v.dim_h(-bp.XC, bp.XC, 60, bd / 2 + 10, f"{2 * bp.XC:g} (slots 8.6 × 20, y ±50…70)")
-    xi, yi = p.C_INVAR_XY
-    v.text(xi, yi - 10, f"post foot 2× ⌀5.5\nat ({xi:g}, {yi:g}) ± 15", fontsize=fs() - 0.5, ha="center", va="top")
-    v.text(0, -8, "red: engraving only\n(cell ⌀240, pads ⌀20 at r 35)", fontsize=fs() - 0.5, ha="center", color=RED)
-    # L02 top plate
-    d = lp["E7-L02_top_plate"]
-    v = View(sh, 95, 112, 0.33, f"L02 TOP PLATE  {d['mat']}, t = {d['t']:g}, 1×", (95, 140))
-    draw(v, d)
-    w, h = d["rect"][0], d["rect"][1]
-    v.dim_h(-w / 2, w / 2, -h / 2, -h / 2 - 12, f"{w:g}", side="below")
-    v.dim_v(-h / 2, h / 2, -w / 2, -w / 2 - 12, f"{h:g}")
-    v.text(0, h / 2 + 4, "⌀14 rod · 4× ⌀5.5 housing (38 × 38) · 2× ⌀5.5 camera (y −30) · 2× ⌀5.5 laser (y +30)",
-           fontsize=fs() - 0.5, ha="center", va="bottom")
-    v.text(0, -h / 2 - 34, "slots 8.6 × 20 at x ±100…120, y ±20 (angle brackets)", fontsize=fs() - 0.5, ha="center",
-           va="top")
-    # small round parts
+    def plan(v, L, w):
+        """Plan of a profile lying along x (top face): body + slot edges."""
+        v.rect(-L / 2, -w / 2, L / 2, w / 2, fc=PROF, lw=THICK)
+        for k in range(int(round(w / 40))):
+            yc = -w / 2 + 20 + 40 * k
+            for e_ in (-4, 4):
+                v.line([(-L / 2, yc + e_), (L / 2, yc + e_)], lw=0.4, c="#7d868c", z=2.5)
+
+    def end(x0, y0, w, h, hole=0.0):
+        e = View(sh, x0, y0, K)
+        tsec(e, -w / 2, -h / 2, w, h, hole=0.0)
+        e.text(0, -h / 2 - 4, f"{w:g}×{h:g}", fontsize=fs() - 1, ha="center", va="top")
+
+    pr = {d["no"]: d for d in bp.PROFILES}
+    # T04 top beam
+    d = pr["E7-T04"]
+    v = View(sh, 95, 238, K, f"T04 TOP BEAM 40×80 × {d['L']:g}, 1×, lies flat", (95, 262))
+    plan(v, d["L"], 80)
+    v.circle(0, 0, 7, fc="white", lw=THIN, z_=4)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            v.circle(sx * 19, sy * 20, 2.75, fc="none", ec=RED, lw=0.5, ls="--", z_=4.5)
+    v.dim_h(-d["L"] / 2, d["L"] / 2, -40, -54, f"{d['L']:g}", side="below")
+    v.dim_v(-40, 40, -d["L"] / 2, -d["L"] / 2 - 12, "80")
+    v.dim_h(-d["L"] / 2, 0, 40, 52, f"{d['L'] / 2:g}")
+    v.text(12, 0, "⌀14 through, vertical (drill press),\nin the middle of the profile", fontsize=fs() - 0.5, va="center")
+    v.text(-d["L"] / 2 + 6, 0, "red: 4 T-nuts M5, bottom\nslots (housing P01)", fontsize=fs() - 1, va="center",
+           color=RED)
+    end(210, 238, 80, 40)
+    # T03 cross bar
+    d = pr["E7-T03"]
+    v = View(sh, 95, 188, K, f"T03 BASE CROSS BAR 40×80 × {d['L']:g}, 1×, lies flat (axis y = {p.C_CROSS_Y[0]:g})",
+             (95, 210))
+    plan(v, d["L"], 80)
+    for k in range(3):
+        a = math.radians(90 + 120 * k)
+        v.circle(p.C_PAD_R * math.cos(a), p.C_PAD_R * math.sin(a) - p.C_CROSS_Y[0], p.C_PAD_D / 2, fc=G10, lw=THIN, z_=4)
+    v.dim_h(-d["L"] / 2, d["L"] / 2, -40, -52, f"{d['L']:g}", side="below")
+    v.text(136, 0, "3 G10 pads ⌀20\n(rig axis +8.75)", fontsize=fs() - 1, va="center")
+    end(210, 188, 80, 40)
+    # T02 base rails
+    d = pr["E7-T02"]
+    v = View(sh, 95, 148, K, f"T02 BASE RAIL 40×40 × {d['L']:g}, 2×", (95, 162))
+    plan(v, d["L"], 40)
+    for x in (-110, 110):
+        v.circle(x, 0, 4, fc="none", ec=RED, lw=0.5, ls="--", z_=4.5)
+    v.dim_h(-110, 110, -20, -30, "220 (feet M8, bottom slot)", side="below")
+    v.dim_h(-d["L"] / 2, d["L"] / 2, -20, -46, f"{d['L']:g}", side="below")
+    end(210, 148, 40, 40)
+    # T01 columns
+    d = pr["E7-T01"]
+    v = View(sh, 95, 108, K, f"T01 COLUMN 40×80 × {d['L']:g}, 2×, both the same length", (95, 124))
+    plan(v, d["L"], 80)
+    v.dim_h(-d["L"] / 2, d["L"] / 2, -40, -52, f"{d['L']:g} ± 0.2, square cut", side="below")
+    end(210, 108, 80, 40)
+    # small round laser parts
     xs = 30
     for key, lab in (("E7-L03_carrier", "L03 carrier"), ("E7-L04_piston_top", "L04 piston top"),
                      ("E7-L05_piston_bottom", "L05 piston bottom"), ("E7-L06_disc_1kg", "L06 disc 1 kg"),
                      ("E7-L07_disc_0.5kg", "L07 disc 0.5 kg")):
         d = lp[key]
-        v = View(sh, xs + d["circle"] * 0.33 / 2, 52, 0.33)
-        draw(v, d, dims=False)
+        v = View(sh, xs + d["circle"] * K / 2, 52, K)
+        draw(v, d)
         hole = f", hole ⌀{d['holes'][0][2]:g}" if d["holes"] else ""
         v.text(0, -d["circle"] / 2 - 6, f"{lab}\n⌀{d['circle']:g}{hole}\nt {d['t']:g}, {d['qty']}×", fontsize=fs() - 0.5,
                ha="center", va="top")
-        xs += d["circle"] * 0.33 + 16
+        xs += d["circle"] * K + 16
     # right: tables
-    sh.heading(255, 276, "Laser cut (one order, DXF 1 : 1)")
-    rows = []
-    for d in bp.LASER:
-        size = f"{d['rect'][0]:g}×{d['rect'][1]:g}" if "rect" in d else f"⌀{d['circle']:g}"
-        rows.append([d["name"][3:6], size, f"{d['t']:g}", d["mat"].split(" (")[0], f"{d['qty']}"])
-    y = table(sh, 255, 272, ["#", "size", "t", "material", "pcs"], rows, [12, 30, 10, 76, 12], row_h=5.0)
+    sh.heading(255, 276, "T-slot profiles slot 8 (cut to length, item/Bosch compatible)")
+    rows = [[d["no"][3:], f"{min(d['section']):g}×{max(d['section']):g}",
+             f"{d['L']:g}", f"{d['qty']}", d["name"].split(" / ")[-1] + (", ⌀14" if d["no"] == "E7-T04" else "")]
+            for d in bp.PROFILES]
+    y = table(sh, 255, 272, ["#", "section", "length", "pcs", "part"], rows, [12, 20, 18, 10, 80], row_h=5.0)
+    sh.heading(255, y - 6, "Laser cut (one order, DXF 1 : 1)")
+    rows = [[d["name"][3:6], f"⌀{d['circle']:g}", f"{d['t']:g}", d["mat"].split(" (")[0], f"{d['qty']}"] for d in bp.LASER]
+    y = table(sh, 255, y - 10, ["#", "size", "t", "material", "pcs"], rows, [12, 24, 10, 82, 12], row_h=5.0)
     sh.heading(255, y - 6, "Cut bars")
     rows = [["Invar 36 ⌀12 h9", f"{bp.ROD_L} mm", "1", "guide rod, faces square, 0.5×45°"],
             ["Invar 36 ⌀16", f"{bp.POST_L:.0f} mm", "1", "post, faces square"],
-            ["G10 (sklotextit) ⌀20", "40 mm", "3", "pads, faces parallel ±0.05"],
-            ["profile 40×80 slot 8", f"{bp.COL_H:g} mm", "2", "columns, square cut ±0.2"]]
+            ["G10 (sklotextit) ⌀20", "40 mm", "3", "pads, faces parallel ±0.05"]]
     y = table(sh, 255, y - 10, ["bar", "length", "pcs", "note"], rows, [40, 20, 10, 70], row_h=5.0)
     sh.heading(255, y - 6, "3D print (PETG-CF, 0.2 mm, 40 % gyroid unless noted)")
     rows = [[n[3:6], n[7:].replace("_", " "), f"{q}"] for n, _, q in bp.PRINT]
     rows.insert(0, ["V03", "cell ⌀240 × 200, one piece (see V03)", "1"])
     y = table(sh, 255, y - 10, ["#", "part", "pcs"], rows, [12, 108, 12], row_h=5.0)
     sh.text(255, y - 4,
-            "Fixing: 8 angle brackets 40 slot 8 + T-nuts M8 + M8×16 (columns), M8×25 + nut (plates);\n"
-            "housing 4× M5×45, brackets/foot M5×20 + nuts; clamps M3/M4 × 20 + nuts.",
+            "Fixing: 12 angle brackets 40 slot 8 + 24 T-nuts M8 + M8×16 (4 base, 4 column–rail,\n"
+            "4 column–beam); 4 feet M8 in T-nuts; T-nuts M5: housing 4× M5×35, P04 / P05 / P08\n"
+            "2× M5 each; clamps M3/M4 × 20 + nuts. Use drop-in (swivel) T-nuts.",
             fontsize=fs() - 0.5, va="top", linespacing=1.4)
     sh.save(pdf, os.path.join(OUT, "E7-V06_parts.png"))
+
 
 def run(fn):
     old = V.TAG_BOX

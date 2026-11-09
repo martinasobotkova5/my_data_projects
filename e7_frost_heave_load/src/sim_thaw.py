@@ -40,7 +40,7 @@ PROPS = {                             # k [W/mK], C [J/m3K]
 }
 L_VOL = THETA * 334e6                 # latent heat 5.0e7 J/m3
 T_S, T_L = -0.5, 0.0                  # freezing range (residual unfrozen water)
-H_OUT, H_CAV, H_BOT = 7.0, 5.0, 10.0  # W/m2K: free surfaces, inside the collar, underside (Al base plate)
+H_OUT, H_CAV, H_BOT = 7.0, 5.0, 10.0  # W/m2K: free surfaces, inside the collar, underside (on the T-profile base frame)
 H_CONTACT = 100.0                     # sand – Al piston
 INSULATED = "--bare" not in sys.argv
 K_INS = p.C_INS_K                    # printed low infill (assumed)
@@ -193,10 +193,10 @@ def run():
             bot[idx[i, j]] = True
     Vs = V[is_sand]
     ins = p.C_INS_T if INSULATED else 0.0
-    z_beam = ins + Z_BOT + 100 + p.C_BEAM_GAP                     # above the base plate
-    z_c = z_beam + p.C_BEAM_H + p.C_TRAVEL + 10                     # carrier underside (top plate + housing)
+    z_beam = ins + Z_BOT + 100 + p.C_BEAM_GAP                     # above the base frame
+    z_c = z_beam + p.C_BEAM_H + p.C_TRAVEL + 10                     # carrier underside (top beam + clearance)
     L_rod = z_c - (ins + Z_SAND + H_PIST + 6)
-    L_inv = z_c - 12 - p.C_LVDT_BODY[1] + 12                        # Invar post: base plate → LVDT arm top
+    L_inv = z_c - 12 - p.C_LVDT_BODY[1] + 12                        # Invar post: base rail → LVDT arm top
     drift = []
     for s in range(steps + 1):
         t_h = s * DT / 3600
@@ -248,7 +248,7 @@ def pack(rc, zc, mat, frames, drift):
         nr=NR, nz=NZ, dr=DR, dz=DZ,
         geom=dict(r_sand=R_SAND, r_wall=R_WALL, r_body=p.BODY_D / 2, r_collar=p.COLLAR_OD / 2,
                   z_bot=Z_BOT, z_sand=Z_SAND, z_jacket=Z_JACKET, z_top=Z_TOP, r_piston=R_PIST, h_piston=H_PIST,
-                  base=list(p.C_BASE), col_span=p.C_COL_SPAN, beam_gap=p.C_BEAM_GAP, beam_h=p.C_BEAM_H, top=list(p.C_TOP), housing=list(p.C_HOUSING),
+                  base=list(p.C_BASE), col_span=p.C_COL_SPAN, beam_gap=p.C_BEAM_GAP, beam_h=p.C_BEAM_H, top=list(p.C_TOP), housing=list(p.C_HOUSING), rail_x=p.C_RAIL_X, cross_y=p.C_CROSS_Y[0],
                   lvdt_body=list(p.C_LVDT_BODY), disc_t=p.C_DISC_T,
                   ins=p.C_INS_T if INSULATED else 0, sleeve=p.C_SLEEVE_T if INSULATED else 0,
                   pad=[p.C_PAD_D, p.C_PAD_R], invar=[p.C_INVAR_D, *p.C_INVAR_XY], lvdt=list(p.C_LVDT_XY),

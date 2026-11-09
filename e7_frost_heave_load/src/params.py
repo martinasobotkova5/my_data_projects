@@ -233,14 +233,14 @@ C_PISTON_D, C_PISTON_H = 50.0, 20.0     # částečný píst (patka) ⌀50 – z
 C_BALL_D = 7.94                         # ocelová kulička 5/16" (ložisková, cyklo) – sedí v otvoru ⌀6 horního kotouče pístu
 C_ROD_D = 12.0                          # vodicí tyč (kalená, h6) v kluzném pouzdře igus drylin R RJ4JP-01-12 (bez maziva)
 C_BUSH = (21.0, 30.0)                   # drylin RJ4JP-01-12 = rozměry LM12UU: vnější ⌀ × délka
-C_BEAM_GAP = 160.0                      # spodní líc příčníku nad povrchem písku (rev. B: 200 → 160, vyrovná izolaci pod celou)
-C_CARRIER_D, C_CARRIER_T = 120.0, 10.0  # nosná deska závaží (Al 10, laser), na tyči 2 stavěcí kroužky ⌀12
+C_BEAM_GAP = 140.0                      # rev. B3: 140 (pouzdro visí pod T-profilem); dříve spodní líc příčníku nad povrchem písku (rev. B: 200 → 160, vyrovná izolaci pod celou)
+C_CARRIER_D, C_CARRIER_T = 140.0, 10.0  # rev. B3 ⌀140 (LVDT na r 65); nosná deska závaží (Al 10, laser), na tyči 2 stavěcí kroužky ⌀12
 C_DISC_D, C_DISC_HOLE = 117.5, 17.0     # ocelové kotouče ⌀117,5 × 12 (laser) = 1,00 kg
 C_DISC_KG = (1.0, 0.5)                  # kotouč 1 kg a 0,5 kg
 C_TRAVEL = 25.0                         # volný zdvih / pokles zátěže
 C_SURCHARGES_KPA = (5.0, 10.0, 15.0, 20.0, 25.0)   # pod pístem
-C_CAM_Y, C_CAM_H, C_CAM_TILT = -85.0, 105.0, 39.0  # kamera stranou (−y), výška nad pískem, sklon k ose (rev. B)
-C_LASER_Y, C_LASER_H = 46.0, 115.0      # rev. B: laser strmě 68° z držáku na příčníku → bez stínu límce, 11 čar po ≈ 9,6 mm
+C_CAM_Y, C_CAM_H, C_CAM_TILT = -92.0, 100.0, 43.0  # kamera stranou (−y), výška nad pískem, sklon k ose (rev. B)
+C_LASER_Y, C_LASER_H = 50.0, 124.0      # rev. B3 (držák na čele T-profilu, 68°, 134 mm od středu); rev. B: laser strmě 68° z držáku na příčníku → bez stínu límce, 11 čar po ≈ 9,6 mm
 C_PT100_R, C_PT100_ANG = 37.5, 315.0    # (rev. A, už neplatí) Pt100 svisle ve volném mezikruží
 # rev. B (upřesnění 10/2026): Pt100 jde ze stejné strany jako TDR – vodorovně otvorem, uprostřed (na ose TDR)
 # a nasedá přímo nad horní tyčku CS645; celé 37 mm v písku, kovová část 25 mm na konci → povrch je volný
@@ -255,11 +255,14 @@ C_LINES, C_LINE_PITCH = 11, 9.6          # vícečárový laser Picotronic DOE25
 C_LASER_ANG = 68.0                       # sklon laserové roviny od vodorovné → posun čáry Δy = Δh / tan 68° = 0,40 Δh
 
 # --- varianta C, revize B (posudek měření 10/2026) ------------------------------------------
-C_BASE = (340.0, 260.0, 10.0)            # rev. B2: Al deska 10 mm, laserem/vodním paprskem vč. otvorů (bez obrábění)
+C_BASE = (340.0, 260.0, 40.0)            # rev. B3: základna z T-profilů 40×40 drážka 8 (2 podélníky + 3 příčky), výška 40
+C_PROFILE = 40.0                         # T-profil 40×40 drážka 8 (item/Bosch kompatibilní)
+C_RAIL_X = 150.0                         # podélníky základny pod sloupy (osa x = ±150, délka 260 ve směru y)
+C_CROSS_Y = (8.75,)                      # příčka základny = T-profil 40×80 naplocho (y −31,25 … 48,75) pod 3 podložkami G10
 # --- rev. B2 „objednatelná“ sestava: jen nakoupené, laserem řezané a 3D tištěné díly -------------
-C_TOP = (340.0, 80.0, 10.0)              # horní deska Al 10 místo příčníku 80×80 (na ní tištěné pouzdro ložiska)
-C_HOUSING = (50.0, 50.0, 36.0)           # tištěné pouzdro pro igus RJ4JP-01-12 (⌀21 × 30), 4× M5 do horní desky
-C_BEAM_H = C_TOP[2] + C_HOUSING[2]       # výška „příčníku“ pro polohu závaží (deska + pouzdro)
+C_TOP = (340.0, 80.0, 40.0)              # rev. B3: horní příčník = T-profil 40×80 naplocho na sloupech, 1 otvor ⌀14 uprostřed
+C_HOUSING = (50.0, 50.0, 36.0)           # tištěné pouzdro pro igus RJ4JP-01-12 (⌀21 × 30), visí POD příčníkem, 4× M5 do T-matic
+C_BEAM_H = C_TOP[2] + 2.0                # příčník + vůle; nad ním zdvih 25 a stavěcí kroužek pod nosnou deskou
 C_LVDT_BODY = (20.6, 50.0)               # RDP DCTH400: tělo ⌀20,6 (výkres RDP), délka těla ≈ 50
 C_DISC_T = 12.0                          # ocelové kotouče z plechu S235 12 mm (⌀117,5 → 1,00 kg)
 C_COL_PROFILE = (40.0, 80.0)             # sloupy 40×80, drážka 8 (item kompatibilní), jen řez na délku
@@ -273,9 +276,9 @@ C_PAD_D, C_PAD_R = 20.0, 35.0            # podložky G10 ⌀20 × 40 v kapsách 
                                          # vyčnívají 0,5 mm → celu nese G10, ne tištěná výplň
 C_INVAR_D = 16.0                         # sloupek z Invaru 36 ⌀16 z desky → rameno s LVDT (bez driftu sloupů)
 C_ROD_INVAR = True                       # vodicí tyč ⌀12 z Invaru 36 (broušená) místo oceli – jinak ocel 249 mm = 57 µm / 20 K
-C_INVAR_XY = (-105.0, 105.0)             # poloha sloupku (mimo celu ⌀240, sloupy, kameru a laser)
-C_LVDT_XY = (-30.0, 48.0)                # LVDT pod nosnou deskou závaží (r 57 < 60), vedle příčníku
-C_REF_XY = (-42.0, 42.0)                 # invarový referenční terčík pro kameru ve výšce límce (r 59, mezera 6)
+C_INVAR_XY = (150.0, 108.0)              # rev. B3: na podélníku základny (x 150) za sloupem; poloha sloupku (mimo celu ⌀240, sloupy, kameru a laser)
+C_LVDT_XY = (30.0, 58.0)                 # rev. B3: vedle příčníku (y > 40), pod nosnou deskou ⌀140; LVDT pod nosnou deskou závaží (r 57 < 60), vedle příčníku
+C_REF_XY = (42.0, 42.0)                  # rev. B3; invarový referenční terčík pro kameru ve výšce límce (r 59, mezera 6)
 ALPHA_G10_Z = 15e-6                      # G10 kolmo k vrstvám ≈ (ověřit), podložky 40 mm
 ALPHA_SAND = 10e-6                       # tepelná roztažnost písku (bez fázové změny)
 C_CYCLE_H = (24.0, 24.0)                 # mrznutí / tání [h] – podle simulace s izolací (sim_thaw.py)

@@ -1,9 +1,11 @@
-"""E7 rig C rev. B2 – parts that are MADE to order (laser-cut plates, 3D-printed parts, cut bars) and the
-fixing scheme, so the rig can be ordered from Czech e-shops and assembled without machining.
+"""E7 rig C rev. B3 – parts that are MADE to order (T-slot profiles cut to length, laser-cut discs, 3D-printed
+parts, cut bars) and the fixing scheme, so the rig can be ordered from Czech e-shops and assembled without
+machining (the only drilled hole is ⌀14 through the top beam).
 
-  laser (Al 10 / steel 12 / steel 6) → ../vyroba/laser/*.dxf   (1 : 1, outline + holes only, one part per file)
-  3D print (PETG-CF)                 → ../vyroba/tisk/*.stl + *.step
-  cut bars (Invar, G10, profiles)    → cut list in BOM_ROWS (used by objednavka.py)
+  T-slot profiles slot 8              → PROFILES (cut list, used by objednavka.py and vyrobni_vykresy.py)
+  laser (Al 10 / steel 12 / steel 6)  → ../vyroba/laser/*.dxf   (1 : 1, outline + holes only, one part per file)
+  3D print (PETG-CF)                  → ../vyroba/tisk/*.stl + *.step
+  cut bars (Invar, G10)               → cut list in objednavka.py
 
 Coordinates of the rig (as model3d.py): x along the frame, y towards the laser (+) / camera (−), z up.
 Run: python buildparts.py
@@ -22,9 +24,9 @@ OUT = os.path.join(HERE, "..", "vyroba")
 Z_S0 = 80.0
 Z_S1 = Z_S0 + p.H_SAMPLE
 ZC0 = Z_S0 - p.BODY_BOTTOM                       # underside of the core = top of the G10 pads
-ZB0 = ZC0 - p.C_INS_T                            # top of the base plate
-ZBEAM = Z_S1 + p.C_BEAM_GAP                      # underside of the top plate
-Z_TOP = ZBEAM + p.C_TOP[2]                       # top of the top plate (housing sits on it)
+ZB0 = ZC0 - p.C_INS_T                            # top of the base frame (T-profiles)
+ZBEAM = Z_S1 + p.C_BEAM_GAP                      # underside of the top beam
+Z_TOP = ZBEAM + p.C_TOP[2]                       # top of the top T-profile (bearing housing hangs below it)
 ZC = ZBEAM + p.C_BEAM_H + p.C_TRAVEL + 10        # underside of the carrier plate
 COLLAR = (22.0, 12.0)                            # stavěcí kroužek DIN 705-A 12 (⌀22 × 12, stavěcí šroub M6)
 Z_COLLAR = ZC - COLLAR[1]                        # under the carrier (carries it)
@@ -35,7 +37,8 @@ ARM_T = 12.0
 Z_ARM = Z_LV_BOT                                 # LVDT arm z Z_ARM … Z_ARM + ARM_T (clamps the body bottom)
 Z_RIM = ZC0 + p.COLLAR_TOP                       # top of the collar (camera sees it)
 COL_H = ZBEAM - ZB0                              # column length
-POST_L = Z_ARM + ARM_T - ZB0                     # Invar post: stands on the base plate, top flush with the arm
+POST_FLOOR = 3.0                                 # printed floor of the post foot (bridges the T-slot)
+POST_L = Z_ARM + ARM_T - ZB0 - POST_FLOOR        # Invar post: stands in its foot on the cross bar, top flush with the arm
 _bh = math.sqrt((p.C_BALL_D / 2) ** 2 - 3.0 ** 2)   # ball ⌀7.94 sitting in a ⌀6 hole of the top piston disc
 Z_BALL = Z_S1 + p.C_PISTON_H + _bh               # ball centre
 Z_ROD0 = Z_BALL + p.C_BALL_D / 2                 # rod bottom (flat end on the ball)
@@ -45,27 +48,6 @@ ROD_L = math.ceil(Z_ROD1 - Z_ROD0)
 XC = p.C_COL_SPAN / 2
 
 # --- 2D laser parts: outline (w, h, corner r) or circle, holes (x, y, d), slots (x0, y0, x1, y1, w) -------
-def _base_plate():
-    bw, bd, t = p.C_BASE
-    holes = [(-150, -110, 8.5), (150, -110, 8.5), (0, 110, 8.5)]                      # levelling feet M8
-    xi, yi = p.C_INVAR_XY
-    holes += [(xi - 15, yi, 5.5), (xi + 15, yi, 5.5)]                                 # Invar post foot, 2× M5
-    slots = [(s * XC, sy * 50, s * XC, sy * 70, 8.6) for s in (-1, 1) for sy in (-1, 1)]   # brackets on ±y faces
-    marks = [(p.C_PAD_R * math.cos(math.radians(90 + 120 * k)), p.C_PAD_R * math.sin(math.radians(90 + 120 * k)),
-              p.C_PAD_D) for k in range(3)]                                           # pad positions (engrave)
-    return dict(name="E7-L01_base_plate", mat="Al EN AW-5754 (or 6082)", t=t, rect=(bw, bd, 6.0), holes=holes,
-                slots=slots, engrave=marks + [(0, 0, 2 * (p.BODY_D / 2 + p.C_SLEEVE_T))], qty=1)
-
-
-def _top_plate():
-    w, d, t = p.C_TOP
-    holes = [(0, 0, 14.0)] + [(sx * 19, sy * 19, 5.5) for sx in (-1, 1) for sy in (-1, 1)]   # rod + housing M5
-    holes += [(-12, -30, 5.5), (12, -30, 5.5), (-12, 30, 5.5), (12, 30, 5.5)]       # camera / laser brackets
-    slots = [(s * 100, y, s * 120, y, 8.6) for s in (-1, 1) for y in (-20, 20)]
-    return dict(name="E7-L02_top_plate", mat="Al EN AW-5754 (or 6082)", t=t, rect=(w, d, 4.0), holes=holes,
-                slots=slots, engrave=[], qty=1)
-
-
 def _carrier():
     return dict(name="E7-L03_carrier", mat="Al EN AW-5754 (or 6082)", t=p.C_CARRIER_T, circle=p.C_CARRIER_D,
                 holes=[(0, 0, p.C_ROD_D + 0.3)], slots=[], engrave=[], qty=1)
@@ -82,8 +64,35 @@ def _disc(t, qty, name):
                 engrave=[], qty=qty)
 
 
-LASER = [_base_plate(), _top_plate(), _carrier(), _piston(True), _piston(False),
+LASER = [_carrier(), _piston(True), _piston(False),
          _disc(p.C_DISC_T, N_DISC, "E7-L06_disc_1kg"), _disc(p.C_DISC_T / 2, 1, "E7-L07_disc_0.5kg")]
+
+
+# --- T-slot profiles (slot 8, item/Bosch compatible): only cut to length, one Ø14 hole in the top beam --------
+PROFILES = [
+    dict(no="E7-T01", name="sloup / column", section=(40.0, 80.0), L=COL_H, qty=2, note="řez kolmý, oba stejně"),
+    dict(no="E7-T02", name="podélník základny / base rail", section=(40.0, 40.0), L=2 * 130.0, qty=2,
+         note="pod sloupy, osa x = ±150"),
+    dict(no="E7-T03", name="příčka základny / base cross bar", section=(80.0, 40.0), L=2 * (p.C_RAIL_X - 20), qty=1,
+         note=f"naplocho mezi podélníky, osa y = {p.C_CROSS_Y[0]:g}; nese 3 podložky G10"),
+    dict(no="E7-T04", name="horní příčník / top beam", section=(80.0, 40.0), L=p.C_TOP[0], qty=1,
+         note="naplocho; uprostřed svislý otvor ⌀14 skrz (vodicí tyč)"),
+]
+
+
+def profile_solid(sec, L, hole=False):
+    """Simplified T-slot profile (outer box with 8 mm slots on every 40 mm face), along x, z 0 … h."""
+    w, h = sec
+    s = cq.Workplane("XY").box(L, w, h, centered=(True, True, False))
+    for yy in [(-w / 2 + 20 + 40 * k) for k in range(int(w // 40))]:
+        for zz, dz in ((h, -4), (0, 0)):
+            s = s.cut(cq.Workplane("XY").box(L, 8, 4, centered=(True, True, False)).translate((0, yy, zz + dz)))
+    for zz in [(20 + 40 * k) for k in range(int(h // 40))]:
+        for yy, dy in ((w / 2, -2), (-w / 2, 2)):
+            s = s.cut(cq.Workplane("XY").box(L, 4, 8).translate((0, yy + dy, zz)))
+    if hole:
+        s = s.cut(cq.Workplane("XY").circle(7).extrude(h))
+    return s
 
 
 def disc_mass(part):
@@ -144,7 +153,8 @@ def write_dxf(part, folder):
 
 # --- 3D-printed parts (PETG-CF; local coordinates, then placed by model3d) --------------------------------
 def housing():
-    """Bearing housing on the top plate: bore ⌀21.2 × 32 for igus RJ4JP-01-12, ⌀14 below, clamp slit + M4."""
+    """Bearing housing hanging under the top T-profile (4× M5 into T-nuts, slots y = ±20): bore ⌀21.2 × 32 for
+    igus RJ4JP-01-12 (inserted from above, held by the profile), ⌀14 below, clamp slit + M4."""
     w, d, h = p.C_HOUSING
     s = cq.Workplane("XY").rect(w, d).extrude(h).edges("|Z").fillet(4)
     s = s.cut(cq.Workplane("XY").circle(7).extrude(h))
@@ -153,8 +163,8 @@ def housing():
     s = s.cut(cq.Workplane("YZ").workplane(offset=-w / 2).center(d / 2 - 6, h / 2 + 2).circle(2.2).extrude(w))
     for sx in (-1, 1):
         for sy in (-1, 1):
-            s = s.cut(cq.Workplane("XY").center(sx * 19, sy * 19).circle(2.75).extrude(h))
-            s = s.cut(cq.Workplane("XY").workplane(offset=h - 5).center(sx * 19, sy * 19).circle(5).extrude(5))
+            s = s.cut(cq.Workplane("XY").center(sx * 19, sy * 20).circle(2.75).extrude(h))
+            s = s.cut(cq.Workplane("XY").center(sx * 19, sy * 20).circle(5).extrude(5))    # screw heads from below
     return s
 
 
@@ -201,32 +211,33 @@ def target_arm():
 
 
 def post_foot():
-    """Foot clamp of the Invar post (post stands on the plate through it), 2× M5 to the base plate; z 0 … 20."""
+    """Foot of the Invar post on the base rail (x = C_RAIL_X): 2× M5 into T-nuts in the rail top slot (along y);
+    the post stands on a 3 mm printed floor (bridges the slot) and is clamped by an M3 screw; z 0 … 20."""
     xi, yi = p.C_INVAR_XY
-    s = cq.Workplane("XY").center(xi, yi).rect(44, 24).extrude(20).edges("|Z").fillet(3)
-    s = s.cut(cq.Workplane("XY").center(xi, yi).circle(8.15).extrude(20))
-    for dx in (-15, 15):
-        s = s.cut(cq.Workplane("XY").center(xi + dx, yi).circle(2.75).extrude(20))
-        s = s.cut(cq.Workplane("XY").workplane(offset=14).center(xi + dx, yi).circle(5).extrude(6))
-    s = s.cut(cq.Workplane("XY").center(xi, yi + 8).rect(1.6, 16).extrude(20))
-    s = s.cut(cq.Workplane("YZ").workplane(offset=xi - 30).center(yi + 8, 10).circle(1.7).extrude(60))
+    s = cq.Workplane("XY").center(xi, yi).rect(32, 44).extrude(20).edges("|Z").fillet(3)
+    s = s.cut(cq.Workplane("XY").workplane(offset=POST_FLOOR).center(xi, yi).circle(8.15).extrude(20))
+    for dy in (-15, 15):
+        s = s.cut(cq.Workplane("XY").center(xi, yi + dy).circle(2.75).extrude(20))
+        s = s.cut(cq.Workplane("XY").workplane(offset=14).center(xi, yi + dy).circle(5).extrude(6))
+    s = s.cut(cq.Workplane("XY").workplane(offset=POST_FLOOR).center(xi - 10, yi).rect(14, 1.6).extrude(20))
+    s = s.cut(cq.Workplane("XZ").workplane(offset=-(yi + 30)).center(xi - 10, 12).circle(1.7).extrude(60))
     return s
 
 
 def laser_holder():
-    """Hangs under the top plate (2× M5 at y = 30); holds the ⌀10 laser at 68°, aimed at the sand centre."""
-    zl = Z_S1 + p.C_LASER_H - ZBEAM                  # laser centre below the plate underside (negative)
-    yl = p.C_LASER_Y
-    flange = cq.Workplane("XY").center(0, 30).rect(40, 16).extrude(-6)
-    web = cq.Workplane("XY").center(0, 34).rect(16, 8).extrude(zl + 8)          # from the plate down to the holder
-    blk = cq.Workplane("XY").workplane(offset=zl - 10).center(0, yl).rect(16, 20).extrude(20)
-    s = flange.union(web.translate((0, 0, 0))).union(blk)
-    a = p.C_LASER_ANG
+    """Holder on the +y face of the top T-profile (2× M5 into T-nuts, face slot z = 20); holds the ⌀10 laser
+    at 68°, aimed at the sand centre. Local z = 0 is the underside of the top beam."""
+    zl = Z_S1 + p.C_LASER_H - ZBEAM                  # laser centre relative to the beam underside (negative)
+    yl, y0 = p.C_LASER_Y, p.C_TOP[1] / 2
+    plate = cq.Workplane("XY").box(30, 6, 30, centered=(True, False, False)).translate((0, y0, 5))
+    web = cq.Workplane("XY").box(16, 6, 5 - (zl + 6), centered=(True, False, False)).translate((0, y0, zl + 6))
+    blk = cq.Workplane("XY").box(16, 20, 20, centered=(True, True, True)).translate((0, yl, zl))
+    s = plate.union(web).union(blk)
     bore = (cq.Workplane("XZ").circle(5.1).extrude(40, both=True)
-            .rotate((0, 0, 0), (1, 0, 0), a).translate((0, yl, zl)))
+            .rotate((0, 0, 0), (1, 0, 0), p.C_LASER_ANG).translate((0, yl, zl)))
     s = s.cut(bore)
-    for dx in (-12, 12):
-        s = s.cut(cq.Workplane("XY").center(dx, 30).circle(2.75).extrude(-6))
+    for dx in (-10, 10):
+        s = s.cut(cq.Workplane("XZ").center(dx, 20).circle(2.75).extrude(-10).translate((0, y0 - 1, 0)))
     s = s.cut(cq.Workplane("YZ").workplane(offset=-10).center(yl, zl - 6).circle(1.4).extrude(20))   # M3 set screw
     return s
 
@@ -261,15 +272,34 @@ def camera_box_lid():
     return s
 
 
+def _cam_place(shape):
+    """Place a shape given in the camera-box frame like model3d places the box (tilt about x, then move)."""
+    return shape.rotate((0, 0, 0), (1, 0, 0), p.C_CAM_TILT).translate((0, p.C_CAM_Y, Z_S1 + p.C_CAM_H - ZBEAM))
+
+
 def camera_hanger():
-    """Hanger from the top plate (2× M5 at y = −30) down to the camera box tab, set at the camera tilt."""
-    zc = Z_S1 + p.C_CAM_H - ZBEAM
-    flange = cq.Workplane("XY").center(0, -30).rect(40, 16).extrude(-6)
-    leg = cq.Workplane("XY").center(0, -30).rect(16, 8).extrude(zc + 40)
-    s = flange.union(leg)
+    """Camera mount: flange on the −y face of the top T-profile (2× M5 into T-nuts), arm, pad on the camera box
+    tab (2× M4). Local z = 0 is the underside of the top beam."""
+    y0 = -p.C_TOP[1] / 2
+    flange = cq.Workplane("XY").box(30, 6, 30, centered=(True, False, False)).translate((0, y0 - 6, 5))
+    for dx in (-10, 10):
+        flange = flange.cut(cq.Workplane("XZ").center(dx, 20).circle(2.75).extrude(10).translate((0, y0 + 1, 0)))
+    L, H = 100.0, 70.0
+    pad = cq.Workplane("XY").box(40, 16, 14, centered=(True, True, False)).translate((0, L / 2 + 8, H / 2))
     for dx in (-12, 12):
-        s = s.cut(cq.Workplane("XY").center(dx, -30).circle(2.75).extrude(-6))
-    return s
+        pad = pad.cut(cq.Workplane("XY").center(dx, L / 2 + 8).circle(2.2).extrude(14).translate((0, 0, H / 2)))
+        pad = pad.cut(cq.Workplane("XY").center(dx, L / 2 + 8).circle(4.2).extrude(8).translate((0, 0, H / 2 + 6)))
+    top = _cam_place(cq.Workplane("XY").box(4, 4, 1).translate((0, L / 2 + 8, H / 2 + 19)))
+    pad = _cam_place(pad)
+    c = top.val().Center()
+    a = cq.Vector(0, y0 - 6, 18)
+    v = cq.Vector(c.x, c.y, c.z) - a
+    arm = cq.Workplane("XY").add(cq.Solid.makeBox(14, v.Length, 10, cq.Vector(-7, 0, -5)))
+    ang = math.degrees(math.atan2(v.z, v.y))
+    arm = arm.rotate((0, 0, 0), (1, 0, 0), ang).translate((a.x, a.y, a.z))
+    keep_out = (cq.Workplane("XY").box(90.4, 100.4, 70.4).union(
+        cq.Workplane("XY").box(40.4, 16.4, 4.2, centered=(True, True, False)).translate((0, L / 2 + 8, H / 2 - 4.2))))
+    return flange.union(arm).union(pad).cut(_cam_place(keep_out))   # arm trimmed to clear box and lid
 
 
 PRINT = [("E7-P01_bearing_housing", housing, 1), ("E7-P02_lvdt_arm", lvdt_arm, 1),
@@ -294,7 +324,7 @@ def export_all():
 
 
 if __name__ == "__main__":
-    print(f"levels: base top {ZB0:.1f}, top plate {ZBEAM:.1f}, carrier {ZC:.1f}; column {COL_H:.0f}, "
+    print(f"levels: base frame top {ZB0:.1f}, top beam underside {ZBEAM:.1f}, carrier {ZC:.1f}; column {COL_H:.0f}, "
           f"Invar post {POST_L:.0f}, Invar rod {ROD_L:.0f}")
     for d in LASER:
         if d["mat"].startswith("steel"):

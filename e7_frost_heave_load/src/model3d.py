@@ -305,37 +305,52 @@ def variant_b_open(asm, prefix=""):
 
 
 def variant_c(asm, prefix=""):
-    """Variant C rev. B2 (orderable): 40×80 columns cut to length, laser-cut Al base and top plates, printed
-    bearing housing (igus RJ4JP-01-12) on the top plate, Invar rod and post, printed arms/brackets/camera box,
-    cell printed in one piece on 3 G10 pads, laser-cut piston discs, carrier and steel weights."""
+    """Variant C rev. B3 (orderable): frame of T-slot profiles slot 8 (2 base rails 40×40, cross bar 40×80 flat,
+    2 columns 40×80, top beam 40×80 flat with one ⌀14 hole), printed bearing housing (igus RJ4JP-01-12) hanging
+    under the beam, Invar rod and post, printed arms/brackets/camera box, cell printed in one piece on 3 G10 pads,
+    laser-cut piston discs, carrier and steel weights."""
     import buildparts as bp
-    bw, bd, bt = p.C_BASE
     zb0, zbeam, zc = bp.ZB0, bp.ZBEAM, bp.ZC
     xc = p.C_COL_SPAN / 2
     lp = {d["name"]: d for d in bp.LASER}
-    asm.add(bp.laser_solid(lp["E7-L01_base_plate"]).translate((0, 0, zb0 - bt)),
-            name=prefix + "L01 base plate Al 340x260x10 (laser)", color=C["al"])
-    for i, (x, y, _) in enumerate(lp["E7-L01_base_plate"]["holes"][:3], 1):
-        asm.add(cyl(30, 4, zb0 - bt - 22, x, y).union(cyl(8, 22, zb0 - bt - 22, x, y)),
-                name=f"{prefix}levelling foot M8 {i}", color=C["steel"])
+    # base frame: 2 rails 40×40 (along y) under the columns, one cross bar 40×80 flat between them
+    for s_ in (-1, 1):
+        rail = bp.profile_solid((40, 40), 260).rotate((0, 0, 0), (0, 0, 1), 90).translate((s_ * p.C_RAIL_X, 0, zb0 - 40))
+        asm.add(rail, name=f"{prefix}T02 base rail 40x40 x260 {'L' if s_ < 0 else 'R'}", color=C["profile"])
+        for sy in (-1, 1):
+            asm.add(cyl(30, 4, zb0 - 40 - 22, s_ * p.C_RAIL_X, sy * 110).union(cyl(8, 22, zb0 - 40 - 22, s_ * p.C_RAIL_X, sy * 110)),
+                    name=f"{prefix}levelling foot M8 {'L' if s_ < 0 else 'R'}{sy:+d}", color=C["steel"])
+    lcb = 2 * (p.C_RAIL_X - 20)
+    yc = p.C_CROSS_Y[0]
+    asm.add(bp.profile_solid((80, 40), lcb).translate((0, yc, zb0 - 40)), name=f"{prefix}T03 base cross bar 40x80 x{lcb:g}",
+            color=C["profile"])
+    for s_ in (-1, 1):                               # angle brackets rail inner face ↔ cross bar side faces (±y)
+        x0, x1 = sorted((s_ * (p.C_RAIL_X - 20), s_ * (p.C_RAIL_X - 60)))
+        xi0, xi1 = (x0, x1 - 4) if s_ > 0 else (x0 + 4, x1)
+        for sy in (-1, 1):
+            y0, y1 = sorted((yc + sy * 40, yc + sy * 80))
+            yi0, yi1 = (y0 + 4, y1 + 1) if sy > 0 else (y0 - 1, y1 - 4)
+            br = box(x0, x1, y0, y1, zb0 - 30, zb0 - 10).cut(box(xi0, xi1, yi0, yi1, zb0 - 31, zb0 - 9))
+            asm.add(br, name=f"{prefix}angle bracket 40 base {'L' if s_ < 0 else 'R'}{sy:+d}", color=C["steel"])
     for s_ in (-1, 1):
         asm.add(box(s_ * xc - 20, s_ * xc + 20, -40, 40, zb0, zbeam),
-                name=f"{prefix}column 40x80 slot 8 x{bp.COL_H:g} {'L' if s_ < 0 else 'R'}", color=C["profile"])
-        for sy in (-1, 1):                           # base: brackets on the ±y faces (clear of the ⌀240 cell)
-            br = box(s_ * xc - 10, s_ * xc + 10, sy * 40 if sy > 0 else -80, 80 if sy > 0 else -40, zb0, zb0 + 40)
-            br = br.cut(box(s_ * xc - 11, s_ * xc + 11, sy * 44 if sy > 0 else -80, 80 if sy > 0 else -44, zb0 + 4, zb0 + 40))
+                name=f"{prefix}T01 column 40x80 slot 8 x{bp.COL_H:g} {'L' if s_ < 0 else 'R'}", color=C["profile"])
+        for sy in (-1, 1):                           # column ↔ rail: brackets on the ±y faces of the column
+            br = box(s_ * xc - 10, s_ * xc + 10, 40 if sy > 0 else -80, 80 if sy > 0 else -40, zb0, zb0 + 40)
+            br = br.cut(box(s_ * xc - 11, s_ * xc + 11, 44 if sy > 0 else -80, 80 if sy > 0 else -44, zb0 + 4, zb0 + 40))
             asm.add(br, name=f"{prefix}angle bracket 40 slot 8 {'L' if s_ < 0 else 'R'}b{sy:+d}", color=C["steel"])
-        for y in (-20, 20):                          # top: brackets on the inner faces under the top plate
+        for y in (-20, 20):                          # column ↔ top beam: brackets on the inner faces, under the beam
             x0, x1 = (s_ * xc - 20 - 40, s_ * xc - 20) if s_ > 0 else (s_ * xc + 20, s_ * xc + 20 + 40)
             br = box(x0, x1, y - 10, y + 10, zbeam - 40, zbeam)
             xi0, xi1 = (x0, x1 - 4) if s_ > 0 else (x0 + 4, x1)
             br = br.cut(box(xi0, xi1, y - 11, y + 11, zbeam - 40, zbeam - 4))
             asm.add(br, name=f"{prefix}angle bracket 40 slot 8 {'L' if s_ < 0 else 'R'}t{y:+d}", color=C["steel"])
-    asm.add(bp.laser_solid(lp["E7-L02_top_plate"]).translate((0, 0, zbeam)),
-            name=prefix + "L02 top plate Al 340x80x10 (laser)", color=C["al"])
-    asm.add(bp.housing().translate((0, 0, bp.Z_TOP)), name=prefix + "P01 bearing housing (print)", color=C["petg"])
+    asm.add(bp.profile_solid((80, 40), p.C_TOP[0], hole=True).translate((0, 0, zbeam)),
+            name=prefix + "T04 top beam 40x80 x340, hole D14", color=C["profile"])
+    asm.add(bp.housing().translate((0, 0, zbeam - p.C_HOUSING[2])), name=prefix + "P01 bearing housing (print, hangs)",
+            color=C["petg"])
     bush_od, bush_l = p.C_BUSH
-    asm.add(tube(bush_od, p.C_ROD_D + 0.1, bush_l, bp.Z_TOP + 4.5), name=prefix + "igus drylin RJ4JP-01-12",
+    asm.add(tube(bush_od, p.C_ROD_D + 0.1, bush_l, zbeam - p.C_HOUSING[2] + 4.5), name=prefix + "igus drylin RJ4JP-01-12",
             color=C["ptfe"])
     # cell printed in one piece with its insulation; 3 G10 pads ⌀20 × 40 in pockets of the printed base carry it
     for k in range(3):
@@ -348,32 +363,32 @@ def variant_c(asm, prefix=""):
             color=C["al"])
     asm.add(bp.laser_solid(lp["E7-L04_piston_top"]).translate((0, 0, Z_S1 + p.C_PISTON_H / 2)),
             name=prefix + "L04 piston top (ball seat)", color=C["al"])
-    asm.add(cq.Workplane("XY").sphere(p.C_BALL_D / 2).translate((0, 0, bp.Z_BALL)), name=prefix + "steel ball 5/16in",
+    asm.add(cq.Workplane("XY").sphere(p.C_BALL_D / 2).translate((0, 0, bp.Z_BALL)), name=prefix + "steel ball 5-16in (7.94)",
             color=C["steel"])
     asm.add(cyl(p.C_ROD_D, bp.ROD_L, bp.Z_ROD0), name=prefix + f"guide rod Invar 36 D12 x{bp.ROD_L}", color=C["invar"])
     asm.add(tube(bp.COLLAR[0], 12, bp.COLLAR[1], bp.Z_COLLAR), name=prefix + "shaft collar DIN 705-A 12", color=C["steel"])
-    asm.add(bp.laser_solid(lp["E7-L03_carrier"]).translate((0, 0, zc)), name=prefix + "L03 carrier Al D120x10",
+    asm.add(bp.laser_solid(lp["E7-L03_carrier"]).translate((0, 0, zc)), name=prefix + f"L03 carrier Al D{p.C_CARRIER_D:g}x10",
             color=C["al"])
     z = zc + p.C_CARRIER_T
     for i in range(bp.N_DISC):
         asm.add(bp.laser_solid(lp["E7-L06_disc_1kg"]).translate((0, 0, z)), name=f"{prefix}L06 steel disc {i + 1} 1 kg",
                 color=C["weight"])
         z += p.C_DISC_T
-    # Invar post on the base plate (printed foot), printed arms with the LVDT and the camera target
+    # Invar post on the base rail (printed foot), printed arms with the LVDT and the camera target
     xi, yi = p.C_INVAR_XY
     asm.add(bp.post_foot().translate((0, 0, zb0)), name=prefix + "P04 post foot (print)", color=C["petg"])
-    asm.add(cyl(p.C_INVAR_D, bp.POST_L, zb0, xi, yi), name=prefix + f"Invar 36 post D16 x{bp.POST_L:.0f}",
+    asm.add(cyl(p.C_INVAR_D, bp.POST_L, zb0 + bp.POST_FLOOR, xi, yi), name=prefix + f"Invar 36 post D16 x{bp.POST_L:.0f}",
             color=C["invar"])
     asm.add(bp.lvdt_arm().translate((0, 0, bp.Z_ARM)), name=prefix + "P02 LVDT arm (print)", color=C["petg"])
     xl, yl = p.C_LVDT_XY
     asm.add(cyl(bp.LV_D, bp.LV_L, bp.Z_LV_BOT, xl, yl), name=prefix + "LVDT RDP DCTH400AG", color=C["sensor"])
     asm.add(cyl(4, zc - bp.Z_LV_TOP, bp.Z_LV_TOP, xl, yl), name=prefix + "LVDT plunger", color=C["steel"])
     asm.add(bp.target_arm().translate((0, 0, bp.Z_RIM)), name=prefix + "P03 target arm (print)", color=C["petg"])
-    # camera box (printed) hanging from the top plate, tilted to the axis; laser holder (printed)
+    # camera box (printed) hanging from the top beam, tilted to the axis; laser holder (printed)
     zcam = Z_S1 + p.C_CAM_H
     cam = bp.camera_box().rotate((0, 0, 0), (1, 0, 0), p.C_CAM_TILT).translate((0, p.C_CAM_Y, zcam))
     asm.add(cam, name=prefix + "P06 camera box: RPi HQ + 6 mm lens + RPi 5", color=C["ins"])
-    asm.add(bp.camera_hanger().translate((0, 0, zbeam)), name=prefix + "P08 camera hanger (print)", color=C["petg"])
+    asm.add(bp.camera_hanger().translate((0, 0, zbeam)), name=prefix + "P08 camera mount (print)", color=C["petg"])
     asm.add(bp.laser_holder().translate((0, 0, zbeam)), name=prefix + "P05 laser holder (print)", color=C["petg"])
     yl_, zl = p.C_LASER_Y, Z_S1 + p.C_LASER_H
     las = (cq.Workplane("XZ").circle(5).extrude(11, both=True)
@@ -396,7 +411,7 @@ def freezer_layout():
     tray = box(50, 50 + p.TRAY_L, 105, 105 + p.TRAY_W, z_tray, z_tray + 40)
     tray = tray.cut(box(51.5, 48.5 + p.TRAY_L, 106.5, 103.5 + p.TRAY_W, z_tray + 1.5, z_tray + 41))
     asm.add(tray, name="stainless tray", color=C["tray"])
-    z_feet = zb0 - p.C_BASE[2] - 22
+    z_feet = zb0 - p.C_BASE[2] - 22   # base frame height 40
     asm.add(sub, loc=cq.Location((50 + p.TRAY_L / 2, 105 + p.TRAY_W / 2, z_tray + 1.5 - z_feet)))
     return asm
 
