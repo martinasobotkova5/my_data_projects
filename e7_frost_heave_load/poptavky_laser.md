@@ -7,7 +7,7 @@ Doplňte údaje v hranatých závorkách. Parametry odpovídají sestavě rev. B
 
 ## 1 · TME (česky) – Laser Components FLEXPOINT s DOE 11 čar
 
-**Komu:** TME – obchodní oddělení pro ČR (kontaktní formulář nebo e-mail na tme.eu/cz)
+**Komu:** TME Czech Republic s.r.o., Ostrava (IČ 27789021) – e-mail **tme@tme.cz** (uveden v obchodních podmínkách z r. 2019, ověřit), jinak kontaktní formulář / chat na [tme.eu/cz](https://www.tme.eu/cz/)
 **Předmět:** Poptávka – laserový modul Laser Components FLEXPOINT FP-DOE, 11 rovnoběžných čar
 
 Dobrý den,
@@ -42,7 +42,7 @@ Děkuji a s pozdravem
 
 ## 2 · Picotronic GmbH (anglicky) – DOE253, 11 čar
 
-**To:** Picotronic GmbH, Koblenz (sales contact / contact form on picotronic.de)
+**To:** Picotronic GmbH, Rudolf-Diesel-Str. 2a, 56070 Koblenz, Germany – **info@picotronic.de**, tel. +49 261 983497-0 ([imprint](https://www.picotronic.de/picopage/en/index/imprint))
 **Subject:** Request for quotation – DOE laser module 11 lines, DOE253-635-1-6(10x22), order no. 70111842
 
 Dear Sir or Madam,
