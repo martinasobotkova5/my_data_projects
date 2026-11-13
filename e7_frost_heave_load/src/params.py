@@ -242,7 +242,8 @@ C_DISC_KG = (1.0, 0.5)                  # kotouč 1 kg a 0,5 kg
 C_TRAVEL = 25.0                         # volný zdvih / pokles zátěže
 C_SURCHARGES_KPA = (5.0, 10.0, 15.0, 20.0, 25.0)   # pod pístem
 C_CAM_Y, C_CAM_H, C_CAM_TILT = -92.0, 100.0, 43.0  # kamera stranou (−y), výška nad pískem, sklon k ose (rev. B)
-C_LASER_Y, C_LASER_H = 50.0, 124.0      # rev. B3 (držák na čele T-profilu, 68°, 134 mm od středu); rev. B: laser strmě 68° z držáku na příčníku → bez stínu límce, 11 čar po ≈ 9,6 mm
+C_LASER_Y, C_LASER_H = 81.0, 183.0      # rev. B3a (13. 11. 2026, úhly DOE z nabídky Picotronic): laser vedle horního příčníku, 66°, 200 mm od středu povrchu
+C_LASER_DOE = (3.1, 31.0)                # Picotronic DOE-DER253: úhel čára–čára 3,1°, vějíř (délka čáry) 31° – nabídka A2627918
 C_PT100_R, C_PT100_ANG = 37.5, 315.0    # (rev. A, už neplatí) Pt100 svisle ve volném mezikruží
 # rev. B (upřesnění 10/2026): Pt100 jde ze stejné strany jako TDR – vodorovně otvorem, uprostřed (na ose TDR)
 # a nasedá přímo nad horní tyčku CS645; celé 37 mm v písku, kovová část 25 mm na konci → povrch je volný
@@ -253,8 +254,8 @@ C_PT100_TIP = 30.0                       # hrot 30 mm od vnitřní stěny (potvr
 C_LENS_F = 6.0                           # rev. B: objektiv 6 mm (kamera blíž) → zorné pole ≈ 140 mm
 C_LVDT_X = 45.0                          # LVDT na příčníku, hrot na spodní straně nosné desky
 C_SNAP_MIN = (10, 1)                     # snímek / měření: běžně 10 min, při průchodu 0 °C 1 min
-C_LINES, C_LINE_PITCH = 11, 9.6          # vícečárový laser Picotronic DOE253 (41°): 11 čar po ≈ 9,6 mm z 124 mm → celý ⌀100
-C_LASER_ANG = 68.0                       # sklon laserové roviny od vodorovné → posun čáry Δy = Δh / tan 68° = 0,40 Δh
+C_LINES, C_LINE_PITCH = 11, 11.9         # Picotronic DOE253 z 200 mm: 11 čar po ≈ 11,9 mm, každá ≈ 111 mm dlouhá → celý ⌀100 i límec
+C_LASER_ANG = 66.1                       # sklon laserové roviny od vodorovné (= atan(183/81)) → posun čáry Δy = Δh / tan 66° = 0,44 Δh
 
 # --- varianta C, revize B (posudek měření 10/2026) ------------------------------------------
 C_BASE = (340.0, 320.0, 40.0)            # rev. B3: základna z T-profilů drážka 8 (2 podélníky 40×40 × 320 + příčka 40×80), výška 40

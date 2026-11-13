@@ -146,7 +146,7 @@ C_BUY = [   # rev. B – konkrétní typy (ceny 10/2026, EUR bez DPH; Kč s DPH 
     ("", "Raspberry Pi 6 mm CS wide-angle lens (RPishop / Pi Hut)", 1, 20, 30, "odhad", "–"),
     ("", "camera box XPS 30, double glass; houses the RPi 5 (no heater)", 1, 20, 40, "odhad", "–"),
     ("", "SHT45 RH/T sensor on the RPi (I2C), freezer air", 1, 15, 25, "odhad", "– (RPi)"),
-    ("LAS", "Picotronic DOE253-635-1-6(10x22), 11 lines, 635 nm, 1 mW, 5 V", 1, 92, 92, "web (Picotronic 70111842)", "– (RPi GPIO)"),
+    ("LAS", "Picotronic DOE253-635-5-6(10x24), 11 lines 3.1°/31°, 5 mW, adj. focus", 1, 116, 116, "web (quote A2627918 incl. S&H)", "– (RPi GPIO)"),
     ("LVDT", "RDP DCTH400AG ±10 mm, spring (Elkome)", 1, 581, 581, "web (Elkome)", "DIFF1, ±5000 mV"),
     ("", "Mean Well HDR-15-24, 24 V DIN (floating supply) (TME)", 1, 11, 14, "web (TME)", "always on"),
     ("", "Campbell 4WPB100 (for the existing Pt100) (Ekotechnika)", 1, 60, 120, "odhad – na dotaz", "DIFF2"),

@@ -104,7 +104,8 @@ Kde: Picotronic (DE), Elkome (FI), [Ekotechnika Černošice](https://campbellsci
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
-| Laser Picotronic DOE253-635-1-6(10x22), obj. č. 70111842 | 11 čar, 635 nm, 1 mW, 5 V, ⌀10 × 22 | 1 | 91,51 € bez DPH | ověřeno – [shop](https://www.picotronic.de/picopage/en/product/detail/id/86333) |
+| **Laser Picotronic DOE253-635-5-6(10x24), obj. č. 70132403** (doporučeno) | 11 čar (DOE-DER253: 3,1° mezi čarami, vějíř 31°), 635 nm, 5 mW, 5 V, ⌀10 × 24, **nastavitelné ohnisko**, třída 2M | 1 | 104,96 € + doprava 11 € bez DPH | nabídka A2627918 (10. 11. 2026), EXW, platba předem |
+| Laser Picotronic DOE253-635-1-6(10x22), obj. č. 70111842 (alternativa) | stejný vzor, 1 mW, ⌀10 × 22, pevné ohnisko, třída 2M | 1 | 98,24 € bez DPH | nabídka A2627918 |
 | LVDT RDP DCTH400AG | ±10 mm, pružina, tělo ⌀20,6; ověřit provoz při −10 °C | 1 | 581 € | ověřeno – [Elkome](https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor) |
 | Campbell 4WPB100 | modul pro 4vodičové Pt100 | 1 | ≈ 60–120 € | poptat – tel. +420 251 640 511 |
 | Campbell 109-L, kabel 3 m | teplota vzduchu (povinně) | 1 | ≈ 150–220 € | poptat |

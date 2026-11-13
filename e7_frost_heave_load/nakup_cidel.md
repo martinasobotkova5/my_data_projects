@@ -14,7 +14,7 @@ Rev. B vychází z posudku měření (`E7_review.pdf`). Anglická verze: `purcha
 | 3 | Objektiv (rev. B: kamera blíž → 6 mm) | Raspberry Pi 6 mm CS širokoúhlý | odhad 20–30 € | RPishop.cz, The Pi Hut |
 | 4 | Box kamery | XPS 30 mm, okénko ze 2 skel; ohřívá ho samo RPi 5 (bez topné fólie) | odhad 20–40 € | hobby market |
 | 5 | Vlhkost vzduchu | SHT45 RH/T modul na RPi (I2C) | odhad 15–25 € | RPishop.cz, LaskaKit, TME |
-| 6 | Vícečárový laser | Picotronic DOE253-635-1-6(10x22), obj. č. 70111842: 11 čar, 635 nm, 1 mW, 5 V | 91,51 € bez DPH | [Picotronic (DE)](https://www.picotronic.de/picopage/en/product/detail/id/86333) |
+| 6 | Vícečárový laser | Picotronic DOE253-635-5-6(10x24), obj. č. 70132403: 11 čar (3,1° mezi čarami, vějíř 31°), 635 nm, 5 mW, 5 V, nastavitelné ohnisko, třída 2M (alternativa DOE253-635-1-6(10x22), 1 mW, 98,24 €) | 104,96 € + 11 € doprava bez DPH (nabídka A2627918) | [Picotronic (DE)](https://www.picotronic.de/picopage/en/product/detail/id/86333) |
 | 7 | LVDT (píst) | RDP Electronics DCTH400AG: ±10 mm, pružina, výstup ±5 V | 581 € | [Elkome (FI)](https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor) nebo RDP (UK) |
 | 8 | Napájení LVDT | Mean Well HDR-15-24, 24 V DIN (izolovaný) | ≈ 11 € bez DPH | [TME](https://www.tme.com/ca/en/details/hdr-15-24/din-rail-mounting-power-supplies/mean-well/) |
 | 9 | Modul pro Pt100 do CR850 | Campbell Scientific 4WPB100 | na dotaz (odhad 60–120 €) | [Ekotechnika, Černošice](https://campbellsci.com/ekotechnika), tel. 251 640 511 |
@@ -39,8 +39,8 @@ Invar 36 (FeNi36): poptat u dodavatele speciálních kovů (např. Goodfellow ne
 ## Poznámky
 - **Kamera:** verze HQ **C/CS**, ne M12. V rev. B je ≈ 135 mm od středu povrchu; doostřit kroužkem zadní ohniskové vzdálenosti.
   RPi 5 je v boxu, takže těsněním víka vede jen Ethernet a 5 V.
-- **Laser:** v rev. B visí z příčníku pod 68° (y 46, 115 mm nad pískem, ≈ 124 mm od středu): vzor 41° dá 11 čar po ≈ 9,6 mm
-  na ⌀100 a límec nestíní. Velikost vzoru ověřit u Picotronicu.
+- **Laser:** vedle horního příčníku pod 66°, 81 mm od osy a 183 mm nad pískem (200 mm ke středu povrchu): vzor DOE253
+  (3,1° / 31°, potvrzeno Picotronicem) dá čáry ≈ 111 mm dlouhé po ≈ 11,9 mm přes celý ⌀100; zaostřit na 200 mm.
 - **LVDT:** jeden izolovaný zdroj 24 V; výstup ±5 V přímo do CR850. Provoz při −10 °C ověřit u RDP/Elkome.
 - **4WPB100** jen pokud je Pt100 čtyřvodičová a měří se přímo CR850.
 - **Vzorek (rozhodnuto 9. 11. 2026):** Sr = 0,5 (θ ≈ 0,19). Zdvih nanejvýš desítky µm, E7 měří hlavně sednutí při tání pod zatížením.

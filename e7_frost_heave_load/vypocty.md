@@ -264,7 +264,7 @@ Kotouč ⌀117.5/17: 1 kg = 12.0 mm, 0,5 kg = 6.0 mm. Při 25 kPa jen ≈ 4 koto
 
 **Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±25 mm). Kluzné pouzdro igus drylin RJ4JP-01-12 (bez maziva, do −40 °C) má tření ≈ 0,1–0,25 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,02 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
 
-**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser 68° (11 čar po ≈ 9.6 mm, posun čáry = 0,40 × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.
+**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser 66.1° (11 čar po ≈ 11.9 mm, posun čáry = 0.44 × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.
 
 **Rozměry:** sloupy 40×80 × 306 mm, spodní líc příčníku 140 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 jde ze strany TDR otvorem a nasedá uprostřed přímo nad horní tyčku CS645 (hloubka ≈ 33 mm) – povrch zůstává volný.
 
@@ -322,4 +322,8 @@ CR850 (= CR800 s klávesnicí a displejem): 6 SE / 3 DIFF analogových vstupů, 
 | – | LVDT z vlastního zdroje 24 V (trvale), RPi snímá podle NTP | – |
 
 **Kanály multiplexoru (2×32, termistory 2 vodiče + společná zem):** 1 Tair 109 (povinně), 2 vzduch ve výšce povrchu, 3 dno cely (otvor v tištěném dnu pod dutinou), 4 vnější stěna cely, 5 invarový sloupek, 6 horní příčník T04, 7 příčka T03 → teploty pro korekci driftu ze slepé zkoušky (dnes se teplota dna a rámu neměří); volitelně 8–11 teplotní profil písku 10 / 25 / 70 / 90 mm pod povrchem (4 radiální otvory ⌀3,4 ve stěně cely, hroty 25 mm od stěny) → poloha čáry 0 °C (hloubka promrznutí) v čase; zbytek rezerva. Čidla: NTC 10 kΩ v epoxidu nebo v nerezové jímce ⌀3 s doplňkovým odporem 10 kΩ 0,1 % na svorce MUX, kalibrace v ledové lázni (±0,1 K).
+
+## 19. Laser podle nabídky Picotronic A2627918 (13. 11. 2026)
+
+DOE-DER253: úhel mezi čarami 3.1°, vějíř 31° (dříve odhadováno 3,8° / 41°). Z původní polohy (134 mm, 68°) by čáry byly dlouhé jen 74 mm po 7.8 mm → nepokryly by povrch ⌀100. **Nová poloha:** laser vedle horního příčníku, 81 mm od osy, 183 mm nad pískem, vzdálenost 200 mm, sklon 66.1° → čáry ≈ 111 mm dlouhé po ≈ 11.9 mm, na písku ⌀100 ≈ 9 čar, límec ⌀106 pokrytý; posun čáry = 0.44 × zdvih. Držák P05 přepracován (blok mimo poloměr nosné desky 70 mm). Krajní čára u stěny na straně kamery je uprostřed zastíněná pouzdrem ložiska (krátká tětiva, zanedbatelné). Doporučen modul DOE253-635-5-6(10x24) s nastavitelným ohniskem (zaostřit na 200 mm) a 5 mW – rezerva pro tmavý mokrý / zmrzlý písek a krátkou expozici; třída 2M: nedívat se do svazku optickými přístroji.
 

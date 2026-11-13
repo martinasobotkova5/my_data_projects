@@ -384,7 +384,7 @@ print("**Konstantní zatížení:** zátěž leží jen na pístu a s povrchem v
       "síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,02 kPa. Kulička mezi tyčí a pístem dovolí "
       "pístu se naklonit, tyč zůstává svislá.\n")
 print(f"**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser {p.C_LASER_ANG:g}° ({p.C_LINES} čar po ≈ {p.C_LINE_PITCH:g} mm, "
-      "posun čáry = 0,40 × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, "
+      f"posun čáry = {1 / math.tan(math.radians(p.C_LASER_ANG)):.2f} × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, "
       "reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), "
       "rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.\n")
 print(f"**Rozměry:** sloupy 40×80 × {col_h:.0f} mm, spodní líc příčníku {p.C_BEAM_GAP:g} mm nad pískem (místo pro kameru "
@@ -509,3 +509,22 @@ print("\n**Kanály multiplexoru (2×32, termistory 2 vodiče + společná zem):*
       "volitelně 8–11 teplotní profil písku 10 / 25 / 70 / 90 mm pod povrchem (4 radiální otvory ⌀3,4 ve stěně cely, "
       "hroty 25 mm od stěny) → poloha čáry 0 °C (hloubka promrznutí) v čase; zbytek rezerva. Čidla: NTC 10 kΩ v epoxidu "
       "nebo v nerezové jímce ⌀3 s doplňkovým odporem 10 kΩ 0,1 % na svorce MUX, kalibrace v ledové lázni (±0,1 K).\n")
+
+# 19 --------------------------------------------------------------------------
+print("## 19. Laser podle nabídky Picotronic A2627918 (13. 11. 2026)\n")
+st, fan = p.C_LASER_DOE
+d_old = math.hypot(50.0, 124.0)
+d = math.hypot(p.C_LASER_Y, p.C_LASER_H)
+a = p.C_LASER_ANG
+def cover(dd, aa):
+    return 2 * dd * math.tan(math.radians(fan / 2)), dd * math.tan(math.radians(st)) / math.sin(math.radians(aa))
+L0, s0 = cover(d_old, 68.0)
+L1, s1 = cover(d, a)
+print(f"DOE-DER253: úhel mezi čarami {st:g}°, vějíř {fan:g}° (dříve odhadováno 3,8° / 41°). Z původní polohy (134 mm, 68°) "
+      f"by čáry byly dlouhé jen {L0:.0f} mm po {s0:.1f} mm → nepokryly by povrch ⌀100. **Nová poloha:** laser vedle horního "
+      f"příčníku, {p.C_LASER_Y:g} mm od osy, {p.C_LASER_H:g} mm nad pískem, vzdálenost {d:.0f} mm, sklon {a:g}° → čáry "
+      f"≈ {L1:.0f} mm dlouhé po ≈ {s1:.1f} mm, na písku ⌀100 ≈ 9 čar, límec ⌀106 pokrytý; posun čáry = "
+      f"{1 / math.tan(math.radians(a)):.2f} × zdvih. Držák P05 přepracován (blok mimo poloměr nosné desky 70 mm). Krajní "
+      "čára u stěny na straně kamery je uprostřed zastíněná pouzdrem ložiska (krátká tětiva, zanedbatelné). "
+      "Doporučen modul DOE253-635-5-6(10x24) s nastavitelným ohniskem (zaostřit na 200 mm) a 5 mW – rezerva pro tmavý "
+      "mokrý / zmrzlý písek a krátkou expozici; třída 2M: nedívat se do svazku optickými přístroji.\n")

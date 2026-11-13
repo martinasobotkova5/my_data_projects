@@ -226,12 +226,13 @@ def post_foot():
 
 def laser_holder():
     """Holder on the +y face of the top T-profile (2× M5 into T-nuts, face slot z = 20); holds the ⌀10 laser
-    at 68°, aimed at the sand centre. Local z = 0 is the underside of the top beam."""
-    zl = Z_S1 + p.C_LASER_H - ZBEAM                  # laser centre relative to the beam underside (negative)
+    beside the beam at C_LASER_ANG, aimed at the sand centre (200 mm, so the 31° DOE fan covers ⌀100).
+    Local z = 0 is the underside of the top beam; the block stays outside the carrier radius (r > 70)."""
+    zl = Z_S1 + p.C_LASER_H - ZBEAM                  # laser centre relative to the beam underside (+43)
     yl, y0 = p.C_LASER_Y, p.C_TOP[1] / 2
-    plate = cq.Workplane("XY").box(30, 6, 30, centered=(True, False, False)).translate((0, y0, 5))
-    web = cq.Workplane("XY").box(16, 6, 5 - (zl + 6), centered=(True, False, False)).translate((0, y0, zl + 6))
-    blk = cq.Workplane("XY").box(16, 20, 20, centered=(True, True, True)).translate((0, yl, zl))
+    plate = cq.Workplane("XY").box(30, 6, 40, centered=(True, False, False)).translate((0, y0, 5))
+    web = cq.Workplane("XY").box(16, yl - 8 - (y0 + 6) + 1, 9, centered=(True, False, False)).translate((0, y0 + 5, 36))
+    blk = cq.Workplane("XY").box(16, 16, 18, centered=(True, True, True)).translate((0, yl, zl))
     s = plate.union(web).union(blk)
     bore = (cq.Workplane("XZ").circle(5.1).extrude(40, both=True)
             .rotate((0, 0, 0), (1, 0, 0), p.C_LASER_ANG).translate((0, yl, zl)))

@@ -393,7 +393,7 @@ def variant_c(asm, prefix=""):
     yl_, zl = p.C_LASER_Y, Z_S1 + p.C_LASER_H
     las = (cq.Workplane("XZ").circle(5).extrude(11, both=True)
            .rotate((0, 0, 0), (1, 0, 0), p.C_LASER_ANG).translate((0, yl_, zl)))
-    asm.add(las, name=prefix + "line laser Picotronic DOE253 (68 deg)", color=C["temp"])
+    asm.add(las, name=prefix + f"line laser Picotronic DOE253 ({p.C_LASER_ANG:g} deg)", color=C["temp"])
     return zb0
 
 

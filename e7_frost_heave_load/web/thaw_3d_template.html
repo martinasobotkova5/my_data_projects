@@ -296,9 +296,11 @@ const DATA = /*__DATA__*/null;
   const lens = new THREE.Mesh(new THREE.CylinderGeometry(14, 14, 18, 28), matSteel); lens.position.set(0, -43, 0); cam.add(lens);
   cam.position.set(0, zCam, -camY); cam.rotation.x = camTilt * Math.PI / 180; frameGrp.add(cam);
   frameGrp.add(box(-8, 8, camY - 8, -40, zCam + 30, zBeam, matAl));
-  // laser (+y) hanging from the beam, 68° to the surface, aimed at the axis
+  // laser (+y) beside the top beam on a printed holder, aimed at the axis (DOE fan 31° from 200 mm)
   const [lasY, lasH] = G.laser, zLas = G.z_sand + lasH;
-  frameGrp.add(box(-8, 8, 40, 43, zLas - 6, zBeam, matAl));
+  frameGrp.add(box(-15, 15, 40, 46, zBeam + 5, zBeam + 45, M(0x34373b)));
+  frameGrp.add(box(-8, 8, 46, lasY - 8, zBeam + 36, zBeam + 45, M(0x34373b)));
+  frameGrp.add(box(-8, 8, lasY - 8, lasY + 8, zLas - 9, zLas + 9, M(0x34373b)));
   const las = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 22, 20), matLaser);
   las.position.set(0, zLas, -lasY); las.rotation.x = -Math.atan2(lasY, lasH); frameGrp.add(las);
   // Invar post from the base rail: arm with the LVDT under the carrier + reference target for the camera

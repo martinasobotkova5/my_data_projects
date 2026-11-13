@@ -1,5 +1,7 @@
 # E7 – poptávky laseru (TME, Picotronic)
 
+**Stav 13. 11. 2026:** Picotronic odpověděl nabídkou A2627918 – DOE253: 3,1° mezi čarami, vějíř 31°; pozice 10 = 1 mW (98,24 €), pozice 20 = 5 mW s nastavitelným ohniskem (104,96 €, doporučeno), doprava 11 €. Sestava upravena: laser 200 mm od povrchu, 66° (`vypocty.md` §19).
+
 Doplňte údaje v hranatých závorkách. Parametry odpovídají sestavě rev. B3 (laser 124 mm nad pískem, 50 mm od osy,
 68° k povrchu → vzdálenost k povrchu ≈ 134 mm; 11 čar po 9,6 mm přes celý povrch ⌀100).
 

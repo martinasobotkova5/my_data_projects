@@ -34,7 +34,7 @@ G10 = "#9bbf6a"
 RO = p.BODY_D / 2 + p.C_SLEEVE_T                   # outer radius of the one-piece printed cell
 LVD, LVL = p.C_LVDT_BODY
 Z_LV = ZC - 12 - LVL                               # LVDT body ⌀20.6 × 50 (bottom), top 12 under the carrier
-TAN_L = math.tan(math.radians(p.C_LASER_ANG))      # laser line shift Δy = Δh / tan 68°
+TAN_L = math.tan(math.radians(p.C_LASER_ANG))      # laser line shift Δy = Δh / tan(angle)
 
 
 def fs():
@@ -186,7 +186,7 @@ def _sheet_assembly(pdf):
     t(v, 0, V.Z_S1 + 90, 180, ZBEAM + 15, "guide rod Invar 36 ⌀12, ball ⌀8", "#5b4a99")
     t(v, p.C_INVAR_XY[1], V.Z_S1 + 60, 180, V.Z_S1 + 120, f"Invar post ⌀16 (x = {p.C_INVAR_XY[0]:g})\nin a printed foot on the base rail", "#5b4a99")
     t(v, p.C_REF_XY[1], ZCELL + p.COLLAR_TOP + 4, 180, V.Z_S1 + 85, "Invar target = camera reference", "#5b4a99")
-    t(v, YL, ZL, 180, V.Z_S1 + 60, "(1) laser 68°, 11 lines", "#c0392b")
+    t(v, YL, ZL, 180, V.Z_S1 + 60, f"(1) laser {p.C_LASER_ANG:.0f}°, 11 lines", "#c0392b")
     t(v, 20, ZP - 5, 180, V.Z_S1 + 36, "partial piston ⌀50×20")
     t(v, 38, V.Z_S1 + 0.3, 180, V.Z_S1 + 14, "FREE surface (25 mm annulus)", FREE)
     t(v, -10, V.Z_S1 - 45, 180, V.Z_S1 - 30, "M: CS645 + fibre + Pt100", "#d33682")
@@ -244,19 +244,21 @@ def _sheet_measurement(pdf):
     v.line([(-ri, zs + dh), (-p.C_PISTON_D / 2, zs + dh)], lw=0.8, c=FREE, ls="--")
     v.line([(p.C_PISTON_D / 2, zs + dh), (ri, zs + dh)], lw=0.8, c=FREE, ls="--")
     v.rect(-p.C_PISTON_D / 2, zs + dh, p.C_PISTON_D / 2, p.C_PISTON_H + dh, fc="none", lw=0.8, ls="--")
-    # laser plane at 68° from +y: a surface at height h is hit at y = h / tan 68° = 0.40 h
-    yl_, hl = p.C_LASER_Y, p.C_LASER_H
+    # laser plane from +y: a surface at height h is hit at y = h / tan(angle); the laser itself is 200 mm away
+    # (y 81, h 183) – outside this detail, the ray is drawn up to h = 95
+    hl = 85.0
+    yl_ = hl / TAN_L
     yp = p.C_PISTON_H / TAN_L
     v.line([(yl_, hl), (yp, p.C_PISTON_H)], lw=1.2, c=LASER, z=5)
     v.line([(yp, p.C_PISTON_H), (0, 0)], lw=1.0, c=LASER, ls=":", z=5)
-    v.rect(yl_ - 4, hl - 4, yl_ + 4, hl + 4, fc="#c0392b", lw=THIN, z=5)
     for h, lab, (tx, tz) in ((0, "● sand (|x| > 25): y = 0", (-50, 86)),
                              (p.C_PISTON_H, f"● piston top: y = {yp:.1f}", (-50, 96))):
         v.circle(h / TAN_L, h, 1.6, fc=LASER, lw=0, z_=6)
         v.text(tx, tz, lab, fontsize=fs(), color=LASER, va="center")
     v.circle(dh / TAN_L, dh, 1.6, fc="white", ec=LASER, lw=0.8, z_=6)
     v.dim_v(zs, zs + dh, -ri - 4, -ri - 16, "Δh")
-    v.text(yl_ + 8, hl, f"laser {p.C_LASER_ANG:g}° (bracket on the beam)", fontsize=fs(), color=LASER, va="center")
+    v.text(yl_ + 3, hl, f"laser {p.C_LASER_ANG:.0f}°, 200 mm ↗\n(y {p.C_LASER_Y:g}, h {p.C_LASER_H:g})",
+           fontsize=fs(), color=LASER, va="center")
     v.text(-ri + 2, -8, "sand", fontsize=fs())
     v.text(-p.C_PISTON_D / 2 + 2, p.C_PISTON_H / 2, "piston", fontsize=fs(), va="center")
     v.text(-rc - 18, zc_top + 4, "rim", fontsize=fs())

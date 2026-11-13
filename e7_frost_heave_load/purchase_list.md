@@ -14,7 +14,7 @@ Rev. B follows the measurement review (`E7_review.pdf`). Czech version: `nakup_c
 | 3 | Lens (rev. B: camera closer → 6 mm) | Raspberry Pi 6 mm CS wide-angle lens | est. 20–30 € | RPishop.cz, The Pi Hut |
 | 4 | Camera box | XPS 30 mm, double-glazed window; the RPi 5 heats it (no heater foil) | est. 20–40 € | DIY store |
 | 5 | Air humidity | SHT45 RH/T breakout on the RPi (I2C) | est. 15–25 € | RPishop.cz, LaskaKit, TME |
-| 6 | Multi-line laser | Picotronic DOE253-635-1-6(10x22), order no. 70111842: 11 lines, 635 nm, 1 mW, 5 V | 91.51 € excl. VAT | [Picotronic (DE)](https://www.picotronic.de/picopage/en/product/detail/id/86333) |
+| 6 | Multi-line laser | Picotronic DOE253-635-5-6(10x24), order no. 70132403: 11 lines (3.1° apart, 31° fan), 635 nm, 5 mW, 5 V, adjustable focus, class 2M (alternative: DOE253-635-1-6(10x22), 1 mW, 98.24 €) | 104.96 € + 11 € S&H excl. VAT (quote A2627918) | [Picotronic (DE)](https://www.picotronic.de/picopage/en/product/detail/id/86333) |
 | 7 | LVDT (piston) | RDP Electronics DCTH400AG: ±10 mm, spring return, ±5 V output | 581 € | [Elkome (FI)](https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor) or RDP (UK) |
 | 8 | LVDT power supply | Mean Well HDR-15-24, 24 V DIN (isolated) | ≈ 11 € excl. VAT | [TME](https://www.tme.com/ca/en/details/hdr-15-24/din-rail-mounting-power-supplies/mean-well/) |
 | 9 | Pt100 module for the CR850 | Campbell Scientific 4WPB100 | on request (est. 60–120 €) | [Ekotechnika, Černošice](https://campbellsci.com/ekotechnika), tel. +420 251 640 511 |
@@ -39,8 +39,8 @@ Invar 36 bar: ask a specialty metals supplier (e.g. Goodfellow, or a local distr
 ## Notes
 - **Camera:** buy the HQ **C/CS** version, not M12. Rev. B camera is ≈ 135 mm from the centre of the surface;
   focus with the back-focus ring. The RPi 5 sits in the box, so only Ethernet and 5 V pass the lid seal.
-- **Laser:** in rev. B it hangs from the beam at 68° (y 46, 115 mm above the sand, ≈ 124 mm from the centre):
-  the 41° pattern then gives 11 lines at ≈ 9.6 mm on ⌀100 and the collar casts no shadow. Confirm the pattern size with Picotronic.
+- **Laser:** beside the top beam at 66°, 81 mm from the axis and 183 mm above the sand (200 mm to the surface centre):
+  the DOE253 pattern (3.1° / 31°, confirmed by Picotronic) gives ≈ 111 mm long lines ≈ 11.9 mm apart over the whole ⌀100; focus at 200 mm.
 - **LVDT:** single isolated 24 V supply; ±5 V output straight into the CR850. Confirm operation at −10 °C with RDP/Elkome.
 - **4WPB100** only if your Pt100 is 4-wire and read directly by the CR850.
 - **Sample (decided 9 Nov 2026):** Sr = 0.5 (θ ≈ 0.19). Expected heave is tens of µm at most; E7 measures mainly the thaw settlement under load.
