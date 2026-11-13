@@ -73,3 +73,35 @@ Po stanovení skutečné hustoty zrn a cílové ρd hodnoty přepočítat.
 Hliníková atrapa ⌀99 × 100 místo písku, celý cyklus: drift (1) a (2) proti teplotě cely → fit a odečet (zbytek
 ≤ 6 µm LVDT, ≤ 3 µm kamera). Kalibrace kamery podložkami 0,1 / 0,5 / 1,0 mm pod rovnou deskou v nezmrzlém i ve
 zmrzlém stavu.
+
+
+## 7 · Zapojení laseru (Picotronic DOE253-635-5-6(10x24))
+
+Laser se napájí z Raspberry Pi 5 v boxu kamery (5 V), zapíná se tranzistorem z GPIO jen na dobu snímku.
+GPIO samo laser napájet nesmí (3,3 V a max. ≈ 16 mA), proto spínač MOSFET na záporném vodiči.
+
+```
+RPi 5 (40pin)                                  laser DOE253 (5 V DC)
+ pin 2  (5V) ───────────────────────────────── červený (+)
+                                               černý (−) ──┐
+                                                           │ D
+ pin 11 (GPIO17) ──[100 Ω]──┬──────────────── G  MOSFET AO3400 / IRLZ44N
+                            │                              │ S
+                         [100 kΩ]                          │
+ pin 9  (GND) ──────────────┴──────────────────────────────┘
+```
+
+- **Polarita:** červený = +, černý = − (ověřit podle štítku / listu Picotronic, přepólování může diodu zničit).
+- **100 kΩ** mezi gate a GND drží laser vypnutý při startu RPi; **100 Ω** omezuje proud do gate.
+- **Vedení kabelu:** laser sedí v držáku P05 na straně +y vedle horního příčníku T04. Kabel 2 × 0,25 mm²
+  (prodloužit přívody laseru, spoj zapájet a přetáhnout bužírkou) vést drážkou příčníku T04 na stranu −y
+  k závěsu P08, do boxu kamery druhou vývodkou PG7. Délka ≈ 0,5 m. Spínač připájet na malou destičku
+  přišroubovanou na víko P07 vedle RPi.
+- **Program (RPi):** `gpiozero.OutputDevice(17)` → zapnout laser, 0,2 s počkat, snímek s pevnou expozicí,
+  laser vypnout; doporučeno ještě druhý snímek bez laseru (odečet pozadí). Interval 10 min, kolem 0 °C 1 min.
+- **Zaostření:** při prvním zapnutí zaostřit kroužkem laseru na povrch (200 mm), čáry co nejtenčí; pak zajistit
+  červíkem M3 v držáku P05 a natočit laser tak, aby čáry ležely napříč (ve směru x).
+- **Rosa na optice laseru** na začátku tání: laser je mimo vyhřátý box – ve slepé zkoušce zkontrolovat ostrost
+  čar po přepnutí na +10 °C; kdyby se rosil, nechat laser svítit trvale (5 mW = zanedbatelné teplo) nebo jej
+  obalit pěnou.
+- **Bezpečnost (třída 2M):** nedívat se do svazku, ani přes lupu / objektiv; svítí jen při snímku v zavřeném mrazáku.

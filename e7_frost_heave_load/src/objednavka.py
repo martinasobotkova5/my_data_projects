@@ -94,7 +94,10 @@ SHOPS = [
       ("Čidlo SHT45 (RH/T) na I2C", "vlhkost vzduchu v truhle", 1, "≈ 15–25 €", "odhad"),
       ("Ventilátor 80 mm 12 V + zdroj 12 V", "promíchání vzduchu (běží trvale)", 1, "≈ 10–20 €", "odhad"),
       ("Mean Well HDR-15-24 (24 V DIN)", "napájení LVDT (trvale zapnuté)", 1, "≈ 11 € bez DPH", "ověřeno (TME)"),
-      ("Kabelová vývodka PG7 + Ethernet kabel 3 m", "box kamery", 1, "≈ 5 €", "odhad"),
+      ("Kabelová vývodka PG7 (2 ks) + Ethernet kabel 3 m", "box kamery: Ethernet + napájení, druhá vývodka pro kabel laseru",
+       1, "≈ 6 €", "odhad"),
+      ("Spínání laseru: MOSFET AO3400 nebo IRLZ44N (logic level), odpory 100 Ω a 100 kΩ, kabel 2 × 0,25 mm² 0,5 m, "
+       "smršťovací bužírka, dutinkové / Dupont konektory", "laser 5 V z RPi, zapíná GPIO17 jen na snímek", 1, "≈ 3–5 €", "odhad"),
       ("NTC termistor 10 kΩ (epoxid / nerezová jímka ⌀3) + odpor 10 kΩ 0,1 %", "na multiplexor: dno a stěna cely, "
        "sloupek, příčníky, vzduch (6 ks) + volitelně 4 do písku", 10, "≈ 3–8 €/ks", "odhad")]),
     ("8 · Čidla ze zahraničí a Campbell",
