@@ -1,6 +1,6 @@
 # E7 – co může při měření zlobit a postup zkoušky (rev. B3, 11/2026)
 
-Sestava: rám z T-profilů, cela ⌀240 tištěná vcelku na 3 podložkách G10, písek ⌀100 × 100 mm, Sr = 0,5,
+Sestava: rám z T-profilů, cela ⌀220 tištěná vcelku na 3 podložkách G10, písek ⌀100 × 100 mm, Sr = 0,5,
 mrtvá váha na pístu ⌀50, (1) kamera + laser 11 čar, (2) LVDT na invarovém sloupku, bod M (TDR CS645, Pt100,
 optické vlákno), datalogger **CR850**. Výpočty: `vypocty.md` §15–18.
 

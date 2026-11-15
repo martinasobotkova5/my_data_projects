@@ -160,6 +160,6 @@ C_MECH = [   # rev. B3 – only bought, laser-cut and printed parts (see objedna
     ("T-profiles slot 8 cut (ENPRAG), 12 brackets, 44 T-nuts, 4 feet", 100, 170),
     ("igus RJ4JP-01-12, shaft collar 12, ball 5/16\", screws M3–M8", 25, 50),
     ("Invar 36: rod ⌀12 × 265 + post ⌀16 × 330 (Evek, cut to length)", 80, 160),
-    ("cell ⌀240 × 200 printed in one piece + 3 G10 pads", 45, 90),
+    ("cell ⌀220 × 200 printed in one piece + 3 G10 pads", 40, 80),
     ("printed parts P01–P11 (holders, camera box, sample aids)", 12, 30),
 ]

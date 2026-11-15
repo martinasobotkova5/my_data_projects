@@ -78,8 +78,8 @@ Kde: [Prusament PETG Carbon Fiber](https://www.prusa3d.com/product/prusament-pet
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
-| Prusament PETG Carbon Fiber 1 kg | cela ≈ 1,3–1,6 kg + díly P01–P11 ≈ 0,5 kg | 2 | ≈ 55 €/ks | ověřeno (USD cena) |
-| Tiskárna pro celu | podložka ≥ 250 × 250, výška ≥ 200 (Prusa XL, Bambu X1/P1S); Prusa MK4/Core One nestačí |  |  | info |
+| Prusament PETG Carbon Fiber 1 kg | cela ≈ 1,1–1,4 kg + díly P01–P11 ≈ 0,5 kg | 2 | ≈ 55 €/ks | ověřeno (USD cena) |
+| Tiskárna pro celu | cela ⌀220 × 200: podložka 240 × 240 (10 mm okraj na límec / skirt), výška ≥ 200 mm; ≈ 1,1–1,4 kg, 35–50 h |  |  | info |
 | Sklo do okénka boxu kamery | 50 × 50 × 2 mm (sklo z fotorámečku / sklenářství) nebo plexi 2 mm | 1 | ≈ 1–3 € | odhad |
 
 ## 7 · Kamera, Raspberry Pi, elektronika

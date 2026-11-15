@@ -130,7 +130,7 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt
     cavity ⌀100 from z 26 (z = 0 at the underside), side port 13 wide at 67.5–94.5 (PORT_ANG).
     Point M: CS645 in the port, optical fibre, Pt100 vertical. Returns z of the underside of the core.
     ins=True: rev. B, printed in ONE piece with +C_SLEEVE_T low-infill wall and a +C_INS_T base with 3 pockets
-    for the G10 pads (⌀240 × 200 overall); the port runs through the whole wall."""
+    for the G10 pads (⌀220 × 200 overall); the port runs through the whole wall."""
     zb = Z_S0 - p.BODY_BOTTOM
     rb, rc, ri = p.BODY_D / 2, p.COLLAR_OD / 2, p.CAV_D / 2
     ro = rb + (p.C_SLEEVE_T if ins else 0.0)
@@ -162,7 +162,7 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt
     xb, yb = 25 * math.cos(math.radians(p.AM_PB[2])), 25 * math.sin(math.radians(p.AM_PB[2]))
     if pb:
         body = body.cut(cyl(8.2, 1.6, Z_S0 - 1.6, xb, yb))
-    asm.add(body, name=prefix + ("cell PETG D240x200 one piece, rev. B (core Column_one_body_version_1)" if ins
+    asm.add(body, name=prefix + (f"cell PETG D{p.BODY_D + 2 * p.C_SLEEVE_T:g}x200 one piece, rev. B (core Column_one_body_version_1)" if ins
                                  else "cell body PETG D160 (Column_one_body_version_1)"), color=C["petg"])
     if pb:
         asm.add(cyl(8, 1.5, Z_S0 - 1.5, xb, yb), name=prefix + "PB1 TML PDA-PA (flush)", color=C["pressure"])
@@ -437,8 +437,18 @@ if __name__ == "__main__":
     os.makedirs(ARCH, exist_ok=True)
     vc = cq.Assembly(name="E7 C - frame guides a dead weight on a partial piston, camera + laser, LVDT")
     variant_c(vc)
-    mr = cq.Assembly(name="E7 cell rev. B - printed in one piece D240 (core Column_one_body_version_1)")
+    mr = cq.Assembly(name=f"E7 cell rev. B - printed in one piece D{p.BODY_D + 2 * p.C_SLEEVE_T:g} (core Column_one_body_version_1)")
     body_a(mr, temps=[], pv=False, pb=False, opt=False, ins=True, pt_port=True)
+    # print-ready cell (bottom on the bed, z = 0) for vyroba/tisk
+    cell = [sh.moved(loc) for sh, n, loc, c in mr if n.split("/")[-1].startswith("cell PETG")][0]
+    bb = cell.BoundingBox()
+    cell = cell.translate(cq.Vector(-(bb.xmin + bb.xmax) / 2, -(bb.ymin + bb.ymax) / 2, -bb.zmin))
+    tisk = os.path.join(OUT, "..", "vyroba", "tisk")
+    os.makedirs(tisk, exist_ok=True)
+    cname = f"E7-V03_cell_D{bb.xlen:.0f}x{bb.zlen:.0f}"
+    cq.exporters.export(cell, os.path.join(tisk, cname + ".stl"), tolerance=0.05, angularTolerance=0.1)
+    cq.exporters.export(cell, os.path.join(tisk, cname + ".step"))
+    print(cname, "for printing")
     lay = freezer_layout()
     for asm, fn in ((vc, "E7_V01_variant_C"), (mr, "E7_V03_cell"), (lay, "E7_V05_freezer_layout")):
         asm.save(os.path.join(OUT, fn + ".step"))

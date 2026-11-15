@@ -30,7 +30,7 @@ Rev. B follows the measurement review (`E7_review.pdf`). Czech version: `nakup_c
 | T-slot profiles slot 8 cut to length (Enprag): 2 columns 40×80 × 306, top beam 40×80 × 340 (one ⌀14 hole), base cross bar 40×80 × 260, 2 base rails 40×40 × 260; 12 angle brackets, 44 drop-in T-nuts, 4 levelling feet M8 | 100–170 € |
 | igus RJ4JP-01-12, shaft collar DIN 705-A 12, ball 5/16", screws | 25–50 € |
 | Invar 36: rod ⌀12 × 265 and post ⌀16 × 330, cut to length (Evek) | 80–160 € |
-| Cell printed in ONE piece ⌀240 × 200 (PETG-CF ≈ 1.5 kg) + 3 G10 pads ⌀20 × 40 (elektroizolanty.cz) | 45–90 € |
+| Cell printed in ONE piece ⌀220 × 200 (PETG-CF ≈ 1.3 kg) + 3 G10 pads ⌀20 × 40 (elektroizolanty.cz) | 45–90 € |
 | Printed parts P01–P08: bearing housing, LVDT and target arms, post foot, laser holder, camera box | 10–25 € |
 
 Total ≈ 1,460–1,990 € excl. VAT, i.e. ≈ 36–50 thousand CZK (drawing V04). Rev. A was ≈ 1,370–1,870 €.

@@ -1,5 +1,5 @@
-"""CAD drawing (DXF, all dimensions) of the printed cell rev. B: printed in ONE piece ⌀240 × 200 –
-core = Column_one_body_version_1 (M. Vrána) + 40 mm low-infill wall and 40 mm base with 3 pockets for G10 pads.
+"""CAD drawing (DXF, all dimensions) of the printed cell rev. B: printed in ONE piece ⌀220 × 200 –
+core = Column_one_body_version_1 (M. Vrána) + 30 mm low-infill wall and 40 mm base with 3 pockets for G10 pads.
 
 Run: python cad_cell.py → ../cad/E7_V04_cell.dxf + E7_V04_cell.pdf (preview).
 Model space in mm 1 : 1; the A3 frame and texts are drawn for printing at 1 : 1.5.
@@ -246,7 +246,7 @@ def frame_and_title(sh, x0, y0):
     sh.rect(tx, ty, x0 + w - 10 * S, ty + 40 * S, "FRAME")
     for k in (10, 20, 30):
         sh.line((tx, ty + k * S), (x0 + w - 10 * S, ty + k * S), "FRAME")
-    rows = [("Title", "E7 – cell rev. B, printed in ONE piece ⌀240 × 200"),
+    rows = [("Title", f"E7 – cell rev. B, printed in ONE piece ⌀{2 * RB:g} × 200"),
             ("Drawing", "E7-V04   sheet 1/1   scale 1 : 1.5 (A3)   mm"),
             ("Material", "PETG(-CF); base + wall gyroid 10–15 %, floor 100 %"),
             ("Ref.", "core: M. Vrána 23.06.2026; rev. B 2026-10-27, DRAFT")]
@@ -262,8 +262,8 @@ def frame_and_title(sh, x0, y0):
              f"3  Sand 100 mm (z {TB:g}–{ZS:g}), 34 mm free above for the piston / camera.",
              f"   3 G10 pads ⌀{p.C_PAD_D:g} × {O:g} in pockets ⌀{p.C_PAD_D + 0.4:g} (r {p.C_PAD_R:g}), 0.5 mm proud.",
              "4  Inside: epoxy coat + PTFE spray + silicone grease.",
-             "5  Port 13 × 27 through the whole wall (r 50–120): TDR, Pt100 and fibre cables.",
-             "   Print bed ≥ 250 × 250, Z ≥ 200; ≈ 1.3–1.6 kg, ≈ 40–60 h."]
+             f"5  Port 13 × 27 through the whole wall (r 50–{RB:g}): TDR, Pt100 and fibre cables.",
+             "   Print bed 240 × 240 (10 mm margin), Z ≥ 200; ≈ 1.1–1.4 kg, ≈ 35–50 h."]
     for i, s in enumerate(notes):
         sh.text(s, (x0 + 20 * S, y0 + (78 - 7 * i) * S), h=TS)
 

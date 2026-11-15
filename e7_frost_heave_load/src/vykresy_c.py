@@ -190,8 +190,8 @@ def _sheet_assembly(pdf):
     t(v, 20, ZP - 5, 180, V.Z_S1 + 36, "partial piston ⌀50×20")
     t(v, 38, V.Z_S1 + 0.3, 180, V.Z_S1 + 14, "FREE surface (25 mm annulus)", FREE)
     t(v, -10, V.Z_S1 - 45, 180, V.Z_S1 - 30, "M: CS645 + fibre + Pt100", "#d33682")
-    t(v, p.BODY_D / 2 - 5, V.Z_S0 + 10, 180, V.Z_S0 - 5, "printed cell ⌀240, one piece (V03)")
-    t(v, RO - 8, ZCELL + 70, 180, V.Z_S0 - 30, "printed wall +40 (gyroid 10–15 %)", "#3a6f99")
+    t(v, p.BODY_D / 2 - 5, V.Z_S0 + 10, 180, V.Z_S0 - 5, f"printed cell ⌀{2 * RO:g}, one piece (V03)")
+    t(v, RO - 8, ZCELL + 70, 180, V.Z_S0 - 30, f"printed wall +{p.C_SLEEVE_T:g} (gyroid 10–15 %)", "#3a6f99")
     t(v, 60, ZB0 + 20, 180, ZB0 + 5, "printed base 40 + 3 G10 pads", "#3a6f99")
     t(v, p.C_CROSS_Y[0] + 30, ZB0 - 20, 180, ZB0 - 30, "base: T-profile rails 40×40\n+ cross bar 40×80")
     t(v, box_[0][0], box_[0][1], -150, ZCAM + 10, "(1) camera box:\nRPi HQ + 6 mm lens\n+ RPi 5 (its heat\nkeeps the window clear)",
@@ -214,7 +214,7 @@ def _sheet_assembly(pdf):
              ["3", "igus RJ4JP-01-12 in a printed housing; Invar rod ⌀12"],
              ["4", "piston ⌀50×20 = 2 laser-cut Al discs, ball 5/16\""],
              ["5", f"carrier Al ⌀{p.C_CARRIER_D:g}×10 on a shaft collar; discs ⌀{p.C_DISC_D:g}×12 = 1 kg"],
-             ["6", "printed cell ⌀240 × 200, ONE piece incl. insulation (V03)"],
+             ["6", f"printed cell ⌀{2 * RO:g} × 200, ONE piece incl. insulation (V03)"],
              ["7", "sand ⌀100×100; 3 G10 pads ⌀20×40 in the base pockets"],
              ["8", "Invar post ⌀16: LVDT arm + camera target arm"],
              ["9", "(1) camera + RPi 5 box, 11-line laser (V02)"],
@@ -363,10 +363,10 @@ def _sheet_measurement(pdf):
 
 # --------------------------------------------------------------------------------------------
 def _sheet_cell(pdf):
-    """Rev. B: the cell printed in ONE piece – core = Column_one_body_version_1 (M. Vrána) + 40 mm low-infill wall
+    """Rev. B: the cell printed in ONE piece – core = Column_one_body_version_1 (M. Vrána) + 30 mm low-infill wall
     and 40 mm base with 3 pockets for the G10 pads. z = 0 at the new underside."""
-    sh = Sheet("Printed cell rev. B – one piece ⌀240 × 200 with insulation, point M", "E7-V03", "1 : 1.67", 3, TOTAL,
-               "core per M. Vrána 23.06.2026 + 40 mm printed insulation; z = 0 at the underside")
+    sh = Sheet(f"Printed cell – one piece ⌀{2 * RO:g} × 200 with insulation, point M", "E7-V03", "1 : 1.67", 3, TOTAL,
+               f"core per M. Vrána 23.06.2026 + {p.C_SLEEVE_T:g} mm printed wall, {p.C_INS_T:g} mm base; z = 0 at the underside")
     O = p.C_INS_T
     rb, rc, ri, w = p.BODY_D / 2, p.COLLAR_OD / 2, p.CAV_D / 2, p.CUP_WALL_IN
     ro = rb + p.C_SLEEVE_T
@@ -450,20 +450,20 @@ def _sheet_cell(pdf):
             ["Pt100", "Pt100, 4-wire", f"from the port, +{p.C_PT100_DZ:g} above the top rod, tip {p.C_PT100_TIP:g} from wall"]]
     y = table(sh, 255, 272, ["", "sensor", "position"], rows, [16, 36, 103], row_h=5.8)
     sh.heading(255, y - 8, "Print (one piece)")
-    pr = [["size", f"⌀{2 * ro:g} × {Hc:g} mm – bed ≥ 250 × 250, Z ≥ 200"],
-          ["material", "PETG or PETG-CF, 0.2 mm layers, ≈ 1.3–1.6 kg"],
+    pr = [["size", f"⌀{2 * ro:g} × {Hc:g} mm – bed 240 × 240 (10 mm margin), Z ≥ 200"],
+          ["material", "PETG or PETG-CF, 0.2 mm layers, ≈ 1.1–1.4 kg"],
           ["walls", "cavity wall ≈ 5 mm (≈ 8 perimeters), outer 3 perimeters"],
           ["floor", f"z {O:g}–{tb:g} under the cavity: 100 % (stiff, flat)"],
           ["insulation", f"base z 0–{O:g} and wall r {rb:g}–{ro:g}: gyroid 10–15 %"],
           ["pockets", f"3× ⌀{p.C_PAD_D + 0.4:g} × {O:g} from below, r {p.C_PAD_R:g}"],
-          ["time", "≈ 40–60 h (one job)"]]
+          ["time", "≈ 35–50 h (one job)"]]
     y = table(sh, 255, y - 12, ["item", "value"], pr, [26, 129], row_h=5.6)
     sh.text(255, y - 4,
             f"• Sand 100 mm (z {tb:g}–{zs:g}), {Hc - zs:g} mm free above (piston 20 + travel).\n"
             "• The cell stands on the 3 G10 pads only (0.5 mm proud): the low-infill\n"
             "  base insulates but carries no load → no creep in the LVDT chain.\n"
             f"• Heat model: λ infill ≈ {p.C_INS_K:g} W/mK → freezes from the top, last unfrozen\n"
-            "  ≈ 13 mm above the floor; at Sr 0.5: 95 % frozen in ≈ 15 h, thawed in ≈ 15 h.\n"
+            "  ≈ 13 mm above the floor; at Sr 0.5: 95 % frozen in ≈ 14.5 h, thawed in ≈ 14.5 h.\n"
             "• Inside: epoxy coat + PTFE spray + silicone grease.\n"
             "• Cables: TDR head, Pt100 and fibre all through the port;\n"
             "  the sand surface stays completely free (camera + laser).\n"
@@ -689,7 +689,7 @@ def _sheet_parts(pdf):
     y = table(sh, 255, y - 10, ["bar", "length", "pcs", "note"], rows, [40, 20, 10, 70], row_h=5.0)
     sh.heading(255, y - 6, "3D print (PETG-CF, 0.2 mm, 40 % gyroid unless noted)")
     rows = [[n[3:6], n[7:].replace("_", " "), f"{q}"] for n, _, q in bp.PRINT]
-    rows.insert(0, ["V03", "cell ⌀240 × 200, one piece (see V03)", "1"])
+    rows.insert(0, ["V03", f"cell ⌀{2 * RO:g} × 200, one piece (see V03)", "1"])
     y = table(sh, 255, y - 10, ["#", "part", "pcs"], rows, [12, 108, 12], row_h=5.0)
     sh.text(255, y - 4,
             "Fixing: 12 angle brackets 40 slot 8 + 24 T-nuts M8 + M8×16 (4 base, 4 column–rail,\n"

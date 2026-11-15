@@ -7,7 +7,7 @@ in the unsaturated sand (Sr 0.5) the expansion fits into the pore air, so the ex
 Also computed: thermal drift of the rig as seen by the LVDT (Al beam vs Invar post) and by the camera
 (rim vs Invar reference), from lumped part temperatures.
 
-Run:  python src/sim_thaw.py          rev. B (cell printed in one piece with +40 mm low-infill wall and base), writes the web files
+Run:  python src/sim_thaw.py          rev. B (cell printed in one piece with 30 mm low-infill wall and 40 mm base), writes the web files
       python src/sim_thaw.py --bare   original cell on the Al plate, summary only (for comparison)
 """
 import json
@@ -44,7 +44,7 @@ H_OUT, H_CAV, H_BOT = 7.0, 5.0, 10.0  # W/m2K: free surfaces, inside the collar,
 H_CONTACT = 100.0                     # sand – Al piston
 INSULATED = "--bare" not in sys.argv
 K_INS = p.C_INS_K                    # printed low infill (assumed)
-# rev. B: cell printed in one piece with +40 mm low-infill wall (side + top ring) and +40 mm base with 3 G10 pads
+# rev. B: cell printed in one piece with 30 mm low-infill wall (side + top ring) and +40 mm base with 3 G10 pads
 H_SIDE = 1 / (1 / H_OUT + p.C_SLEEVE_T / 1e3 / K_INS) if INSULATED else H_OUT
 _a_pad = 3 * math.pi / 4 * (p.C_PAD_D / 1e3) ** 2
 _a_bot = math.pi / 4 * (p.BODY_D / 1e3) ** 2

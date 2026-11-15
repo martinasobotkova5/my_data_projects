@@ -399,9 +399,11 @@ print(f"**Očekávaný zdvih (rozhodnuto Sr = {sr:g}):** pórovitost ≈ {n_por}
       f"zdvih in situ ≈ 0 (desítky µm nanejvýš od migrace vody). Horní mez (vše nahoru) {0.09 * th * p.H_SAMPLE:.2f} mm. "
       "E7 tedy měří hlavně sednutí při tání pod zatížením; pro měření zdvihu by bylo nutné Sr ≥ 0,85 nebo voda zespodu.\n")
 print("**Směr mrznutí (sim_thaw.py, Sr 0,5):** cela přímo na Al desce – 95 % zmrzne za ≈ 10,5 h i zespodu, poslední "
-      "nezmrzlé místo 35 mm nade dnem; rev. B (cela tištěná vcelku ⌀240 × 200: +40 mm stěna a +40 mm dno z nízké výplně "
-      "λ ≈ 0,06, podložky G10 v kapsách) – 95 % zmrzne za ≈ 15 h, celý vzorek za ≈ 16 h, poslední nezmrzlé 13 mm nade dnem "
-      "→ mrznutí shora. Tání ≈ 15 h → cyklus 24 h + 24 h stačí (rezerva ≈ 8 h).\n")
+      "nezmrzlé místo 35 mm nade dnem; rev. B (cela tištěná vcelku ⌀220 × 200: stěna 30 mm a dno 40 mm z nízké výplně "
+      "λ ≈ 0,06, podložky G10 v kapsách) – 95 % zmrzne za ≈ 14,5 h, celý vzorek za ≈ 15 h, poslední nezmrzlé 13 mm nade dnem "
+      "→ mrznutí shora. Tání ≈ 14,5 h → cyklus 24 h + 24 h stačí (rezerva ≈ 9 h). Stěna 40 / 30 / 25 mm (⌀240 / 220 / 210): "
+      "95 % zmrzne za 15,0 / 14,5 / 14,25 h, poslední nezmrzlé místo vždy 13 mm nade dnem na ose – stěna 30 mm stačí "
+      "a cela ⌀220 se vejde na podložku tiskárny 24 cm.\n")
 print("**Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle teplot cely ze slepé zkoušky):** "
       "rev. A (bez izolace, LVDT na Al příčníku, ocelová tyč) −24…+48 µm, zbytek ≤ 12 µm; kamera vůči PETG límci 0…100 µm, "
       "zbytek ≤ 8 µm. Jen izolace bez Invaru by zbytek LVDT zhoršila na 57 µm (cela reaguje pomaleji než sloupy a tyč). "

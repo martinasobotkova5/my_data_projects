@@ -272,15 +272,16 @@ C_DISC_T = 12.0                          # ocelové kotouče z plechu S235 12 mm
 C_COL_PROFILE = (40.0, 80.0)             # sloupy 40×80, drážka 8 (item kompatibilní), jen řez na délku
 C_COL_SPAN = 300.0                       # osová vzdálenost sloupů (vnitřní líc 130 > objímka r 120)
 # rev. B: cela se tiskne VCELKU s izolací – jádro = Column_one_body_version_1 (BODY_*), k tomu dole a kolem
-# přitištěno 40 mm nízké výplně (gyroid 10–15 %); límec zůstává volný. Výsledek: ⌀240 × 200, jeden kus.
+# přitištěna nízká výplň (gyroid 10–15 %): stěna 30 mm, dno 40 mm; límec zůstává volný. Výsledek: ⌀220 × 200, jeden kus
+# (15. 11. 2026: stěna 40 → 30 mm, aby se cela vešla na podložku tiskárny 24 cm s okrajem 10 mm; mrznutí zůstává shora).
 C_INS_T = 40.0                           # přitištěné dno pod jádrem (nízká výplň), s 3 kapsami pro podložky G10
-C_SLEEVE_T = 40.0                        # přitištěná stěna kolem pláště (r 80 → 120)
+C_SLEEVE_T = 30.0                        # přitištěná stěna kolem pláště (r 80 → 110), cela ⌀220 na podložku 24 cm
 C_INS_K = 0.06                           # λ tištěné nízké výplně [W/mK] – odhad 0,05–0,08 (XPS 0,035)
 C_PAD_D, C_PAD_R = 20.0, 35.0            # podložky G10 ⌀20 × 40 v kapsách ⌀20,4 na r 35 (pod dutinou), 3× po 120°;
                                          # vyčnívají 0,5 mm → celu nese G10, ne tištěná výplň
 C_INVAR_D = 16.0                         # sloupek z Invaru 36 ⌀16 z desky → rameno s LVDT (bez driftu sloupů)
 C_ROD_INVAR = True                       # vodicí tyč ⌀12 z Invaru 36 (broušená) místo oceli – jinak ocel 249 mm = 57 µm / 20 K
-C_INVAR_XY = (150.0, 108.0)              # rev. B3: na podélníku základny (x 150) za sloupem; poloha sloupku (mimo celu ⌀240, sloupy, kameru a laser)
+C_INVAR_XY = (150.0, 108.0)              # rev. B3: na podélníku základny (x 150) za sloupem; poloha sloupku (mimo celu, sloupy, kameru a laser)
 C_LVDT_XY = (30.0, 58.0)                 # rev. B3: vedle příčníku (y > 40), pod nosnou deskou ⌀140; LVDT pod nosnou deskou závaží (r 57 < 60), vedle příčníku
 C_REF_XY = (42.0, 42.0)                  # rev. B3; invarový referenční terčík pro kameru ve výšce límce (r 59, mezera 6)
 ALPHA_G10_Z = 15e-6                      # G10 kolmo k vrstvám ≈ (ověřit), podložky 40 mm

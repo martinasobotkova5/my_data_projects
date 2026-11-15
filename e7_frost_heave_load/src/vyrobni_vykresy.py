@@ -237,7 +237,7 @@ def sheet_plate(part, pdf):
                        (btop[2] + 14 * S, y - (4 + 4.6 * k) * S), h=2.8)
             y -= (8 + 4.6 * len(part["slots"])) * S
         if part["engrave"]:
-            D.text("gravírovat (nebo jen orýsovat): kružnice ⌀240 a 3× ⌀20 na r 35 – poloha cely a podložek G10",
+            D.text("gravírovat (nebo jen orýsovat): kružnice cely a 3× ⌀20 na r 35 – poloha cely a podložek G10",
                    (25 * S, 58 * S), h=2.8)
     else:
         cx, cy = (btop[0] + btop[2]) / 2, (btop[1] + btop[3]) / 2

@@ -66,6 +66,6 @@ if __name__ == "__main__":
     render(a, os.path.join(m.OUT, "E7_V01_variant_C_section.png"), elev=10, azim=0, cut=xcut,
            title="E7 C – section x = 0")
     c = cq.Assembly(); m.body_a(c, temps=[], pv=False, pb=False, opt=False, pt_r=m.p.C_PT100_R, pt_ang=m.p.C_PT100_ANG)
-    render(c, os.path.join(m.OUT, "E7_V03_cell.png"), elev=20, azim=-100, title="E7 cell rev. B – printed in one piece ⌀240, point M")
+    render(c, os.path.join(m.OUT, "E7_V03_cell.png"), elev=20, azim=-100, title=f"E7 cell rev. B – printed in one piece ⌀{m.p.BODY_D + 2 * m.p.C_SLEEVE_T:g}, point M")
     render(m.freezer_layout(), os.path.join(m.OUT, "E7_V05_freezer_layout.png"), elev=35, azim=-70,
            title="E7 – rig C in the chest freezer")
