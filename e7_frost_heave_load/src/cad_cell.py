@@ -262,6 +262,7 @@ def frame_and_title(sh, x0, y0):
              f"3  Sand 100 mm (z {TB:g}–{ZS:g}), 34 mm free above for the piston / camera.",
              f"   3 G10 pads ⌀{p.C_PAD_D:g} × {O:g} in pockets ⌀{p.C_PAD_D + 0.4:g} (r {p.C_PAD_R:g}), 0.5 mm proud.",
              "4  Inside: epoxy coat + PTFE spray + silicone grease.",
+             f"   NTC hole ⌀4 radial at {p.C_NTC_ANG:g}° (between the pads), {p.C_NTC_Z:g} above the underside, to the axis.",
              f"5  Port 13 × 27 through the whole wall (r 50–{RB:g}): TDR, Pt100 and fibre cables.",
              "   Print bed 240 × 240 (10 mm margin), Z ≥ 200; ≈ 1.1–1.4 kg, ≈ 35–50 h."]
     for i, s in enumerate(notes):

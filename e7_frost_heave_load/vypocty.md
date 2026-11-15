@@ -276,7 +276,7 @@ Kotouč ⌀117.5/17: 1 kg = 12.0 mm, 0,5 kg = 6.0 mm. Při 25 kPa jen ≈ 4 koto
 
 **Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle teplot cely ze slepé zkoušky):** rev. A (bez izolace, LVDT na Al příčníku, ocelová tyč) −24…+48 µm, zbytek ≤ 12 µm; kamera vůči PETG límci 0…100 µm, zbytek ≤ 8 µm. Jen izolace bez Invaru by zbytek LVDT zhoršila na 57 µm (cela reaguje pomaleji než sloupy a tyč). Rev. B (izolace + invarový sloupek + invarová tyč) −59…0 µm, zbytek ≤ 6 µm; kamera vůči invarovému terčíku −49…0 µm, zbytek ≤ 3 µm. Zbylý drift = PETG dno 26 mm + písek → změřit slepou zkouškou s Al atrapou.
 
-**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); RPi fotí podle hodin NTP (CR850 nemá volný port); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.
+**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); snímek spouští CR850 (C4); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.
 
 ## 16. Varianta C rev. B3 – rám z T-profilů (11/2026)
 
@@ -305,33 +305,26 @@ Hmotnosti: rám 4.4 kg, mrtvá váha až 5.5 kg, písek 1.41 kg (Sr 0.5), cela 1
 
 **Závěr:** napětí v profilech jsou desetiny až jednotky MPa (rezerva > 20×), průhyby jednotky µm. Rám zátěž jen vede, takže jeho únosnost nerozhoduje; profil 40×80 je zvolen kvůli tuhosti spojů a ploše pro úhelníky, ne kvůli pevnosti. **Rozhoduje stabilita proti překlopení:** s nožkami ±110 by stačil vodorovný tlak ≈ 40 N na horní příčník (např. při nasazování kotoučů). Proto podélníky 320 mm a nohy ±140; v mrazáku rám stojí ve vaně (opře se o stěnu), mimo mrazák manipulovat se závažím jen při přidrženém rámu. Prokluz spojů pod konstantním zatížením nehrozí; při výměně kotoučů se změní průhyb příčky T03 o < 1 µm (jde do LVDT, zanedbatelné).
 
-## 18. Datalogger CR850 + multiplexor AM16/32B (11/2026)
+## 18. Datalogger CR850 – zapojení bez multiplexoru (11/2026)
 
-CR850 (= CR800 s klávesnicí a displejem): 6 SE / 3 DIFF analogových vstupů, buzení VX1–VX2, porty C1–C4 (při SDM jsou C1–C3 vyhrazené pro TDR) a výstup 12 V. Multiplexor potřebuje RES na řídicím portu a CLK na řídicím portu **nebo na budicím kanálu** (manuál AM16/32B) → RES = C4, CLK = VX1. Na spouštění snímku port nezbude: RPi fotí podle vlastních hodin synchronizovaných NTP, hodiny CR850 synchronizuje LoggerNet (odchylka < 1 s, při intervalu 1–10 min zanedbatelné). Zdroj LVDT a ventilátor trvale zapnuté. LVDT diferenciálně: rozsah ±5000 mV, rozlišení ≈ 0,67 mV = 1,3 µm při 0,5 V/mm, průměrováním 20–50 vzorků ≈ 0,5 µm.
+CR850 (= CR800 s klávesnicí a displejem): 6 SE / 3 DIFF analogových vstupů, buzení VX1–VX2, porty C1–C4 (při SDM jsou C1–C3 vyhrazené pro TDR) a výstup 12 V. Zjednodušená sestava potřebuje jen 3 teploty, takže se vše vejde přímo do CR850 bez multiplexoru a port C4 zůstane na spouštění snímku (jedna časová značka pro všechna data). Zdroj LVDT a ventilátor trvale zapnuté. LVDT diferenciálně: rozsah ±5000 mV, rozlišení ≈ 0,67 mV = 1,3 µm při 0,5 V/mm, průměrováním 20–50 vzorků ≈ 0,5 µm.
 
 | svorka CR850 | připojeno | měření |
 |---|---|---|
 | DIFF1 (1H/1L) | (2) LVDT DCTH400AG | VoltDiff ±5000 mV, průměr 20–50 vzorků |
-| DIFF2 (2H/2L) + VX2 | Pt100 přes 4WPB100 | BrHalf4W, 2500 mV |
-| SE5 + VX2 | AM16/32B COM (režim 2×32): signál / buzení termistorů | Therm109 / BrHalf přes MUX |
-| SE6 | rezerva (kontrola napájení LVDT přes dělič) | VoltSE |
+| DIFF2 (2H/2L) + VX2 | Pt100 v písku (bod M) přes 4WPB100 | BrHalf4W, 2500 mV |
+| SE5 + VX1 | Tair Campbell 109 (vzduch = okrajová podmínka) | Therm109 |
+| SE6 + VX1 | NTC 10 kΩ ve dně cely (+ odpor 10 kΩ 0,1 %) | BrHalf → teplota dna pro korekci driftu |
 | C1–C3 | TDR100/TDR200 → CS645 | SDM |
-| C4 | AM16/32B RES | PortSet |
-| VX1 | AM16/32B CLK | ExciteV pulz |
-| 12 V + G | AM16/32B napájení, ventilátor 80 mm (trvale) | – |
-| – | LVDT z vlastního zdroje 24 V (trvale), RPi snímá podle NTP | – |
-
-**Kanály multiplexoru (2×32, termistory 2 vodiče + společná zem):** 1 Tair 109 (povinně), 2 vzduch ve výšce povrchu, 3 dno cely (otvor v tištěném dnu pod dutinou), 4 vnější stěna cely, 5 invarový sloupek, 6 horní příčník T04, 7 příčka T03 → teploty pro korekci driftu ze slepé zkoušky (dnes se teplota dna a rámu neměří); volitelně 8–11 teplotní profil písku 10 / 25 / 70 / 90 mm pod povrchem (4 radiální otvory ⌀3,4 ve stěně cely, hroty 25 mm od stěny) → poloha čáry 0 °C (hloubka promrznutí) v čase; zbytek rezerva. Čidla: NTC 10 kΩ v epoxidu nebo v nerezové jímce ⌀3 s doplňkovým odporem 10 kΩ 0,1 % na svorce MUX, kalibrace v ledové lázni (±0,1 K).
+| C4 | impuls → optočlen → GPIO RPi | spouští snímek + laser |
+| 12 V + G | ventilátor 80 mm (trvale) | – |
+| – | LVDT z vlastního zdroje 24 V (trvale) | – |
 
 ## 19. Laser podle nabídky Picotronic A2627918 (13. 11. 2026)
 
 DOE-DER253: úhel mezi čarami 3.1°, vějíř 31° (dříve odhadováno 3,8° / 41°). Z původní polohy (134 mm, 68°) by čáry byly dlouhé jen 74 mm po 7.8 mm → nepokryly by povrch ⌀100. **Nová poloha:** laser vedle horního příčníku, 81 mm od osy, 183 mm nad pískem, vzdálenost 200 mm, sklon 66.1° → čáry ≈ 111 mm dlouhé po ≈ 11.9 mm, na písku ⌀100 ≈ 9 čar, límec ⌀106 pokrytý; posun čáry = 0.44 × zdvih. Držák P05 přepracován (blok mimo poloměr nosné desky 70 mm). Krajní čára u stěny na straně kamery je uprostřed zastíněná pouzdrem ložiska (krátká tětiva, zanedbatelné). Doporučen modul DOE253-635-5-6(10x24) s nastavitelným ohniskem (zaostřit na 200 mm) a 5 mW – rezerva pro tmavý mokrý / zmrzlý písek a krátkou expozici; třída 2M: nedívat se do svazku optickými přístroji.
 
-## 20. Pohyblivá kamera – 3D model povrchu fotogrammetrií (15. 11. 2026)
+## 20. Zjednodušení pro měření (15. 11. 2026)
 
-Jedna kamera (box s RPi 5 jako dosud) na vozíku v boční drážce horního příčníku T04; pohon trapézovým šroubem T8 × 2 a krokovým motorem NEMA 17 (budič TMC2209, řídí RPi), ložisko 608 na −x, motor za koncem příčníku na +x. Zdvih ±70 mm (dál než ±80 mm narazí box do sloupů – ověřeno v 3D modelu), 8 poloh po 20 mm. Šroub drží polohu bez proudu, motor je mezi snímky vypnutý (teplo ≈ 3 W jen ≈ 1 min z 10 min, daleko od vzorku).
-
-**Geometrie snímání:** vzdálenost ke středu povrchu ≈ 136 mm, zorné pole ≈ 142 mm na šířku → každý bod povrchu ⌀100 je na 5–8 snímcích; základna (krajní polohy) 140 mm, poměr základna / vzdálenost ≈ 1.0 (velmi dobrý). Odhad přesnosti výšky: σ ≈ Z² / (B · f) · 0,2 px ≈ 7 µm teoreticky, prakticky 10–30 µm pro celý model; změny mezi dvěma časy ve stejné poloze (x = 0) lze korelací obrazu určit přesněji.
-
-**Postup každých 10 min:** návrat do výchozí polohy (koncový spínač) → 8 snímků s LED, bez laseru → v poloze x = 0 snímek s laserem (11 čar, nezávislá kontrola) → kamera zůstane v x = 0, motor vypnout. Trvání ≈ 1 min. Vyhodnocení: kalibrovaný objektiv (deska ChArUco), kódové značky ArUco na invarovém terčíku P03 = měřítko a pevný vztažný bod, 3D model SfM/MVS (COLMAP, Meshroom nebo Agisoft Metashape) → mračno bodů / síť povrchu písku a pístu → rozdíl modelů v čase. Na horní plochu pístu nastříkat jemný matný náhodný vzor; písek má vlastní texturu.
+Sestava posouzená očima toho, kdo ji staví a měří: **jediná pohyblivá část je zátěž**. Průběžně (každých 10 min, kolem 0 °C každou minutu) měří LVDT (sednutí / zdvih pod pístem, ≈ 1 µm), pevná kamera s laserem 11 čar (výšky volného povrchu, ≈ 10 µm), Pt100 a TDR v bodě M, teplota vzduchu a teplota dna cely. **3D model povrchu** se dělá ručně fotogrammetrií jen v klíčových stavech (před zmrazením, zmrzlý na konci fáze −10 °C, po roztátí, konec série): 30–50 snímků dokola kolem otevřené cely, měřítko a kódové značky na límci → model z celých 360°, bez stínu za pístem. Vypuštěno: motorový posuv kamery, LED osvětlení, multiplexor a 10 termistorů, volitelný teplotní profil v písku, fotky podle NTP. Úspora ≈ 100–130 €, 2 tištěné díly (P12, P13) a většina zapojení a programování.
 

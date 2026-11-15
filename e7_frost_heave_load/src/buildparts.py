@@ -279,20 +279,12 @@ def _cam_place(shape):
 
 
 def camera_hanger():
-    """P08 – camera carriage: slides along the −y face of the top T-profile (2 keys in the face slot z = 20),
-    driven by a T8 lead screw through a brass nut (block around the screw axis), arm and pad carry the camera box
-    tab (2× M4). The camera moves ±C_CAM_TRAVEL along the beam (x) for photogrammetry. Local z = 0 is the
-    underside of the top beam; carriage at x = 0."""
+    """Camera mount: flange on the −y face of the top T-profile (2× M5 into T-nuts), arm, pad on the camera box
+    tab (2× M4). Local z = 0 is the underside of the top beam."""
     y0 = -p.C_TOP[1] / 2
-    ys, zs = p.C_SCREW_YZ
-    plate = cq.Workplane("XY").box(50, 6, 34, centered=(True, False, False)).translate((0, y0 - 6, 4))
-    for kx in (-16, 16):                                        # keys in the face slot (8 mm), PTFE tape
-        plate = plate.union(cq.Workplane("XY").box(20, 3.6, 7.4, centered=(True, False, True)).translate((kx, y0, 20)))
-    nut = cq.Workplane("XY").box(30, (y0 - 6) - (ys - 10), 20, centered=(True, False, True)).translate((0, ys - 10, zs))
-    s = plate.union(nut)
-    s = s.cut(cq.Workplane("YZ").workplane(offset=-20).center(ys, zs).circle(5.2).extrude(40))       # T8 nut body
-    for dy, dz in ((-8, 0), (8, 0), (0, -8), (0, 8)):                                              # nut flange M3
-        s = s.cut(cq.Workplane("YZ").workplane(offset=-20).center(ys + dy, zs + dz).circle(1.6).extrude(12))
+    flange = cq.Workplane("XY").box(30, 6, 30, centered=(True, False, False)).translate((0, y0 - 6, 5))
+    for dx in (-10, 10):
+        flange = flange.cut(cq.Workplane("XZ").center(dx, 20).circle(2.75).extrude(10).translate((0, y0 + 1, 0)))
     L, H = 100.0, 70.0
     pad = cq.Workplane("XY").box(40, 16, 14, centered=(True, True, False)).translate((0, L / 2 + 8, H / 2))
     for dx in (-12, 12):
@@ -301,58 +293,14 @@ def camera_hanger():
     top = _cam_place(cq.Workplane("XY").box(4, 4, 1).translate((0, L / 2 + 8, H / 2 + 19)))
     pad = _cam_place(pad)
     c = top.val().Center()
-    a = cq.Vector(0, ys - 6, zs + 10)
+    a = cq.Vector(0, y0 - 6, 18)
     v = cq.Vector(c.x, c.y, c.z) - a
-    arm = cq.Workplane("XY").add(cq.Solid.makeCylinder(7, v.Length, a, v.normalized()))
+    arm = cq.Workplane("XY").add(cq.Solid.makeBox(14, v.Length, 10, cq.Vector(-7, 0, -5)))
+    ang = math.degrees(math.atan2(v.z, v.y))
+    arm = arm.rotate((0, 0, 0), (1, 0, 0), ang).translate((a.x, a.y, a.z))
     keep_out = (cq.Workplane("XY").box(90.4, 100.4, 70.4).union(
         cq.Workplane("XY").box(40.4, 16.4, 4.2, centered=(True, True, False)).translate((0, L / 2 + 8, H / 2 - 4.2))))
-    s = s.union(arm).union(pad).cut(_cam_place(keep_out))
-    return s.cut(cq.Workplane("YZ").workplane(offset=-40).center(ys, zs).circle(4.6).extrude(80))   # screw clearance
-
-
-def lead_screw():
-    """T8 × 2 lead screw (bought), along x on the −y side of the top beam; local z = 0 = beam underside."""
-    ys, zs = p.C_SCREW_YZ
-    x0, x1 = p.C_SCREW_X
-    return cq.Workplane("XY").add(cq.Solid.makeCylinder(4, x1 - x0, cq.Vector(x0, ys, zs), cq.Vector(1, 0, 0)))
-
-
-def motor_mount():
-    """P12 – NEMA 17 mount behind the +x end of the top beam: flange on the −y face (2× M5 into T-nuts), bridge
-    above the coupling and a face plate (motor holes 31 × 31, ⌀22.8 for the boss) perpendicular to the screw."""
-    y0 = -p.C_TOP[1] / 2
-    ys, zs = p.C_SCREW_YZ
-    xm = p.C_SCREW_X[1] + 20                                     # motor face (coupling between screw end and motor)
-    flange = cq.Workplane("XY").box(15, 6, 30, centered=(False, False, False)).translate((135, y0 - 6, 5))
-    bridge = cq.Workplane("XY").box(xm - 135, (y0 - 6) - (ys - 24), 6, centered=(False, False, False)).translate(
-        (135, ys - 24, zs + 12))
-    face = cq.Workplane("XY").box(6, 48, 50, centered=(False, True, True)).translate((xm - 6, ys, zs))
-    s = flange.union(bridge).union(face)
-    s = s.cut(cq.Workplane("YZ").workplane(offset=xm - 7).center(ys, zs).circle(11.4).extrude(8))
-    for dy in (-15.5, 15.5):
-        for dz in (-15.5, 15.5):
-            s = s.cut(cq.Workplane("YZ").workplane(offset=xm - 7).center(ys + dy, zs + dz).circle(1.7).extrude(8))
-    for dx in (139, 146):
-        s = s.cut(cq.Workplane("XZ").center(dx, 20).circle(2.75).extrude(-10).translate((0, y0 + 1, 0)))
-    return s
-
-
-def bearing_block():
-    """P13 – end bearing for the lead screw at the −x end (608ZZ ⌀8/22 × 7), flange on the beam −y face (2× M5);
-    carries the homing micro-switch (M2 holes)."""
-    y0 = -p.C_TOP[1] / 2
-    ys, zs = p.C_SCREW_YZ
-    x0 = p.C_SCREW_X[0]
-    flange = cq.Workplane("XY").box(30, 6, 30, centered=(False, False, False)).translate((x0 - 4, y0 - 6, 5))
-    blk = cq.Workplane("XY").box(14, (y0 - 6) - (ys - 16), 32, centered=(False, False, True)).translate((x0 - 4, ys - 16, zs))
-    s = flange.union(blk)
-    s = s.cut(cq.Workplane("YZ").workplane(offset=x0 - 4).center(ys, zs).circle(11.1).extrude(7))
-    s = s.cut(cq.Workplane("YZ").workplane(offset=x0 - 5).center(ys, zs).circle(4.5).extrude(20))
-    for dx in (x0 + 8, x0 + 20):
-        s = s.cut(cq.Workplane("XZ").center(dx, 20).circle(2.75).extrude(-10).translate((0, y0 + 1, 0)))
-    for dz in (-5, 5):                                           # micro-switch (homing), M2
-        s = s.cut(cq.Workplane("YZ").workplane(offset=x0 + 4).center(ys - 12, zs + dz).circle(1.0).extrude(6))
-    return s
+    return flange.union(arm).union(pad).cut(_cam_place(keep_out))   # arm trimmed to clear box and lid
 
 
 # --- pomůcky pro přípravu a výměnu vzorku (tisk) ---------------------------------------------------------
@@ -392,9 +340,8 @@ def parking_fork():
 PRINT = [("E7-P01_bearing_housing", housing, 1), ("E7-P02_lvdt_arm", lvdt_arm, 1),
          ("E7-P03_target_arm", target_arm, 1), ("E7-P04_post_foot", post_foot, 1),
          ("E7-P05_laser_holder", laser_holder, 1), ("E7-P06_camera_box", camera_box, 1),
-         ("E7-P07_camera_box_lid", camera_box_lid, 1), ("E7-P08_camera_carriage", camera_hanger, 1),
-         ("E7-P09_centering_cap", centering_cap, 1), ("E7-P10_screed", screed, 1), ("E7-P11_parking_fork", parking_fork, 1),
-         ("E7-P12_motor_mount", motor_mount, 1), ("E7-P13_bearing_block", bearing_block, 1)]
+         ("E7-P07_camera_box_lid", camera_box_lid, 1), ("E7-P08_camera_hanger", camera_hanger, 1),
+         ("E7-P09_centering_cap", centering_cap, 1), ("E7-P10_screed", screed, 1), ("E7-P11_parking_fork", parking_fork, 1)]
 
 
 def export_all():

@@ -410,7 +410,7 @@ print("**Tepelný drift sestavy (20 K, sim_thaw.py, zbytek = po korekci podle te
       "Rev. B (izolace + invarový sloupek + invarová tyč) −59…0 µm, zbytek ≤ 6 µm; kamera vůči invarovému terčíku "
       "−49…0 µm, zbytek ≤ 3 µm. Zbylý drift = PETG dno 26 mm + písek → změřit slepou zkouškou s Al atrapou.\n")
 print("**Další změny:** RPi 5 v boxu s kamerou (žádný plochý kabel přes těsnění, jeho teplo drží okénko bez námrazy); "
-      "RPi fotí podle hodin NTP (CR850 nemá volný port); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; "
+      "snímek spouští CR850 (C4); kluzné pouzdro drylin místo kuličkového; čidlo vzduchu 109 povinně; ventilátor 80 mm; "
       "vážení cely před/po cyklu a RH vzduchu (SHT45) kvůli vymrzání a námraze; kalibrace kamery podložkami 0,1/0,5/1,0 mm.\n")
 
 # 16 --------------------------------------------------------------------------
@@ -487,30 +487,23 @@ print("\n**Závěr:** napětí v profilech jsou desetiny až jednotky MPa (rezer
       "při výměně kotoučů se změní průhyb příčky T03 o < 1 µm (jde do LVDT, zanedbatelné).\n")
 
 # 18 --------------------------------------------------------------------------
-print("## 18. Datalogger CR850 + multiplexor AM16/32B (11/2026)\n")
+print("## 18. Datalogger CR850 – zapojení bez multiplexoru (11/2026)\n")
 print("CR850 (= CR800 s klávesnicí a displejem): 6 SE / 3 DIFF analogových vstupů, buzení VX1–VX2, porty C1–C4 "
-      "(při SDM jsou C1–C3 vyhrazené pro TDR) a výstup 12 V. Multiplexor potřebuje RES na řídicím portu a CLK na "
-      "řídicím portu **nebo na budicím kanálu** (manuál AM16/32B) → RES = C4, CLK = VX1. Na spouštění snímku port "
-      "nezbude: RPi fotí podle vlastních hodin synchronizovaných NTP, hodiny CR850 synchronizuje LoggerNet (odchylka "
-      "< 1 s, při intervalu 1–10 min zanedbatelné). Zdroj LVDT a ventilátor trvale zapnuté. LVDT diferenciálně: rozsah "
-      "±5000 mV, rozlišení ≈ 0,67 mV = 1,3 µm při 0,5 V/mm, průměrováním 20–50 vzorků ≈ 0,5 µm.\n")
+      "(při SDM jsou C1–C3 vyhrazené pro TDR) a výstup 12 V. Zjednodušená sestava potřebuje jen 3 teploty, takže se vše "
+      "vejde přímo do CR850 bez multiplexoru a port C4 zůstane na spouštění snímku (jedna časová značka pro všechna data). "
+      "Zdroj LVDT a ventilátor trvale zapnuté. LVDT diferenciálně: rozsah ±5000 mV, rozlišení ≈ 0,67 mV = 1,3 µm "
+      "při 0,5 V/mm, průměrováním 20–50 vzorků ≈ 0,5 µm.\n")
 print("| svorka CR850 | připojeno | měření |\n|---|---|---|")
 for r in (("DIFF1 (1H/1L)", "(2) LVDT DCTH400AG", "VoltDiff ±5000 mV, průměr 20–50 vzorků"),
-          ("DIFF2 (2H/2L) + VX2", "Pt100 přes 4WPB100", "BrHalf4W, 2500 mV"),
-          ("SE5 + VX2", "AM16/32B COM (režim 2×32): signál / buzení termistorů", "Therm109 / BrHalf přes MUX"),
-          ("SE6", "rezerva (kontrola napájení LVDT přes dělič)", "VoltSE"),
+          ("DIFF2 (2H/2L) + VX2", "Pt100 v písku (bod M) přes 4WPB100", "BrHalf4W, 2500 mV"),
+          ("SE5 + VX1", "Tair Campbell 109 (vzduch = okrajová podmínka)", "Therm109"),
+          ("SE6 + VX1", "NTC 10 kΩ ve dně cely (+ odpor 10 kΩ 0,1 %)", "BrHalf → teplota dna pro korekci driftu"),
           ("C1–C3", "TDR100/TDR200 → CS645", "SDM"),
-          ("C4", "AM16/32B RES", "PortSet"),
-          ("VX1", "AM16/32B CLK", "ExciteV pulz"),
-          ("12 V + G", "AM16/32B napájení, ventilátor 80 mm (trvale)", "–"),
-          ("–", "LVDT z vlastního zdroje 24 V (trvale), RPi snímá podle NTP", "–")):
+          ("C4", "impuls → optočlen → GPIO RPi", "spouští snímek + laser"),
+          ("12 V + G", "ventilátor 80 mm (trvale)", "–"),
+          ("–", "LVDT z vlastního zdroje 24 V (trvale)", "–")):
     print("| " + " | ".join(r) + " |")
-print("\n**Kanály multiplexoru (2×32, termistory 2 vodiče + společná zem):** 1 Tair 109 (povinně), 2 vzduch ve výšce "
-      "povrchu, 3 dno cely (otvor v tištěném dnu pod dutinou), 4 vnější stěna cely, 5 invarový sloupek, 6 horní příčník "
-      "T04, 7 příčka T03 → teploty pro korekci driftu ze slepé zkoušky (dnes se teplota dna a rámu neměří); "
-      "volitelně 8–11 teplotní profil písku 10 / 25 / 70 / 90 mm pod povrchem (4 radiální otvory ⌀3,4 ve stěně cely, "
-      "hroty 25 mm od stěny) → poloha čáry 0 °C (hloubka promrznutí) v čase; zbytek rezerva. Čidla: NTC 10 kΩ v epoxidu "
-      "nebo v nerezové jímce ⌀3 s doplňkovým odporem 10 kΩ 0,1 % na svorce MUX, kalibrace v ledové lázni (±0,1 K).\n")
+print()
 
 # 19 --------------------------------------------------------------------------
 print("## 19. Laser podle nabídky Picotronic A2627918 (13. 11. 2026)\n")
@@ -532,25 +525,12 @@ print(f"DOE-DER253: úhel mezi čarami {st:g}°, vějíř {fan:g}° (dříve odh
       "mokrý / zmrzlý písek a krátkou expozici; třída 2M: nedívat se do svazku optickými přístroji.\n")
 
 # 20 --------------------------------------------------------------------------
-print("## 20. Pohyblivá kamera – 3D model povrchu fotogrammetrií (15. 11. 2026)\n")
-Zc = math.hypot(p.C_CAM_Y, p.C_CAM_H)               # kamera → střed povrchu
-f_px = p.C_LENS_F / 1.55e-3                          # HQ: pixel 1,55 µm
-B = 2 * p.C_CAM_TRAVEL
-step = 2 * p.C_CAM_TRAVEL / (p.C_CAM_STEPS - 1)
-sig = Zc ** 2 / (B * f_px) * 0.2 * 1000              # µm, chyba určení obrazu 0,2 px
-fov = 2 * Zc * math.tan(math.atan(3.14 / p.C_LENS_F))
-print(f"Jedna kamera (box s RPi 5 jako dosud) na vozíku v boční drážce horního příčníku T04; pohon trapézovým šroubem "
-      f"T8 × 2 a krokovým motorem NEMA 17 (budič TMC2209, řídí RPi), ložisko 608 na −x, motor za koncem příčníku na +x. "
-      f"Zdvih ±{p.C_CAM_TRAVEL:g} mm (dál než ±80 mm narazí box do sloupů – ověřeno v 3D modelu), {p.C_CAM_STEPS} poloh po "
-      f"{step:.0f} mm. Šroub drží polohu bez proudu, motor je mezi snímky vypnutý (teplo ≈ 3 W jen ≈ 1 min z 10 min, "
-      f"daleko od vzorku).\n")
-print(f"**Geometrie snímání:** vzdálenost ke středu povrchu ≈ {Zc:.0f} mm, zorné pole ≈ {fov:.0f} mm na šířku → každý bod "
-      f"povrchu ⌀100 je na 5–8 snímcích; základna (krajní polohy) {B:.0f} mm, poměr základna / vzdálenost ≈ {B / Zc:.1f} "
-      f"(velmi dobrý). Odhad přesnosti výšky: σ ≈ Z² / (B · f) · 0,2 px ≈ {sig:.0f} µm teoreticky, prakticky 10–30 µm pro "
-      "celý model; změny mezi dvěma časy ve stejné poloze (x = 0) lze korelací obrazu určit přesněji.\n")
-print("**Postup každých 10 min:** návrat do výchozí polohy (koncový spínač) → 8 snímků s LED, bez laseru → v poloze x = 0 "
-      "snímek s laserem (11 čar, nezávislá kontrola) → kamera zůstane v x = 0, motor vypnout. Trvání ≈ 1 min. "
-      "Vyhodnocení: kalibrovaný objektiv (deska ChArUco), kódové značky ArUco na invarovém terčíku P03 = měřítko a pevný "
-      "vztažný bod, 3D model SfM/MVS (COLMAP, Meshroom nebo Agisoft Metashape) → mračno bodů / síť povrchu písku a pístu "
-      "→ rozdíl modelů v čase. Na horní plochu pístu nastříkat jemný matný náhodný vzor; písek má vlastní texturu.\n")
+print("## 20. Zjednodušení pro měření (15. 11. 2026)\n")
+print("Sestava posouzená očima toho, kdo ji staví a měří: **jediná pohyblivá část je zátěž**. Průběžně (každých 10 min, "
+      "kolem 0 °C každou minutu) měří LVDT (sednutí / zdvih pod pístem, ≈ 1 µm), pevná kamera s laserem 11 čar (výšky "
+      "volného povrchu, ≈ 10 µm), Pt100 a TDR v bodě M, teplota vzduchu a teplota dna cely. **3D model povrchu** se dělá "
+      "ručně fotogrammetrií jen v klíčových stavech (před zmrazením, zmrzlý na konci fáze −10 °C, po roztátí, konec "
+      "série): 30–50 snímků dokola kolem otevřené cely, měřítko a kódové značky na límci → model z celých 360°, bez stínu "
+      "za pístem. Vypuštěno: motorový posuv kamery, LED osvětlení, multiplexor a 10 termistorů, volitelný teplotní profil "
+      "v písku, fotky podle NTP. Úspora ≈ 100–130 €, 2 tištěné díly (P12, P13) a většina zapojení a programování.\n")
 

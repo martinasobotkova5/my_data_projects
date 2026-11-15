@@ -4,7 +4,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 ## ★ Aktuální návrh: varianta C, měření deformace 1 + 2 (výkresy V01–V05)
 
-**Pohyblivá kamera (15. 11. 2026):** kamera na vozíku v drážce horního příčníku, posuv ±70 mm šroubem T8 a krokovým motorem → 8 snímků → 3D model povrchu fotogrammetrií (`vypocty.md` §20, `postup_zkousky.md` kap. 8); nové tištěné díly P08 vozík, P12 držák motoru, P13 ložisko.
+**Zjednodušení pro měření (15. 11. 2026):** jediná pohyblivá část je zátěž; průběžně LVDT, pevná kamera s laserem, Pt100, TDR, teplota vzduchu a dna cely (CR850 bez multiplexoru); 3D model povrchu ručně fotogrammetrií v klíčových stavech (`postup_zkousky.md` kap. 8, `vypocty.md` §20).
 
 **Statika, CR850 a postup (9. 11. 2026):** rám ověřen na únosnost (rezerva > 20×), rozhoduje stabilita → podélníky 320 mm, nohy ±140 (`vypocty.md` §17); datalogger CR850 – plán kanálů §18; rizika měření a postup přípravy, vložení a výměny vzorku v `postup_zkousky.md` (nové tištěné pomůcky P09 středicí víčko, P10 stěrka, P11 parkovací vidlice); poptávka rámu u ENPRAG v `poptavka_ramu.md`.
 
@@ -14,7 +14,7 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 **Revize B (27. 10. 2026, podle posudku měření `E7_review.pdf`):** cela tištěná vcelku ⌀220 × 200 s izolací (stěna 30 mm a dno 40 mm z nízké výplně – vejde se na podložku tiskárny 24 cm,
 3 podložky G10 v kapsách dna → mrznutí shora), LVDT a referenční terčík kamery na sloupku z Invaru, vodicí tyč z Invaru v kluzném pouzdře
-igus drylin, laser pod 66° vedle horního příčníku, 200 mm od povrchu (DOE253 3,1°/31°: čáry po 11,9 mm, 111 mm dlouhé, bez stínu límce), RPi 5 v boxu kamery (snímky podle hodin NTP),
+igus drylin, laser pod 66° vedle horního příčníku, 200 mm od povrchu (DOE253 3,1°/31°: čáry po 11,9 mm, 111 mm dlouhé, bez stínu límce), RPi 5 v boxu kamery (spouštění z CR850 C4),
 čidlo vzduchu 109 povinně, ventilátor, SHT45, vážení cely. Mezera pod příčníkem 200 → 160 mm, celková výška beze změny.
 Pt100 jde ze stejné strany jako TDR a nasedá uprostřed přímo nad horní tyčku (bod M v jednom místě, povrch volný).
 Rozhodnuto 9. 11. 2026: nasycení vzorku Sr = 0,5 (θ ≈ 0,19) → zdvih nanejvýš desítky µm, měří se hlavně sednutí při tání; Pt100 osa 3,5 mm nad horní tyčkou, hrot 30 mm od stěny. Výpočty §15 v `vypocty.md`,

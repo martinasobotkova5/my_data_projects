@@ -242,12 +242,6 @@ C_DISC_KG = (1.0, 0.5)                  # kotouč 1 kg a 0,5 kg
 C_TRAVEL = 25.0                         # volný zdvih / pokles zátěže
 C_SURCHARGES_KPA = (5.0, 10.0, 15.0, 20.0, 25.0)   # pod pístem
 C_CAM_Y, C_CAM_H, C_CAM_TILT = -92.0, 100.0, 43.0  # kamera stranou (−y), výška nad pískem, sklon k ose (rev. B)
-# 15. 11. 2026: kamera se posouvá podél horního příčníku (vozík v drážce, šroub T8 × 2, krokový motor NEMA 17)
-# → snímky z 8 poloh po 20 mm → fotogrammetrie (3D model povrchu); dál než ±80 mm narazí box do sloupů
-C_CAM_TRAVEL = 70.0                      # zdvih kamery ±70 mm (x)
-C_CAM_STEPS = 8                          # počet poloh na jeden 3D model (−70 … +70 po 20 mm)
-C_SCREW_YZ = (-50.0, 12.0)               # osa šroubu T8 vůči spodnímu líci T04 (y, z) – mezi příčníkem a boxem kamery
-C_SCREW_X = (-160.0, 156.0)              # šroub od ložiska (−x) po spojku motoru (+x); motor za koncem T04
 C_LASER_Y, C_LASER_H = 81.0, 183.0      # rev. B3a (13. 11. 2026, úhly DOE z nabídky Picotronic): laser vedle horního příčníku, 66°, 200 mm od středu povrchu
 C_LASER_DOE = (3.1, 31.0)                # Picotronic DOE-DER253: úhel čára–čára 3,1°, vějíř (délka čáry) 31° – nabídka A2627918
 C_PT100_R, C_PT100_ANG = 37.5, 315.0    # (rev. A, už neplatí) Pt100 svisle ve volném mezikruží
@@ -281,6 +275,7 @@ C_COL_SPAN = 300.0                       # osová vzdálenost sloupů (vnitřní
 # přitištěna nízká výplň (gyroid 10–15 %): stěna 30 mm, dno 40 mm; límec zůstává volný. Výsledek: ⌀220 × 200, jeden kus
 # (15. 11. 2026: stěna 40 → 30 mm, aby se cela vešla na podložku tiskárny 24 cm s okrajem 10 mm; mrznutí zůstává shora).
 C_INS_T = 40.0                           # přitištěné dno pod jádrem (nízká výplň), s 3 kapsami pro podložky G10
+C_NTC_ANG, C_NTC_Z = 30.0, 20.0          # radiální otvor ⌀4 pro NTC ve dně cely (azimut, výška nad spodkem) – teplota dna
 C_SLEEVE_T = 30.0                        # přitištěná stěna kolem pláště (r 80 → 110), cela ⌀220 na podložku 24 cm
 C_INS_K = 0.06                           # λ tištěné nízké výplně [W/mK] – odhad 0,05–0,08 (XPS 0,035)
 C_PAD_D, C_PAD_R = 20.0, 35.0            # podložky G10 ⌀20 × 40 v kapsách ⌀20,4 na r 35 (pod dutinou), 3× po 120°;

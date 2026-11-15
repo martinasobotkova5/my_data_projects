@@ -141,20 +141,19 @@ B_CAM_MECH = [
 
 # --- varianta C: měření deformace 1 (kamera + laser) a 2 (LVDT) – co koupit (EUR bez DPH) --------
 C_BUY = [   # rev. B – konkrétní typy (ceny 10/2026, EUR bez DPH; Kč s DPH přepočteno / 1,21 / 25) – viz purchase_list.md
-    ("CAM", "Raspberry Pi 5 4 GB + PSU, SD, camera cable (RPishop)", 1, 105, 120, "web (RPishop 2769 Kč)", "– (Ethernet, NTP)"),
-    ("", "Raspberry Pi HQ Camera C/CS, IMX477 (RPishop OFI060)", 1, 50, 62, "web (RPishop 1499 Kč)", "– (NTP timer)"),
+    ("CAM", "Raspberry Pi 5 4 GB + PSU, SD, camera cable (RPishop)", 1, 105, 120, "web (RPishop 2769 Kč)", "– (Ethernet)"),
+    ("", "Raspberry Pi HQ Camera C/CS, IMX477 (RPishop OFI060)", 1, 50, 62, "web (RPishop 1499 Kč)", "C4 trigger"),
     ("", "Raspberry Pi 6 mm CS wide-angle lens (RPishop / Pi Hut)", 1, 20, 30, "odhad", "–"),
     ("", "camera box XPS 30, double glass; houses the RPi 5 (no heater)", 1, 20, 40, "odhad", "–"),
     ("", "SHT45 RH/T sensor on the RPi (I2C), freezer air", 1, 15, 25, "odhad", "– (RPi)"),
-    ("LAS", "Picotronic DOE253-635-5-6(10x24), 11 lines 3.1°/31°, 5 mW, adj. focus", 1, 116, 116, "web (quote A2627918 incl. S&H)", "– (RPi GPIO)"),
+    ("LAS", "Picotronic DOE253-635-5-6(10x24), 11 lines, 5 mW, focus", 1, 116, 116, "web (quote A2627918 incl. S&H)", "– (RPi GPIO)"),
     ("LVDT", "RDP DCTH400AG ±10 mm, spring (Elkome)", 1, 581, 581, "web (Elkome)", "DIFF1, ±5000 mV"),
     ("", "Mean Well HDR-15-24, 24 V DIN (floating supply) (TME)", 1, 11, 14, "web (TME)", "always on"),
     ("", "Campbell 4WPB100 (for the existing Pt100) (Ekotechnika)", 1, 60, 120, "odhad – na dotaz", "DIFF2"),
-    ("Tair", "Campbell 109-L, REQUIRED: air = boundary condition", 1, 150, 220, "odhad – na dotaz", "MUX ch 1"),
+    ("Tair", "Campbell 109-L, REQUIRED: air = boundary condition", 1, 150, 220, "odhad – na dotaz", "SE5, VX1"),
     ("", "fan 80 mm 12 V, air mixing in the freezer", 1, 10, 20, "odhad", "12 V, always on"),
-    ("T", "NTC 10k thermistors + 10k 0.1 % resistors (rig, cell, air; 4 optional in sand)", 10, 3, 8, "odhad", "MUX ch 2–11"),
+    ("T", "NTC 10k in the cell base + 10k 0.1 % resistor (+1 spare)", 2, 3, 8, "odhad", "SE6, VX1"),
     ("CAL", "shims 0.1 / 0.5 / 1.0 mm (feeler gauge set) for camera px → mm", 1, 10, 25, "odhad", "–"),
-    ("MOV", "camera drive: NEMA 17 + TMC2209, T8 screw + nut, coupling, 608, end switch, LED strip", 1, 45, 70, "odhad", "– (RPi GPIO)"),
 ]
 C_MECH = [   # rev. B3 – only bought, laser-cut and printed parts (see objednavka.md)
     ("laser: carrier ⌀140, 2 piston discs; steel discs ⌀117.5", 70, 140),

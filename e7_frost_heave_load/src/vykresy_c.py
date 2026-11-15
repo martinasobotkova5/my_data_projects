@@ -154,8 +154,6 @@ def draw_c(v):
     v.poly(box_, fc="#f3e7c9", lw=THICK)
     v.poly([cam_rot(-14, -35), cam_rot(14, -35), cam_rot(14, -47), cam_rot(-14, -47)], fc="#555", lw=THIN)
     draw_xsec(v, bp.camera_hanger().translate((0, 0, ZBEAM)), V.PETG, hatch="..")
-    ys_, zs_ = p.C_SCREW_YZ                                          # T8 lead screw of the camera carriage (cut)
-    v.circle(ys_, ZBEAM + zs_, 4, fc=V.STEEL, lw=THIN, z_=4.9)
     c0 = cam_rot(0, -47)
     for xx in (-p.COLLAR_OD / 2 - 2, p.COLLAR_OD / 2 + 2):
         v.line([c0, (xx, ZCELL + p.COLLAR_TOP)], lw=0.5, c=FREE, ls="--")
@@ -196,7 +194,7 @@ def _sheet_assembly(pdf):
     t(v, RO - 8, ZCELL + 70, 180, V.Z_S0 - 30, f"printed wall +{p.C_SLEEVE_T:g} (gyroid 10–15 %)", "#3a6f99")
     t(v, 60, ZB0 + 20, 180, ZB0 + 5, "printed base 40 + 3 G10 pads", "#3a6f99")
     t(v, p.C_CROSS_Y[0] + 30, ZB0 - 20, 180, ZB0 - 30, "base: T-profile rails 40×40\n+ cross bar 40×80")
-    t(v, box_[0][0], box_[0][1], -150, ZCAM + 10, "(1) camera box\non a carriage ±70 mm\n(T8 screw, stepper)\n→ 3D model",
+    t(v, box_[0][0], box_[0][1], -150, ZCAM + 10, "(1) camera box:\nRPi HQ + 6 mm lens\n+ RPi 5 (its heat\nkeeps the window clear)",
       INK, ha="right")
     t(v, -40, ZBEAM + 40, -150, ZBEAM + 40, "columns 40×80\n(behind)", INK, ha="right")
     # right panel: load table + parts
@@ -333,8 +331,7 @@ def _sheet_measurement(pdf):
     V.tag(l_, -20, -hh / 2, -60, tp + 95, "top beam T-profile 40×80, ⌀14;\nprinted housing + igus RJ4JP-01-12\nhangs below it (4× M5 in T-nuts)", INK, ha="left")
     # right panel
     sh.heading(255, 276, "What is measured")
-    rows = [["(1) camera, 8 positions", "3D model (photogrammetry)", "≈ 10–30 µm", "every 10 min"],
-            ["(1) camera + 11 lines", "h(x, y) on 11 profiles", "≈ 10 µm", "every 10 / 1 min"],
+    rows = [["(1) camera + 11 lines", "map h(x, y) of the whole surface", "≈ 10 µm", "every 10 / 1 min"],
             ["(2) LVDT", "carrier = piston", "≈ 1 µm", "CR850, 10 / 1 min"],
             ["Invar target", "camera / frame drift", "≈ 10 µm", "every photo"]]
     y = table(sh, 255, 272, ["method", "signal", "resolution", "interval"], rows, [38, 56, 22, 36], row_h=5.6)
@@ -355,8 +352,8 @@ def _sheet_measurement(pdf):
             "2  calibrate (1): shims 0.1 / 0.5 / 1.0 mm under a flat plate,\n"
             "   camera px → mm for free sand and piston top\n"
             f"3  load, 24 h at +10 °C, then zero (1) and (2)\n"
-            f"4  cycle {p.C_CYCLE_H[0]:g} h −10 °C / {p.C_CYCLE_H[1]:g} h +10 °C (fan on); every 10 min: camera\n"
-            "   8 positions ±70 mm (LED) → 3D model, at x = 0 laser photo\n"
+            f"4  cycle {p.C_CYCLE_H[0]:g} h −10 °C / {p.C_CYCLE_H[1]:g} h +10 °C (fan on); photo every 10 min\n"
+            "   (CR850 C4 pulse); laser on only for the photo; 3D model by hand\n"
             "5  weigh a witness dish each cycle (not the cell); log air RH\n"
             "6  Sr = 0.5 (θ 0.19): expected heave tens of µm, upper bound 1.7 mm;\n"
             "   the main signal is the thaw settlement under the load",
@@ -459,6 +456,7 @@ def _sheet_cell(pdf):
           ["floor", f"z {O:g}–{tb:g} under the cavity: 100 % (stiff, flat)"],
           ["insulation", f"base z 0–{O:g} and wall r {rb:g}–{ro:g}: gyroid 10–15 %"],
           ["pockets", f"3× ⌀{p.C_PAD_D + 0.4:g} × {O:g} from below, r {p.C_PAD_R:g}"],
+          ["NTC hole", f"⌀4 radial at {p.C_NTC_ANG:g}°, {p.C_NTC_Z:g} above the underside, to the axis"],
           ["time", "≈ 35–50 h (one job)"]]
     y = table(sh, 255, y - 12, ["item", "value"], pr, [26, 129], row_h=5.6)
     sh.text(255, y - 4,
@@ -493,13 +491,14 @@ def _sheet_sensors(pdf):
     sh.text(28, y2 - 5, f"Total ≈ {lo}–{hi} EUR excl. VAT (≈ {lo * 25 / 1000:.0f}–{hi * 25 / 1000:.0f} tis. Kč). "
             "Already available: printed cell, CS645 + TDR100/200, Pt100, optical fibre, CR850.",
             fontsize=fs(), weight="bold")
-    sh.heading(255, 278, "CR850 + AM16/32B channel plan")
+    sh.heading(255, 278, "CR850 channel plan (no multiplexer)")
     ch = [["DIFF1", "(2) LVDT", "VoltDiff ±5000 mV, avg 20–50"],
           ["DIFF2", "Pt100 via 4WPB100", "BrHalf4W, VX2 2500 mV"],
-          ["SE5+VX2", "MUX COM (2×32): thermistors", "Tair 109 + rig / cell temps"],
+          ["SE5", "Tair 109 (required)", "Therm109, VX1"],
+          ["SE6", "NTC in the cell base", "BrHalf, VX1 (drift corr.)"],
           ["C1–C3", "TDR100/200 → CS645", "SDM"],
-          ["C4 / VX1", "MUX RES / MUX CLK", "PortSet / ExciteV pulse"],
-          ["12 V", "MUX, fan; LVDT own 24 V", "always on"],
+          ["C4", "pulse → RPi GPIO (opto)", "triggers photo + laser"],
+          ["12 V", "fan; LVDT own 24 V supply", "both always on"],
           ["–", "(1) camera + RH sensor", "RPi 5 in the camera box"],
           ["–", "optical fibre", "own reader"]]
     y = table(sh, 255, 274, ["terminal", "connected to", "measurement"], ch, [24, 56, 75], row_h=5.6)
@@ -508,10 +507,10 @@ def _sheet_sensors(pdf):
             "• CR850 and TDR outside; RPi 5 inside the camera box\n"
             "  (no CSI ribbon through the seal, its ≈ 5 W heat the box).\n"
             "  Through the lid seal: Ethernet, 5 V, LVDT, sensor cables.\n"
-            "• Scan 10 min, 1 min around 0 °C; the RPi takes the photo\n"
-            "  on its NTP clock (no free port on the CR850).\n"
-            "• MUX: Tair, air at surface, cell base + wall, Invar post,\n"
-            "  beams → drift correction; option: 4 probes in the sand.\n"
+            "• Scan 10 min, 1 min around 0 °C; the photo is triggered\n"
+            "  by the CR850 (C4) → one time stamp for all data.\n"
+            "• 3D model of the surface: photogrammetry by hand at key\n"
+            "  states (before freezing, frozen, thawed, end of series).\n"
             "• Fan in the freezer evens out the on/off air swings.\n"
             "• No pressure cells: the load is a known dead weight.",
             fontsize=fs(), va="top", linespacing=1.45)
@@ -696,7 +695,7 @@ def _sheet_parts(pdf):
     y = table(sh, 255, y - 10, ["#", "part", "pcs"], rows, [12, 108, 12], row_h=5.0)
     sh.text(255, y - 4,
             "Fixing: 12 angle brackets 40 slot 8 + 24 T-nuts M8 + M8×16 (4 base, 4 column–rail,\n"
-            "4 column–beam); 4 feet M8 in T-nuts; T-nuts M5: housing 4× M5×35, P04 / P05 / P12 / P13\n"
+            "4 column–beam); 4 feet M8 in T-nuts; T-nuts M5: housing 4× M5×35, P04 / P05 / P08\n"
             "2× M5 each; clamps M3/M4 × 20 + nuts. Use drop-in (swivel) T-nuts.",
             fontsize=fs() - 0.5, va="top", linespacing=1.4)
     sh.save(pdf, os.path.join(OUT, "E7-V06_parts.png"))
