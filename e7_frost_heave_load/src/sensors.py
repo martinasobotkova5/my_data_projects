@@ -154,6 +154,7 @@ C_BUY = [   # rev. B – konkrétní typy (ceny 10/2026, EUR bez DPH; Kč s DPH 
     ("", "fan 80 mm 12 V, air mixing in the freezer", 1, 10, 20, "odhad", "12 V, always on"),
     ("T", "NTC 10k thermistors + 10k 0.1 % resistors (rig, cell, air; 4 optional in sand)", 10, 3, 8, "odhad", "MUX ch 2–11"),
     ("CAL", "shims 0.1 / 0.5 / 1.0 mm (feeler gauge set) for camera px → mm", 1, 10, 25, "odhad", "–"),
+    ("MOV", "camera drive: NEMA 17 + TMC2209, T8 screw + nut, coupling, 608, end switch, LED strip", 1, 45, 70, "odhad", "– (RPi GPIO)"),
 ]
 C_MECH = [   # rev. B3 – only bought, laser-cut and printed parts (see objednavka.md)
     ("laser: carrier ⌀140, 2 piston discs; steel discs ⌀117.5", 70, 140),

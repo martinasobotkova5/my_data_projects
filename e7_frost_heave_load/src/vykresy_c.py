@@ -154,6 +154,8 @@ def draw_c(v):
     v.poly(box_, fc="#f3e7c9", lw=THICK)
     v.poly([cam_rot(-14, -35), cam_rot(14, -35), cam_rot(14, -47), cam_rot(-14, -47)], fc="#555", lw=THIN)
     draw_xsec(v, bp.camera_hanger().translate((0, 0, ZBEAM)), V.PETG, hatch="..")
+    ys_, zs_ = p.C_SCREW_YZ                                          # T8 lead screw of the camera carriage (cut)
+    v.circle(ys_, ZBEAM + zs_, 4, fc=V.STEEL, lw=THIN, z_=4.9)
     c0 = cam_rot(0, -47)
     for xx in (-p.COLLAR_OD / 2 - 2, p.COLLAR_OD / 2 + 2):
         v.line([c0, (xx, ZCELL + p.COLLAR_TOP)], lw=0.5, c=FREE, ls="--")
@@ -194,7 +196,7 @@ def _sheet_assembly(pdf):
     t(v, RO - 8, ZCELL + 70, 180, V.Z_S0 - 30, f"printed wall +{p.C_SLEEVE_T:g} (gyroid 10–15 %)", "#3a6f99")
     t(v, 60, ZB0 + 20, 180, ZB0 + 5, "printed base 40 + 3 G10 pads", "#3a6f99")
     t(v, p.C_CROSS_Y[0] + 30, ZB0 - 20, 180, ZB0 - 30, "base: T-profile rails 40×40\n+ cross bar 40×80")
-    t(v, box_[0][0], box_[0][1], -150, ZCAM + 10, "(1) camera box:\nRPi HQ + 6 mm lens\n+ RPi 5 (its heat\nkeeps the window clear)",
+    t(v, box_[0][0], box_[0][1], -150, ZCAM + 10, "(1) camera box\non a carriage ±70 mm\n(T8 screw, stepper)\n→ 3D model",
       INK, ha="right")
     t(v, -40, ZBEAM + 40, -150, ZBEAM + 40, "columns 40×80\n(behind)", INK, ha="right")
     # right panel: load table + parts
@@ -331,7 +333,8 @@ def _sheet_measurement(pdf):
     V.tag(l_, -20, -hh / 2, -60, tp + 95, "top beam T-profile 40×80, ⌀14;\nprinted housing + igus RJ4JP-01-12\nhangs below it (4× M5 in T-nuts)", INK, ha="left")
     # right panel
     sh.heading(255, 276, "What is measured")
-    rows = [["(1) camera + 11 lines", "map h(x, y) of the whole surface", "≈ 10 µm", "every 10 / 1 min"],
+    rows = [["(1) camera, 8 positions", "3D model (photogrammetry)", "≈ 10–30 µm", "every 10 min"],
+            ["(1) camera + 11 lines", "h(x, y) on 11 profiles", "≈ 10 µm", "every 10 / 1 min"],
             ["(2) LVDT", "carrier = piston", "≈ 1 µm", "CR850, 10 / 1 min"],
             ["Invar target", "camera / frame drift", "≈ 10 µm", "every photo"]]
     y = table(sh, 255, 272, ["method", "signal", "resolution", "interval"], rows, [38, 56, 22, 36], row_h=5.6)
@@ -352,8 +355,8 @@ def _sheet_measurement(pdf):
             "2  calibrate (1): shims 0.1 / 0.5 / 1.0 mm under a flat plate,\n"
             "   camera px → mm for free sand and piston top\n"
             f"3  load, 24 h at +10 °C, then zero (1) and (2)\n"
-            f"4  cycle {p.C_CYCLE_H[0]:g} h −10 °C / {p.C_CYCLE_H[1]:g} h +10 °C (fan on); RPi photo timer\n"
-            "   (NTP); laser on only for the photo\n"
+            f"4  cycle {p.C_CYCLE_H[0]:g} h −10 °C / {p.C_CYCLE_H[1]:g} h +10 °C (fan on); every 10 min: camera\n"
+            "   8 positions ±70 mm (LED) → 3D model, at x = 0 laser photo\n"
             "5  weigh a witness dish each cycle (not the cell); log air RH\n"
             "6  Sr = 0.5 (θ 0.19): expected heave tens of µm, upper bound 1.7 mm;\n"
             "   the main signal is the thaw settlement under the load",
@@ -693,7 +696,7 @@ def _sheet_parts(pdf):
     y = table(sh, 255, y - 10, ["#", "part", "pcs"], rows, [12, 108, 12], row_h=5.0)
     sh.text(255, y - 4,
             "Fixing: 12 angle brackets 40 slot 8 + 24 T-nuts M8 + M8×16 (4 base, 4 column–rail,\n"
-            "4 column–beam); 4 feet M8 in T-nuts; T-nuts M5: housing 4× M5×35, P04 / P05 / P08\n"
+            "4 column–beam); 4 feet M8 in T-nuts; T-nuts M5: housing 4× M5×35, P04 / P05 / P12 / P13\n"
             "2× M5 each; clamps M3/M4 × 20 + nuts. Use drop-in (swivel) T-nuts.",
             fontsize=fs() - 0.5, va="top", linespacing=1.4)
     sh.save(pdf, os.path.join(OUT, "E7-V06_parts.png"))

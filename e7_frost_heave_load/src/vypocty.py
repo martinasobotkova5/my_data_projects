@@ -530,3 +530,27 @@ print(f"DOE-DER253: úhel mezi čarami {st:g}°, vějíř {fan:g}° (dříve odh
       "čára u stěny na straně kamery je uprostřed zastíněná pouzdrem ložiska (krátká tětiva, zanedbatelné). "
       "Doporučen modul DOE253-635-5-6(10x24) s nastavitelným ohniskem (zaostřit na 200 mm) a 5 mW – rezerva pro tmavý "
       "mokrý / zmrzlý písek a krátkou expozici; třída 2M: nedívat se do svazku optickými přístroji.\n")
+
+# 20 --------------------------------------------------------------------------
+print("## 20. Pohyblivá kamera – 3D model povrchu fotogrammetrií (15. 11. 2026)\n")
+Zc = math.hypot(p.C_CAM_Y, p.C_CAM_H)               # kamera → střed povrchu
+f_px = p.C_LENS_F / 1.55e-3                          # HQ: pixel 1,55 µm
+B = 2 * p.C_CAM_TRAVEL
+step = 2 * p.C_CAM_TRAVEL / (p.C_CAM_STEPS - 1)
+sig = Zc ** 2 / (B * f_px) * 0.2 * 1000              # µm, chyba určení obrazu 0,2 px
+fov = 2 * Zc * math.tan(math.atan(3.14 / p.C_LENS_F))
+print(f"Jedna kamera (box s RPi 5 jako dosud) na vozíku v boční drážce horního příčníku T04; pohon trapézovým šroubem "
+      f"T8 × 2 a krokovým motorem NEMA 17 (budič TMC2209, řídí RPi), ložisko 608 na −x, motor za koncem příčníku na +x. "
+      f"Zdvih ±{p.C_CAM_TRAVEL:g} mm (dál než ±80 mm narazí box do sloupů – ověřeno v 3D modelu), {p.C_CAM_STEPS} poloh po "
+      f"{step:.0f} mm. Šroub drží polohu bez proudu, motor je mezi snímky vypnutý (teplo ≈ 3 W jen ≈ 1 min z 10 min, "
+      f"daleko od vzorku).\n")
+print(f"**Geometrie snímání:** vzdálenost ke středu povrchu ≈ {Zc:.0f} mm, zorné pole ≈ {fov:.0f} mm na šířku → každý bod "
+      f"povrchu ⌀100 je na 5–8 snímcích; základna (krajní polohy) {B:.0f} mm, poměr základna / vzdálenost ≈ {B / Zc:.1f} "
+      f"(velmi dobrý). Odhad přesnosti výšky: σ ≈ Z² / (B · f) · 0,2 px ≈ {sig:.0f} µm teoreticky, prakticky 10–30 µm pro "
+      "celý model; změny mezi dvěma časy ve stejné poloze (x = 0) lze korelací obrazu určit přesněji.\n")
+print("**Postup každých 10 min:** návrat do výchozí polohy (koncový spínač) → 8 snímků s LED, bez laseru → v poloze x = 0 "
+      "snímek s laserem (11 čar, nezávislá kontrola) → kamera zůstane v x = 0, motor vypnout. Trvání ≈ 1 min. "
+      "Vyhodnocení: kalibrovaný objektiv (deska ChArUco), kódové značky ArUco na invarovém terčíku P03 = měřítko a pevný "
+      "vztažný bod, 3D model SfM/MVS (COLMAP, Meshroom nebo Agisoft Metashape) → mračno bodů / síť povrchu písku a pístu "
+      "→ rozdíl modelů v čase. Na horní plochu pístu nastříkat jemný matný náhodný vzor; písek má vlastní texturu.\n")
+

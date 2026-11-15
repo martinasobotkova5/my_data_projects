@@ -4,6 +4,8 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 ## ★ Aktuální návrh: varianta C, měření deformace 1 + 2 (výkresy V01–V05)
 
+**Pohyblivá kamera (15. 11. 2026):** kamera na vozíku v drážce horního příčníku, posuv ±70 mm šroubem T8 a krokovým motorem → 8 snímků → 3D model povrchu fotogrammetrií (`vypocty.md` §20, `postup_zkousky.md` kap. 8); nové tištěné díly P08 vozík, P12 držák motoru, P13 ložisko.
+
 **Statika, CR850 a postup (9. 11. 2026):** rám ověřen na únosnost (rezerva > 20×), rozhoduje stabilita → podélníky 320 mm, nohy ±140 (`vypocty.md` §17); datalogger CR850 – plán kanálů §18; rizika měření a postup přípravy, vložení a výměny vzorku v `postup_zkousky.md` (nové tištěné pomůcky P09 středicí víčko, P10 stěrka, P11 parkovací vidlice); poptávka rámu u ENPRAG v `poptavka_ramu.md`.
 
 **Revize B3 (9. 11. 2026):** celý rám z hliníkových T-profilů drážka 8 řezaných na délku – 2 podélníky 40×40, příčka 40×80 (nese 3 podložky G10), 2 sloupy 40×80, horní příčník 40×80 s jediným otvorem ⌀14; pouzdro ložiska visí pod příčníkem, spoje úhelníky a vkládací T-matice. Laserem řezané desky L01/L02 odpadly. Výkresy profilů T01–T04 ve `vyroba/vykresy`.

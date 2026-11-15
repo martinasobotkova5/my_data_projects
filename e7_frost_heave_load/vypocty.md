@@ -327,3 +327,11 @@ CR850 (= CR800 s klávesnicí a displejem): 6 SE / 3 DIFF analogových vstupů, 
 
 DOE-DER253: úhel mezi čarami 3.1°, vějíř 31° (dříve odhadováno 3,8° / 41°). Z původní polohy (134 mm, 68°) by čáry byly dlouhé jen 74 mm po 7.8 mm → nepokryly by povrch ⌀100. **Nová poloha:** laser vedle horního příčníku, 81 mm od osy, 183 mm nad pískem, vzdálenost 200 mm, sklon 66.1° → čáry ≈ 111 mm dlouhé po ≈ 11.9 mm, na písku ⌀100 ≈ 9 čar, límec ⌀106 pokrytý; posun čáry = 0.44 × zdvih. Držák P05 přepracován (blok mimo poloměr nosné desky 70 mm). Krajní čára u stěny na straně kamery je uprostřed zastíněná pouzdrem ložiska (krátká tětiva, zanedbatelné). Doporučen modul DOE253-635-5-6(10x24) s nastavitelným ohniskem (zaostřit na 200 mm) a 5 mW – rezerva pro tmavý mokrý / zmrzlý písek a krátkou expozici; třída 2M: nedívat se do svazku optickými přístroji.
 
+## 20. Pohyblivá kamera – 3D model povrchu fotogrammetrií (15. 11. 2026)
+
+Jedna kamera (box s RPi 5 jako dosud) na vozíku v boční drážce horního příčníku T04; pohon trapézovým šroubem T8 × 2 a krokovým motorem NEMA 17 (budič TMC2209, řídí RPi), ložisko 608 na −x, motor za koncem příčníku na +x. Zdvih ±70 mm (dál než ±80 mm narazí box do sloupů – ověřeno v 3D modelu), 8 poloh po 20 mm. Šroub drží polohu bez proudu, motor je mezi snímky vypnutý (teplo ≈ 3 W jen ≈ 1 min z 10 min, daleko od vzorku).
+
+**Geometrie snímání:** vzdálenost ke středu povrchu ≈ 136 mm, zorné pole ≈ 142 mm na šířku → každý bod povrchu ⌀100 je na 5–8 snímcích; základna (krajní polohy) 140 mm, poměr základna / vzdálenost ≈ 1.0 (velmi dobrý). Odhad přesnosti výšky: σ ≈ Z² / (B · f) · 0,2 px ≈ 7 µm teoreticky, prakticky 10–30 µm pro celý model; změny mezi dvěma časy ve stejné poloze (x = 0) lze korelací obrazu určit přesněji.
+
+**Postup každých 10 min:** návrat do výchozí polohy (koncový spínač) → 8 snímků s LED, bez laseru → v poloze x = 0 snímek s laserem (11 čar, nezávislá kontrola) → kamera zůstane v x = 0, motor vypnout. Trvání ≈ 1 min. Vyhodnocení: kalibrovaný objektiv (deska ChArUco), kódové značky ArUco na invarovém terčíku P03 = měřítko a pevný vztažný bod, 3D model SfM/MVS (COLMAP, Meshroom nebo Agisoft Metashape) → mračno bodů / síť povrchu písku a pístu → rozdíl modelů v čase. Na horní plochu pístu nastříkat jemný matný náhodný vzor; písek má vlastní texturu.
+

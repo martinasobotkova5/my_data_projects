@@ -95,7 +95,7 @@ RPi 5 (40pin)                                  laser DOE253 (5 V DC)
 - **100 kΩ** mezi gate a GND drží laser vypnutý při startu RPi; **100 Ω** omezuje proud do gate.
 - **Vedení kabelu:** laser sedí v držáku P05 na straně +y vedle horního příčníku T04. Kabel 2 × 0,25 mm²
   (prodloužit přívody laseru, spoj zapájet a přetáhnout bužírkou) vést drážkou příčníku T04 na stranu −y
-  k závěsu P08, do boxu kamery druhou vývodkou PG7. Délka ≈ 0,5 m. Spínač připájet na malou destičku
+  k vozíku kamery P08 (volná smyčka kabelu kvůli posuvu ±70 mm), do boxu kamery druhou vývodkou PG7. Délka ≈ 0,5 m. Spínač připájet na malou destičku
   přišroubovanou na víko P07 vedle RPi.
 - **Program (RPi):** `gpiozero.OutputDevice(17)` → zapnout laser, 0,2 s počkat, snímek s pevnou expozicí,
   laser vypnout; doporučeno ještě druhý snímek bez laseru (odečet pozadí). Interval 10 min, kolem 0 °C 1 min.
@@ -105,3 +105,22 @@ RPi 5 (40pin)                                  laser DOE253 (5 V DC)
   čar po přepnutí na +10 °C; kdyby se rosil, nechat laser svítit trvale (5 mW = zanedbatelné teplo) nebo jej
   obalit pěnou.
 - **Bezpečnost (třída 2M):** nedívat se do svazku, ani přes lupu / objektiv; svítí jen při snímku v zavřeném mrazáku.
+
+
+## 8 · Pohyblivá kamera a 3D model povrchu
+
+- Kamera (box P06/P07 s RPi 5) sedí na vozíku **P08**, který jede v boční drážce horního příčníku (−y) a pohání ho
+  trapézový šroub T8 × 2 s krokovým motorem NEMA 17 (držák **P12**, ložisko **P13**). Zdvih ±70 mm, 8 poloh po 20 mm.
+- **Montáž:** drážku T04 v místě pojezdu vylepit PTFE páskou, vozík nasadit klíny do drážky, matici T8 přišroubovat,
+  šroub protáhnout do ložiska a spojky, koncový spínač na P13 nastavit tak, aby sepnul ve výchozí poloze (x = −75).
+  Kabel Ethernet + napájení a kabel laseru nechat ve volné smyčce (pohyb ±70 mm).
+- **Zapojení:** TMC2209 – STEP GPIO23, DIR GPIO24, EN GPIO25 (EN vypíná motor mezi snímky), koncový spínač GPIO27,
+  LED pásek přes druhý MOSFET na GPIO22, motor a LED z 12 V.
+- **Snímání (každých 10 min):** najetí na spínač → poloha −70 → 8 snímků s LED po 20 mm (pevná expozice a ostření) →
+  v poloze 0 snímek s laserem → stop v poloze 0, motor vypnout.
+- **Kalibrace objektivu:** deska ChArUco v 15–20 polohách a náklonech, jednou na začátku (ostření pak neměnit).
+- **Vztažný systém a měřítko:** 4 kódové značky ArUco (10 mm) na invarovém terčíku P03; v každém 3D modelu stejné.
+- **Píst:** horní plochu nastříkat jemným matným náhodným vzorem (sprej z dálky), písek má vlastní texturu.
+- **Vyhodnocení:** COLMAP / Meshroom (zdarma) nebo Agisoft Metashape → mračno bodů → síť → výška povrchu h(x, y);
+  rozdíly mezi časy = zdvih / sednutí. Přesnost celého modelu ≈ 10–30 µm (`vypocty.md` §20); laser v x = 0 slouží
+  jako nezávislá kontrola na 11 profilech.

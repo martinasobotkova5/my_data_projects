@@ -301,7 +301,7 @@ def sheet_profile(prof, pdf):
         D.dim_d((cx, cy), 7.0, 45, text="⌀14")
         notes += ["otvor ⌀14 svisle skrz celý profil (40 mm), uprostřed délky i šířky, stojanová vrtačka",
                   "spodní drážky: 4 T-matice M5 pro pouzdro P01 (rozteč 38 × 40, souměrně k otvoru)",
-                  "boční drážky: T-matice M5 – držák laseru P05 (+y), závěs kamery P08 (−y)"]
+                  "boční drážka +y: držák laseru P05; boční drážka −y: vodítko vozíku kamery P08, P12 a P13 (T-matice M5)"]
     D.notes(notes, 25 * S, oy - 20 * S)
     D.title_block(scale_txt(S))
     return D.save(prof["no"] + "_" + prof["name"].split(" / ")[-1].replace(" ", "_"), pdf)
@@ -328,7 +328,13 @@ PRINT_NOTES = {
                       "otáčet kolem osy, přebytek písku odebrat; břit tisknout naležato, 100 % výplň"],
     "E7-P11_parking_fork": [f"postavit na horní plochu T04 kolem tyče pod stavěcí kroužek: tyč zvednutá o {bp.PARK_LIFT:g} mm",
                             "pak lze celu vyjmout (směr +y, rameno terčíku P03 natočit stranou)"],
-    "E7-P08_camera_hanger": ["2× ⌀5,5 (M5×12) do T-matic v boční drážce příčníku T04 (−y)", "box kamery přišroubovat 2× M4"],
+    "E7-P08_camera_carriage": ["2 klíny 7,4 mm jedou v boční drážce T04 (−y), drážku vylepit PTFE páskou",
+                               "otvor ⌀10,4 pro matici T8 + 4× ⌀3,2 (M3) příruba; box kamery přišroubovat 2× M4",
+                               "zdvih ±70 mm podél příčníku (8 poloh po 20 mm)"],
+    "E7-P12_motor_mount": ["čelní deska: díry 31 × 31 (M3) + ⌀22,8 pro NEMA 17", "2× ⌀5,5 (M5×12) do T-matic v boční drážce T04 (−y)",
+                           "spojka 5/8 mm mezi šroubem T8 a hřídelem motoru"],
+    "E7-P13_bearing_block": ["kapsa ⌀22,2 × 7 pro ložisko 608ZZ, otvor ⌀9 pro šroub T8", "2× ⌀5,5 (M5×12) do boční drážky T04 (−y)",
+                             "2× ⌀2 pro koncový mikrospínač (výchozí poloha vozíku)"],
 }
 
 

@@ -388,7 +388,18 @@ def variant_c(asm, prefix=""):
     zcam = Z_S1 + p.C_CAM_H
     cam = bp.camera_box().rotate((0, 0, 0), (1, 0, 0), p.C_CAM_TILT).translate((0, p.C_CAM_Y, zcam))
     asm.add(cam, name=prefix + "P06 camera box: RPi HQ + 6 mm lens + RPi 5", color=C["ins"])
-    asm.add(bp.camera_hanger().translate((0, 0, zbeam)), name=prefix + "P08 camera mount (print)", color=C["petg"])
+    asm.add(bp.camera_hanger().translate((0, 0, zbeam)), name=prefix + "P08 camera carriage (print, moves +-70 in x)",
+            color=C["petg"])
+    # camera drive: T8 lead screw, NEMA 17 at +x, bearing block at -x (camera moves along the beam)
+    ys, zs = p.C_SCREW_YZ
+    asm.add(bp.lead_screw().translate((0, 0, zbeam)), name=prefix + "lead screw T8x2 L320", color=C["steel"])
+    asm.add(bp.motor_mount().translate((0, 0, zbeam)), name=prefix + "P12 motor mount (print)", color=C["petg"])
+    asm.add(bp.bearing_block().translate((0, 0, zbeam)), name=prefix + "P13 bearing block (print)", color=C["petg"])
+    xm = p.C_SCREW_X[1] + 20
+    asm.add(box(xm, xm + 40, ys - 21, ys + 21, zbeam + zs - 21, zbeam + zs + 21), name=prefix + "stepper NEMA 17 (17HS4401)",
+            color=C["sensor"])
+    asm.add(cq.Workplane("YZ").workplane(offset=p.C_SCREW_X[1] - 5).center(ys, zbeam + zs).circle(9.5).extrude(25),
+            name=prefix + "coupling 5-8 mm", color=C["steel"])
     asm.add(bp.laser_holder().translate((0, 0, zbeam)), name=prefix + "P05 laser holder (print)", color=C["petg"])
     yl_, zl = p.C_LASER_Y, Z_S1 + p.C_LASER_H
     las = (cq.Workplane("XZ").circle(5).extrude(11, both=True)

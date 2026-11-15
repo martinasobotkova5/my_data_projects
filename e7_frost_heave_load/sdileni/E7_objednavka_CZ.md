@@ -32,7 +32,7 @@ Kde: **doporučeno: [ENPRAG, s.r.o., Praha 5](https://www.enprag.cz/hlinikove-pr
 | — | celkem 40×80: 1,21 m, 40×40: 0,64 m |  |  |  |
 | Úhelník 40×40 drážka 8 (Zn) s krytkou | 4 příčka ↔ podélníky, 4 sloupy ↔ podélníky, 4 sloupy ↔ příčník | 12 | ≈ 3–6 €/ks | odhad |
 | T-matice drážka 8, M8, vkládací (otočná) | úhelníky (24) + nohy (4) + 4 rezerva | 32 | ≈ 1 €/ks | odhad |
-| T-matice drážka 8, M5, vkládací (otočná) | pouzdro P01 (4), patka P04 (2), držák laseru P05 (2), závěs kamery P08 (2) + 2 rezerva | 12 | ≈ 1 €/ks | odhad |
+| T-matice drážka 8, M5, vkládací (otočná) | pouzdro P01 (4), patka P04 (2), držák laseru P05 (2), motorový držák P12 (2), ložisko P13 (2) + 2 rezerva | 12 | ≈ 1 €/ks | odhad |
 | Stavitelná noha M8 (talíř ⌀30–40) | do T-matic ve spodní drážce podélníků T02 (y ±140) | 4 | ≈ 3–5 €/ks | odhad |
 | Krytka čela 40×80 / 40×40 (volitelně) | konce příčníku a podélníků | 6 | ≈ 0,5 €/ks | odhad |
 
@@ -66,7 +66,7 @@ Kde: igus v ČR: [HENNLICH s.r.o., Litoměřice](https://www.igus.eu/Contact/gen
 | Imbus ISO 4762 M8×16 + podložka | úhelníky do T-matic | 24 |  | sada |
 | Imbus ISO 4762 M5×35 + podložka | pouzdro ložiska P01 ↔ T-matice ve spodní drážce T04 | 4 |  | sada |
 | Imbus ISO 4762 M5×20 + podložka | patka sloupku P04 ↔ T-matice v podélníku | 2 |  | sada |
-| Imbus ISO 4762 M5×12 + podložka | držák laseru P05 a závěs kamery P08 ↔ boční drážky T04 | 4 |  | sada |
+| Imbus ISO 4762 M5×12 + podložka | držák laseru P05, držák motoru P12, ložisko P13 ↔ boční drážky T04 | 6 |  | sada |
 | Šroub M4×20 + matice | box kamery ↔ závěs, svěrky | 4 |  | sada |
 | Šroub M3×20 + matice, červík M3×6 | svěrky ramen (3), aretace laseru (1) | 4 |  | sada |
 | Šroubky M2,5×6 + distanční sloupky 10 mm | HQ kamera (4) a RPi 5 (4) v boxu | 8 |  | sada |
@@ -96,6 +96,11 @@ Kde: [RPishop.cz](https://rpishop.cz/), [LaskaKit](https://www.laskakit.cz/), [G
 | Ventilátor 80 mm 12 V + zdroj 12 V | promíchání vzduchu (běží trvale) | 1 | ≈ 10–20 € | odhad |
 | Mean Well HDR-15-24 (24 V DIN) | napájení LVDT (trvale zapnuté) | 1 | ≈ 11 € bez DPH | ověřeno (TME) |
 | Kabelová vývodka PG7 (2 ks) + Ethernet kabel 3 m | box kamery: Ethernet + napájení, druhá vývodka pro kabel laseru | 1 | ≈ 6 € | odhad |
+| **Posuv kamery:** krokový motor NEMA 17 (17HS4401, 1,5 A) + budič TMC2209 | vozík P08 po horním příčníku ±70 mm, řídí RPi (STEP/DIR/EN), mezi snímky motor vypnutý | 1 | ≈ 15–25 € | odhad |
+| Trapézový šroub T8 × 2, 320 mm + mosazná matice s přírubou + spojka 5/8 mm + ložisko 608ZZ | šroub drží polohu i bez proudu | 1 | ≈ 10–15 € | odhad |
+| Koncový mikrospínač + zdroj 12 V / 3 A (Mean Well, společný s ventilátorem) | výchozí poloha vozíku | 1 | ≈ 15–25 € | odhad |
+| LED pásek 12 V neutrální bílý 0,5 m + difuzor (mléčný profil) | rovnoměrné světlo pro fotogrammetrii, spíná RPi přes MOSFET | 1 | ≈ 8–12 € | odhad |
+| Kalibrační deska ChArUco (tisk 80 × 80 mm, nalepit na hliník / sklo) + kódové značky ArUco 10 mm | kalibrace objektivu; značky na terčík P03 = měřítko a vztažný bod 3D modelu | 1 | ≈ 5 € | odhad |
 | Spínání laseru: MOSFET AO3400 nebo IRLZ44N (logic level), odpory 100 Ω a 100 kΩ, kabel 2 × 0,25 mm² 0,5 m, smršťovací bužírka, dutinkové / Dupont konektory | laser 5 V z RPi, zapíná GPIO17 jen na snímek | 1 | ≈ 3–5 € | odhad |
 | NTC termistor 10 kΩ (epoxid / nerezová jímka ⌀3) + odpor 10 kΩ 0,1 % | na multiplexor: dno a stěna cely, sloupek, příčníky, vzduch (6 ks) + volitelně 4 do písku | 10 | ≈ 3–8 €/ks | odhad |
 
@@ -162,7 +167,7 @@ Kde: Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)
 9. Navrch písku položte píst, do otvoru ⌀6 kuličku 5/16". Na límec nasaďte středicí víčko P09 (rameno P03 natočené stranou).
 10. Invarovou tyč zasuňte shora pouzdrem víčkem P09 až na kuličku – posunutím cely ji vystřeďte, víčko vysuňte do strany, rameno P03 vraťte na značku. Na tyč stavěcí kroužek, na něj nosná deska L03 a kotouče L06/L07. Kroužek nastavte tak, aby nosná deska byla 37 mm nad horní plochou příčníku T04 (spodní hrana kroužku 25 mm nad ním = zdvih ±25).
 11. LVDT posuňte ve svěrce P02, až je jádro uprostřed rozsahu (výstup ≈ 0 V), dotáhněte.
-12. Laser do držáku P05 (2× M5×12 do boční drážky T04, +y), kameru + RPi 5 do boxu P06/P07 (sklo do drážky, kabel přes PG7), box na závěs P08 (2× M5×12 do boční drážky T04, −y). Laser natočte, aby čáry ležely napříč přes celý povrch ⌀100; kameru zaostřete (zadní ohnisková vzdálenost).
+12. Laser do držáku P05 (2× M5×12 do boční drážky T04, +y), kameru + RPi 5 do boxu P06/P07 (sklo do drážky, kabel přes PG7), vozík P08 nasaďte klíny do boční drážky T04 (−y, drážku vylepit PTFE páskou), matici T8 přišroubujte do vozíku, šroub T8 protáhněte maticí do ložiska P13 (−x) a spojkou k motoru na P12 (+x), box kamery přišroubujte na vozík (2× M4). Spínač dorazu na P13 = výchozí poloha. Laser natočte, aby čáry ležely napříč přes celý povrch ⌀100; kameru zaostřete (zadní ohnisková vzdálenost).
 13. Slepá zkouška s hliníkovou atrapou (V02) → kalibrace podložkami → první cyklus.
 
 Celkem (V04): čidla a elektronika + mechanika ≈ 1 460–1 990 € bez DPH, tj. ≈ 36–50 tis. Kč.

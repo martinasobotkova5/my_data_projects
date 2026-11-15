@@ -31,7 +31,8 @@ Rev. B vychází z posudku měření (`E7_review.pdf`). Anglická verze: `purcha
 | igus RJ4JP-01-12, stavěcí kroužek DIN 705-A 12, kulička 5/16", šrouby | 25–50 € |
 | Invar 36: tyč ⌀12 × 265 a sloupek ⌀16 × 330, řez na délku (Evek) | 80–160 € |
 | Cela tištěná VCELKU ⌀220 × 200 (PETG-CF ≈ 1,3 kg) + 3 podložky G10 ⌀20 × 40 (elektroizolanty.cz) | 45–90 € |
-| Tištěné díly P01–P08: pouzdro ložiska, ramena LVDT a terčíku, patka sloupku, držák laseru, box kamery | 10–25 € |
+| Tištěné díly P01–P13: pouzdro ložiska, ramena, patka, držák laseru, box a vozík kamery, držák motoru, pomůcky | 12–30 € |
+| Posuv kamery: NEMA 17 + TMC2209, šroub T8 × 2 s maticí, spojka, ložisko, koncový spínač, LED pásek | 45–70 € |
 
 Celkem ≈ 1 460–1 990 € bez DPH, tj. ≈ 36–50 tis. Kč (výkres V04). Rev. A byla ≈ 1 370–1 870 €.
 Invar 36 (FeNi36): poptat u dodavatele speciálních kovů (např. Goodfellow nebo tuzemský distributor).
