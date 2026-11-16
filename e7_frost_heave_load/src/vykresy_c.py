@@ -718,7 +718,7 @@ def run(fn):
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
-        if f.endswith((".png", ".pdf")):
+        if f.endswith((".png", ".pdf")) and not f.startswith("E7-V07"):   # V07 (phase 1) is drawn by vykres_u.py
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E7_drawings.pdf")) as pdf:
         for fn in (_sheet_assembly, _sheet_measurement, _sheet_cell, _sheet_sensors, _sheet_layout, _sheet_parts):
