@@ -534,3 +534,41 @@ print("Sestava posouzená očima toho, kdo ji staví a měří: **jediná pohybl
       "za pístem. Vypuštěno: motorový posuv kamery, LED osvětlení, multiplexor a 10 termistorů, volitelný teplotní profil "
       "v písku, fotky podle NTP. Úspora ≈ 100–130 €, 2 tištěné díly (P12, P13) a většina zapojení a programování.\n")
 
+# 21 --------------------------------------------------------------------------
+print("## 21. Sublimace ledu pod částečným krytem – hlavní nová série (16. 11. 2026)\n")
+
+
+def rho_v_ice(T):                                    # g/m3, nasycená pára nad ledem (Murphy & Koop)
+    Tk = T + 273.15
+    e = math.exp(9.550426 - 5723.265 / Tk + 3.53068 * math.log(Tk) - 0.00728332 * Tk)
+    return e / (461.5 * Tk) * 1000
+
+
+rs = rho_v_ice(-10.0)
+print(f"Nasycená pára nad ledem při −10 °C: {rs:.2f} g/m³. Tok z volné plochy J = h_m · ρ_sat · (1 − RH), "
+      "h_m = h / (ρ c_p Le^(2/3)) z přestupu tepla h (vzduch v truhle s ventilátorem 3–12 W/m²K).\n")
+print("| h [W/m²K] | RH | tok [kg/m²·den] | čistý led [mm/den] | mezikruží ⌀100/⌀50 [g/den] |\n|---|---|---|---|---|")
+a_ann = math.pi / 4 * (p.CAV_D ** 2 - p.C_PISTON_D ** 2) / 1e6
+for h in (3.0, 7.0, 12.0):
+    hm = h / (1.3 * 1005 * 0.89)
+    for rh in (0.8, 0.5, 0.3):
+        J = hm * rs * (1 - rh) / 1000 * 86400
+        print(f"| {h:g} | {rh:.1f} | {J:.2f} | {J / 917 * 1000:.2f} | {J * a_ann * 1000:.1f} |")
+D_eff = 0.38 * 0.66 * 2.1e-5                         # m2/s, difuze páry suchou vrstvou písku (φ · τ · D0)
+dr = rs * 0.5 / 1000                                 # kg/m3, rozdíl hustot páry při RH 0,5
+print(f"\n**Suchá vrstva (lag):** jakmile led z povrchu zmizí, pára prochází suchou vrstvou tloušťky L: J ≈ D_eff · Δρ / L, "
+      f"D_eff ≈ {D_eff:.1e} m²/s. Hranice ledu pak postupuje jako L = √(2 D_eff Δρ t / (ρ_led θ_led)).\n")
+print("| vzorek | led v objemu | L po 2 dnech | L po 14 dnech | L po 30 dnech | pokles volného povrchu po 14 dnech |\n|---|---|---|---|---|---|")
+for name, th_i, collapse in (("pórový led (Sr ≈ 1, bez přebytku)", 0.38, 0.0),
+                             ("přebytek ledu (zrna 40 %, led 60 %)", 0.60, 1 - 0.40 / 0.62)):
+    Ls = [math.sqrt(2 * D_eff * dr * d * 86400 / (917 * th_i)) * 1000 for d in (2, 14, 30)]
+    print(f"| {name} | {th_i:.2f} | {Ls[0]:.1f} mm | {Ls[1]:.1f} mm | {Ls[2]:.1f} mm | {collapse * Ls[1]:.2f} mm |")
+A_glen = 3.5e-25                                     # s-1 Pa-3, led při −10 °C (řádový odhad)
+eps = A_glen * (25e3) ** 3 * 30 * 86400
+print(f"\n**Pod pístem** led nesublimuje (kryt), páru může odvést jen boční difuze od okraje pístu → vznikne **podstavec**: "
+      f"volné mezikruží klesá (laser), píst zůstává (LVDT). Tečení ledu pod pístem při 25 kPa za 30 dní je řádově "
+      f"{eps * p.H_SAMPLE * 1000:.1f} µm (Glenův zákon) – zatížení samo pokles neudělá, srovnání 3,5 a 25 kPa ukáže "
+      "jen jeho vedlejší vliv. **Měřitelnost:** u písku s přebytkem ledu klesne volný povrch o desetiny mm za několik "
+      "dní a o mm za týdny – laser (≈ 10 µm) ho zachytí den po dni; u pórového ledu pokles téměř nulový (kontrolní "
+      "vzorek: suchá vrstva vznikne, kostra zrn stojí). Teplota se během sublimační série nemění (−10 °C), takže "
+      "teplotní drift sestavy je prakticky nulový. Odhady ověří předzkouška (miska ledu na váze v mrazáku).\n")

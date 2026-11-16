@@ -328,3 +328,28 @@ DOE-DER253: úhel mezi čarami 3.1°, vějíř 31° (dříve odhadováno 3,8° /
 
 Sestava posouzená očima toho, kdo ji staví a měří: **jediná pohyblivá část je zátěž**. Průběžně (každých 10 min, kolem 0 °C každou minutu) měří LVDT (sednutí / zdvih pod pístem, ≈ 1 µm), pevná kamera s laserem 11 čar (výšky volného povrchu, ≈ 10 µm), Pt100 a TDR v bodě M, teplota vzduchu a teplota dna cely. **3D model povrchu** se dělá ručně fotogrammetrií jen v klíčových stavech (před zmrazením, zmrzlý na konci fáze −10 °C, po roztátí, konec série): 30–50 snímků dokola kolem otevřené cely, měřítko a kódové značky na límci → model z celých 360°, bez stínu za pístem. Vypuštěno: motorový posuv kamery, LED osvětlení, multiplexor a 10 termistorů, volitelný teplotní profil v písku, fotky podle NTP. Úspora ≈ 100–130 €, 2 tištěné díly (P12, P13) a většina zapojení a programování.
 
+## 21. Sublimace ledu pod částečným krytem – hlavní nová série (16. 11. 2026)
+
+Nasycená pára nad ledem při −10 °C: 2.14 g/m³. Tok z volné plochy J = h_m · ρ_sat · (1 − RH), h_m = h / (ρ c_p Le^(2/3)) z přestupu tepla h (vzduch v truhle s ventilátorem 3–12 W/m²K).
+
+| h [W/m²K] | RH | tok [kg/m²·den] | čistý led [mm/den] | mezikruží ⌀100/⌀50 [g/den] |
+|---|---|---|---|---|
+| 3 | 0.8 | 0.10 | 0.10 | 0.6 |
+| 3 | 0.5 | 0.24 | 0.26 | 1.4 |
+| 3 | 0.3 | 0.33 | 0.36 | 2.0 |
+| 7 | 0.8 | 0.22 | 0.24 | 1.3 |
+| 7 | 0.5 | 0.56 | 0.61 | 3.3 |
+| 7 | 0.3 | 0.78 | 0.85 | 4.6 |
+| 12 | 0.8 | 0.38 | 0.42 | 2.2 |
+| 12 | 0.5 | 0.95 | 1.04 | 5.6 |
+| 12 | 0.3 | 1.34 | 1.46 | 7.9 |
+
+**Suchá vrstva (lag):** jakmile led z povrchu zmizí, pára prochází suchou vrstvou tloušťky L: J ≈ D_eff · Δρ / L, D_eff ≈ 5.3e-06 m²/s. Hranice ledu pak postupuje jako L = √(2 D_eff Δρ t / (ρ_led θ_led)).
+
+| vzorek | led v objemu | L po 2 dnech | L po 14 dnech | L po 30 dnech | pokles volného povrchu po 14 dnech |
+|---|---|---|---|---|---|
+| pórový led (Sr ≈ 1, bez přebytku) | 0.38 | 2.4 mm | 6.3 mm | 9.2 mm | 0.00 mm |
+| přebytek ledu (zrna 40 %, led 60 %) | 0.60 | 1.9 mm | 5.0 mm | 7.3 mm | 1.77 mm |
+
+**Pod pístem** led nesublimuje (kryt), páru může odvést jen boční difuze od okraje pístu → vznikne **podstavec**: volné mezikruží klesá (laser), píst zůstává (LVDT). Tečení ledu pod pístem při 25 kPa za 30 dní je řádově 1.4 µm (Glenův zákon) – zatížení samo pokles neudělá, srovnání 3,5 a 25 kPa ukáže jen jeho vedlejší vliv. **Měřitelnost:** u písku s přebytkem ledu klesne volný povrch o desetiny mm za několik dní a o mm za týdny – laser (≈ 10 µm) ho zachytí den po dni; u pórového ledu pokles téměř nulový (kontrolní vzorek: suchá vrstva vznikne, kostra zrn stojí). Teplota se během sublimační série nemění (−10 °C), takže teplotní drift sestavy je prakticky nulový. Odhady ověří předzkouška (miska ledu na váze v mrazáku).
+

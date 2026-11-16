@@ -99,6 +99,8 @@ Kde: [RPishop.cz](https://rpishop.cz/), [LaskaKit](https://www.laskakit.cz/), [G
 | Spínání laseru: MOSFET AO3400 nebo IRLZ44N (logic level), odpory 100 Ω a 100 kΩ, kabel 2 × 0,25 mm² 0,5 m, smršťovací bužírka, dutinkové / Dupont konektory | laser 5 V z RPi, zapíná GPIO17 jen na snímek | 1 | ≈ 3–5 € | odhad |
 | NTC termistor 10 kΩ v nerezové jímce ⌀3 + odpor 10 kΩ 0,1 % | teplota dna cely (radiální otvor ⌀4 v tištěném dnu) → CR850 SE6; 1 + 1 rezerva | 2 | ≈ 3–8 €/ks | odhad |
 | Optočlen / relé modul 5 V pro spouštění snímku | CR850 C4 → GPIO RPi | 1 | ≈ 3–5 € | odhad |
+| **Sublimační série:** tenzometr 1 kg (TAL220 nebo podobný) + převodník HX711 na RPi, skleněné misky ⌀90 (3 ks) | kontrolní miska s ledem / pískem s ledem na váze v mrazáku → rychlost sublimace | 1 | ≈ 10–15 € | odhad |
+| Silikagel 2 kg (s indikátorem) + plastový tác, sítko 2 mm (drcený led) | suchý vzduch v mrazáku; příprava písku s přebytkem ledu | 1 | ≈ 15–20 € | odhad |
 | Kódové značky ArUco 10 mm (samolepky, 8 ks) + ocelové měřítko 150 mm | ruční fotogrammetrie: značky na límec cely, měřítko vedle cely | 1 | ≈ 5 € | odhad |
 
 ## 8 · Čidla ze zahraničí a Campbell

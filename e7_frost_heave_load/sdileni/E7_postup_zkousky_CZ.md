@@ -129,3 +129,45 @@ v klíčových stavech – vždy na konci fáze, kdy je teplota ustálená:
   z ArUco značek a měřítka; modely srovnat podle značek na límci → mapa rozdílu výšek mezi stavy (≈ 20–50 µm).
 - Model je z celých 360° (bez stínu za pístem a bez vlivu mrazu na techniku); průběh mezi stavy dává LVDT
   a laser.
+
+
+## 9 · Sublimační série – podstavec pod „kamenem“ (hlavní nová série)
+
+**Co se měří:** led z písku v suchém mrazivém vzduchu sublimuje (mění se přímo v páru). Volné mezikruží kolem pístu
+proto klesá, pod pístem („kámen“) je led zakrytý a zůstává → vzniká podstavec. Laser měří pokles volného povrchu
+(≈ 10 µm), LVDT pohyb pístu (≈ 1 µm), váha v mrazáku úbytek ledu z kontrolní misky, SHT45 vlhkost vzduchu.
+Odhady rychlostí: `vypocty.md` §21.
+
+**Navíc oproti ostatním sériím:** tác se silikagelem (1–2 kg) do mrazáku, malá váha (tenzometr 1 kg + HX711 na RPi)
+s miskou, sítko 2 mm na drcený led, čidlo SHT45 na kabelu u vzorku (povinné).
+
+### 9.1 Předzkouška (2–3 dny, bez cely)
+1. Na váhu v mrazáku dát skleněnou misku ⌀90 s čistým ledem (vrstva 10 mm) a vedle misku s pískem nasyceným ledem.
+2. Mrazák −10 °C, ventilátor zapnutý, silikagel v tácu; RPi zapisuje hmotnost a RH každých 10 min.
+3. Výsledek: rychlost sublimace čistého ledu [mm/den] a písku s ledem při dané RH → podle ní zvolit délku série
+   (cíl: pokles volného povrchu ≥ 0,5 mm).
+
+### 9.2 Příprava vzorku
+- **A – pórový led (kontrola):** písek nasytit vodou (Sr ≈ 1), hutnit po vrstvách jako v kap. 2, zmrazit shora
+  v mrazáku. Při sublimaci vznikne suchá vrstva, povrch by klesat neměl.
+- **B – přebytek ledu (hlavní):** v mrazáku při −10 °C smíchat suchý zmrzlý písek s drceným ledem (sítko 2 mm)
+  v poměru objemů ≈ 40 : 60, plnit po vrstvách 20 mm a lehce upěchovat, každou vrstvu pokropit ledovou vodou
+  (stmelí ji); celou přípravu dělat v mrazáku, aby led neroztál. Hmotnost vrstev zapsat (obsah ledu).
+- Povrch srovnat stěrkou **P10**, ve zmrzlém stavu; čidla TDR a Pt100 zasunout jako v kap. 2 (předvrtat tyčinkou).
+
+### 9.3 Průběh
+1. Celu vložit do rámu (kap. 3), píst na střed: **bez kotoučů** (3,5 kPa – „samotný kámen“) nebo **s kotouči**
+   (25 kPa) – dva vzorky / dvě série.
+2. Mrazák stále −10 °C, ventilátor, silikagel; laser + kamera a LVDT každých 10 min, váha a RH na RPi.
+3. Délka 14–30 dní podle předzkoušky. Volitelně **série B2:** stejné, ale každých 7 dní krátké tání (6 h při +5 °C)
+   jako letní oteplení na Ostrově Jamese Rosse – ukáže, jestli tání podstavec „rozmaže“.
+4. Konec: zvážit celu, vzorek rozříznout svisle (ve zmrzlém stavu) a změřit tloušťku suché vrstvy pod volným
+   povrchem a pod pístem (posuvné měřítko, foto s měřítkem); ruční 3D model povrchu (kap. 8) před a po.
+
+### 9.4 Vyhodnocení
+- výška podstavce h(t) = pokles volného mezikruží (laser) − pohyb pístu (LVDT);
+- rychlost sublimace z misky [mm/den] a z cely (úbytek hmotnosti) vs. RH;
+- tloušťka suché vrstvy L(t) – srovnat s √t (difuze, `vypocty.md` §21);
+- srovnání: pórový led × přebytek ledu, 3,5 × 25 kPa, bez tání × s krátkými táními;
+- vztah k terénu: rychlost ústupu ledu v Antarktidě (Victoria Valley ≈ 0,22 mm/rok – model; laboratoř je řádově
+  rychlejší, porovnává se mechanismus a poměr krytý / volný povrch, ne absolutní rychlost).

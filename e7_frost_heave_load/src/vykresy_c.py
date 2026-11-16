@@ -333,10 +333,12 @@ def _sheet_measurement(pdf):
     sh.heading(255, 276, "What is measured")
     rows = [["(1) camera + 11 lines", "map h(x, y) of the whole surface", "≈ 10 µm", "every 10 / 1 min"],
             ["(2) LVDT", "carrier = piston", "≈ 1 µm", "CR850, 10 / 1 min"],
-            ["Invar target", "camera / frame drift", "≈ 10 µm", "every photo"]]
+            ["Invar target", "camera / frame drift", "≈ 10 µm", "every photo"],
+            ["scale + SHT45", "sublimation: dish mass, air RH", "0.01 g / 2 %", "10 min (RPi)"]]
     y = table(sh, 255, 272, ["method", "signal", "resolution", "interval"], rows, [38, 56, 22, 36], row_h=5.6)
     sh.heading(255, y - 10, "Evaluation per freeze–thaw cycle")
-    ev = [["surface map", "Δh(x, y) on 11 profiles → contour map, whole ⌀100"],
+    ev = [["pedestal (new)", "annulus lowering by sublimation − piston (LVDT)"],
+          ["surface map", "Δh(x, y) on 11 profiles → contour map, whole ⌀100"],
           ["heave, free surface", "mean Δh over the annulus (minus rim)"],
           ["heave under load", "Δh_load = LVDT (check: (1) on the piston)"],
           ["settlement on thawing", "drop from the maximum to the end of thaw"],
@@ -356,7 +358,9 @@ def _sheet_measurement(pdf):
             "   (CR850 C4 pulse); laser on only for the photo; 3D model by hand\n"
             "5  weigh a witness dish each cycle (not the cell); log air RH\n"
             "6  Sr = 0.5 (θ 0.19): expected heave tens of µm, upper bound 1.7 mm;\n"
-            "   the main signal is the thaw settlement under the load",
+            "   the main signal is the thaw settlement under the load" "\n"
+            "7  NEW sublimation series: −10 °C, silica gel, 14–30 days, ice-rich\n"
+            "   sand; annulus lowers, piston (cover) stays → pedestal",
             fontsize=fs(), va="top", linespacing=1.45)
     sh.save(pdf, os.path.join(OUT, "E7-V02_measurement.png"))
 

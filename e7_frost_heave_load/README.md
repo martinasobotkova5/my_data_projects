@@ -4,6 +4,8 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 ## ★ Aktuální návrh: varianta C, měření deformace 1 + 2 (výkresy V01–V05)
 
+**Sublimace – hlavní nová série (16. 11. 2026):** led z písku sublimuje v suchém mrazivém vzduchu; volné mezikruží klesá, pod pístem („kámen“) led zůstává → podstavec, měřený laserem a LVDT na µm; pórový led × přebytek ledu, 3,5 × 25 kPa, volitelně krátká tání podle Ostrova Jamese Rosse (`koncepce_E7.md`, `postup_zkousky.md` kap. 9, `vypocty.md` §21, rešerše `reserse_novost.md`).
+
 **Zjednodušení pro měření (15. 11. 2026):** jediná pohyblivá část je zátěž; průběžně LVDT, pevná kamera s laserem, Pt100, TDR, teplota vzduchu a dna cely (CR850 bez multiplexoru); 3D model povrchu ručně fotogrammetrií v klíčových stavech (`postup_zkousky.md` kap. 8, `vypocty.md` §20).
 
 **Statika, CR850 a postup (9. 11. 2026):** rám ověřen na únosnost (rezerva > 20×), rozhoduje stabilita → podélníky 320 mm, nohy ±140 (`vypocty.md` §17); datalogger CR850 – plán kanálů §18; rizika měření a postup přípravy, vložení a výměny vzorku v `postup_zkousky.md` (nové tištěné pomůcky P09 středicí víčko, P10 stěrka, P11 parkovací vidlice); poptávka rámu u ENPRAG v `poptavka_ramu.md`.
