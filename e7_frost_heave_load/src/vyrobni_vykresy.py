@@ -316,6 +316,18 @@ PRINT_NOTES = {
     "E7-P03_target_arm": ["svěrka ⌀16,3 na sloupek; plocha 14 × 14 pro bílý terčík (samolepka)",
                           "rameno obchází celu zvenku (ohyb), terčík na straně kamery – v zorném poli kamery i laseru",
                           "fáze 1 (cela U): spodní plocha 3 mm nad čelem cely; fáze 2: horní plocha ve výšce límce"],
+    "E7-P12_orbit_bearing_block": ["na horní stranu T04: 4× M5 do T-matic (drážky y ±20), otvor ⌀16 nad otvorem ⌀14",
+                                   "2 lůžka ⌀28 × 8 pro 6001-2RS (zalisovat), mezi nimi osazení ⌀24; tisk deskou dolů, 100 % výplň kolem lůžek"],
+    "E7-P14_camera_arm_head": ["náboj ⌀28 na hřídel ⌀12 h6: 2 červíky M4 (matice v kapsách), 4 mm pod příčníkem",
+                               "hlava 34 × 34 × 24, okénko ⌀12, 4× M2 pro Camera Module 3 (21 × 12,5), sklon 36,5°",
+                               "tisknout ramenem naplocho, podpěry pod hlavou; LED na hvězdě a 2 odpory 47 Ω přilepit"],
+    "E7-P15_head_lid": ["víčko hlavy, výřez 17 × 3 pro plochý kabel kamery a vodiče LED / topení"],
+    "E7-P16_motor_stand": ["stojánek 28BYJ-48 na horní stranu T04 (strana −x), 2× M5; uši motoru M4 (rozteč 35) zespodu",
+                           "osa pastorku 42 mm od osy vzorku (záběr m1 z12 / z72); držák Hall A3144 u věnce"],
+    "E7-P17_gear_z72": ["ozubené kolo m1 z72, šířka 6, náboj ⌀24 s červíkem M4 (matice v kapse)",
+                        "kapsa ⌀6,2 × 2,2 pro magnet výchozí polohy (strana −y); tisk 0,15 mm, 100 % výplň"],
+    "E7-P18_rpi_tray": ["vanička pro box P06 s RPi 5 na horní straně T04 (x 40 … 150), 2× M5 do drážky y −20"],
+    "E7-P19_pinion_z12": ["pastorek m1 z12 na hřídel 28BYJ-48 (⌀5 s ploškami 3 mm), nalisovat; tisk 0,1 mm, 100 % výplň"],
     "E7-P10u_screed_5mm": ["fáze 1 (cela U): příčka leží na rovném čele cely, břit sahá 5 mm pod čelo (= povrch písku)",
                            "otáčet kolem osy, přebytek písku odebrat; břit tisknout naležato, 100 % výplň"],
     "E7-V03u_cell_bez_zatizeni": ["fáze 1: cela ⌀220 × 171 v jednom kuse, rovné čelo 5 mm nad pískem (bez límce)",
@@ -384,6 +396,9 @@ def main():
             made.append(sheet_print(name, fn, q, pdf))
         # phase 1 – variant U (appended, page order of the sheets above stays the same)
         for name, fn, q in bp.PRINT_U_EXTRA:
+            made.append(sheet_print(name, fn, q, pdf))
+        import orbit
+        for name, fn, q in orbit.PRINT_ORBIT:
             made.append(sheet_print(name, fn, q, pdf))
         cu = [f for f in os.listdir(os.path.join(HERE, "..", "vyroba", "tisk")) if f.startswith("E7-V03u") and f.endswith(".step")][0]
         made.append(sheet_print("E7-V03u_cell_bez_zatizeni",

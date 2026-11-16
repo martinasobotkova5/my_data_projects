@@ -173,46 +173,75 @@ s miskou, sítko 2 mm na drcený led, čidlo SHT45 na kabelu u vzorku (povinné)
   rychlejší, porovnává se mechanismus a poměr krytý / volný povrch, ne absolutní rychlost).
 
 
-## 10 · Fáze 1 – mrznutí a tání BEZ ZATÍŽENÍ (varianta U, výkres V07)
+## 10 · Fáze 1 – mrznutí a tání BEZ ZATÍŽENÍ, kamera obíhá kolem vzorku (varianta U, výkres V07)
 
-Začíná se touto jednodušší fází. Rám, kamera, laser, podložky G10 a bod M jsou stejné jako výše. **Nemontuje se**
-píst, kulička, vodicí tyč, pouzdro P01, nosná deska se závažím ani LVDT s ramenem P02. Na invarovém sloupku je jen
-rameno s terčíkem P03.
+Začíná se touto jednodušší fází. Rám, laser, podložky G10 a bod M jsou stejné jako výše.
+
+- **Nemontuje se:** píst, kulička, vodicí tyč zátěže, pouzdro P01, nosná deska se závažím, LVDT s ramenem P02 ani pevný box kamery na závěsu P08.
+- **Na invarovém sloupku** je jen rameno s terčíkem P03.
+- **Kamera:** malá hlava s Raspberry Pi Camera Module 3 obíhá kolem vzorku na hřídeli, který prochází otvorem ⌀14 v horním příčníku.
 
 **Sestavení (oproti kap. 1–3):**
 
-1. Cela **E7-V03u** (⌀220 × 171, rovné čelo 5 mm nad pískem) na 3 podložkách G10, vystředit podle rysky na příčce T03
-   (středicí víčko P09 se ve fázi 1 nepoužívá – stačí ±1 mm, kamera vidí celý povrch s rezervou).
-2. Invarový sloupek ⌀16 v patce P04, rameno P03 nasunout shora a utáhnout tak, aby **spodní plocha terčíku byla
-   3 mm nad čelem cely**; rameno obchází celu zvenku, terčík je na straně kamery. Na terčík nalepit bílou matnou
-   samolepku 12 × 12.
-3. Box kamery P06 na závěsu P08 (nová poloha: sklon 38°). **Bílá LED** na hliníkové hvězdě ⌀20 přilepit tepelně
-   vodivým lepidlem na čelo boxu vedle okénka (na straně dál od vzorku), kabel vývodkou PG7 dovnitř.
+1. **Cela E7-V03u** (⌀220 × 171, rovné čelo 5 mm nad pískem) přijde na 3 podložky G10. Vystředit podle rysky na příčce T03 na ±1 mm. Hlava obíhá kolem osy příčníku, kamera vidí celý povrch s rezervou.
+2. **Invarový sloupek** ⌀16 do patky P04. Rameno P03 nasunout shora a utáhnout tak, aby **spodní plocha terčíku byla 3 mm nad čelem cely**. Rameno obchází celu zvenku, terčík je na straně kamery (−y). Na terčík nalepit bílou matnou samolepku 12 × 12.
+3. **Oběh – nad příčníkem:**
+   1. Ložiskový blok P12 se 2 ložisky 6001-2RS přišroubovat 4× M5 do horních drážek, otvor bloku nad otvor ⌀14.
+   2. Hřídel ⌀12 h6 × 120 prostrčit shora blokem a příčníkem.
+   3. Na hřídel nasadit stavěcí kroužek DIN 705 tak, aby hřídel na něm visel a kroužek se opíral o vnitřní kroužek horního ložiska.
+   4. Nad kroužek nasadit kolo P17 (z72) a utáhnout červíkem M4.
+   5. Na stojánek P16 (strana −x, 2× M5) přišroubovat motor 28BYJ-48 hřídelí nahoru a nasadit pastorek P19 do záběru s kolem.
+   6. Hall senzor A3144 přilepit do držáku na stojánku, magnet ⌀6 × 2 do kolíku v kole na straně −y. Ten určuje výchozí polohu.
+4. **Oběh – pod příčníkem:**
+   1. Rameno s hlavou P14 nasunout na spodní konec hřídele.
+   2. Natočit hlavu na stranu −y, když je magnet u senzoru.
+   3. Výšku nastavit tak, aby mezera náboje pod příčníkem byla 4 mm, a utáhnout 2 červíky M4.
+   4. Camera Module 3 přišroubovat 4× M2 do hlavy čočkou do okénka ⌀12.
+   5. Bílou LED na hvězdě ⌀20 přilepit tepelně vodivým lepidlem vedle okénka.
+   6. Do hlavy vlepit 2 topné odpory 47 Ω / 1 W. Zavřít víčkem P15, plochý kabel a 4 vodiče vést výřezem.
+5. **Box P06 s RPi 5** postavit do vaničky P18 na horní straně příčníku (strana +x, 2× M5).
+   - Plochý kabel kamery 500 mm vést přes hranu příčníku pod něj a k náboji.
+   - Kolem náboje udělat volnou smyčku (jeden závit), aby se hlava mohla otočit ±180°. Pak kabel vést po rameni do hlavy.
+   - **Před prvním měřením projet celý rozsah ručně** a zkontrolovat, že kabel nikde nedře a nenapíná se.
 
-**Příprava vzorku:** hutnit po vrstvách 20 mm jako v kap. 2; poslední vrstvu srovnat **stěrkou P10u** (příčka leží na
-čele cely, břit 5 mm) otáčením kolem osy. Povrch je pak přesně 5 mm pod čelem.
+**Příprava vzorku:** hutnit po vrstvách 20 mm jako v kap. 2. Poslední vrstvu srovnat **stěrkou P10u** (příčka leží na čele cely, břit 5 mm) otáčením kolem osy. Povrch je pak přesně 5 mm pod čelem. Hlava je při tom otočená na stranu +y, mimo práci.
 
-**Zapojení LED (vedle laseru z kap. 7):**
+**Zapojení na RPi 5:**
 
-```
-RPi 5                                          LED 1 W (≈ 3,1 V, 0,3 A) + odpor 6,8 Ω / 1 W v sérii
- pin 4  (5V) ─────────────────────────────────── + LED
-                                                 − LED ──┐ D
- pin 13 (GPIO27) ──[100 Ω]──┬──────────────── G  MOSFET AO3400 (druhý kus)
-                         [100 kΩ]                        │ S
- pin 14 (GND) ──────────────┴────────────────────────────┘
-```
+| co | piny RPi (fyzické) | poznámka |
+|---|---|---|
+| laser (kap. 7) | pin 11 = GPIO17 → MOSFET | 5 V, svítí jen při snímku |
+| LED 1 W + 6,8 Ω | pin 13 = GPIO27 → druhý MOSFET AO3400 | 5 V (pin 4), GND pin 14 |
+| motor 28BYJ-48 přes ULN2003 | IN1–IN4 = GPIO5, 6, 13, 19 (piny 29, 31, 33, 35) | napájení desky 5 V (pin 2) a GND; po pohybu všechny výstupy vypnout |
+| Hall A3144 | GPIO26 (pin 37) + pull-up 10 kΩ na 3,3 V | napájení 3,3 V (pin 1); magnet = výchozí poloha |
+| topení hlavy 2× 47 Ω paralelně | 5 V trvale (≈ 1 W) | drží Camera Module 3 nad 0 °C (provozní rozsah 0–50 °C), okénko bez rosy |
+| spouštění snímku z CR850 | C4 → optočlen → GPIO22 (pin 15) | jako dosud |
 
-**Snímání (RPi):** při každém spuštění (CR850 C4, interval 10 min, kolem 0 °C 1 min) tři snímky s pevnou expozicí:
-(1) **LED zapnutá, laser vypnutý** – fotka povrchu (námraza, trhliny, vysychání, barva);
-(2) **laser zapnutý, LED vypnutá** – čáry pro výšku;
-(3) obojí vypnuté – pozadí (odečte se od (2)).
-Čáry se vyhodnotí na celém ⌀100 i na terčíku P03; výška povrchu = výška z čar − posun terčíku.
+**Snímání:**
 
-**Slepá zkouška S0 (povinná):** místo písku hliníková atrapa ⌀99 × 100 se stejným čelem; 2 celé cykly −10 / +10 °C.
-Z ní se získá, o kolik se „pohne“ povrch jen teplotou (dno cely a podložky ≈ 70 µm na 20 K) – v řadě se pak odečítá
-podle teploty dna (NTC). Posun rámu (≈ 140 µm na 20 K) ukazuje terčík P03 a odečítá se průběžně.
+- **Průběžně** (spuštění z CR850, interval 10 min, kolem 0 °C 1 min) – hlava stojí ve **výchozí poloze**. Pořizují se tři snímky s pevnou expozicí a pevným zaostřením (autofokus jednou nastavit a uzamknout, `LensPosition`):
+  1. s LED – fotka povrchu;
+  2. s laserem bez LED – čáry pro výšku;
+  3. bez světla – pozadí.
+- **Oběh pro 3D model** – v klíčových stavech: před zmrazením, na konci −10 °C, po roztátí, konec cyklu; podle potřeby i každý cyklus.
+  1. Najet na výchozí polohu (Hall) vždy ze stejné strany.
+  2. Otočit na −180°.
+  3. Po 10° až do +170° pořídit 36 snímků s LED, každý s úhlem v názvu souboru.
+  4. Vrátit se do výchozí polohy.
+  - Trvá ≈ 1,5 min; laser je při oběhu vypnutý.
+- **Výška z laseru** se počítá ve výchozí poloze **vůči čarám na rovném čele cely a na invarovém terčíku** v témže snímku. Malá nepřesnost návratu ramene (≈ 0,1°) se tím vyruší.
 
-**Vyhodnocení fáze 1:** zdvih při mrznutí a sednutí při tání po celé ploše (mapa 11 profilů), průměr, rozdíl
-střed × okraj u stěny, zbytková deformace po cyklu; k tomu fotky povrchu z každého cyklu. Ve fázi 2 se pak stejný
-vzorek a postup opakuje s pístem (zatížená × volná část) a se sublimací (kap. 9).
+**Slepá zkouška S0 (povinná):** místo písku hliníková atrapa ⌀99 × 100 se stejným čelem, 2 celé cykly −10 / +10 °C.
+
+- Z ní se zjistí, o kolik se „pohne“ povrch jen teplotou (dno cely a podložky ≈ 70 µm na 20 K). V měřené řadě se to pak odečítá podle teploty dna (NTC).
+- Posun rámu (≈ 140 µm na 20 K) ukazuje terčík P03 a odečítá se průběžně.
+- **Ve S0 se zkouší i oběh při −10 °C:** rozjezd motoru, kabel, rosa na okénku při přechodu na +10 °C.
+
+**Vyhodnocení fáze 1:**
+
+- zdvih při mrznutí a sednutí při tání po celé ploše (mapa 11 profilů);
+- průměr, rozdíl střed × okraj u stěny a zbytková deformace po cyklu;
+- z oběhů 3D model povrchu (fotogrammetrie, měřítko ze značek ArUco na čele cely) a jejich rozdíly mezi stavy;
+- fotky povrchu z každého cyklu.
+
+Ve fázi 2 se pak stejný postup opakuje s pístem (zatížená × volná část) a se sublimací (kap. 9). **Oběh ve fázi 2 nejde**, středem vede vodicí tyč zátěže. Hlava se připevní pevně ve výchozí poloze a 3D model se dělá ručně (kap. 8).

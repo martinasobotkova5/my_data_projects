@@ -295,3 +295,13 @@ C_U_RIM = 5.0                            # horní hrana cely jen 5 mm nad píske
 U_TOP = SAND_TOP + C_U_RIM               # 131 nad spodkem jádra (místo COLLAR_TOP 160)
 C_LED = (20.0, 6.0)                      # bílá LED 5 V na hliníkové hvězdě ⌀20, přilepená na čelo boxu kamery vedle okénka
 C_LED_OFF = 38.0                         # střed LED od osy objektivu (po delší straně boxu, dál od vzorku)
+
+# --- oběh kamery kolem vzorku (16. 11. 2026, fáze 1 / varianta U) ----------------------------------------------------
+# malá hlava s Raspberry Pi Camera Module 3 (25 × 24 mm, 66° × 41°) obíhá na náboji pod středem příčníku T04;
+# RPi 5 zůstává v pevném boxu P06 na horní straně příčníku, kabel kamery 500 mm ve smyčce (±180° od výchozí polohy)
+C_ORB_R, C_ORB_H, C_ORB_TILT = 85.0, 100.0, 36.5   # okénko hlavy: vzdálenost od osy, výška nad pískem, sklon od svislice
+C_ORB_BRG = (30.0, 42.0, 7.0)            # 2× ložisko 6806-2RS (d × D × B) na tištěném čepu, sevřené šroubem M12 skrz otvor ⌀14
+C_ORB_GEAR = (1.0, 72, 12)               # modul, zuby věnce na náboji, zuby pastorku na krokovém motoru 28BYJ-48 (převod 6 : 1)
+C_ORB_MOTOR_ANG = 180.0                  # motor na straně −x (mimo vějíř laseru na +y a mimo výchozí polohu kamery na −y)
+C_ORB_STEP_DEG = 10.0                    # snímek po 10° → 36 snímků na jeden oběh (fotogrammetrie)
+CM3 = dict(board=(25.0, 24.0), fov=(66.0, 41.0), px=(4608, 2592))   # Raspberry Pi Camera Module 3 (standardní, autofokus)

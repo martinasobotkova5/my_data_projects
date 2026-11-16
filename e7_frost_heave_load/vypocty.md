@@ -355,6 +355,8 @@ Nasycená pára nad ledem při −10 °C: 2.14 g/m³. Tok z volné plochy J = h_
 
 ## 22. Fáze 1 bez zatížení – varianta U (16. 11. 2026)
 
+*Pozn.: tento oddíl počítá s pevnou kamerou (HQ + 6 mm). Platí výsledky pro nízkou celu a laser; kamera nyní obíhá – její zorné pole a viditelnost jsou v §23.*
+
 Bez pístu a zátěže je celý povrch ⌀100 volný. Aby ho kamera i laser opravdu viděly, cela má **rovné čelo jen 5 mm nad pískem** (bez límce; tisk ⌀220 × 171) a kamera je přesunuta (y -102, 110 mm nad pískem, sklon 38°; dříve −92 / 100 / 43°).
 
 | | límec 34 mm (var. C) | čelo 5 mm (var. U) |
@@ -367,4 +369,23 @@ Zorné pole objektivu 6 mm na HQ kameře (6,29 × 4,71 mm): ±27,6° × ±21,4°
 **Teplotní posun (−10 ↔ +10 °C):** sloupy rámu 306 mm Al zvednou kameru i laser o ≈ 141 µm – to ukáže invarový terčík P03 (stojí na základně, výška se nemění) a odečte se; dno cely a podložky G10 zvednou písek o ≈ 71 µm – opraví se podle slepé zkoušky S0 (atrapa) a teploty dna (NTC). Bez těchto oprav by posun byl srovnatelný se zdvihem písku.
 
 **Fotky:** bílá LED 5 V vedle okénka kamery; při každém snímání dva snímky – s LED (obraz povrchu: námraza, trhliny, vysychání) a s laserem bez LED (výšková mapa). LVDT se ve fázi 1 nepoužívá – kupuje se až pro fázi 2 (píst = kryt při sublimaci).
+
+## 23. Kamera obíhající kolem vzorku (16. 11. 2026)
+
+Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° × 41°, 4608 × 2592 px, autofokus) obíhá kolem osy vzorku. Pohon je nad příčníkem: hřídel ⌀12 h6 prochází otvorem ⌀14 v T04, točí se ve dvou ložiskách 6001-2RS v tištěném bloku P12, visí na stavěcím kroužku DIN 705 a nese kolo m1 z72; krokový motor 28BYJ-48 s pastorkem z12 (převod 6 : 1). Pod příčníkem je jen rameno s hlavou (P14) – vějíř laseru i pohled kamery jsou volné. RPi 5 je v pevném boxu P06 na příčníku, plochý kabel 500 mm ve smyčce → rozsah ±180°.
+
+| veličina | hodnota |
+|---|---|
+| okénko hlavy | 85 mm od osy, 100 mm nad pískem, sklon 36.5° od svislice |
+| potřebné zorné pole pro celý ⌀100 | ±21.4° × -17.2…+17.0° (kamera má ±33° × ±20.5° → rezerva ≥ 3.3°) |
+| vzdálenost okénko–střed, 1 pixel | 131 mm, ≈ 37 µm → výška laserem ≈ 8–12 µm |
+| kroky na otáčku ramene | 2048 × 72/12 = 12288 → 0.029° na krok |
+| vůle převodovky 28BYJ-48 | ≈ 1–3° na hřídeli motoru → 0,2–0,5° na rameni; výchozí poloha vždy najetím ze stejné strany na Hall senzor (magnet v kole P17) → opakovatelnost ≈ 0,1° |
+| moment | motor ≈ 0,03 N·m × 6 ≈ 0,16 N·m; tření 2 ložisek 2RS při −10 °C + smyčka kabelu ≈ 0,02–0,04 N·m → rezerva ≈ 4× |
+| oběh pro 3D model | 36 snímků po 10° (−180 … +170°), ≈ 2 s na pozici → ≈ 1,5 min; při snímku svítí LED na hlavě |
+| teplo | motor 1,2 W jen při pohybu (pak vypnout cívky – převod drží); hlava: topný odpor 2× 47 Ω (≈ 1 W) drží Camera Module 3 nad 0 °C (provozní rozsah 0–50 °C) a okénko bez rosy |
+
+**Laser se snímá jen ve výchozí poloze (−y)**, kam se hlava vrací přes Hall senzor. Protože se hlava mezi tím otáčí, výška se počítá vůči laserovým čarám na rovném čele cely (5 mm nad pískem) a na invarovém terčíku v témže snímku; malá nepřesnost návratu (≈ 0,1°) se tím vyruší.
+
+**Fáze 2 (se zátěží):** středem příčníku prochází vodicí tyč zátěže a pod ním visí pouzdro P01, takže oběh v této podobě ve fázi 2 nejde; hlava se tam připevní pevně ve výchozí poloze (držák se navrhne před fází 2), nebo se pouzdro P01 přesune nad příčník.
 

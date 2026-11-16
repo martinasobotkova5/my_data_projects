@@ -405,15 +405,20 @@ def _frame_c(asm, prefix=""):
     return zb0
 
 
-def _optics_c(asm, prefix="", led=False):
-    """Fixed camera (box P06 on hanger P08) and line laser (holder P05) on the top beam; led=True adds the white LED."""
+def _optics_c(asm, prefix="", led=False, camera=True, orbit_angle=None):
+    """Fixed camera (box P06 on hanger P08) and line laser (holder P05) on the top beam; led=True adds the white LED.
+    orbit_angle given: no fixed camera – the orbiting Camera Module 3 head (orbit.py) at that angle instead."""
     import buildparts as bp
     zbeam = bp.ZBEAM
-    # camera box (printed) hanging from the top beam, tilted to the axis; laser holder (printed)
     zcam = Z_S1 + p.C_CAM_H
-    cam = bp.camera_box().rotate((0, 0, 0), (1, 0, 0), p.C_CAM_TILT).translate((0, p.C_CAM_Y, zcam))
-    asm.add(cam, name=prefix + "P06 camera box: RPi HQ + 6 mm lens + RPi 5", color=C["ins"])
-    asm.add(bp.camera_hanger().translate((0, 0, zbeam)), name=prefix + "P08 camera mount (print)", color=C["petg"])
+    if orbit_angle is not None:
+        import orbit
+        orbit.add_to(asm, prefix, C, orbit_angle)
+        camera, led = False, False
+    if camera:                                       # camera box (printed) hanging from the top beam, tilted to the axis
+        cam = bp.camera_box().rotate((0, 0, 0), (1, 0, 0), p.C_CAM_TILT).translate((0, p.C_CAM_Y, zcam))
+        asm.add(cam, name=prefix + "P06 camera box: RPi HQ + 6 mm lens + RPi 5", color=C["ins"])
+        asm.add(bp.camera_hanger().translate((0, 0, zbeam)), name=prefix + "P08 camera mount (print)", color=C["petg"])
     asm.add(bp.laser_holder().translate((0, 0, zbeam)), name=prefix + "P05 laser holder (print)", color=C["petg"])
     yl_, zl = p.C_LASER_Y, Z_S1 + p.C_LASER_H
     las = (cq.Workplane("XZ").circle(5).extrude(11, both=True)
@@ -426,10 +431,12 @@ def _optics_c(asm, prefix="", led=False):
         asm.add(led_s, name=prefix + "LED white 5 V on star D20 (photo light)", color=C["temp"])
 
 
-def variant_u(asm, prefix=""):
+def variant_u(asm, prefix="", orbit_angle=0.0):
     """Variant U (phase 1, 16. 11. 2026): NO LOAD. Same frame, camera, laser and G10 pads as variant C; the cell has a
     flat top only 5 mm above the sand (no collar), so camera and laser see the whole surface ⌀100. No piston, weights,
-    guide rod, bearing or LVDT; the Invar post carries only the reference target P03. White LED next to the camera window for plain photos."""
+    guide rod, bearing or LVDT; the Invar post carries only the reference target P03. The camera (Raspberry Pi Camera
+    Module 3 in a small head with a white LED) ORBITS round the sample on a hub under the top beam (orbit.py);
+    orbit_angle 0 = home on −y, where the laser images are taken. orbit_angle=None → old fixed camera box."""
     zb0 = _frame_c(asm, prefix)
     # cell printed in one piece with its insulation; 3 G10 pads ⌀20 × 40 in pockets of the printed base carry it
     for k in range(3):
@@ -443,7 +450,7 @@ def variant_u(asm, prefix=""):
     asm.add(cyl(p.C_INVAR_D, bp.POST_L, zb0 + bp.POST_FLOOR, xi, yi), name=prefix + f"Invar 36 post D16 x{bp.POST_L:.0f}",
             color=C["invar"])
     asm.add(bp.target_arm().translate((0, 0, bp.Z_REF_U)), name=prefix + "P03 target arm (print)", color=C["petg"])
-    _optics_c(asm, prefix, led=True)
+    _optics_c(asm, prefix, led=True, orbit_angle=orbit_angle)
     return zb0
 
 

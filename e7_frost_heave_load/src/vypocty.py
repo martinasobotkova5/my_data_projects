@@ -575,6 +575,8 @@ print(f"\n**Pod pístem** led nesublimuje (kryt), páru může odvést jen bočn
 
 # ---------------------------------------------------------------------------------------------------------------
 print("## 22. Fáze 1 bez zatížení – varianta U (16. 11. 2026)\n")
+print("*Pozn.: tento oddíl počítá s pevnou kamerou (HQ + 6 mm). Platí výsledky pro nízkou celu a laser; kamera nyní "
+      "obíhá – její zorné pole a viditelnost jsou v §23.*\n")
 import buildparts as bp                              # noqa: E402
 _th = math.radians(p.C_CAM_TILT)
 
@@ -639,3 +641,52 @@ print(f"**Teplotní posun (−10 ↔ +10 °C):** sloupy rámu {bp.COL_H:g} mm Al
 print("**Fotky:** bílá LED 5 V vedle okénka kamery; při každém snímání dva snímky – s LED (obraz povrchu: námraza, "
       "trhliny, vysychání) a s laserem bez LED (výšková mapa). LVDT se ve fázi 1 nepoužívá – kupuje se až pro fázi 2 "
       "(píst = kryt při sublimaci).\n")
+
+# ---------------------------------------------------------------------------------------------------------------
+print("## 23. Kamera obíhající kolem vzorku (16. 11. 2026)\n")
+import orbit as _o                                   # noqa: E402
+_tho = math.radians(p.C_ORB_TILT)
+
+
+def _r2(v):
+    return (v[0], v[1] * math.cos(_tho) - v[2] * math.sin(_tho), v[1] * math.sin(_tho) + v[2] * math.cos(_tho))
+
+
+_W = _o.WIN
+_axo, _uo, _vo = _r2((0, 0, -1)), _r2((1, 0, 0)), _r2((0, 1, 0))
+_xo, _yo = [], []
+for k in range(144):
+    P = (50 * math.cos(k * math.pi / 72), 50 * math.sin(k * math.pi / 72), bp.Z_S1)
+    r = [P[i] - _W[i] for i in range(3)]
+    dot = lambda a, b: sum(a_ * b_ for a_, b_ in zip(a, b))
+    _xo.append(math.degrees(math.atan2(dot(r, _uo), dot(r, _axo))))
+    _yo.append(math.degrees(math.atan2(dot(r, _vo), dot(r, _axo))))
+_do = math.dist(_W, (0, 0, bp.Z_S1))
+_hf, _vf = (f / 2 for f in p.CM3["fov"])
+_pxo = 2 * _do * math.tan(math.radians(_hf)) / p.CM3["px"][0] * 1000
+_steps = 2048 * _o.Z_RING / _o.Z_PIN
+print("Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° × 41°, 4608 × 2592 px, autofokus) "
+      "obíhá kolem osy vzorku. Pohon je nad příčníkem: hřídel ⌀12 h6 prochází otvorem ⌀14 v T04, točí se ve dvou "
+      "ložiskách 6001-2RS v tištěném bloku P12, visí na stavěcím kroužku DIN 705 a nese kolo m1 z72; krokový motor "
+      "28BYJ-48 s pastorkem z12 (převod 6 : 1). Pod příčníkem je jen rameno s hlavou (P14) – vějíř laseru i pohled "
+      "kamery jsou volné. RPi 5 je v pevném boxu P06 na příčníku, plochý kabel 500 mm ve smyčce → rozsah ±180°.\n")
+print("| veličina | hodnota |\n|---|---|")
+print(f"| okénko hlavy | {p.C_ORB_R:g} mm od osy, {p.C_ORB_H:g} mm nad pískem, sklon {p.C_ORB_TILT:g}° od svislice |")
+print(f"| potřebné zorné pole pro celý ⌀100 | ±{max(map(abs, _xo)):.1f}° × {min(_yo):.1f}…+{max(_yo):.1f}° "
+      f"(kamera má ±{_hf:g}° × ±{_vf:g}° → rezerva ≥ {min(_hf - max(map(abs, _xo)), _vf - max(_yo), _vf + min(_yo)):.1f}°) |")
+print(f"| vzdálenost okénko–střed, 1 pixel | {_do:.0f} mm, ≈ {_pxo:.0f} µm → výška laserem ≈ 8–12 µm |")
+print(f"| kroky na otáčku ramene | 2048 × {_o.Z_RING}/{_o.Z_PIN} = {_steps:.0f} → {360 / _steps:.3f}° na krok |")
+print("| vůle převodovky 28BYJ-48 | ≈ 1–3° na hřídeli motoru → 0,2–0,5° na rameni; výchozí poloha vždy najetím ze "
+      "stejné strany na Hall senzor (magnet v kole P17) → opakovatelnost ≈ 0,1° |")
+print("| moment | motor ≈ 0,03 N·m × 6 ≈ 0,16 N·m; tření 2 ložisek 2RS při −10 °C + smyčka kabelu ≈ 0,02–0,04 N·m "
+      "→ rezerva ≈ 4× |")
+print(f"| oběh pro 3D model | {360 / p.C_ORB_STEP_DEG:.0f} snímků po {p.C_ORB_STEP_DEG:g}° (−180 … +170°), ≈ 2 s na pozici → "
+      "≈ 1,5 min; při snímku svítí LED na hlavě |")
+print("| teplo | motor 1,2 W jen při pohybu (pak vypnout cívky – převod drží); hlava: topný odpor 2× 47 Ω (≈ 1 W) "
+      "drží Camera Module 3 nad 0 °C (provozní rozsah 0–50 °C) a okénko bez rosy |\n")
+print("**Laser se snímá jen ve výchozí poloze (−y)**, kam se hlava vrací přes Hall senzor. Protože se hlava mezi "
+      "tím otáčí, výška se počítá vůči laserovým čarám na rovném čele cely (5 mm nad pískem) a na invarovém terčíku "
+      "v témže snímku; malá nepřesnost návratu (≈ 0,1°) se tím vyruší.\n")
+print("**Fáze 2 (se zátěží):** středem příčníku prochází vodicí tyč zátěže a pod ním visí pouzdro P01, takže oběh "
+      "v této podobě ve fázi 2 nejde; hlava se tam připevní pevně ve výchozí poloze (držák se navrhne před fází 2), "
+      "nebo se pouzdro P01 přesune nad příčník.\n")

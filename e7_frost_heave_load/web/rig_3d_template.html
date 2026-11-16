@@ -39,6 +39,11 @@ h1 { font: 600 22px/1.2 var(--f-body); margin: 0; text-wrap: balance; }
 .bar button, .chips button { font: 500 12px var(--f-body); color: var(--ink); background: var(--panel); border: 1px solid var(--rule);
   border-radius: 5px; padding: 5px 9px; cursor: pointer; }
 .bar button:hover, .chips button:hover { border-color: var(--accent); }
+.orb { display: inline-flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--rule); border-radius: 5px; padding: 2px 8px 2px 2px; font-size: 12px; }
+.orb[hidden] { display: none; }
+.orb button { border: 0; }
+.orb input { width: 120px; vertical-align: middle; accent-color: var(--accent); }
+.orb output { font: 12px var(--f-mono); display: inline-block; min-width: 3.2em; text-align: right; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .info { position: absolute; left: 10px; bottom: 10px; right: 10px; background: var(--panel); border: 1px solid var(--rule);
   border-radius: 6px; padding: 8px 10px; font-size: 13px; }
@@ -85,6 +90,8 @@ aside h2 { font: 600 14px var(--f-body); margin: 0 0 6px; }
       <div class="bar">
         <button id="vIso">Pohled 3D</button><button id="vFront">Zepředu</button><button id="vSide">Z boku</button><button id="vTop">Shora</button>
         <button id="vAll">Zobrazit vše</button>
+        <span id="orb" class="orb" hidden><button id="oPlay" aria-pressed="false">▶ Oběh kamery</button>
+          <label>úhel <input id="oAng" type="range" min="-180" max="180" step="1" value="0"> <output id="oVal">0°</output></label></span>
       </div>
       <div class="info" id="info"><b>Klikněte na díl</b> v modelu nebo v seznamu – zvýrazní se a ukáže se, kde ho koupit. Tažením otáčíte, kolečkem / dvěma prsty přibližujete.</div>
     </div>
@@ -101,9 +108,9 @@ aside h2 { font: 600 14px var(--f-body); margin: 0 0 6px; }
 <script>
 const GLB = { u: "/*__GLB_U__*/", c: "/*__GLB_C__*/" };
 const PHASE = {
-  u: { sub: "rám z T-profilů · cela ⌀220 × 171 s rovným čelem 5 mm nad pískem · celý povrch volný · kamera + laser 11 čar + bílá LED · invarový terčík",
-       facts: [["423 mm", "výška sestavy nad dnem mrazáku"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
-               ["0 kPa", "bez zatížení – měří se celý povrch ⌀100"], ["≈ 10 µm", "výška povrchu laserem s kamerou (1 px ≈ 30 µm)"]] },
+  u: { sub: "rám z T-profilů · cela ⌀220 × 171 s rovným čelem · celý povrch volný · kamera OBÍHÁ kolem vzorku ±180° · laser 11 čar · invarový terčík",
+       facts: [["480 mm", "výška sestavy nad dnem mrazáku (s boxem RPi)"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
+               ["0 kPa", "bez zatížení – měří se celý povrch ⌀100"], ["36 snímků / oběh", "3D model povrchu z jednoho oběhu (10°), laser ve výchozí poloze ≈ 10 µm"]] },
   c: { sub: "stejný rám, kamera a laser · cela ⌀220 × 200 s límcem · zátěž na pístu ⌀50 · LVDT na invarovém sloupku",
        facts: [["559 mm", "výška sestavy nad dnem mrazáku"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
                ["5–25 kPa", "zatížení pod pístem ⌀50 (0–4 kotouče)"], ["≈ 1 µm / 10 µm", "rozlišení LVDT / laseru s kamerou"]] },
@@ -118,6 +125,8 @@ const GROUPS = [
    n => /^(L0\d|steel ball|guide rod|shaft collar|igus|P01)/.test(n)],
   ["meas", "Měření", "laser: Picotronic · kamera + RPi: RPishop.cz · LED: TME / GME · Invar: Kovohutě Rokycany · LVDT (fáze 2): Elkome · tištěné díly: vlastní tisk", "#d1873a",
    n => /^(LVDT|Invar 36 post|P0[2-8]|line laser|LED)/.test(n)],
+  ["orbit", "Oběh kamery", "Camera Module 3 + kabel 500 mm: RPishop.cz · motor 28BYJ-48 + ULN2003, Hall: GME / LaskaKit · ložiska 6001-2RS: TME / ZKL · hřídel ⌀12 h6: HENNLICH / TME · tištěné díly: vlastní tisk", "#3d7fb8",
+   n => /^(P1[2-9]|shaft|stepper|bearing 6001|Raspberry Pi Camera|P06 box with RPi)/.test(n)],
 ];
 // [prefix of model name, Czech name, where to buy]
 const CZ = [
@@ -152,8 +161,21 @@ const CZ = [
   ["LVDT RDP", "LVDT RDP DCTH400AG ±10 mm", "Elkome (zastoupení RDP pro ČR) – poptávka"],
   ["LVDT plunger", "jádro LVDT", "součást LVDT"],
   ["P03", "P03 rameno s invarovým terčíkem (tisk)", "vlastní 3D tisk; obchází celu zvenku, terčík na straně kamery – reference posunu rámu"],
-  ["LED", "bílá LED 5 V na hvězdě ⌀20 (fotky povrchu)", "TME / GM electronic; přilepit vedle okénka boxu kamery, spíná RPi (GPIO27)"],
+  ["LED", "bílá LED 1 W na hvězdě ⌀20 (fotky povrchu)", "TME / GM electronic; na hlavě vedle okénka, spíná RPi (GPIO27)"],
+  ["P06 box with RPi", "P06 box s RPi 5 (ve vaničce na příčníku)", "RPi 5 – RPishop.cz, box vlastní 3D tisk"],
   ["P06", "P06 box kamery: RPi 5 + HQ kamera + objektiv 6 mm", "elektronika RPishop.cz, box vlastní 3D tisk"],
+  ["P12", "P12 ložiskový blok na příčníku (tisk)", "vlastní 3D tisk; 2× ložisko 6001-2RS, 4× M5 do horních drážek T04"],
+  ["P14", "P14 rameno s nábojem a hlavou kamery (tisk)", "vlastní 3D tisk; na hřídeli ⌀12 dvěma červíky M4, obíhá ±180°"],
+  ["P15", "P15 víčko hlavy (tisk)", "vlastní 3D tisk"],
+  ["P16", "P16 stojánek motoru (tisk)", "vlastní 3D tisk; Hall senzor A3144 pro výchozí polohu"],
+  ["P17", "P17 ozubené kolo m1 z72 (tisk)", "vlastní 3D tisk; magnet ⌀6 × 2 pro výchozí polohu"],
+  ["P18", "P18 vanička boxu RPi (tisk)", "vlastní 3D tisk"],
+  ["P19", "P19 pastorek m1 z12 (tisk)", "vlastní 3D tisk; převod 6 : 1"],
+  ["shaft collar DIN 705-A 12 (orbit)", "stavěcí kroužek DIN 705 ⌀12 (oběh)", "Fabory CZ / Hornbach; hřídel na něm visí"],
+  ["shaft D12", "hřídel ⌀12 h6 × 120", "kalená broušená tyč – HENNLICH / TME / e-shopy s díly pro 3D tiskárny"],
+  ["stepper", "krokový motor 28BYJ-48 5 V + ULN2003", "GM electronic / LaskaKit"],
+  ["bearing 6001", "ložisko 6001-2RS (12 × 28 × 8)", "TME nebo ZKL (český výrobce)"],
+  ["Raspberry Pi Camera", "Raspberry Pi Camera Module 3", "RPishop.cz; 66° × 41°, kabel Standard–Mini 500 mm"],
   ["P08", "P08 závěs kamery (tisk)", "vlastní 3D tisk; kamera 110 mm nad pískem, sklon 38°"],
   ["P05", "P05 držák laseru (tisk)", "vlastní 3D tisk"],
   ["line laser", "laser Picotronic DOE253, 11 čar", "Picotronic GmbH (dle cenové nabídky)"],
@@ -180,7 +202,27 @@ new ResizeObserver(resize).observe(stage);
 const parts = []; let center = new THREE.Vector3(), radius = 400, selected = null, hiMat = null;
 function nameOf(o) { while (o && o.parent) { if (/^E7/.test(o.parent.name || "")) return o.name.replace(/_/g, " "); o = o.parent; } return ""; }
 
-let root = null;
+let root = null, pivot = null, axis = null, playing = false, orbAng = 0, orbDir = 1;
+const ROT = /^(shaft D12|shaft collar DIN 705-A 12 \(orbit\)|P17 |P14 |P15 |Raspberry Pi Camera Module 3|LED white 1 W)/;
+function setOrbit(deg) {
+  orbAng = deg; document.getElementById("oAng").value = Math.round(deg); document.getElementById("oVal").textContent = Math.round(deg) + "°";
+  if (pivot && axis) pivot.quaternion.setFromAxisAngle(axis, deg * Math.PI / 180);
+}
+function buildPivot() {
+  pivot = null; axis = null;
+  let asmNode = null; const nodes = [];
+  root.traverse(o => { if (!asmNode && /^E7/.test(o.name || "") && o.children.length > 5) asmNode = o; });
+  if (!asmNode) return;
+  for (const c of [...asmNode.children]) if (ROT.test((c.name || "").replace(/_/g, " "))) nodes.push(c);
+  if (!nodes.length) return;
+  const shaft = nodes.find(c => /^shaft D12/.test(c.name.replace(/_/g, " "))) || nodes[0];
+  root.updateMatrixWorld(true);
+  const inv = asmNode.matrixWorld.clone().invert();
+  const bb = new THREE.Box3().setFromObject(shaft).applyMatrix4(inv), s = bb.getSize(new THREE.Vector3());
+  axis = s.z >= s.y && s.z >= s.x ? new THREE.Vector3(0, 0, 1) : (s.y >= s.x ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0));
+  pivot = new THREE.Group(); asmNode.add(pivot);
+  for (const n of nodes) pivot.attach(n);
+}
 function load(ph) {
   document.getElementById("phU").setAttribute("aria-pressed", ph === "u");
   document.getElementById("phC").setAttribute("aria-pressed", ph === "c");
@@ -209,10 +251,15 @@ function load(ph) {
     }
     const box = new THREE.Box3().setFromObject(root); box.getCenter(center); radius = box.getSize(new THREE.Vector3()).length() / 2;
     camera.near = radius / 200; camera.far = radius * 200; camera.updateProjectionMatrix();
+    buildPivot(); document.getElementById("orb").hidden = !pivot; playing = false;
+    document.getElementById("oPlay").textContent = "▶ Oběh kamery"; setOrbit(0);
     buildList(); view("iso"); ld.style.display = "none";
   }, err => { ld.textContent = "Model se nepodařilo načíst."; });
 }
 document.getElementById("phU").onclick = () => load("u");
+document.getElementById("oPlay").onclick = e => { playing = !playing; e.currentTarget.setAttribute("aria-pressed", playing);
+  e.currentTarget.textContent = playing ? "❚❚ Zastavit" : "▶ Oběh kamery"; };
+document.getElementById("oAng").oninput = e => { playing = false; document.getElementById("oPlay").textContent = "▶ Oběh kamery"; setOrbit(+e.target.value); };
 document.getElementById("phC").onclick = () => load("c");
 
 function view(k) {
@@ -266,5 +313,8 @@ canvas.addEventListener("pointerup", e => {
   select(hit ? parts.find(p => p.meshes.includes(hit.object)) : null);
 });
 load("u");
-(function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+(function loop() { requestAnimationFrame(loop);
+  if (playing && pivot) { let a = orbAng + orbDir * (reduce ? 2 : 0.6); if (a > 180 || a < -180) { orbDir *= -1; a = Math.max(-180, Math.min(180, a)); } setOrbit(a); }
+  controls.update(); renderer.render(scene, camera); })();
 </script>

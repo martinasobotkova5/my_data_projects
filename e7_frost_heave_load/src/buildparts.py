@@ -364,7 +364,8 @@ def export_all():
     for part in LASER:
         out.append(write_dxf(part, os.path.join(OUT, "laser")))
         cq.exporters.export(laser_solid(part), os.path.join(OUT, "laser", f"{part['name']}_{part['t']:g}mm.step"))
-    for name, fn, _ in PRINT + PRINT_U_EXTRA:
+    import orbit                                     # local import: orbit.py imports this module
+    for name, fn, _ in PRINT + PRINT_U_EXTRA + orbit.PRINT_ORBIT:
         s = fn()
         cq.exporters.export(s, os.path.join(OUT, "tisk", name + ".stl"), tolerance=0.05, angularTolerance=0.1)
         cq.exporters.export(s, os.path.join(OUT, "tisk", name + ".step"))
