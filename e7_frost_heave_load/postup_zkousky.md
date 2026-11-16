@@ -171,3 +171,48 @@ s miskou, sítko 2 mm na drcený led, čidlo SHT45 na kabelu u vzorku (povinné)
 - srovnání: pórový led × přebytek ledu, 3,5 × 25 kPa, bez tání × s krátkými táními;
 - vztah k terénu: rychlost ústupu ledu v Antarktidě (Victoria Valley ≈ 0,22 mm/rok – model; laboratoř je řádově
   rychlejší, porovnává se mechanismus a poměr krytý / volný povrch, ne absolutní rychlost).
+
+
+## 10 · Fáze 1 – mrznutí a tání BEZ ZATÍŽENÍ (varianta U, výkres V07)
+
+Začíná se touto jednodušší fází. Rám, kamera, laser, podložky G10 a bod M jsou stejné jako výše. **Nemontuje se**
+píst, kulička, vodicí tyč, pouzdro P01, nosná deska se závažím ani LVDT s ramenem P02. Na invarovém sloupku je jen
+rameno s terčíkem P03.
+
+**Sestavení (oproti kap. 1–3):**
+
+1. Cela **E7-V03u** (⌀220 × 171, rovné čelo 5 mm nad pískem) na 3 podložkách G10, vystředit podle rysky na příčce T03
+   (středicí víčko P09 se ve fázi 1 nepoužívá – stačí ±1 mm, kamera vidí celý povrch s rezervou).
+2. Invarový sloupek ⌀16 v patce P04, rameno P03 nasunout shora a utáhnout tak, aby **spodní plocha terčíku byla
+   3 mm nad čelem cely**; rameno obchází celu zvenku, terčík je na straně kamery. Na terčík nalepit bílou matnou
+   samolepku 12 × 12.
+3. Box kamery P06 na závěsu P08 (nová poloha: sklon 38°). **Bílá LED** na hliníkové hvězdě ⌀20 přilepit tepelně
+   vodivým lepidlem na čelo boxu vedle okénka (na straně dál od vzorku), kabel vývodkou PG7 dovnitř.
+
+**Příprava vzorku:** hutnit po vrstvách 20 mm jako v kap. 2; poslední vrstvu srovnat **stěrkou P10u** (příčka leží na
+čele cely, břit 5 mm) otáčením kolem osy. Povrch je pak přesně 5 mm pod čelem.
+
+**Zapojení LED (vedle laseru z kap. 7):**
+
+```
+RPi 5                                          LED 1 W (≈ 3,1 V, 0,3 A) + odpor 6,8 Ω / 1 W v sérii
+ pin 4  (5V) ─────────────────────────────────── + LED
+                                                 − LED ──┐ D
+ pin 13 (GPIO27) ──[100 Ω]──┬──────────────── G  MOSFET AO3400 (druhý kus)
+                         [100 kΩ]                        │ S
+ pin 14 (GND) ──────────────┴────────────────────────────┘
+```
+
+**Snímání (RPi):** při každém spuštění (CR850 C4, interval 10 min, kolem 0 °C 1 min) tři snímky s pevnou expozicí:
+(1) **LED zapnutá, laser vypnutý** – fotka povrchu (námraza, trhliny, vysychání, barva);
+(2) **laser zapnutý, LED vypnutá** – čáry pro výšku;
+(3) obojí vypnuté – pozadí (odečte se od (2)).
+Čáry se vyhodnotí na celém ⌀100 i na terčíku P03; výška povrchu = výška z čar − posun terčíku.
+
+**Slepá zkouška S0 (povinná):** místo písku hliníková atrapa ⌀99 × 100 se stejným čelem; 2 celé cykly −10 / +10 °C.
+Z ní se získá, o kolik se „pohne“ povrch jen teplotou (dno cely a podložky ≈ 70 µm na 20 K) – v řadě se pak odečítá
+podle teploty dna (NTC). Posun rámu (≈ 140 µm na 20 K) ukazuje terčík P03 a odečítá se průběžně.
+
+**Vyhodnocení fáze 1:** zdvih při mrznutí a sednutí při tání po celé ploše (mapa 11 profilů), průměr, rozdíl
+střed × okraj u stěny, zbytková deformace po cyklu; k tomu fotky povrchu z každého cyklu. Ve fázi 2 se pak stejný
+vzorek a postup opakuje s pístem (zatížená × volná část) a se sublimací (kap. 9).

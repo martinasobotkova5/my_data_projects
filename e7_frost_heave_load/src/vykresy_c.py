@@ -302,7 +302,7 @@ def _sheet_measurement(pdf):
     xr_, yr_ = p.C_REF_XY
     c.rect(xr_ - 5, yr_ - 5, xr_ + 5, yr_ + 5, fc="white", lw=THIN, z=6)
     c.circle(xr_, yr_, 2, fc="#111", lw=0, z_=6.1)
-    c.text(0, -62, f"+y (laser) ↑   pitch {p.C_LINE_PITCH:g} mm", fontsize=fs(), color="white", ha="center")
+    c.text(-38, -62, f"+y (laser) ↑   pitch {p.C_LINE_PITCH:g} mm", fontsize=fs(), color="white", ha="center")  # left of the Invar target (x 20, y −56)
     V.tag(c, xr_ + 5, yr_ + 5, 75, 55, "Invar target = reference", "#5b4a99")
     V.tag(c, 46, 20, 75, 38, "rim: PETG, moves ≈ 100 µm / 20 K", INK)
     V.tag(c, 40, -9, 75, 18, "free sand: 11 profiles", INK)

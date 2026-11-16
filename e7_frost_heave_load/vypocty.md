@@ -353,3 +353,18 @@ Nasycená pára nad ledem při −10 °C: 2.14 g/m³. Tok z volné plochy J = h_
 
 **Pod pístem** led nesublimuje (kryt), páru může odvést jen boční difuze od okraje pístu → vznikne **podstavec**: volné mezikruží klesá (laser), píst zůstává (LVDT). Tečení ledu pod pístem při 25 kPa za 30 dní je řádově 1.4 µm (Glenův zákon) – zatížení samo pokles neudělá, srovnání 3,5 a 25 kPa ukáže jen jeho vedlejší vliv. **Měřitelnost:** u písku s přebytkem ledu klesne volný povrch o desetiny mm za několik dní a o mm za týdny – laser (≈ 10 µm) ho zachytí den po dni; u pórového ledu pokles téměř nulový (kontrolní vzorek: suchá vrstva vznikne, kostra zrn stojí). Teplota se během sublimační série nemění (−10 °C), takže teplotní drift sestavy je prakticky nulový. Odhady ověří předzkouška (miska ledu na váze v mrazáku).
 
+## 22. Fáze 1 bez zatížení – varianta U (16. 11. 2026)
+
+Bez pístu a zátěže je celý povrch ⌀100 volný. Aby ho kamera i laser opravdu viděly, cela má **rovné čelo jen 5 mm nad pískem** (bez límce; tisk ⌀220 × 171) a kamera je přesunuta (y -102, 110 mm nad pískem, sklon 38°; dříve −92 / 100 / 43°).
+
+| | límec 34 mm (var. C) | čelo 5 mm (var. U) |
+|---|---|---|
+| kamera nevidí | 20.0 % povrchu | 1.1 % povrchu |
+| laser neosvítí | 5.5 % | 0.3 % |
+
+Zorné pole objektivu 6 mm na HQ kameře (6,29 × 4,71 mm): ±27,6° × ±21,4°; potřeba na celý ⌀100: ±24.4° × -17.7…19.7° → vejde se s rezervou 2–3°. Vzdálenost objektiv–střed 115 mm, 1 pixel ≈ 30 µm; posun čáry = 0.44 × změna výšky, střed čáry na 1/10 pixelu → výška ≈ 5–10 µm.
+
+**Teplotní posun (−10 ↔ +10 °C):** sloupy rámu 306 mm Al zvednou kameru i laser o ≈ 141 µm – to ukáže invarový terčík P03 (stojí na základně, výška se nemění) a odečte se; dno cely a podložky G10 zvednou písek o ≈ 71 µm – opraví se podle slepé zkoušky S0 (atrapa) a teploty dna (NTC). Bez těchto oprav by posun byl srovnatelný se zdvihem písku.
+
+**Fotky:** bílá LED 5 V vedle okénka kamery; při každém snímání dva snímky – s LED (obraz povrchu: námraza, trhliny, vysychání) a s laserem bez LED (výšková mapa). LVDT se ve fázi 1 nepoužívá – kupuje se až pro fázi 2 (píst = kryt při sublimaci).
+

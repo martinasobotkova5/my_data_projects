@@ -36,6 +36,7 @@ Z_LV_BOT = Z_LV_TOP - LV_L
 ARM_T = 12.0
 Z_ARM = Z_LV_BOT                                 # LVDT arm z Z_ARM … Z_ARM + ARM_T (clamps the body bottom)
 Z_RIM = ZC0 + p.COLLAR_TOP                       # top of the collar (camera sees it)
+Z_REF_U = ZC0 + p.U_TOP + 3.0                    # variant U: target arm 3 mm above the flat cell top
 COL_H = ZBEAM - ZB0                              # column length
 POST_FLOOR = 3.0                                 # printed floor of the post foot (bridges the T-slot)
 POST_L = Z_ARM + ARM_T - ZB0 - POST_FLOOR        # Invar post: stands in its foot on the cross bar, top flush with the arm
@@ -202,12 +203,15 @@ def lvdt_arm():
 
 
 def target_arm():
-    """Arm from the Invar post to the camera reference target (white 12×12 face) at rim height; z 0 … 8."""
-    (xi, yi), (xr, yr) = p.C_INVAR_XY, p.C_REF_XY
+    """Arm from the Invar post to the camera/laser reference target (white 12×12 face); z 0 … 8. The arm bends at
+    C_REF_VIA so that it runs round the outside of the cell, never over the sample. Clamped on the post at any
+    height: variant C at the collar top (Z_RIM), variant U 3 mm above the flat cell top (Z_REF_U)."""
+    (xi, yi), (xv, yv), (xr, yr) = p.C_INVAR_XY, p.C_REF_VIA, p.C_REF_XY
     o1, i1 = _clamp_ring(16.3, 30, 8, xi, yi)
     pad = cq.Workplane("XY").center(xr, yr).rect(14, 14).extrude(8)
-    s = o1.union(pad).union(_arm((xi, yi), (xr, yr), 10, 8)).cut(i1).cut(_slit(xi, yi, 135, 15, 8))
-    return s
+    knee = cq.Workplane("XY").center(xv, yv).circle(5).extrude(8)
+    s = o1.union(pad).union(knee).union(_arm((xi, yi), (xv, yv), 10, 8)).union(_arm((xv, yv), (xr, yr), 10, 8))
+    return s.cut(i1).cut(_slit(xi, yi, 135, 15, 8))
 
 
 def post_foot():
@@ -319,11 +323,12 @@ def centering_cap():
     return s
 
 
-def screed():
+def screed(depth=None):
     """P10 – stěrka povrchu: příčka 124 × 16 × 6 leží na límci, břit 99 × 3 sahá 34 mm pod jeho hranu;
     otáčením se srovná povrch písku přesně do výšky SAND_TOP. Lokální z = 0 je horní hrana límce."""
     bar = cq.Workplane("XY").box(124, 16, 6, centered=(True, True, False))
-    blade = cq.Workplane("XY").box(p.CAV_D - 1.0, 3, SCREED_DEPTH, centered=(True, True, False)).translate((0, 0, -SCREED_DEPTH))
+    dd = SCREED_DEPTH if depth is None else depth
+    blade = cq.Workplane("XY").box(p.CAV_D - 1.0, 3, dd, centered=(True, True, False)).translate((0, 0, -dd))
     grip = cq.Workplane("XY").box(16, 16, 30, centered=(True, True, False)).translate((0, 0, 6))
     return bar.union(blade).union(grip)
 
@@ -337,11 +342,19 @@ def parking_fork():
     return s
 
 
+def screed_u():
+    """P10u – stěrka pro celu varianty U: příčka leží na rovném čele cely ⌀220, břit sahá 5 mm pod čelo."""
+    return screed(p.C_U_RIM)
+
+
 PRINT = [("E7-P01_bearing_housing", housing, 1), ("E7-P02_lvdt_arm", lvdt_arm, 1),
          ("E7-P03_target_arm", target_arm, 1), ("E7-P04_post_foot", post_foot, 1),
          ("E7-P05_laser_holder", laser_holder, 1), ("E7-P06_camera_box", camera_box, 1),
          ("E7-P07_camera_box_lid", camera_box_lid, 1), ("E7-P08_camera_hanger", camera_hanger, 1),
          ("E7-P09_centering_cap", centering_cap, 1), ("E7-P10_screed", screed, 1), ("E7-P11_parking_fork", parking_fork, 1)]
+# fáze 1 – varianta U bez zatížení: tisknou se jen tyto díly (+ cela E7-V03u z model3d)
+PRINT_U = ["E7-P05_laser_holder", "E7-P06_camera_box", "E7-P07_camera_box_lid", "E7-P08_camera_hanger"]
+PRINT_U_EXTRA = [("E7-P10u_screed_5mm", screed_u, 1)]
 
 
 def export_all():
@@ -351,7 +364,7 @@ def export_all():
     for part in LASER:
         out.append(write_dxf(part, os.path.join(OUT, "laser")))
         cq.exporters.export(laser_solid(part), os.path.join(OUT, "laser", f"{part['name']}_{part['t']:g}mm.step"))
-    for name, fn, _ in PRINT:
+    for name, fn, _ in PRINT + PRINT_U_EXTRA:
         s = fn()
         cq.exporters.export(s, os.path.join(OUT, "tisk", name + ".stl"), tolerance=0.05, angularTolerance=0.1)
         cq.exporters.export(s, os.path.join(OUT, "tisk", name + ".step"))

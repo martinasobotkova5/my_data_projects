@@ -12,6 +12,8 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 **Revize B3 (9. 11. 2026):** celý rám z hliníkových T-profilů drážka 8 řezaných na délku – 2 podélníky 40×40, příčka 40×80 (nese 3 podložky G10), 2 sloupy 40×80, horní příčník 40×80 s jediným otvorem ⌀14; pouzdro ložiska visí pod příčníkem, spoje úhelníky a vkládací T-matice. Laserem řezané desky L01/L02 odpadly. Výkresy profilů T01–T04 ve `vyroba/vykresy`.
 
+**Fáze 1 bez zatížení (16. 11. 2026):** začíná se variantou U – stejný rám, kamera a laser, ale bez pístu, zátěže a LVDT; cela `E7-V03u` (⌀220 × 171) má rovné čelo jen 5 mm nad pískem, takže kamera a laser vidí celý povrch ⌀100; bílá LED pro fotky povrchu; kamera přesunuta (y −102, 110 mm nad pískem, sklon 38°), invarový terčík P03 na straně kamery. Výkres `vykresy/E7-V07_bez_zatizeni.pdf` (`src/vykres_u.py`), 3D `3d/E7_V07_bez_zatizeni.step`, výpočty `vypocty.md` §22, postup `postup_zkousky.md` kap. 10, model `model3d.variant_u`.
+
 **Objednávka (16. 11. 2026):** dodavatelé podle fází (1 = mrznutí–tání, 2 = sublimace) v `dodavatele_E7.md` / `E7_dodavatele.docx`; nářezové výkresy v `vyroba/narezy/` (přehled + plány N01–N03 + výrobní výkresy, zvlášť PDF pro každou firmu; generuje `src/narezove_vykresy.py`); 3D model finální sestavy `web/E7_sestava_3D.html` a `3d/E7_sestava_final.glb`.
 
 **Revize B2 (27. 10. 2026):** sestava jen z koupených, laserem řezaných a 3D tištěných dílů (bez obrábění) – objednávka po obchodech a postup sestavení v `objednavka.md`, výrobní list V06, DXF v `vyroba/laser`, STL v `vyroba/tisk`.

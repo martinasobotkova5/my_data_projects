@@ -33,6 +33,8 @@ EXTRA = [("vykresy/E7_drawings.pdf", "E7_drawings.pdf"),
          ("E7_dodavatele.docx", "E7_dodavatele_CZ.docx"),
          ("web/E7_sestava_3D.html", "E7_sestava_3D.html"),
          ("3d/E7_sestava_final.glb", "3d/E7_sestava_final.glb"),
+         ("vykresy/E7-V07_bez_zatizeni.pdf", "E7-V07_faze1_bez_zatizeni.pdf"),
+         ("3d/E7_V07_bez_zatizeni.step", "3d/E7_V07_bez_zatizeni.step"),
          ("postup_zkousky.md", "E7_postup_zkousky_CZ.md"),
          ("poptavka_ramu.md", "E7_poptavka_ramu_CZ.md"),
          ("poptavky_laser.md", "E7_poptavky_laser.md"),
@@ -98,7 +100,8 @@ def build():
         "One-page measurement review: E7_review.pdf (also E7_review.html).\n"
         "Drawings: E7_drawings.pdf (rev. B3, sheets V01–V06). Purchase list: E7_purchase_list.md;\n"
         "order by shop + assembly (Czech): E7_objednavka_CZ.md; suppliers by phase: E7_dodavatele_CZ.docx.\n"
-        "Final rig 3D (parts + suppliers): E7_sestava_3D.html. Cutting drawings: vyroba/narezy/E7_narezove_vykresy.pdf.\n"
+        "Phase 1 without load: E7-V07_faze1_bez_zatizeni.pdf, 3d/E7_V07_bez_zatizeni.step, print vyroba/tisk/E7-V03u_*.\n"
+        "Final rig 3D, phase 1 / phase 2 switch (parts + suppliers): E7_sestava_3D.html. Cutting drawings: vyroba/narezy/E7_narezove_vykresy.pdf.\n"
         " Manufacturing files: vyroba/laser (DXF), vyroba/tisk (STL).\n"
         "CAD: cad/E7_V04_cell.dxf, 3D: 3d/*.step (Onshape, SolidWorks, FreeCAD).\n")
     zp = os.path.join(OUT, "E7_package.zip")

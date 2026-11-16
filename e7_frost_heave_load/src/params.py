@@ -241,7 +241,7 @@ C_DISC_D, C_DISC_HOLE = 117.5, 17.0     # ocelové kotouče ⌀117,5 × 12 (lase
 C_DISC_KG = (1.0, 0.5)                  # kotouč 1 kg a 0,5 kg
 C_TRAVEL = 25.0                         # volný zdvih / pokles zátěže
 C_SURCHARGES_KPA = (5.0, 10.0, 15.0, 20.0, 25.0)   # pod pístem
-C_CAM_Y, C_CAM_H, C_CAM_TILT = -92.0, 100.0, 43.0  # kamera stranou (−y), výška nad pískem, sklon k ose (rev. B)
+C_CAM_Y, C_CAM_H, C_CAM_TILT = -102.0, 110.0, 38.0  # kamera stranou (−y), výška nad pískem, sklon k ose; 16. 11. 2026: z (−92, 100, 43°) → objektiv 6 mm pokryje celý ⌀100 (var. U)
 C_LASER_Y, C_LASER_H = 81.0, 183.0      # rev. B3a (13. 11. 2026, úhly DOE z nabídky Picotronic): laser vedle horního příčníku, 66°, 200 mm od středu povrchu
 C_LASER_DOE = (3.1, 31.0)                # Picotronic DOE-DER253: úhel čára–čára 3,1°, vějíř (délka čáry) 31° – nabídka A2627918
 C_PT100_R, C_PT100_ANG = 37.5, 315.0    # (rev. A, už neplatí) Pt100 svisle ve volném mezikruží
@@ -284,7 +284,14 @@ C_INVAR_D = 16.0                         # sloupek z Invaru 36 ⌀16 z desky →
 C_ROD_INVAR = True                       # vodicí tyč ⌀12 z Invaru 36 (broušená) místo oceli – jinak ocel 249 mm = 57 µm / 20 K
 C_INVAR_XY = (150.0, 108.0)              # rev. B3: na podélníku základny (x 150) za sloupem; poloha sloupku (mimo celu, sloupy, kameru a laser)
 C_LVDT_XY = (30.0, 58.0)                 # rev. B3: vedle příčníku (y > 40), pod nosnou deskou ⌀140; LVDT pod nosnou deskou závaží (r 57 < 60), vedle příčníku
-C_REF_XY = (42.0, 42.0)                  # rev. B3; invarový referenční terčík pro kameru ve výšce límce (r 59, mezera 6)
+C_REF_XY = (20.0, -56.0)                 # 16. 11. 2026: invarový referenční terčík pro kameru a laser – na straně kamery (r 59), v zorném poli
+C_REF_VIA = (75.0, -30.0)                # ohyb ramene P03 – rameno obchází celu zvenku, nepřechází nad vzorkem
 ALPHA_G10_Z = 15e-6                      # G10 kolmo k vrstvám ≈ (ověřit), podložky 40 mm
 ALPHA_SAND = 10e-6                       # tepelná roztažnost písku (bez fázové změny)
 C_CYCLE_H = (24.0, 24.0)                 # mrznutí / tání [h] – podle simulace s izolací (sim_thaw.py)
+
+# --- varianta U (16. 11. 2026): fáze 1 BEZ ZATÍŽENÍ – stejný rám, kamera a laser; bez pístu, zátěže a LVDT ------------
+C_U_RIM = 5.0                            # horní hrana cely jen 5 mm nad pískem (rovné čelo, bez límce) → kamera vidí celý ⌀100
+U_TOP = SAND_TOP + C_U_RIM               # 131 nad spodkem jádra (místo COLLAR_TOP 160)
+C_LED = (20.0, 6.0)                      # bílá LED 5 V na hliníkové hvězdě ⌀20, přilepená na čelo boxu kamery vedle okénka
+C_LED_OFF = 38.0                         # střed LED od osy objektivu (po delší straně boxu, dál od vzorku)

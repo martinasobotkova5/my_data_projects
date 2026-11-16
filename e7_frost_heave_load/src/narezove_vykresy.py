@@ -115,10 +115,10 @@ def table(ax, x, y, cols, widths, rows, fs=6.6, rh=5.2, head_fill="#e3eef5"):
 
 # ----------------------------------------------------------------------------------------------------------------
 def n00(pdf):
-    fig, ax = sheet("E7-N00", "přehled nářezů a dodavatelů", "všechny firmy (fáze 1)")
+    fig, ax = sheet("E7-N00", "přehled nářezů a dodavatelů", "všechny firmy (fáze 1 a 2)")
     ax.text(14, 194, "Nářezové výkresy – přehled", fontsize=13, weight="bold")
-    ax.text(14, 188, "Fáze 1 (jednoduchá zkouška mrznutí–tání) potřebuje všechny řezané díly níže. Fáze 2 (sublimace) "
-                     "nepřidává žádné řezané ani obráběné díly – jen nákup (váha, silikagel, misky, SHT45).",
+    ax.text(14, 188, "Fáze 1 = mrznutí–tání BEZ ZATÍŽENÍ (varianta U): rám T01–T04, podložky G10 a invarový sloupek B02. "
+                     "Fáze 2 = sublimace se zátěží (varianta C): navíc vodicí tyč B01 a laserem řezané díly L03–L07.",
             fontsize=7.5, color=MUTE)
     t1 = PROF["E7-T01"]; t2 = PROF["E7-T02"]; t3 = PROF["E7-T03"]; t4 = PROF["E7-T04"]
     L80 = 2 * t1["L"] + t3["L"] + t4["L"] + 4 * KERF
@@ -132,7 +132,7 @@ def n00(pdf):
         ("", "", f"celkem 40×80: {L80:g} mm, 40×40: {L40:g} mm", "", "", "+ úhelníky, T-matice, nohy", ""),
         ("§Kovohutě Rokycany (sales@koro.cz) – Invar 36, 1.3912 (výkres N02 + B01, B02)",) + ("",) * 6,
         ("B01", "vodicí tyč", "Invar 36 ⌀12 h9", f"{bp.ROD_L:g} ±0,5", "1", "čela kolmá, sražení 0,5", "N02, B01"),
-        ("B02", "sloupek LVDT", "Invar 36 ⌀16", f"{round(bp.POST_L):g} ±0,5", "1", "čela kolmá, sražení 0,5", "N02, B02"),
+        ("B02", "sloupek (terčík, LVDT)", "Invar 36 ⌀16", f"{round(bp.POST_L):g} ±0,5", "1", "čela kolmá, sražení 0,5", "N02, B02"),
         ("§Elektroizolanty Praha – sklotextit G10 (výkres N02 + B03)",) + ("",) * 6,
         ("B03", "podložka pod celu", "G10 tyč ⌀20 × 1000", f"{p.C_INS_T:g} ±0,05", "3", "čela rovnoběžná ≤ 0,05", "N02, B03"),
         ("§grupol.cz (laser, nahrát DXF) – plechy (výkres N03 + L03–L07)",) + ("",) * 6,
@@ -142,13 +142,17 @@ def n00(pdf):
         ("L06", "závaží 1 kg", "ocel S235JR, tl. 12", "⌀117,5, otvor ⌀17", "4", "E7-L06_disc_1kg_12mm.dxf", "N03, L06"),
         ("L07", "závaží 0,5 kg", "ocel S235JR, tl. 6", "⌀117,5, otvor ⌀17", "1", "E7-L07_disc_0.5kg_6mm.dxf", "N03, L07"),
     ]
-    yy = table(ax, 14, 182, ["poz.", "díl", "materiál / polotovar", "rozměr", "ks", "pozn.", "výkres"],
-               [12, 30, 62, 34, 9, 52, 22], rows)
+    PH = {"T": "1", "B02": "1", "B03": "1", "B01": "2 *", "L": "2"}
+    rows = [r + ("",) if r[0].startswith("§") or not r[0] else r + (PH.get(r[0], PH.get(r[0][:1], "")),) for r in rows]
+    yy = table(ax, 14, 182, ["poz.", "díl", "materiál / polotovar", "rozměr", "ks", "pozn.", "výkres", "fáze"],
+               [12, 30, 62, 34, 9, 52, 22, 12], rows)
     notes = ["Prořez pily počítán 3 mm. Nekótované tolerance ISO 2768-mK, hrany odjehlit.",
              "Hliník 10 mm: ověřit u grupol.cz, že ho laser řeže; jinak stejné DXF na vodní paprsek (Zamet, Light Cut).",
              "Kotouče L06/L07 po výrobě zvážit, rozdíl hmotnosti doladit podložkami (±0,5 mm tloušťky ≈ ±4 %).",
              "Invar: pokud Rokycany čela nezarovnají, objednat B01 270 mm a B02 335 mm a čela srovnat v dílně.",
-             "Tištěné díly (P01–P11, cela) se neřežou – STL/STEP ve vyroba/tisk."]
+             "* B01 patří do fáze 2, ale objednat ji spolu s B02 (jedna poptávka, malé množství).",
+             "Díly L03–L07 (grupol.cz) stačí objednat až před fází 2. Otvor ⌀14 v T04 vyvrtat hned (rám je společný).",
+             "Tištěné díly (cela E7-V03u, P03–P08, P10u) se neřežou – STL/STEP ve vyroba/tisk."]
     for k, s in enumerate(notes):
         ax.text(14, yy - 7 - k * 4.6, "• " + s, fontsize=7)
     pdf.savefig(fig); plt.close(fig)
@@ -212,7 +216,7 @@ def n02(pdf):
 
 
 def n03(pdf):
-    fig, ax = sheet("E7-N03", "laserové řezání – rozložení na plechu", "grupol.cz (alt. Zamet, Light Cut)")
+    fig, ax = sheet("E7-N03", "laserové řezání – rozložení na plechu (fáze 2)", "grupol.cz (alt. Zamet, Light Cut)")
     ax.text(14, 194, "Laserové řezání – rozložení dílů na plechu (orientační; firma si díly rozloží sama)",
             fontsize=12, weight="bold")
     ax.text(14, 188.5, f"Mezera mezi díly a k okraji {GAP:g} mm. Do e-shopu nahrát DXF z vyroba/laser – "

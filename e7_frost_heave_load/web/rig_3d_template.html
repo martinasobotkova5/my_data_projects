@@ -27,6 +27,10 @@ body { background: var(--bg); color: var(--ink); font: 14px/1.45 var(--f-body); 
 header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
 h1 { font: 600 22px/1.2 var(--f-body); margin: 0; text-wrap: balance; }
 .sub { color: var(--ink-2); font-size: 13px; }
+.phase { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--panel); }
+.phase button { font: 500 13px var(--f-body); color: var(--ink); background: transparent; border: 0; padding: 7px 12px; cursor: pointer; }
+.phase button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.phase button + button { border-left: 1px solid var(--rule); }
 .main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 14px; align-items: start; }
 .stage { position: relative; background: var(--stage); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden;
   height: min(80vh, 780px); min-height: 380px; max-width: 100%; }
@@ -65,16 +69,14 @@ aside h2 { font: 600 14px var(--f-body); margin: 0 0 6px; }
 
 <div class="wrap">
   <header>
-    <h1>Sestava E7 – finální návrh</h1>
-    <span class="sub">rám z T-profilů · cela ⌀220 × 200 · zátěž na pístu ⌀50 · LVDT na invarovém sloupku · kamera + laser 11 čar</span>
+    <h1>Sestava E7</h1>
+    <div class="phase" role="group" aria-label="Fáze experimentu">
+      <button id="phU" aria-pressed="true">Fáze 1 – bez zatížení</button><button id="phC" aria-pressed="false">Fáze 2 – se zátěží</button>
+    </div>
+    <span class="sub" id="sub"></span>
   </header>
 
-  <div class="facts">
-    <div class="fact"><div class="v">559 mm</div><div class="l">výška sestavy nad dnem mrazáku</div></div>
-    <div class="fact"><div class="v">340 × 320 mm</div><div class="l">půdorys rámu (nohy ±150 / ±140)</div></div>
-    <div class="fact"><div class="v">5–25 kPa</div><div class="l">zatížení pod pístem ⌀50 (0–4 kotouče)</div></div>
-    <div class="fact"><div class="v">≈ 1 µm / 10 µm</div><div class="l">rozlišení LVDT / laseru s kamerou</div></div>
-  </div>
+  <div class="facts" id="facts"></div>
 
   <div class="main">
     <div class="stage">
@@ -97,7 +99,15 @@ aside h2 { font: 600 14px var(--f-body); margin: 0 0 6px; }
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
-const GLB_B64 = "/*__GLB__*/";
+const GLB = { u: "/*__GLB_U__*/", c: "/*__GLB_C__*/" };
+const PHASE = {
+  u: { sub: "rám z T-profilů · cela ⌀220 × 171 s rovným čelem 5 mm nad pískem · celý povrch volný · kamera + laser 11 čar + bílá LED · invarový terčík",
+       facts: [["423 mm", "výška sestavy nad dnem mrazáku"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
+               ["0 kPa", "bez zatížení – měří se celý povrch ⌀100"], ["≈ 10 µm", "výška povrchu laserem s kamerou (1 px ≈ 30 µm)"]] },
+  c: { sub: "stejný rám, kamera a laser · cela ⌀220 × 200 s límcem · zátěž na pístu ⌀50 · LVDT na invarovém sloupku",
+       facts: [["559 mm", "výška sestavy nad dnem mrazáku"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
+               ["5–25 kPa", "zatížení pod pístem ⌀50 (0–4 kotouče)"], ["≈ 1 µm / 10 µm", "rozlišení LVDT / laseru s kamerou"]] },
+};
 // groups: [id, label, supplier text, colour, matcher]
 const GROUPS = [
   ["frame", "Rám z T-profilů", "ENPRAG, s.r.o., Praha 5 – profily nařezané podle výkresů T01–T04, úhelníky, T-matice, nohy", "#9aa3ab",
@@ -106,8 +116,8 @@ const GROUPS = [
    n => /^(cell|unsaturated sand|G10|M )/.test(n)],
   ["load", "Zátěž a vedení", "kotouče a píst: laser grupol.cz (DXF) · Invar: Kovohutě Rokycany · igus: HENNLICH · kroužek, kulička: Fabory / cyklo", "#6f7c8a",
    n => /^(L0\d|steel ball|guide rod|shaft collar|igus|P01)/.test(n)],
-  ["meas", "Měření", "LVDT: Elkome (RDP) · laser: Picotronic · kamera + RPi: RPishop.cz · Invar: Kovohutě Rokycany · tištěné díly: vlastní tisk", "#d1873a",
-   n => /^(LVDT|Invar 36 post|P0[2-8]|line laser)/.test(n)],
+  ["meas", "Měření", "laser: Picotronic · kamera + RPi: RPishop.cz · LED: TME / GME · Invar: Kovohutě Rokycany · LVDT (fáze 2): Elkome · tištěné díly: vlastní tisk", "#d1873a",
+   n => /^(LVDT|Invar 36 post|P0[2-8]|line laser|LED)/.test(n)],
 ];
 // [prefix of model name, Czech name, where to buy]
 const CZ = [
@@ -119,7 +129,8 @@ const CZ = [
   ["angle bracket 40 slot", "úhelník 40 – sloupy", "úhelník 40, drážka 8 + T-matice M8 – ENPRAG"],
   ["T04", "T04 horní nosník 40×80 × 340, otvor ⌀14", "profil 40×80 × 340 mm, otvor ⌀14 vyvrtá ENPRAG podle výkresu T04"],
   ["G10", "podložka G10 ⌀20 × 40", "tyč sklotextit G10 ⌀20, nařezat 3 × 40 mm – Elektroizolanty Praha"],
-  ["cell", "cela ⌀220 × 200 (3D tisk)", "vlastní tisk PETG-CF, ≈ 1,3 kg filamentu – Prusa Research"],
+  ["cell PETG D220x171", "cela ⌀220 × 171, rovné čelo (3D tisk, E7-V03u)", "fáze 1: vlastní tisk PETG-CF, ≈ 1,1 kg filamentu – Prusa Research; čelo jen 5 mm nad pískem, kamera vidí celý povrch"],
+  ["cell", "cela ⌀220 × 200 s límcem (3D tisk, E7-V03)", "fáze 2: vlastní tisk PETG-CF, ≈ 1,3 kg filamentu – Prusa Research"],
   ["unsaturated", "vzorek písku ⌀100 × 100", "písek – máte (Sr 0,5)"],
   ["M TDR CS645 head", "TDR CS645 – hlava", "máte (Campbell, servis Ekotechnika)"],
   ["M TDR CS645 rod", "TDR CS645 – tyčky", "máte (Campbell, servis Ekotechnika)"],
@@ -140,9 +151,10 @@ const CZ = [
   ["P02", "P02 rameno LVDT (tisk)", "vlastní 3D tisk"],
   ["LVDT RDP", "LVDT RDP DCTH400AG ±10 mm", "Elkome (zastoupení RDP pro ČR) – poptávka"],
   ["LVDT plunger", "jádro LVDT", "součást LVDT"],
-  ["P03", "P03 rameno terčíku (tisk)", "vlastní 3D tisk"],
+  ["P03", "P03 rameno s invarovým terčíkem (tisk)", "vlastní 3D tisk; obchází celu zvenku, terčík na straně kamery – reference posunu rámu"],
+  ["LED", "bílá LED 5 V na hvězdě ⌀20 (fotky povrchu)", "TME / GM electronic; přilepit vedle okénka boxu kamery, spíná RPi (GPIO27)"],
   ["P06", "P06 box kamery: RPi 5 + HQ kamera + objektiv 6 mm", "elektronika RPishop.cz, box vlastní 3D tisk"],
-  ["P08", "P08 závěs kamery (tisk)", "vlastní 3D tisk"],
+  ["P08", "P08 závěs kamery (tisk)", "vlastní 3D tisk; kamera 110 mm nad pískem, sklon 38°"],
   ["P05", "P05 držák laseru (tisk)", "vlastní 3D tisk"],
   ["line laser", "laser Picotronic DOE253, 11 čar", "Picotronic GmbH (dle cenové nabídky)"],
 ];
@@ -168,28 +180,40 @@ new ResizeObserver(resize).observe(stage);
 const parts = []; let center = new THREE.Vector3(), radius = 400, selected = null, hiMat = null;
 function nameOf(o) { while (o && o.parent) { if (/^E7/.test(o.parent.name || "")) return o.name.replace(/_/g, " "); o = o.parent; } return ""; }
 
-const bin = Uint8Array.from(atob(GLB_B64), c => c.charCodeAt(0)).buffer;
-new THREE.GLTFLoader().parse(bin, "", gltf => {
-  const root = gltf.scene;
-  const box0 = new THREE.Box3().setFromObject(root), sz = box0.getSize(new THREE.Vector3());
-  if (sz.z > sz.y * 1.05) root.rotation.x = -Math.PI / 2;      // Z-up export → Y-up view
-  scene.add(root);
-  const byName = new Map();
-  root.traverse(o => {
-    if (!o.isMesh) return;
-    const n = nameOf(o);
-    o.material = o.material.clone(); o.material.metalness = Math.min(o.material.metalness ?? 0, 0.3); o.material.roughness = 0.65;
-    if (/^cell/.test(n)) { o.material.transparent = true; o.material.opacity = 0.55; o.material.depthWrite = false; }
-    if (!byName.has(n)) byName.set(n, []); byName.get(n).push(o);
-  });
-  for (const [n, meshes] of byName) {
-    const g = GROUPS.find(g => g[4](n)); if (!g) continue;
-    parts.push({ name: n, meshes, group: g[0], base: meshes.map(m => m.material.color.clone()) });
-  }
-  const box = new THREE.Box3().setFromObject(root); box.getCenter(center); radius = box.getSize(new THREE.Vector3()).length() / 2;
-  camera.near = radius / 200; camera.far = radius * 200; camera.updateProjectionMatrix();
-  buildList(); view("iso"); document.getElementById("load").style.display = "none";
-}, err => { document.getElementById("load").textContent = "Model se nepodařilo načíst."; });
+let root = null;
+function load(ph) {
+  document.getElementById("phU").setAttribute("aria-pressed", ph === "u");
+  document.getElementById("phC").setAttribute("aria-pressed", ph === "c");
+  document.getElementById("sub").textContent = PHASE[ph].sub;
+  document.getElementById("facts").innerHTML = PHASE[ph].facts.map(f => `<div class="fact"><div class="v">${f[0]}</div><div class="l">${f[1]}</div></div>`).join("");
+  if (root) { scene.remove(root); root = null; }
+  parts.length = 0; document.getElementById("groups").innerHTML = ""; select(null);
+  const ld = document.getElementById("load"); ld.style.display = ""; ld.textContent = "Načítám model…";
+  const bin = Uint8Array.from(atob(GLB[ph]), c => c.charCodeAt(0)).buffer;
+  new THREE.GLTFLoader().parse(bin, "", gltf => {
+    root = gltf.scene;
+    const box0 = new THREE.Box3().setFromObject(root), sz = box0.getSize(new THREE.Vector3());
+    if (sz.z > sz.y * 1.05) root.rotation.x = -Math.PI / 2;      // Z-up export → Y-up view
+    scene.add(root);
+    const byName = new Map();
+    root.traverse(o => {
+      if (!o.isMesh) return;
+      const n = nameOf(o);
+      o.material = o.material.clone(); o.material.metalness = Math.min(o.material.metalness ?? 0, 0.3); o.material.roughness = 0.65;
+      if (/^cell/.test(n)) { o.material.transparent = true; o.material.opacity = 0.55; o.material.depthWrite = false; }
+      if (!byName.has(n)) byName.set(n, []); byName.get(n).push(o);
+    });
+    for (const [n, meshes] of byName) {
+      const g = GROUPS.find(g => g[4](n)); if (!g) continue;
+      parts.push({ name: n, meshes, group: g[0], base: meshes.map(m => m.material.color.clone()) });
+    }
+    const box = new THREE.Box3().setFromObject(root); box.getCenter(center); radius = box.getSize(new THREE.Vector3()).length() / 2;
+    camera.near = radius / 200; camera.far = radius * 200; camera.updateProjectionMatrix();
+    buildList(); view("iso"); ld.style.display = "none";
+  }, err => { ld.textContent = "Model se nepodařilo načíst."; });
+}
+document.getElementById("phU").onclick = () => load("u");
+document.getElementById("phC").onclick = () => load("c");
 
 function view(k) {
   const d = radius * 3.1 * Math.max(1, 0.9 / camera.aspect), c = center;
@@ -215,6 +239,7 @@ function buildList() {
   const host = document.getElementById("groups");
   for (const g of GROUPS) {
     const items = parts.filter(p => p.group === g[0]);
+    if (!items.length) continue;
     const uniq = new Map();
     for (const p of items) { const k = cz(p.name)[1]; if (!uniq.has(k)) uniq.set(k, [p, 0]); uniq.get(k)[1]++; }
     const div = document.createElement("div"); div.className = "grp";
@@ -240,5 +265,6 @@ canvas.addEventListener("pointerup", e => {
   const hit = ray.intersectObjects(vis, false)[0];
   select(hit ? parts.find(p => p.meshes.includes(hit.object)) : null);
 });
+load("u");
 (function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
 </script>

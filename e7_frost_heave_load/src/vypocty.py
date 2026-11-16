@@ -572,3 +572,70 @@ print(f"\n**Pod pístem** led nesublimuje (kryt), páru může odvést jen bočn
       "dní a o mm za týdny – laser (≈ 10 µm) ho zachytí den po dni; u pórového ledu pokles téměř nulový (kontrolní "
       "vzorek: suchá vrstva vznikne, kostra zrn stojí). Teplota se během sublimační série nemění (−10 °C), takže "
       "teplotní drift sestavy je prakticky nulový. Odhady ověří předzkouška (miska ledu na váze v mrazáku).\n")
+
+# ---------------------------------------------------------------------------------------------------------------
+print("## 22. Fáze 1 bez zatížení – varianta U (16. 11. 2026)\n")
+import buildparts as bp                              # noqa: E402
+_th = math.radians(p.C_CAM_TILT)
+
+
+def _rot(v):
+    return (v[0], v[1] * math.cos(_th) - v[2] * math.sin(_th), v[1] * math.sin(_th) + v[2] * math.cos(_th))
+
+
+_w = _rot((0, 0, -35))
+_C = (0.0, p.C_CAM_Y + _w[1], bp.Z_S1 + p.C_CAM_H + _w[2])
+_L = (0.0, p.C_LASER_Y, bp.Z_S1 + p.C_LASER_H)
+
+
+def _hidden(S, rim):
+    n = bad = 0
+    for i in range(-49, 50, 2):
+        for j in range(-49, 50, 2):
+            if i * i + j * j > 49.5 ** 2:
+                continue
+            n += 1
+            d = (i - S[0], j - S[1], bp.Z_S1 - S[2])
+            a = d[0] ** 2 + d[1] ** 2
+            b = 2 * (S[0] * d[0] + S[1] * d[1])
+            c = S[0] ** 2 + S[1] ** 2 - 50.0 ** 2
+            disc = b * b - 4 * a * c
+            if disc < 0:
+                continue
+            for t in ((-b - math.sqrt(disc)) / (2 * a), (-b + math.sqrt(disc)) / (2 * a)):
+                if 0 < t < 1 and S[2] + t * d[2] < bp.Z_S1 + rim:
+                    bad += 1
+                    break
+    return 100.0 * bad / n
+
+
+_ax, _u, _v = _rot((0, 0, -1)), _rot((1, 0, 0)), _rot((0, 1, 0))
+_xs, _ys = [], []
+for k in range(72):
+    P = (50 * math.cos(k * math.pi / 36), 50 * math.sin(k * math.pi / 36), bp.Z_S1)
+    r = [P[i] - _C[i] for i in range(3)]
+    dot = lambda a, b: sum(a_ * b_ for a_, b_ in zip(a, b))
+    _xs.append(math.degrees(math.atan2(dot(r, _u), dot(r, _ax))))
+    _ys.append(math.degrees(math.atan2(dot(r, _v), dot(r, _ax))))
+_dist = math.dist(_C, (0, 0, bp.Z_S1))
+_px = _dist * 6.287 / 6.0 / 4056 * 1000
+print("Bez pístu a zátěže je celý povrch ⌀100 volný. Aby ho kamera i laser opravdu viděly, cela má **rovné čelo jen "
+      f"{p.C_U_RIM:g} mm nad pískem** (bez límce; tisk ⌀220 × {p.U_TOP + p.C_INS_T:g}) a kamera je přesunuta "
+      f"(y {p.C_CAM_Y:g}, {p.C_CAM_H:g} mm nad pískem, sklon {p.C_CAM_TILT:g}°; dříve −92 / 100 / 43°).\n")
+print("| | límec 34 mm (var. C) | čelo 5 mm (var. U) |\n|---|---|---|")
+print(f"| kamera nevidí | {_hidden(_C, 34):.1f} % povrchu | {_hidden(_C, p.C_U_RIM):.1f} % povrchu |")
+print(f"| laser neosvítí | {_hidden(_L, 34):.1f} % | {_hidden(_L, p.C_U_RIM):.1f} % |\n")
+print(f"Zorné pole objektivu 6 mm na HQ kameře (6,29 × 4,71 mm): ±27,6° × ±21,4°; potřeba na celý ⌀100: "
+      f"±{max(map(abs, _xs)):.1f}° × {min(_ys):.1f}…{max(_ys):.1f}° → vejde se s rezervou 2–3°. Vzdálenost objektiv–střed "
+      f"{_dist:.0f} mm, 1 pixel ≈ {_px:.0f} µm; posun čáry = {1 / math.tan(math.radians(p.C_LASER_ANG)):.2f} × změna výšky, "
+      "střed čáry na 1/10 pixelu → výška ≈ 5–10 µm.\n")
+_dT = 20.0
+_frame = p.ALPHA_AL * bp.COL_H * _dT * 1000
+_cell = p.ALPHA_PETG * (p.C_INS_T + p.BODY_BOTTOM) * _dT * 1000 + p.ALPHA_G10_Z * p.C_INS_T * _dT * 1000
+print(f"**Teplotní posun (−10 ↔ +10 °C):** sloupy rámu {bp.COL_H:g} mm Al zvednou kameru i laser o ≈ {_frame:.0f} µm – "
+      f"to ukáže invarový terčík P03 (stojí na základně, výška se nemění) a odečte se; dno cely a podložky G10 zvednou "
+      f"písek o ≈ {_cell:.0f} µm – opraví se podle slepé zkoušky S0 (atrapa) a teploty dna (NTC). Bez těchto oprav by "
+      "posun byl srovnatelný se zdvihem písku.\n")
+print("**Fotky:** bílá LED 5 V vedle okénka kamery; při každém snímání dva snímky – s LED (obraz povrchu: námraza, "
+      "trhliny, vysychání) a s laserem bez LED (výšková mapa). LVDT se ve fázi 1 nepoužívá – kupuje se až pro fázi 2 "
+      "(píst = kryt při sublimaci).\n")

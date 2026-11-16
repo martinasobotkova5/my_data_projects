@@ -314,7 +314,14 @@ PRINT_NOTES = {
     "E7-P02_lvdt_arm": ["svěrka ⌀16,3 na Invarový sloupek, svěrka ⌀20,9 na LVDT DCTH (⌀20,6)",
                         "drážky 1,6 + šroub M3 (svěrky)", "výška ramene 12"],
     "E7-P03_target_arm": ["svěrka ⌀16,3 na sloupek; plocha 14 × 14 pro bílý terčík (samolepka)",
-                          "osadit tak, aby horní plocha byla ve výšce horní hrany límce cely"],
+                          "rameno obchází celu zvenku (ohyb), terčík na straně kamery – v zorném poli kamery i laseru",
+                          "fáze 1 (cela U): spodní plocha 3 mm nad čelem cely; fáze 2: horní plocha ve výšce límce"],
+    "E7-P10u_screed_5mm": ["fáze 1 (cela U): příčka leží na rovném čele cely, břit sahá 5 mm pod čelo (= povrch písku)",
+                           "otáčet kolem osy, přebytek písku odebrat; břit tisknout naležato, 100 % výplň"],
+    "E7-V03u_cell_bez_zatizeni": ["fáze 1: cela ⌀220 × 171 v jednom kuse, rovné čelo 5 mm nad pískem (bez límce)",
+                                  "dutina ⌀100, dno pod pískem 26; port bodu M (TDR, vlákno, Pt100), NTC ⌀4 ve dně",
+                                  "3 kapsy ⌀20,4 hl. 40 pro podložky G10; tisk dnem na podložku, bez podpěr v dutině",
+                                  "stěna kolem dutiny 3 perimetry + 10–15 % gyroid (izolace); dutinu natřít epoxidem"],
     "E7-P04_post_foot": ["otvor ⌀16,3 se dnem 3 mm (přemostí drážku) – sloupek stojí na dně patky",
                          "2× ⌀5,5 (M5×20) do T-matic v horní drážce podélníku T02, zahloubení ⌀10 × 6; svěrka M3"],
     "E7-P05_laser_holder": [f"otvor ⌀10,2 pod úhlem {p.C_LASER_ANG:g}° pro laser ⌀10; červík M3",
@@ -332,13 +339,13 @@ PRINT_NOTES = {
 }
 
 
-def sheet_print(name, fn, qty, pdf):
+def sheet_print(name, fn, qty, pdf, mat="PETG-CF, tisk 0,2 mm, 3 perimetry, 40 % gyroid"):
     s = centred(fn())
     bb = s.val().BoundingBox()
     w, d, h = bb.xlen, bb.ylen, bb.zlen
     S = pick_scale(w + d + 90, d + h + 70)
-    D = Drawing(dict(no=name[:6], name=name[7:].replace("_", " "), mat="PETG-CF, tisk 0,2 mm, 3 perimetry, 40 % gyroid",
-                     qty=qty), S)
+    no, nm = name.split("_", 1)
+    D = Drawing(dict(no=no, name=nm.replace("_", " "), mat=mat, qty=qty), S)
     ox, oy = 25 * S, 62 * S
     bf, _ = D.view(s, "front", ox, oy, label="ZEPŘEDU")
     bt, circ = D.view(s, "top", ox, bf[3] + 22 * S, label="SHORA")
@@ -375,6 +382,13 @@ def main():
             made.append(sheet_profile(prof, pdf))
         for name, fn, q in bp.PRINT:
             made.append(sheet_print(name, fn, q, pdf))
+        # phase 1 – variant U (appended, page order of the sheets above stays the same)
+        for name, fn, q in bp.PRINT_U_EXTRA:
+            made.append(sheet_print(name, fn, q, pdf))
+        cu = [f for f in os.listdir(os.path.join(HERE, "..", "vyroba", "tisk")) if f.startswith("E7-V03u") and f.endswith(".step")][0]
+        made.append(sheet_print("E7-V03u_cell_bez_zatizeni",
+                                lambda: cq.importers.importStep(os.path.join(HERE, "..", "vyroba", "tisk", cu)), 1, pdf,
+                                mat="PETG-CF, 0,2 mm, 3 perimetry, gyroid 10–15 %"))
     print(len(made), "sheets →", OUT)
 
 
