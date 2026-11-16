@@ -29,6 +29,10 @@ EXTRA = [("vykresy/E7_drawings.pdf", "E7_drawings.pdf"),
          ("E7_review.pdf", "E7_review.pdf"),
          ("purchase_list.md", "E7_purchase_list.md"),
          ("objednavka.md", "E7_objednavka_CZ.md"),
+         ("dodavatele_E7.md", "E7_dodavatele_CZ.md"),
+         ("E7_dodavatele.docx", "E7_dodavatele_CZ.docx"),
+         ("web/E7_sestava_3D.html", "E7_sestava_3D.html"),
+         ("3d/E7_sestava_final.glb", "3d/E7_sestava_final.glb"),
          ("postup_zkousky.md", "E7_postup_zkousky_CZ.md"),
          ("poptavka_ramu.md", "E7_poptavka_ramu_CZ.md"),
          ("poptavky_laser.md", "E7_poptavky_laser.md"),
@@ -93,7 +97,9 @@ def build():
         "3D model of freezing and thawing: E7_3D_model.html (works without internet).\n"
         "One-page measurement review: E7_review.pdf (also E7_review.html).\n"
         "Drawings: E7_drawings.pdf (rev. B3, sheets V01–V06). Purchase list: E7_purchase_list.md;\n"
-        "order by shop + assembly (Czech): E7_objednavka_CZ.md. Manufacturing files: vyroba/laser (DXF), vyroba/tisk (STL).\n"
+        "order by shop + assembly (Czech): E7_objednavka_CZ.md; suppliers by phase: E7_dodavatele_CZ.docx.\n"
+        "Final rig 3D (parts + suppliers): E7_sestava_3D.html. Cutting drawings: vyroba/narezy/E7_narezove_vykresy.pdf.\n"
+        " Manufacturing files: vyroba/laser (DXF), vyroba/tisk (STL).\n"
         "CAD: cad/E7_V04_cell.dxf, 3D: 3d/*.step (Onshape, SolidWorks, FreeCAD).\n")
     zp = os.path.join(OUT, "E7_package.zip")
     with zipfile.ZipFile(zp, "w", zipfile.ZIP_DEFLATED) as z:
