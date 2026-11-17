@@ -12,6 +12,8 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 **Revize B3 (9. 11. 2026):** celý rám z hliníkových T-profilů drážka 8 řezaných na délku – 2 podélníky 40×40, příčka 40×80 (nese 3 podložky G10), 2 sloupy 40×80, horní příčník 40×80 s jediným otvorem ⌀14; pouzdro ložiska visí pod příčníkem, spoje úhelníky a vkládací T-matice. Laserem řezané desky L01/L02 odpadly. Výkresy profilů T01–T04 ve `vyroba/vykresy`.
 
+**Sdílení 3D modelu:** `web/E7_sestava_3D_offline.html` je jeden soubor (≈ 4,5 MB) s modely i knihovnou three.js – funguje bez internetu, stačí ho poslat (e-mail, Teams, OneDrive; pro e-mail raději `web/E7_sestava_3D_sdileni.zip`) a otevřít dvojklikem v Chrome / Edge / Firefoxu. Generuje `src/build_web3d.py`.
+
 **Oběh kamery (16. 11. 2026):** ve fázi 1 kamera obíhá kolem vzorku ±180° – malá hlava s Raspberry Pi Camera Module 3 na rameni P14, hřídel ⌀12 h6 skrz otvor ⌀14 v T04, nad příčníkem ložiska 6001-2RS (blok P12), kolo m1 z72 a krokový motor 28BYJ-48 (P16, P19); RPi 5 v boxu P06 na příčníku (vanička P18). 36 snímků po 10° → 3D model povrchu; laser se snímá ve výchozí poloze. Model `src/orbit.py`, ověřeno bez kolizí v celém rozsahu, výpočty `vypocty.md` §23, postup kap. 10.
 
 **Fáze 1 bez zatížení (16. 11. 2026):** začíná se variantou U – stejný rám, kamera a laser, ale bez pístu, zátěže a LVDT; cela `E7-V03u` (⌀220 × 171) má rovné čelo jen 5 mm nad pískem, takže kamera a laser vidí celý povrch ⌀100; bílá LED pro fotky povrchu; kamera přesunuta (y −102, 110 mm nad pískem, sklon 38°), invarový terčík P03 na straně kamery. Výkres `vykresy/E7-V07_bez_zatizeni.pdf` (`src/vykres_u.py`), 3D `3d/E7_V07_bez_zatizeni.step`, výpočty `vypocty.md` §22, postup `postup_zkousky.md` kap. 10, model `model3d.variant_u`.
