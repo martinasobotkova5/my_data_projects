@@ -75,36 +75,18 @@ Hliníková atrapa ⌀99 × 100 místo písku, celý cyklus: drift (1) a (2) pro
 zmrzlém stavu.
 
 
-## 7 · Zapojení laseru (Picotronic DOE253-635-5-6(10x24))
+## 7 · Zapojení laseru – bez pájení
 
-Laser se napájí z Raspberry Pi 5 v boxu kamery (5 V), zapíná se tranzistorem z GPIO jen na dobu snímku.
-GPIO samo laser napájet nesmí (3,3 V a max. ≈ 16 mA), proto spínač MOSFET na záporném vodiči.
+Laser (5 V) se zapíná **kontaktem relé** z dvoukanálového modulu relé se šroubovacími svorkami; relé ovládá Raspberry Pi
+(GPIO17) jen na dobu snímku. Vodiče laseru se prodlouží **pákovými svorkami WAGO 221** (žádné pájení, žádná bužírka),
+kabel vede drážkou příčníku T04 k boxu s Raspberry Pi na pravém sloupu.
 
-```
-RPi 5 (40pin)                                  laser DOE253 (5 V DC)
- pin 2  (5V) ───────────────────────────────── červený (+)
-                                               černý (−) ──┐
-                                                           │ D
- pin 11 (GPIO17) ──[100 Ω]──┬──────────────── G  MOSFET AO3400 / IRLZ44N
-                            │                              │ S
-                         [100 kΩ]                          │
- pin 9  (GND) ──────────────┴──────────────────────────────┘
-```
-
-- **Polarita:** červený = +, černý = − (ověřit podle štítku / listu Picotronic, přepólování může diodu zničit).
-- **100 kΩ** mezi gate a GND drží laser vypnutý při startu RPi; **100 Ω** omezuje proud do gate.
-- **Vedení kabelu:** laser sedí v držáku P05 na straně +y vedle horního příčníku T04. Kabel 2 × 0,25 mm²
-  (prodloužit přívody laseru, spoj zapájet a přetáhnout bužírkou) vést drážkou příčníku T04 na stranu −y
-  k závěsu P08, do boxu kamery druhou vývodkou PG7. Délka ≈ 0,5 m. Spínač připájet na malou destičku
-  přišroubovanou na víko P07 vedle RPi.
-- **Program (RPi):** `gpiozero.OutputDevice(17)` → zapnout laser, 0,2 s počkat, snímek s pevnou expozicí,
-  laser vypnout; doporučeno ještě druhý snímek bez laseru (odečet pozadí). Interval 10 min, kolem 0 °C 1 min.
-- **Zaostření:** při prvním zapnutí zaostřit kroužkem laseru na povrch (200 mm), čáry co nejtenčí; pak zajistit
-  červíkem M3 v držáku P05 a natočit laser tak, aby čáry ležely napříč (ve směru x).
-- **Rosa na optice laseru** na začátku tání: laser je mimo vyhřátý box – ve slepé zkoušce zkontrolovat ostrost
-  čar po přepnutí na +10 °C; kdyby se rosil, nechat laser svítit trvale (5 mW = zanedbatelné teplo) nebo jej
-  obalit pěnou.
-- **Bezpečnost (třída 2M):** nedívat se do svazku, ani přes lupu / objektiv; svítí jen při snímku v zavřeném mrazáku.
+- **Polarita:** červený = +, černý = − (ověřit podle štítku laseru); + laseru na kontakt relé (NO), druhý kontakt na 5 V
+  svorkovnicového HATu, − laseru na GND.
+- **Program:** `e7_kamera.py` zapne relé, 0,3 s počká, sejme snímek s pevnou expozicí a relé vypne; třetí snímek bez
+  světla slouží jako pozadí. Ovládá se z počítače (webová stránka nebo SSH).
+- **Zaostření:** při prvním zapnutí zaostřit kroužkem laseru na povrch, čáry co nejtenčí; zajistit červíkem M3 v držáku P05.
+- **Bezpečnost (třída 2M):** nedívat se do svazku, ani přes lupu nebo objektiv; svítí jen při snímku v zavřeném mrazáku.
 
 
 ## 8 · 3D model povrchu ruční fotogrammetrií (bez motoru)
@@ -119,9 +101,9 @@ v klíčových stavech – vždy na konci fáze, kdy je teplota ustálená:
 | 3 | na konci fáze +10 °C po roztátí |
 | 4 | konec série (před vyjmutím vzorku) |
 
-- **Příprava (jednou):** na horní hranu límce cely nalepit 8 kódových značek ArUco 10 mm (po obvodu), vedle cely
-  položit ocelové měřítko 150 mm; horní plochu pístu nastříkat jemným matným náhodným vzorem.
-- **Řízení:** motor řídí přímo **RPi 5** (to samé, které fotí) přes desku ULN2003 – program `rpi/e7_kamera.py`. Arduino není potřeba: poloha se počítá v krocích, takže na přesném časování nezáleží, a jeden program pak sám otočí, počká, rozsvítí a vyfotí. Příkazy: `test`, `home`, `laser`, `orbit [krok]`, `run` (trvalý běh: puls z CR850 = sada snímků ve výchozí poloze, oběh v nastavených časech). Cíl se vždy najíždí ve stejném směru (vůle převodovky), po pohybu se cívky vypnou, poslední poloha se ukládá do `~/e7/stav.json`.
+- **Příprava (jednou):** nic se nelepí – měřítko 3D modelu dává známý průměr dutiny ⌀100 a invarový terčík P03;
+  vedle cely lze položit ocelové měřítko 150 mm.
+- **Řízení – vše z počítače:** motor, LED, laser, topení i kameru řídí **Raspberry Pi Zero 2 W** (podle výrobce funguje od −20 °C) programem `rpi/e7_kamera.py`. Na počítači stačí otevřít v prohlížeči jeho webovou stránku (tlačítka *Výchozí poloha, Sada laser + LED, Oběh, Test*, teplota hlavy, poslední snímek) nebo se připojit přes SSH; CR850 se obsluhuje jako dosud z LoggerNetu. Arduino není potřeba: poloha se počítá v krocích, takže na přesném časování nezáleží, a jeden program pak sám otočí, počká, rozsvítí a vyfotí. Příkazy: `test`, `home`, `laser`, `orbit [krok]`, `run` (trvalý běh: puls z CR850 = sada snímků ve výchozí poloze, oběh v nastavených časech). Cíl se vždy najíždí ve stejném směru (vůle převodovky), po pohybu se cívky vypnou, poslední poloha se ukládá do `~/e7/stav.json`.
 
 **Snímání:** sejmout kotouče a nosnou desku, tyč zvednout a podložit vidlicí **P11** (píst zůstává na písku);
   mobilem nebo fotoaparátem 30–50 snímků dokola ve dvou výškách (asi 30° a 60° nad povrchem), překryv ≥ 70 %,
@@ -184,48 +166,52 @@ Začíná se fází 1 bez zatížení. Rám, laser, podložky G10, bod M a **ob�
 
 **Sestavení (oproti kap. 1–3):**
 
-1. **Cela.** Fáze 1: E7-V03u (⌀220 × 151, rovné čelo 5 mm nad pískem) na 3 podložkách G10, vystředit na ±1 mm podle rysky na příčce T03. Ve fázi 2 vystředit na tyč víčkem P09.
-2. **Invarový sloupek** ⌀16 do patky P04. Rameno P03 utáhnout tak, aby **spodní plocha terčíku byla 3 mm nad čelem cely** (ve fázi 2 ve výšce límce). Terčík je na straně kamery (−y), nalepit na něj bílou matnou samolepku 12 × 12.
+1. **Cela** E7-V03u (⌀220 × 146, dutina přesně ⌀100 × 100) je **stejná pro obě fáze**. Stojí na 3 podložkách G10 ⌀20 × 20 na příčce T03; dva dorazy **P20** (2× M5 každý do drážek T03) ji vystředí pod vodicí tyč – bez rysek a bez měření. Ve fázi 2 vystředit na tyč víčkem P09.
+2. **Invarový sloupek** ⌀16 do patky P04. Rameno P03 (tištěné z bílého PETG – terčík bez samolepky) utáhnout tak, aby **spodní plocha terčíku byla 3 mm nad čelem cely**. Terčík je na straně kamery (−y), nalepit na něj bílou matnou samolepku 12 × 12.
 3. **Oběh – pevná část pod příčníkem:**
-   1. Do jádra P12 zalisovat pouzdro igus RJ4JP-01-12 a do kapsy ve spodní ploše desky zalepit Hall senzor A3144 (vývody kanálkem k okraji).
+   1. Do jádra P12 zalisovat pouzdro igus RJ4JP-01-12 (rukou, bez lepidla).
    2. Na čep ⌀30 nasunout horní ložisko 6806-2RS, distanční kroužek P12b a spodní ložisko.
    3. Zespodu je stáhnout svěrným kroužkem P12c (3× M3 × 10).
    4. Jádro přišroubovat 4× M5 do T-matic ve spodních drážkách T04, otvor pouzdra přesně pod otvor ⌀14.
 4. **Oběh – otočná část:**
-   1. Náboj P13 (věnec z72, magnet ⌀6 × 2 zalepit do kapsy nahoře) nasunout zespodu na vnější kroužky ložisek.
+   1. Náboj P13 (věnec z72, vodorovná clona výchozí polohy) nasunout zespodu na vnější kroužky ložisek.
    2. Pod něj přišroubovat rameno s hlavou P14 (2× M3). Patka ramene drží spodní ložisko.
    3. Motor 28BYJ-48 přišroubovat pod desku držáku P16 (uši M4, hřídel nahoru), na hřídel nalisovat pastorek P19.
    4. Držák přišroubovat 2× M5 do spodních drážek na straně −x, pastorek do záběru s věncem s malou vůlí.
+   5. Držák koncovky **P21** přišroubovat 2× M5 do spodních drážek na straně +x, na něj 2× M3 optickou vidlicovou koncovku tak, aby clona náboje procházela štěrbinou.
 5. **Hlava kamery:**
    1. Camera Module 3 přišroubovat 4× M2 do hlavy, čočkou do okénka ⌀12.
-   2. LED 1 W na hvězdě ⌀20 přilepit vedle okénka. 2 topné odpory 47 Ω / 1 W vlepit dovnitř hlavy.
-   3. Zavřít víčkem P15.
-6. **Box P06 s RPi 5** na polici držáku P18 na boční straně příčníku (−y, x 76 … 174, 2× M5 do boční drážky). Lid P07 je venku.
+   2. Modul výkonové LED přišroubovat M3 na výstupek hlavy vedle okénka.
+   3. Na víčko P15 přišroubovat (M3) topné tělísko PTC 5 V a sponu s teploměrem DS18B20; zavřít víčkem.
+6. **Box P06 s Raspberry Pi Zero 2 WH** (svorkovnicový HAT, modul relé, deska ULN2003, modul optočlenu) na polici držáku P18 na vnější straně pravého sloupu (2× M5). Box obalit deskou XPS 20 mm (stažená páskami, nelepí se). Vše se propojuje kabely Dupont a svorkami – nic se nepájí.
    - Plochý kabel kamery 500 mm vést od boxu pod příčník k náboji.
    - Kolem náboje nechat volnou smyčku (jeden závit), pak kabel vést po rameni do hlavy, spolu s vodiči LED a topení.
    - **Před prvním měřením spustit `python3 e7_kamera.py test`** (výchozí poloha, ±90°, zpět) a zkontrolovat, že kabel nikde nedře, nenapíná se a nedotýká se tyče se závažím.
 
 **Umístění v mrazáku (vnitřní 59 × 39 × 41 cm):**
 
-- Sestava stojí přímo na dně na 4 pryžových podložkách 3 mm. Nemá stavitelné nohy, nerovnost se vyrovná podložkami pod podložky.
+- Sestava stojí přímo na dně na volně položeném pryžovém pásu 3 mm (nic se nelepí). Nemá stavitelné nohy, nerovnost se vyrovná podložkami.
 - Box s RPi je na vnější straně pravého sloupu (+x), sestava je uprostřed šířky (výkres V05).
-- Výška je 383 mm ve fázi 1 a 397 mm ve fázi 2. **Ve fázi 2 zbývá k víku jen ≈ 13 mm.** Před prvním zavřením zkontrolovat, že víko nic netlačí, hlavně těsnění a výstupek víka.
+- Výška je 383 mm ve fázi 1 a 400 mm ve fázi 2. **Ve fázi 2 zbývá k víku jen ≈ 10 mm.** Před prvním zavřením zkontrolovat, že víko nic netlačí, hlavně těsnění a výstupek víka.
 - Kabely vést po stranách, ne přes sestavu.
 
-**Příprava vzorku:** hutnit po vrstvách 20 mm jako v kap. 2. Poslední vrstvu srovnat **stěrkou P10u** (příčka leží na čele cely, břit 5 mm) otáčením kolem osy. Povrch je pak přesně 5 mm pod čelem. Hlava je při tom otočená na stranu +y, mimo práci.
+**Příprava vzorku:** hutnit po vrstvách 20 mm jako v kap. 2. Poslední vrstvu srovnat **stěrkou P10u** (rovná příčka leží na čele cely – povrch písku = čelo) otáčením kolem osy. Povrch je pak přesně 5 mm pod čelem. Hlava je při tom otočená na stranu +y, mimo práci.
 
-**Zapojení na RPi 5:**
+**Zapojení – Raspberry Pi Zero 2 WH se svorkovnicovým HATem (vše šroubovací svorky nebo kabely Dupont, nic se nepájí):**
 
-| co | piny RPi (fyzické) | poznámka |
+| co | GPIO → svorka HAT | poznámka |
 |---|---|---|
-| laser (kap. 7) | pin 11 = GPIO17 → MOSFET | 5 V, svítí jen při snímku |
-| LED 1 W + 6,8 Ω | pin 13 = GPIO27 → druhý MOSFET AO3400 | 5 V (pin 4), GND pin 14 |
-| motor 28BYJ-48 přes ULN2003 | IN1–IN4 = GPIO5, 6, 13, 19 (piny 29, 31, 33, 35) | napájení desky 5 V (pin 2) a GND; po pohybu všechny výstupy vypnout |
-| Hall A3144 (v desce P12) | GPIO26 (pin 37), interní pull-up | napájení 3,3 V (pin 1); magnet ve věnci = výchozí poloha |
-| topení hlavy 2× 47 Ω paralelně | 5 V trvale (≈ 1 W) | drží Camera Module 3 nad 0 °C (provozní rozsah 0–50 °C), okénko bez rosy |
-| spouštění snímku z CR850 | C4 → optočlen → GPIO22 (pin 15) | jako dosud |
+| motor 28BYJ-48 (konektor do desky ULN2003) | IN1–IN4 = GPIO5, 6, 13, 19 | deska ULN2003: 5 V a GND ze svorek HATu |
+| optická koncovka (P21) | GPIO26 | 3,3 V, GND; clona náboje = výchozí poloha |
+| LED modul 3 W (3 piny) | GPIO27 | 5 V, GND; modul má vlastní spínací tranzistor |
+| relé 1 – laser | GPIO17 | kontakt relé spíná + laseru (5 V); vodiče laseru prodloužené svorkami WAGO |
+| relé 2 – topení hlavy | GPIO23 | kontakt relé spíná topné tělísko PTC 5 V; termostat v programu (5 … 8 °C) |
+| teploměr DS18B20 (modul / sonda s kabelem) | GPIO4 (1-Wire) | 3,3 V, GND; v config.txt `dtoverlay=w1-gpio` |
+| spouštění snímku z CR850 | C4 → modul optočlenu → GPIO22 | jako dosud |
+| spojení s počítačem | adaptér USB-Ethernet + plochý kabel přes těsnění víka | webová stránka `http://e7-kamera:8080` nebo SSH |
+| napájení | powerbanka ≈ 100 Wh mimo mrazák → USB kabel přes těsnění | ≥ 24 h bez sítě (§25) |
 
-**Řízení:** motor řídí přímo **RPi 5** (to samé, které fotí) přes desku ULN2003 – program `rpi/e7_kamera.py`. Arduino není potřeba: poloha se počítá v krocích, takže na přesném časování nezáleží, a jeden program pak sám otočí, počká, rozsvítí a vyfotí. Příkazy: `test`, `home`, `laser`, `orbit [krok]`, `run` (trvalý běh: puls z CR850 = sada snímků ve výchozí poloze, oběh v nastavených časech). Cíl se vždy najíždí ve stejném směru (vůle převodovky), po pohybu se cívky vypnou, poslední poloha se ukládá do `~/e7/stav.json`.
+**Řízení – vše z počítače:** motor, LED, laser, topení i kameru řídí **Raspberry Pi Zero 2 W** (podle výrobce funguje od −20 °C) programem `rpi/e7_kamera.py`. Na počítači stačí otevřít v prohlížeči jeho webovou stránku (tlačítka *Výchozí poloha, Sada laser + LED, Oběh, Test*, teplota hlavy, poslední snímek) nebo se připojit přes SSH; CR850 se obsluhuje jako dosud z LoggerNetu. Arduino není potřeba: poloha se počítá v krocích, takže na přesném časování nezáleží, a jeden program pak sám otočí, počká, rozsvítí a vyfotí. Příkazy: `test`, `home`, `laser`, `orbit [krok]`, `run` (trvalý běh: puls z CR850 = sada snímků ve výchozí poloze, oběh v nastavených časech). Cíl se vždy najíždí ve stejném směru (vůle převodovky), po pohybu se cívky vypnou, poslední poloha se ukládá do `~/e7/stav.json`.
 
 **Snímání:**
 
@@ -234,14 +220,14 @@ Začíná se fází 1 bez zatížení. Rám, laser, podložky G10, bod M a **ob�
   2. s laserem bez LED – čáry pro výšku;
   3. bez světla – pozadí.
 - **Oběh pro 3D model** – v klíčových stavech: před zmrazením, na konci −10 °C, po roztátí, konec cyklu; podle potřeby i každý cyklus.
-  1. Najet na výchozí polohu (Hall) vždy ze stejné strany.
+  1. Najet na výchozí polohu (optická koncovka) vždy ze stejné strany.
   2. Otočit na −180°.
   3. Po 10° až do +170° pořídit 36 snímků s LED, každý s úhlem v názvu souboru.
   4. Vrátit se do výchozí polohy.
   - Trvá ≈ 1,5 min; laser je při oběhu vypnutý.
 - **Výška z laseru** se počítá ve výchozí poloze **vůči čarám na rovném čele cely a na invarovém terčíku** v témže snímku. Malá nepřesnost návratu ramene (≈ 0,1°) se tím vyruší.
 
-**Slepá zkouška S0 (povinná):** místo písku hliníková atrapa ⌀99 × 100 se stejným čelem, 2 celé cykly −10 / +10 °C.
+**Slepá zkouška S0 (povinná):** místo písku hliníková atrapa ⌀99 × 100 se stejným čelem, 2 celé cykly −20 / +20 °C (nejhorší případ) a −10 / +10 °C.
 
 - Z ní se zjistí, o kolik se „pohne“ povrch jen teplotou (dno cely a podložky ≈ 70 µm na 20 K). V měřené řadě se to pak odečítá podle teploty dna (NTC).
 - Posun rámu (≈ 140 µm na 20 K) ukazuje terčík P03 a odečítá se průběžně.

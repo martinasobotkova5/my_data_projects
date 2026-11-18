@@ -250,19 +250,19 @@ Na povrchu písku nic neleží. Čárový laser svítí šikmo (45° od svislice
 
 ## 14. Varianta C – kombinace: Al rám vede mrtvou váhu, částečný píst, kamera nad volným povrchem
 
-Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 162 144 g + Al nosná deska 249 g = **0.50 kg ≈ 2.5 kPa** (nejmenší přitížení pod pístem).
+Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 159 141 g + Al nosná deska 249 g = **0.50 kg ≈ 2.5 kPa** (nejmenší přitížení pod pístem).
 
 | napětí pod pístem [kPa] | celkem [kg] | kotouče 1 kg | 0,5 kg | doladit [kg] |
 |---|---|---|---|---|
-| 5 | 1.00 | 0 | 0 | 0.50 |
+| 5 | 1.00 | 0 | 1 | 0.00 |
 | 10 | 2.00 | 1 | 1 | 0.00 |
 | 15 | 3.00 | 2 | 1 | 0.00 |
 | 20 | 4.00 | 3 | 1 | 0.00 |
-| 25 | 5.00 | 4 | 1 | 0.00 |
+| 25 | 5.00 | 4 | 1 | 0.01 |
 
 Kotouč ⌀165/6.6: 1 kg = 6.0 mm, 0,5 kg = 3.0 mm. Při 25 kPa jen ≈ 4 kotouče.
 
-**Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±8 mm). Kluzné pouzdro igus drylin RJ4JP-01-12 (bez maziva, do −40 °C) má tření ≈ 0,1–0,25 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,02 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
+**Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±5 mm). Kluzné pouzdro igus drylin RJ4JP-01-12 (bez maziva, do −40 °C) má tření ≈ 0,1–0,25 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,02 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
 
 **Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser 60° (11 čar po ≈ 13.1 mm, posun čáry = 0.58 × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.
 
@@ -398,11 +398,11 @@ Vnitřní prostor mrazáku 590 × 390 × 410 mm (šířka × hloubka × výška)
 | | výška | k víku | volno po stranách (š / h) |
 |---|---|---|---|
 | fáze 1 – bez zatížení | 383 mm | 27 mm | 87 / 35 mm |
-| fáze 2 – se zátěží | 412 mm | -2 mm | 87 / 35 mm |
+| fáze 2 – se zátěží | 400 mm | 10 mm | 87 / 35 mm |
 
-**Co se změnilo:** pryžové podložky 3 mm místo stavitelných noh (−19 mm); dno cely a podložky G10 20 mm (dříve 40, −20 mm); příčník 130 mm nad pískem (dříve 140), oběh kamery se posunul s ním, okénko 90 mm nad pískem, sklon 39° (zorné pole s rezervou ≈ 3°, 1 px ≈ 35 µm); nosná deska Al 6 mm přišroubovaná M6 do čela vodicí tyče 8 mm nad příčníkem (bez stavěcího kroužku); kotouče ocel ⌀165 × 6 = 1,00 kg (dříve ⌀117,5 × 12); laser 105 mm od osy a 182 mm nad pískem (60°, posun čáry 0.58 × změna výšky) – mimo kotouče; LVDT vedle příčníku; box s RPi na vnější straně pravého sloupu.
+**Co se změnilo:** pryžové podložky 3 mm místo stavitelných noh (−19 mm); dno cely a podložky G10 20 mm (dříve 40, −20 mm); příčník 130 mm nad pískem (dříve 140), oběh kamery se posunul s ním, okénko 90 mm nad pískem, sklon 39° (zorné pole s rezervou ≈ 3°, 1 px ≈ 35 µm); nosná deska Al 6 mm přišroubovaná M6 do čela vodicí tyče 5 mm nad příčníkem (bez stavěcího kroužku); kotouče ocel ⌀165 × 6 = 1,00 kg (dříve ⌀117,5 × 12); laser 105 mm od osy a 182 mm nad pískem (60°, posun čáry 0.58 × změna výšky) – mimo kotouče; LVDT vedle příčníku; box s RPi na vnější straně pravého sloupu.
 
-**Zatížení:** pohyblivá část bez kotoučů (píst, tyč, nosná deska) ≈ 0.50 kg → ≈ 2.5 kPa pod pístem ⌀50; každý kotouč 1 kg přidá ≈ 5.0 kPa (4 kotouče + 0,5 kg ≈ 25 kPa).
+**Zatížení:** pohyblivá část bez kotoučů (píst, tyč, nosná deska) ≈ 0.49 kg → ≈ 2.5 kPa pod pístem ⌀50; každý kotouč 1 kg přidá ≈ 5.0 kPa (4 kotouče + 0,5 kg ≈ 25 kPa).
 
 **Ověřeno v modelu:** v obou fázích bez kolizí v celém rozsahu oběhu kamery (po 10°); ve fázi 1 kamera i laser vidí celý povrch ⌀100 a invarový terčík. Ve fázi 2 laser pod sklonem 60° víc stíní vysoký límec cely (34 mm) – před fází 2 zvážit nižší límec nebo celu fáze 1.
 
@@ -421,16 +421,16 @@ Vnitřní prostor mrazáku 590 × 390 × 410 mm (šířka × hloubka × výška)
 | sloupek Invar + ramena + LVDT | 0.50 |
 | **celkem** | **13.6** |
 
-Těžiště 254 mm nad dnem, posunuté o 10 mm k boxu RPi. Sestava se převrhne až po naklonění o 32° (do strany x 32°, y 32°) nebo vodorovnou silou ≈ 51 N na horní hranu (407 mm) – kabely ani zavírání víka ji nepřevrhnou.
+Těžiště 253 mm nad dnem, posunuté o 10 mm k boxu RPi. Sestava se převrhne až po naklonění o 32° (do strany x 32°, y 32°) nebo vodorovnou silou ≈ 52 N na horní hranu (404 mm) – kabely ani zavírání víka ji nepřevrhnou.
 
-**Vedení zátěže (bod 4).** Tyč je vedená ve dvou místech: nahoře kluzným pouzdrem igus ⌀12 × 30 v jádře oběhu, dole středicím důlkem 90° na kuličce v pístu (píst drží v písku tření pod zatížením). Vzdálenost obou míst 92 mm, vůle pouzdra ≈ 60 µm → náklon tyče nejvýš ≈ 0.04°, u kotoučů ≈ 51 µm do strany. Kotouče (otvor ⌀6,6) sedí na závitovém čepu M6 a maticí jsou staženy k nosné desce a k tyči – jsou vystředěné, nevrzají a nechvějí se; těžiště zátěže je v ose tyče. Chvění od kompresoru tlumí pryžový pás pod rámem.
+**Vedení zátěže (bod 4).** Tyč je vedená ve dvou místech: nahoře kluzným pouzdrem igus ⌀12 × 30 v jádře oběhu, dole středicím důlkem 90° na kuličce v pístu (píst drží v písku tření pod zatížením). Vzdálenost obou míst 92 mm, vůle pouzdra ≈ 60 µm → náklon tyče nejvýš ≈ 0.04°, u kotoučů ≈ 49 µm do strany. Kotouče (otvor ⌀6,6) sedí na závitovém čepu M6 a maticí jsou staženy k nosné desce a k tyči – jsou vystředěné, nevrzají a nechvějí se; těžiště zátěže je v ose tyče. Chvění od kompresoru tlumí pryžový pás pod rámem.
 
 **Teplotní roztažnost (bod 6)** pro změnu −20 → +20 °C (ΔT = 40 K):
 
 | část | α [1/K] | délka [mm] | změna [µm] | jak se řeší |
 |---|---|---|---|---|
 | sloupy rámu Al (kamera, laser) | 2.3e-05 | 276 | 255 | invarový terčík P03 – odečte se v každém snímku |
-| vodicí tyč Invar (píst → LVDT) | 1.2e-06 | 155 | 7 | zanedbatelné |
+| vodicí tyč Invar (píst → LVDT) | 1.2e-06 | 150 | 7 | zanedbatelné |
 | sloupek LVDT Invar | 1.2e-06 | 283 | 14 | zanedbatelné |
 | dno cely PETG pod pískem (+ jádro) | 4.5e-05 | 46 | 83 | slepá zkouška S0 + teplota dna (NTC) |
 | podložky G10 | 1.5e-05 | 20 | 12 | slepá zkouška S0 |

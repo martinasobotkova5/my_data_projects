@@ -36,14 +36,14 @@ def assembly(var="u"):
 TXT = {
     "u": dict(no="E7-V07", fn="E7-V07_bez_zatizeni",
               title="Fáze 1 – sestava BEZ ZATÍŽENÍ (varianta U): kamera OBÍHÁ kolem vzorku, laser vidí celý povrch ⌀100",
-              sub="Stejný rám, laser, oběh kamery a podložky G10 jako ve fázi 2 (V08). Bez pístu, závaží a LVDT. Cela s rovným "
-                  "čelem 5 mm nad pískem. Hlava s Camera Module 3 obíhá ±180°; ložiska, věnec a motor pod příčníkem. 1 : 3.",
-              tb="Fáze 1 – sestava bez zatížení (varianta U)", rim=p.C_U_RIM, rimtxt="čelo cely\n5 mm nad pískem"),
+              sub="Stejný rám, laser, oběh kamery a podložky G10 jako ve fázi 2 (V08). Bez pístu, závaží a LVDT. Dutina cely "
+                  "⌀100 × 100. Hlava s Camera Module 3 obíhá ±180°; ložiska, věnec a motor pod příčníkem. 1 : 3.",
+              tb="Fáze 1 – sestava bez zatížení (varianta U)", rim=p.C_U_RIM, rimtxt="čelo cely =\npovrch písku"),
     "c": dict(no="E7-V08", fn="E7-V08_se_zatezi",
               title="Fáze 2 – sestava SE ZÁTĚŽÍ (varianta C): kamera obíhá kolem tyče se závažím, LVDT na pístu",
               sub="Stejný rám, laser a oběh kamery jako ve fázi 1 (V07); přibývá píst ⌀50, kulička, vodicí tyč Invar ⌀12 "
                   "(vede ji pouzdro igus ve středu jádra oběhu P12), nosná deska se závažím a LVDT na invarovém sloupku. 1 : 3.",
-              tb="Fáze 2 – sestava se zátěží (varianta C)", rim=p.COLLAR_TOP - p.SAND_TOP, rimtxt="límec cely\n34 mm nad pískem"),
+              tb="Fáze 2 – sestava se zátěží (varianta C)", rim=p.C_U_RIM, rimtxt="čelo cely =\npovrch písku"),
 }
 
 
@@ -138,7 +138,7 @@ def main(var="u"):
     ax.text(ox3, oy3 - p.C_ORB_R * S6 - 3.5, "výchozí poloha (laser)", ha="center", fontsize=5.5, color=CAM)
     # --- parts table (phase 1)
     rows = [("rám T-profily T01–T04, úhelníky, T-matice", "1 sada", "ENPRAG"),
-            ((f"cela ⌀220 × {p.C_INS_T + p.U_TOP:g} s rovným čelem (E7-V03u)" if var == "u" else f"cela ⌀220 × {p.C_INS_T + p.COLLAR_TOP:g} s límcem (E7-V03)"), "1", "tisk PETG-CF"),
+            (f"cela ⌀220 × {p.C_INS_T + p.U_TOP:g}, dutina ⌀100 × 100 (E7-V03u)", "1", "tisk PETG-CF"),
             (f"podložky G10 ⌀20 × {p.C_INS_T:g}, dorazy cely P20, pryžový pás", "3 + 2", "Elektroizol. / tisk"),
             ("sloupek Invar ⌀16 × 330 + patka P04, terčík P03", "1", "Rokycany / tisk"),
             ("laser Picotronic DOE253, držák P05", "1", "Picotronic / tisk"),

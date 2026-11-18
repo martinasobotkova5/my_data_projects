@@ -44,7 +44,7 @@ Kde: **česky:** [Kovohutě Rokycany](http://www.koro.cz/produkty/nikl-a-slitiny
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
-| Invar 36 ⌀12 | délka 155 mm, tolerance h9 nebo lepší (vodicí tyč pro kluzné pouzdro), čela kolmá, sražení 0,5×45° | 1 |  | poptat |
+| Invar 36 ⌀12 | délka 150 mm, tolerance h9 nebo lepší (vodicí tyč pro kluzné pouzdro), čela kolmá, sražení 0,5×45° | 1 |  | poptat |
 | Invar 36 ⌀16 | délka 283 mm, čela kolmá | 1 |  | poptat |
 | — | obojí ≈ 0,9 kg Invaru |  | ≈ 80–160 € | odhad |
 
@@ -150,8 +150,8 @@ Kde: Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)
 
 ## Rozměry pro kontrolu (z modelu)
 
-- sloupy 276 mm, Invarová tyč 155 mm, Invarový sloupek 283 mm
-- nosná deska závaží 324 mm nad horní plochou rámu; spodní líc příčníku 276 mm
+- sloupy 276 mm, Invarová tyč 150 mm, Invarový sloupek 283 mm
+- nosná deska závaží 321 mm nad horní plochou rámu; spodní líc příčníku 276 mm
 - kotouč 165 × 6 mm = 1.01 kg, poloviční 0.50 kg
 - kontrola kolizí v 3D sestavě (model3d.py): bez kolizí
 
@@ -166,7 +166,7 @@ Kde: Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)
 7. Připravte vzorek mimo rám podle `postup_zkousky.md` (vlhčení, hutnění po vrstvách se zátkami v otvorech čidel, srovnání stěrkou P10, zasunutí čidel). Celu postavte na podložky G10 – kapsy ve dně na podložky; cela se nedotýká rámu.
 8. Invarový sloupek ⌀16 postavte do patky P04 (2× M5×20 do T-matic v horní drážce pravého podélníku, y = 108); sloupek stojí na dně patky, svěrku dotáhněte. Nasaďte rameno P03 (terčík ve výšce horní hrany límce) a rameno P02 s LVDT.
 9. Navrch písku položte píst, do otvoru ⌀6 kuličku 5/16". Na límec nasaďte středicí víčko P09 (rameno P03 natočené stranou).
-10. Invarovou tyč zasuňte shora pouzdrem víčkem P09 až na kuličku – posunutím cely ji vystřeďte, víčko vysuňte do strany, rameno P03 vraťte na značku. Na tyč nosnou desku L03 (šroub M6 do čela tyče) a na ni kotouče L06/L07. Nosná deska má být ≈ 8 mm nad horní plochou příčníku T04 (volný zdvih / pokles vzorku); délka tyče je daná, výška povrchu písku se srovná stěrkou – pokud mezera nesedí, podložit nosnou desku podložkou.
+10. Invarovou tyč zasuňte shora pouzdrem víčkem P09 až na kuličku – posunutím cely ji vystřeďte, víčko vysuňte do strany, rameno P03 vraťte na značku. Do čela tyče zašroubujte čep M6 × 45, nasuňte nosnou desku L03 a kotouče L06/L07 a stáhněte je tenkou maticí M6 (vystředěné, nechvějí se). Nosná deska má být ≈ 5 mm nad horní plochou příčníku T04 (volný zdvih / pokles vzorku); délka tyče je daná, výška povrchu písku se srovná stěrkou – pokud mezera nesedí, podložit nosnou desku podložkou.
 11. LVDT posuňte ve svěrce P02, až je jádro uprostřed rozsahu (výstup ≈ 0 V), dotáhněte.
 12. Laser do držáku P05 (2× M5×12 do boční drážky T04, +y), kameru + RPi 5 do boxu P06/P07 (sklo do drážky, kabel přes PG7), box na závěs P08 (2× M5×12 do boční drážky T04, −y). Laser natočte, aby čáry ležely napříč přes celý povrch ⌀100; kameru zaostřete (zadní ohnisková vzdálenost).
 13. Slepá zkouška s hliníkovou atrapou (V02) → kalibrace podložkami → první cyklus.
