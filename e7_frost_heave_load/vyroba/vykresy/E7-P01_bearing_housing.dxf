@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461361.5929050925
+2461363.461111111
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461361.592939815
+2461363.461145833
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-2A4
+2A5
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{E91C0757-EB97-4E8D-AB4D-2D29573736C5}
+{0F9E2FDD-A761-47AB-BAC6-9C020432D53A}
   9
 $VERSIONGUID
   2
-{219E9F33-0187-44B2-B907-0C06ACEE5F68}
+{E541C449-E06B-4BE6-A5FA-4682424063EF}
   9
 $EXTNAMES
 290
@@ -3237,7 +3237,7 @@ ACAD
   0
 APPID
   5
-2A1
+2A2
 330
 3
 100
@@ -3251,7 +3251,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-2A2
+2A3
 330
 3
 100
@@ -28007,7 +28007,7 @@ AcDbText
  40
 4.5
   1
-otvor ⌀21,2 hl. 32 pro igus RJ4JP-01-12 (lisovat rukou, svěrka M4)
+NEPOUŽÍVÁ SE od 18. 11. 2026 – pouzdro igus je v jádře oběhu P12
   7
 OpenSans
  11
@@ -28039,7 +28039,7 @@ AcDbText
  40
 4.5
   1
-spodem ⌀14 průchozí pro tyč; 4× ⌀5,5 (M5×45) se zahloubením ⌀10 × 5
+otvor ⌀21,2 hl. 32 pro igus RJ4JP-01-12 (lisovat rukou, svěrka M4)
   7
 OpenSans
  11
@@ -28071,7 +28071,7 @@ AcDbText
  40
 4.5
   1
-rozteč 38 × 40 = T-matice M5 ve spodních drážkách příčníku T04, pouzdro visí pod ním
+spodem ⌀14 průchozí pro tyč; 4× ⌀5,5 (M5×45) se zahloubením ⌀10 × 5
   7
 OpenSans
  11
@@ -28103,7 +28103,7 @@ AcDbText
  40
 4.5
   1
-průměry otvorů v pohledu shora: ⌀14, ⌀5.5
+rozteč 38 × 40 = T-matice M5 ve spodních drážkách příčníku T04, pouzdro visí pod ním
   7
 OpenSans
  11
@@ -28135,7 +28135,7 @@ AcDbText
  40
 4.5
   1
-přesná geometrie: vyroba/tisk/E7-P01_bearing_housing.step / .stl
+průměry otvorů v pohledu shora: ⌀14, ⌀5.5
   7
 OpenSans
  11
@@ -28147,9 +28147,41 @@ OpenSans
 100
 AcDbText
   0
-LWPOLYLINE
+TEXT
   5
 295
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+125.0
+ 20
+174.5
+ 30
+0.0
+ 40
+4.5
+  1
+přesná geometrie: vyroba/tisk/E7-P01_bearing_housing.step / .stl
+  7
+OpenSans
+ 11
+125.0
+ 21
+174.5
+ 31
+0.0
+100
+AcDbText
+  0
+LWPOLYLINE
+  5
+296
 330
 17
 100
@@ -28181,30 +28213,6 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-296
-330
-17
-100
-AcDbEntity
-  8
-FRAME
-100
-AcDbPolyline
- 90
-2
- 70
-0
- 10
-160.5
- 20
-24.0
- 10
-430.5
- 20
-24.0
-  0
-LWPOLYLINE
-  5
 297
 330
 17
@@ -28221,6 +28229,30 @@ AcDbPolyline
  10
 160.5
  20
+24.0
+ 10
+430.5
+ 20
+24.0
+  0
+LWPOLYLINE
+  5
+298
+330
+17
+100
+AcDbEntity
+  8
+FRAME
+100
+AcDbPolyline
+ 90
+2
+ 70
+0
+ 10
+160.5
+ 20
 36.0
  10
 430.5
@@ -28229,7 +28261,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-298
+299
 330
 17
 100
@@ -28253,7 +28285,7 @@ AcDbPolyline
   0
 TEXT
   5
-299
+29A
 330
 17
 100
@@ -28285,7 +28317,7 @@ AcDbText
   0
 TEXT
   5
-29A
+29B
 330
 17
 100
@@ -28319,7 +28351,7 @@ AcDbText
   0
 TEXT
   5
-29B
+29C
 330
 17
 100
@@ -28351,7 +28383,7 @@ AcDbText
   0
 TEXT
   5
-29C
+29D
 330
 17
 100
@@ -28385,7 +28417,7 @@ AcDbText
   0
 TEXT
   5
-29D
+29E
 330
 17
 100
@@ -28417,7 +28449,7 @@ AcDbText
   0
 TEXT
   5
-29E
+29F
 330
 17
 100
@@ -28451,7 +28483,7 @@ AcDbText
   0
 TEXT
   5
-29F
+2A0
 330
 17
 100
@@ -28483,7 +28515,7 @@ AcDbText
   0
 TEXT
   5
-2A0
+2A1
 330
 17
 100
@@ -28501,7 +28533,7 @@ AcDbText
  40
 4.5
   1
-2026-11-16  návrh
+2026-11-18  návrh
   7
 OpenSans
  72
@@ -29605,7 +29637,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-2A3
+2A4
   0
 DICTIONARYVAR
   5
@@ -29617,7 +29649,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-16T14:13:47.453040+00:00
+1.4.5 @ 2026-11-18T11:04:00.757369+00:00
   0
 VISUALSTYLE
   5
@@ -30321,7 +30353,7 @@ X-Ray
   0
 DICTIONARYVAR
   5
-2A3
+2A4
 330
 2D
 100
@@ -30329,7 +30361,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-16T14:13:50.163877+00:00
+1.4.5 @ 2026-11-18T11:04:03.318694+00:00
   0
 ENDSEC
   0

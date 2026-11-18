@@ -365,10 +365,17 @@ def export_all():
         out.append(write_dxf(part, os.path.join(OUT, "laser")))
         cq.exporters.export(laser_solid(part), os.path.join(OUT, "laser", f"{part['name']}_{part['t']:g}mm.step"))
     import orbit                                     # local import: orbit.py imports this module
+    OBSOLETE = ("E7-P01_bearing_housing", "E7-P08_camera_hanger")   # 18. 11. 2026: replaced by the camera orbit
+    os.makedirs(os.path.join(OUT, "tisk", "_nepouzivat"), exist_ok=True)
     for name, fn, _ in PRINT + PRINT_U_EXTRA + orbit.PRINT_ORBIT:
         s = fn()
-        cq.exporters.export(s, os.path.join(OUT, "tisk", name + ".stl"), tolerance=0.05, angularTolerance=0.1)
-        cq.exporters.export(s, os.path.join(OUT, "tisk", name + ".step"))
+        sub = os.path.join("tisk", "_nepouzivat") if name in OBSOLETE else "tisk"
+        for ext in (".stl", ".step"):
+            old = os.path.join(OUT, "tisk", name + ext)
+            if sub != "tisk" and os.path.exists(old):
+                os.remove(old)
+        cq.exporters.export(s, os.path.join(OUT, sub, name + ".stl"), tolerance=0.05, angularTolerance=0.1)
+        cq.exporters.export(s, os.path.join(OUT, sub, name + ".step"))
         out.append(name)
     return out
 

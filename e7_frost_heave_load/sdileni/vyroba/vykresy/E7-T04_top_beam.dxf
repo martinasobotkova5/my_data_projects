@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461361.5928935185
+2461363.461099537
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461361.5928935185
+2461363.461099537
   9
 $TDUUPDATE
  40
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{403FC6BE-EE9D-47C0-9CFC-DAF1A9A488D9}
+{91971B1E-8473-4CED-B54A-C954513868EB}
   9
 $VERSIONGUID
   2
-{549FDFAD-9E25-42B8-9888-1028BBDC05E4}
+{38813224-2E92-4D33-BF55-1324311394EA}
   9
 $EXTNAMES
 290
@@ -12243,7 +12243,7 @@ AcDbText
  40
 6.0
   1
-spodní drážky: 4 T-matice M5 pro pouzdro P01 (rozteč 38 × 40, souměrně k otvoru)
+spodní drážky: 4 T-matice M5 pro jádro oběhu P12 (rozteč 48 × 40, souměrně k otvoru) + 2 pro držák motoru P16 (x −68)
   7
 OpenSans
  11
@@ -12275,7 +12275,7 @@ AcDbText
  40
 6.0
   1
-boční drážky: T-matice M5 – držák laseru P05 (+y), závěs kamery P08 (−y)
+boční drážky: T-matice M5 – držák laseru P05 (+y), držák boxu RPi P18 (−y)
   7
 OpenSans
  11
@@ -12641,7 +12641,7 @@ AcDbText
  40
 6.0
   1
-2026-11-16  návrh
+2026-11-18  návrh
   7
 OpenSans
  72
@@ -13757,7 +13757,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-16T14:13:46.586461+00:00
+1.4.5 @ 2026-11-18T11:03:59.913036+00:00
   0
 VISUALSTYLE
   5
@@ -14469,7 +14469,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-16T14:13:46.624491+00:00
+1.4.5 @ 2026-11-18T11:03:59.951422+00:00
   0
 ENDSEC
   0

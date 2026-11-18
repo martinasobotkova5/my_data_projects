@@ -312,21 +312,24 @@ def variant_b_open(asm, prefix=""):
     return zb
 
 
-def variant_c(asm, prefix=""):
+def variant_c(asm, prefix="", orbit_angle=0.0):
     """Variant C rev. B3 (orderable): frame of T-slot profiles slot 8 (2 base rails 40×40, cross bar 40×80 flat,
-    2 columns 40×80, top beam 40×80 flat with one ⌀14 hole), printed bearing housing (igus RJ4JP-01-12) hanging
-    under the beam, Invar rod and post, printed arms/brackets/camera box, cell printed in one piece on 3 G10 pads,
-    laser-cut piston discs, carrier and steel weights."""
+    2 columns 40×80, top beam 40×80 flat with one ⌀14 hole), Invar rod and post, printed arms, cell printed in one
+    piece on 3 G10 pads, laser-cut piston discs, carrier and steel weights.
+    18. 11. 2026 – ONE setup for both phases: the igus bushing of the guide rod sits in the fixed core P12 of the
+    camera orbit (orbit.py, replaces housing P01) and the camera head orbits round the rod (orbit_angle, 0 = home −y).
+    orbit_angle=None → the old fixed camera box P06 on hanger P08 and housing P01 (rev. B3, for comparison)."""
     import buildparts as bp
     zb0 = _frame_c(asm, prefix)
     zbeam, zc = bp.ZBEAM, bp.ZC
     xc = p.C_COL_SPAN / 2
     lp = {d["name"]: d for d in bp.LASER}
-    asm.add(bp.housing().translate((0, 0, zbeam - p.C_HOUSING[2])), name=prefix + "P01 bearing housing (print, hangs)",
-            color=C["petg"])
-    bush_od, bush_l = p.C_BUSH
-    asm.add(tube(bush_od, p.C_ROD_D + 0.1, bush_l, zbeam - p.C_HOUSING[2] + 4.5), name=prefix + "igus drylin RJ4JP-01-12",
-            color=C["ptfe"])
+    if orbit_angle is None:
+        asm.add(bp.housing().translate((0, 0, zbeam - p.C_HOUSING[2])), name=prefix + "P01 bearing housing (print, hangs)",
+                color=C["petg"])
+        bush_od, bush_l = p.C_BUSH
+        asm.add(tube(bush_od, p.C_ROD_D + 0.1, bush_l, zbeam - p.C_HOUSING[2] + 4.5),
+                name=prefix + "igus drylin RJ4JP-01-12", color=C["ptfe"])
     # cell printed in one piece with its insulation; 3 G10 pads ⌀20 × 40 in pockets of the printed base carry it
     for k in range(3):
         a = math.radians(90 + 120 * k)
@@ -359,7 +362,7 @@ def variant_c(asm, prefix=""):
     asm.add(cyl(bp.LV_D, bp.LV_L, bp.Z_LV_BOT, xl, yl), name=prefix + "LVDT RDP DCTH400AG", color=C["sensor"])
     asm.add(cyl(4, zc - bp.Z_LV_TOP, bp.Z_LV_TOP, xl, yl), name=prefix + "LVDT plunger", color=C["steel"])
     asm.add(bp.target_arm().translate((0, 0, bp.Z_RIM)), name=prefix + "P03 target arm (print)", color=C["petg"])
-    _optics_c(asm, prefix)
+    _optics_c(asm, prefix, orbit_angle=orbit_angle)
     return zb0
 
 
@@ -492,7 +495,7 @@ if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     ARCH = os.path.join(OUT, "archiv")
     os.makedirs(ARCH, exist_ok=True)
-    vc = cq.Assembly(name="E7 C - frame guides a dead weight on a partial piston, camera + laser, LVDT")
+    vc = cq.Assembly(name="E7 C - phase 2: dead weight on a partial piston, camera orbits round the rod, laser, LVDT")
     variant_c(vc)
     mr = cq.Assembly(name=f"E7 cell rev. B - printed in one piece D{p.BODY_D + 2 * p.C_SLEEVE_T:g} (core Column_one_body_version_1)")
     body_a(mr, temps=[], pv=False, pb=False, opt=False, ins=True, pt_port=True)

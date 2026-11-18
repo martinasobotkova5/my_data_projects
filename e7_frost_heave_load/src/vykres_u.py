@@ -27,10 +27,24 @@ INK, HID, CAM, LAS, MUTE = "#111111", "#9a9a9a", "#1f5fa8", "#d23a2a", "#555555"
 plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 7})
 
 
-def assembly():
+def assembly(var="u"):
     a = cq.Assembly()
-    m.variant_u(a)
+    (m.variant_u if var == "u" else m.variant_c)(a)
     return [(n.split("/")[-1], s.moved(l)) for s, n, l, c in a]
+
+
+TXT = {
+    "u": dict(no="E7-V07", fn="E7-V07_bez_zatizeni",
+              title="Fáze 1 – sestava BEZ ZATÍŽENÍ (varianta U): kamera OBÍHÁ kolem vzorku, laser vidí celý povrch ⌀100",
+              sub="Stejný rám, laser, oběh kamery a podložky G10 jako ve fázi 2 (V08). Bez pístu, závaží a LVDT. Cela s rovným "
+                  "čelem 5 mm nad pískem. Hlava s Camera Module 3 obíhá ±180°; ložiska, věnec a motor pod příčníkem. 1 : 3.",
+              tb="Fáze 1 – sestava bez zatížení (varianta U)", rim=p.C_U_RIM, rimtxt="čelo cely\n5 mm nad pískem"),
+    "c": dict(no="E7-V08", fn="E7-V08_se_zatezi",
+              title="Fáze 2 – sestava SE ZÁTĚŽÍ (varianta C): kamera obíhá kolem tyče se závažím, LVDT na pístu",
+              sub="Stejný rám, laser a oběh kamery jako ve fázi 1 (V07); přibývá píst ⌀50, kulička, vodicí tyč Invar ⌀12 "
+                  "(vede ji pouzdro igus ve středu jádra oběhu P12), nosná deska se závažím a LVDT na invarovém sloupku. 1 : 3.",
+              tb="Fáze 2 – sestava se zátěží (varianta C)", rim=p.COLLAR_TOP - p.SAND_TOP, rimtxt="límec cely\n34 mm nad pískem"),
+}
 
 
 def draw_view(ax, comp, view, ox, oy, flip=False):
@@ -56,19 +70,17 @@ def dim_v(ax, x, z0, z1, ox, oy, txt, side=1):
             fontsize=6.5)
 
 
-def main():
-    parts = assembly()
+def main(var="u"):
+    T = TXT[var]
+    parts = assembly(var)
     solids = [s for n, s in parts]
     comp = cq.Compound.makeCompound(solids)
     fig = plt.figure(figsize=(420 / 25.4, 297 / 25.4))
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, 420); ax.set_ylim(0, 297); ax.set_aspect("equal"); ax.axis("off")
     ax.add_patch(Rectangle((10, 10), 400, 277, fill=False, lw=0.9, ec=INK))
-    ax.text(18, 277, "Fáze 1 – sestava BEZ ZATÍŽENÍ (varianta U): kamera OBÍHÁ kolem vzorku, laser vidí celý povrch ⌀100",
-            fontsize=12, weight="bold")
-    ax.text(18, 271, "Stejný rám z T-profilů, laser a podložky G10 jako varianta C. Bez pístu, závaží a LVDT. Cela s rovným "
-                     "čelem 5 mm nad pískem. Hlava s Camera Module 3 obíhá ±180° na hřídeli ⌀12 skrz otvor ⌀14 v T04 "
-                     "(ložiska, kolo a motor nad příčníkem). Měřítko 1 : 3.", fontsize=7.5, color=MUTE)
+    ax.text(18, 277, T["title"], fontsize=12, weight="bold")
+    ax.text(18, 271, T["sub"], fontsize=7.5, color=MUTE)
 
     z_sand = bp.Z_S1
     # --- side view (paper x = world y), eye on +x looking −x → flip so that +y (laser) is on the right
@@ -81,7 +93,7 @@ def main():
     for y in (-50, 50):
         (x0, y0), (x1, y1) = P(wy, wz), P(y, z_sand)
         ax.plot([x0, x1], [y0, y1], c=CAM, lw=0.7, ls="--")
-    yr, zr = p.C_REF_XY[1], bp.Z_REF_U + 8
+    yr, zr = p.C_REF_XY[1], (bp.Z_REF_U if var == "u" else bp.Z_RIM) + 8
     (x0, y0), (x1, y1) = P(wy, wz), P(yr, zr)
     ax.plot([x0, x1], [y0, y1], c=CAM, lw=0.5, ls=":")
     ly, lz = p.C_LASER_Y, z_sand + p.C_LASER_H
@@ -90,8 +102,8 @@ def main():
         ax.plot([x0, x1], [y0, y1], c=LAS, lw=0.6)
     ax.text(16, oy1 + (wz + 95) * S, f"hlava s Camera Module 3 (výchozí poloha)\n{p.C_ORB_R:g} mm od osy, {p.C_ORB_H:g} nad pískem,\n"
             f"sklon {p.C_ORB_TILT:g}° od svislice, bílá LED;\nobíhá ±180° kolem osy vzorku", color=CAM, fontsize=6.5, ha="left")
-    ax.text(*P(-60, ob.ZT + 62), "motor 28BYJ-48, kolo z72,\nložiska 6001 nad příčníkem;\nRPi 5 v boxu P06", fontsize=6,
-            color=MUTE, ha="right")
+    ax.text(16, oy1 + (wz + 150) * S, "oběh: věnec z72, 2× 6806 a motor 28BYJ-48\npod příčníkem; RPi 5 v boxu P06 na boku T04\nřídí motor i kameru", fontsize=6,
+            color=MUTE, ha="left")
     ax.text(*P(ly + 25, lz + 22), f"laser 11 čar, 635 nm\ny {ly:g}, {p.C_LASER_H:g} nad pískem,\n{p.C_LASER_ANG:g}° od vodorovné",
             color=LAS, fontsize=6.5)
     ax.annotate("invarový terčík P03\n(reference posunu rámu)", P(yr, zr), (18, oy1 + (zr - 75) * S), color=CAM, fontsize=6,
@@ -101,8 +113,8 @@ def main():
     bbz = comp.BoundingBox().zmax
     dim_v(ax, 185, zf, bbz, ox1, oy1, f"{bbz - zf:.0f} celková výška", side=1)
     dim_v(ax, -180, zf, z_sand, ox1, oy1, f"{z_sand - zf:g} povrch písku", side=-1)
-    zt = z_sand + p.C_U_RIM
-    ax.annotate(f"čelo cely\n{p.C_U_RIM:g} mm nad pískem", P(60, zt), P(116, zt - 45), fontsize=6.5,
+    zt = z_sand + T["rim"]
+    ax.annotate(T["rimtxt"], P(60 if var == "u" else 53, zt), P(116, zt - 45), fontsize=6.5,
                 arrowprops=dict(arrowstyle="-", lw=0.4))
     # --- front view (paper x = world x)
     ox2, oy2 = 255, oy1
@@ -126,20 +138,25 @@ def main():
     ax.text(ox3, oy3 - p.C_ORB_R * S6 - 3.5, "výchozí poloha (laser)", ha="center", fontsize=5.5, color=CAM)
     # --- parts table (phase 1)
     rows = [("rám T-profily T01–T04, úhelníky, T-matice, nohy", "1 sada", "ENPRAG"),
-            ("cela ⌀220 × 171 s rovným čelem (E7-V03u)", "1", "tisk PETG-CF"),
+            ("cela ⌀220 × 171 s rovným čelem (E7-V03u)" if var == "u" else "cela ⌀220 × 200 s límcem (E7-V03)", "1", "tisk PETG-CF"),
             ("podložky G10 ⌀20 × 40", "3", "Elektroizolanty"),
             ("sloupek Invar ⌀16 × 330 + patka P04, terčík P03", "1", "Rokycany / tisk"),
             ("laser Picotronic DOE253, držák P05", "1", "Picotronic / tisk"),
             ("RPi 5 + Camera Module 3 + kabel 500 mm", "1", "RPishop.cz"),
-            ("box P06 + víko P07 ve vaničce P18 (RPi)", "1", "tisk"),
-            ("oběh: hřídel ⌀12 h6 × 120, 2× 6001-2RS", "1", "TME / ZKL"),
-            ("oběh: P12, P14, P15, P16, P17, P19 + kroužek", "1", "tisk / Fabory"),
+            ("box P06 + víko P07 na držáku P18 (bok T04)", "1", "tisk"),
+            ("oběh: 2× 6806-2RS, pouzdro igus RJ4JP-01-12", "1", "TME / HENNLICH"),
+            ("oběh: P12, P12b, P12c, P13, P14, P15, P16, P19", "1", "tisk"),
             ("motor 28BYJ-48 + ULN2003, Hall A3144", "1", "GME / LaskaKit"),
-            ("LED 1 W + topení hlavy 2× 47 Ω, MOSFETy", "1", "GME / TME"),
-            ("stěrka P10u (břit 5 mm)", "1", "tisk"),
-            ("bod M: TDR CS645, Pt100, vlákno; NTC ve dně", "–", "máte / TME")]
+            ("LED 1 W + topení hlavy 2× 47 Ω, MOSFETy", "1", "GME / TME")]
+    if var == "u":
+        rows += [("stěrka P10u (břit 5 mm)", "1", "tisk"),
+                 ("bod M: TDR CS645, Pt100, vlákno; NTC ve dně", "–", "máte / TME")]
+    else:
+        rows += [("píst L04 + L05, nosná deska L03, závaží L06/L07", "1 sada", "grupol.cz"),
+                 ("tyč Invar ⌀12 × 265, kulička 5/16\", kroužek DIN 705", "1", "Rokycany / Fabory"),
+                 ("LVDT RDP DCTH400AG + rameno P02, zdroj 24 V", "1", "Elkome / TME")]
     tx, ty = 330, 246
-    ax.text(tx, ty + 4, "DÍLY FÁZE 1", fontsize=8, weight="bold")
+    ax.text(tx, ty + 4, "DÍLY FÁZE 1" if var == "u" else "DÍLY FÁZE 2 (oběh a rám jako ve fázi 1)", fontsize=8, weight="bold")
     wc = (52, 9, 22)
     for k, r in enumerate(rows):
         y = ty - k * 5.6
@@ -148,16 +165,16 @@ def main():
         ax.text(tx + wc[0] + wc[1] / 2, y, r[1], fontsize=5.6, ha="center")
         ax.text(tx + wc[0] + wc[1] + 1, y, r[2], fontsize=5.6)
     ny = ty - len(rows) * 5.6 - 5
-    notes = ["Ověřeno v modelu (§22, §23):", "• oběh ±180° po 10°: bez kolizí", "• kamera vidí celý ⌀100 v 0/±90/180°", "• ve výchozí poloze laser i terčík volné",
+    notes = ["Ověřeno v modelu (§22, §23):", *CHECK[var],
              "• CM3 66° × 41°: celý ⌀100 s rezervou ≈ 3°", "• 1 pixel ≈ 37 µm, výška ≈ 8–12 µm",
-             "Fáze 2: oběh nejde (střed zabírá", "vedení zátěže) – hlava pevně."]
+             "Řízení: RPi 5 + ULN2003,", "program rpi/e7_kamera.py."]
     for k, s in enumerate(notes):
         ax.text(tx, ny - k * 4.4, s, fontsize=6.2, weight="bold" if s.endswith(":") else None)
     # title block
     x0, y0, w, h = 410 - 170, 10, 170, 24
     ax.add_patch(Rectangle((x0, y0), w, h, fill=False, lw=0.6, ec=INK))
-    for k, (a_, b_) in enumerate((("E7-V07  Fáze 1 – sestava bez zatížení (varianta U)", "A3  1 : 3"),
-                                  ("z 3D modelu model3d.variant_u, skryté hrany čárkovaně", "rozměry v mm"),
+    for k, (a_, b_) in enumerate(((f"{T['no']}  {T['tb']}", "A3  1 : 3"),
+                                  (f"z 3D modelu model3d.variant_{var}, skryté hrany čárkovaně", "rozměry v mm"),
                                   ("E7 – mrznutí a tání / sublimace", f"{TODAY}  návrh"))):
         yy = y0 + h - (k + 1) * h / 3
         if k:
@@ -165,10 +182,16 @@ def main():
         ax.text(x0 + 2, yy + 2.5, a_, fontsize=8 if k == 0 else 6.5, weight="bold" if k == 0 else None)
         ax.text(x0 + w - 2, yy + 2.5, b_, fontsize=6.5, ha="right")
     os.makedirs(OUT, exist_ok=True)
-    fig.savefig(os.path.join(OUT, "E7-V07_bez_zatizeni.pdf"))
-    fig.savefig(os.path.join(OUT, "E7-V07_bez_zatizeni.png"), dpi=150)
-    print("→ vykresy/E7-V07_bez_zatizeni.pdf")
+    fig.savefig(os.path.join(OUT, T["fn"] + ".pdf"))
+    fig.savefig(os.path.join(OUT, T["fn"] + ".png"), dpi=150)
+    plt.close(fig)
+    print("→ vykresy/" + T["fn"] + ".pdf")
 
+
+CHECK = {"u": ["• oběh ±180° po 10°: bez kolizí", "• kamera vidí celý ⌀100 v 0/±90/180°",
+               "• ve výchozí poloze laser i terčík volné"],
+         "c": ["• oběh ±180° po 10°: bez kolizí", "  (ani s tyčí, závažím a LVDT)", "• kamera: mezikruží z každé polohy"]}
 
 if __name__ == "__main__":
-    main()
+    for v in ("u", "c"):
+        main(v)

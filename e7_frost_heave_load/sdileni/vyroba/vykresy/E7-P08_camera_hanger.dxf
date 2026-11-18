@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461361.593009259
+2461363.4612037037
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461361.593009259
+2461363.4612037037
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-227
+228
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{88208E1D-494B-45AA-85FC-2605698E9A3A}
+{C4CC76AE-188F-45E8-AE18-29BC0172E2E0}
   9
 $VERSIONGUID
   2
-{7C978BA6-EC9F-4865-A5F5-F9819E6048E8}
+{6A2E754F-35D6-4F66-ABF3-1A53C3A7E587}
   9
 $EXTNAMES
 290
@@ -3237,7 +3237,7 @@ ACAD
   0
 APPID
   5
-224
+225
 330
 3
 100
@@ -3251,7 +3251,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-225
+226
 330
 3
 100
@@ -17311,7 +17311,7 @@ AcDbText
  40
 4.5
   1
-2× ⌀5,5 (M5×12) do T-matic v boční drážce příčníku T04 (−y)
+NEPOUŽÍVÁ SE od 18. 11. 2026 – kamera obíhá (P14), box RPi na držáku P18
   7
 OpenSans
  11
@@ -17343,7 +17343,7 @@ AcDbText
  40
 4.5
   1
-box kamery přišroubovat 2× M4
+2× ⌀5,5 (M5×12) do T-matic v boční drážce příčníku T04 (−y)
   7
 OpenSans
  11
@@ -17375,7 +17375,7 @@ AcDbText
  40
 4.5
   1
-průměry otvorů v pohledu shora: 
+box kamery přišroubovat 2× M4
   7
 OpenSans
  11
@@ -17407,7 +17407,7 @@ AcDbText
  40
 4.5
   1
-přesná geometrie: vyroba/tisk/E7-P08_camera_hanger.step / .stl
+průměry otvorů v pohledu shora: 
   7
 OpenSans
  11
@@ -17419,9 +17419,41 @@ OpenSans
 100
 AcDbText
   0
-LWPOLYLINE
+TEXT
   5
 218
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+115.0
+ 20
+196.13360685798807
+ 30
+0.0
+ 40
+4.5
+  1
+přesná geometrie: vyroba/tisk/E7-P08_camera_hanger.step / .stl
+  7
+OpenSans
+ 11
+115.0
+ 21
+196.13360685798807
+ 31
+0.0
+100
+AcDbText
+  0
+LWPOLYLINE
+  5
+219
 330
 17
 100
@@ -17453,30 +17485,6 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-219
-330
-17
-100
-AcDbEntity
-  8
-FRAME
-100
-AcDbPolyline
- 90
-2
- 70
-0
- 10
-160.5
- 20
-24.0
- 10
-430.5
- 20
-24.0
-  0
-LWPOLYLINE
-  5
 21A
 330
 17
@@ -17493,6 +17501,30 @@ AcDbPolyline
  10
 160.5
  20
+24.0
+ 10
+430.5
+ 20
+24.0
+  0
+LWPOLYLINE
+  5
+21B
+330
+17
+100
+AcDbEntity
+  8
+FRAME
+100
+AcDbPolyline
+ 90
+2
+ 70
+0
+ 10
+160.5
+ 20
 36.0
  10
 430.5
@@ -17501,7 +17533,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-21B
+21C
 330
 17
 100
@@ -17525,7 +17557,7 @@ AcDbPolyline
   0
 TEXT
   5
-21C
+21D
 330
 17
 100
@@ -17557,7 +17589,7 @@ AcDbText
   0
 TEXT
   5
-21D
+21E
 330
 17
 100
@@ -17591,7 +17623,7 @@ AcDbText
   0
 TEXT
   5
-21E
+21F
 330
 17
 100
@@ -17623,7 +17655,7 @@ AcDbText
   0
 TEXT
   5
-21F
+220
 330
 17
 100
@@ -17657,7 +17689,7 @@ AcDbText
   0
 TEXT
   5
-220
+221
 330
 17
 100
@@ -17689,7 +17721,7 @@ AcDbText
   0
 TEXT
   5
-221
+222
 330
 17
 100
@@ -17723,7 +17755,7 @@ AcDbText
   0
 TEXT
   5
-222
+223
 330
 17
 100
@@ -17755,7 +17787,7 @@ AcDbText
   0
 TEXT
   5
-223
+224
 330
 17
 100
@@ -17773,7 +17805,7 @@ AcDbText
  40
 4.5
   1
-2026-11-16  návrh
+2026-11-18  návrh
   7
 OpenSans
  72
@@ -18877,7 +18909,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-226
+227
   0
 DICTIONARYVAR
   5
@@ -18889,7 +18921,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-16T14:13:56.134517+00:00
+1.4.5 @ 2026-11-18T11:04:08.871030+00:00
   0
 VISUALSTYLE
   5
@@ -19593,7 +19625,7 @@ X-Ray
   0
 DICTIONARYVAR
   5
-226
+227
 330
 2D
 100
@@ -19601,7 +19633,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-16T14:13:56.200096+00:00
+1.4.5 @ 2026-11-18T11:04:08.934252+00:00
   0
 ENDSEC
   0

@@ -121,7 +121,9 @@ v klíčových stavech – vždy na konci fáze, kdy je teplota ustálená:
 
 - **Příprava (jednou):** na horní hranu límce cely nalepit 8 kódových značek ArUco 10 mm (po obvodu), vedle cely
   položit ocelové měřítko 150 mm; horní plochu pístu nastříkat jemným matným náhodným vzorem.
-- **Snímání:** sejmout kotouče a nosnou desku, tyč zvednout a podložit vidlicí **P11** (píst zůstává na písku);
+- **Řízení:** motor řídí přímo **RPi 5** (to samé, které fotí) přes desku ULN2003 – program `rpi/e7_kamera.py`. Arduino není potřeba: poloha se počítá v krocích, takže na přesném časování nezáleží, a jeden program pak sám otočí, počká, rozsvítí a vyfotí. Příkazy: `test`, `home`, `laser`, `orbit [krok]`, `run` (trvalý běh: puls z CR850 = sada snímků ve výchozí poloze, oběh v nastavených časech). Cíl se vždy najíždí ve stejném směru (vůle převodovky), po pohybu se cívky vypnou, poslední poloha se ukládá do `~/e7/stav.json`.
+
+**Snímání:** sejmout kotouče a nosnou desku, tyč zvednout a podložit vidlicí **P11** (píst zůstává na písku);
   mobilem nebo fotoaparátem 30–50 snímků dokola ve dvou výškách (asi 30° a 60° nad povrchem), překryv ≥ 70 %,
   bez blesku, rovnoměrné světlo. Trvá ≈ 5 min, pak zátěž vrátit (kroužek na značku) – LVDT se vrátí na původní
   hodnotu, kontrola správného usazení.
@@ -173,36 +175,35 @@ s miskou, sítko 2 mm na drcený led, čidlo SHT45 na kabelu u vzorku (povinné)
   rychlejší, porovnává se mechanismus a poměr krytý / volný povrch, ne absolutní rychlost).
 
 
-## 10 · Fáze 1 – mrznutí a tání BEZ ZATÍŽENÍ, kamera obíhá kolem vzorku (varianta U, výkres V07)
+## 10 · Kamera obíhá kolem vzorku – jedna sestava pro fázi 1 i 2 (výkresy V07, V08)
 
-Začíná se touto jednodušší fází. Rám, laser, podložky G10 a bod M jsou stejné jako výše.
+Začíná se fází 1 bez zatížení. Rám, laser, podložky G10, bod M a **oběh kamery** jsou pro obě fáze stejné. Ve fázi 2 se jen přidá zátěž: píst, kulička, vodicí tyč, nosná deska se závažím, LVDT s ramenem P02. Hlava pak obíhá kolem tyče se závažím.
 
-- **Nemontuje se:** píst, kulička, vodicí tyč zátěže, pouzdro P01, nosná deska se závažím, LVDT s ramenem P02 ani pevný box kamery na závěsu P08.
-- **Na invarovém sloupku** je jen rameno s terčíkem P03.
-- **Kamera:** malá hlava s Raspberry Pi Camera Module 3 obíhá kolem vzorku na hřídeli, který prochází otvorem ⌀14 v horním příčníku.
+- **Pouzdro igus** vodicí tyče je v pevném jádře oběhu P12. Dřívější pouzdro P01, pevný box kamery a závěs P08 se nepoužívají.
+- **Na invarovém sloupku** je ve fázi 1 jen rameno s terčíkem P03, ve fázi 2 přibude rameno LVDT P02.
 
 **Sestavení (oproti kap. 1–3):**
 
-1. **Cela E7-V03u** (⌀220 × 171, rovné čelo 5 mm nad pískem) přijde na 3 podložky G10. Vystředit podle rysky na příčce T03 na ±1 mm. Hlava obíhá kolem osy příčníku, kamera vidí celý povrch s rezervou.
-2. **Invarový sloupek** ⌀16 do patky P04. Rameno P03 nasunout shora a utáhnout tak, aby **spodní plocha terčíku byla 3 mm nad čelem cely**. Rameno obchází celu zvenku, terčík je na straně kamery (−y). Na terčík nalepit bílou matnou samolepku 12 × 12.
-3. **Oběh – nad příčníkem:**
-   1. Ložiskový blok P12 se 2 ložisky 6001-2RS přišroubovat 4× M5 do horních drážek, otvor bloku nad otvor ⌀14.
-   2. Hřídel ⌀12 h6 × 120 prostrčit shora blokem a příčníkem.
-   3. Na hřídel nasadit stavěcí kroužek DIN 705 tak, aby hřídel na něm visel a kroužek se opíral o vnitřní kroužek horního ložiska.
-   4. Nad kroužek nasadit kolo P17 (z72) a utáhnout červíkem M4.
-   5. Na stojánek P16 (strana −x, 2× M5) přišroubovat motor 28BYJ-48 hřídelí nahoru a nasadit pastorek P19 do záběru s kolem.
-   6. Hall senzor A3144 přilepit do držáku na stojánku, magnet ⌀6 × 2 do kolíku v kole na straně −y. Ten určuje výchozí polohu.
-4. **Oběh – pod příčníkem:**
-   1. Rameno s hlavou P14 nasunout na spodní konec hřídele.
-   2. Natočit hlavu na stranu −y, když je magnet u senzoru.
-   3. Výšku nastavit tak, aby mezera náboje pod příčníkem byla 4 mm, a utáhnout 2 červíky M4.
-   4. Camera Module 3 přišroubovat 4× M2 do hlavy čočkou do okénka ⌀12.
-   5. Bílou LED na hvězdě ⌀20 přilepit tepelně vodivým lepidlem vedle okénka.
-   6. Do hlavy vlepit 2 topné odpory 47 Ω / 1 W. Zavřít víčkem P15, plochý kabel a 4 vodiče vést výřezem.
-5. **Box P06 s RPi 5** postavit do vaničky P18 na horní straně příčníku (strana +x, 2× M5).
-   - Plochý kabel kamery 500 mm vést přes hranu příčníku pod něj a k náboji.
-   - Kolem náboje udělat volnou smyčku (jeden závit), aby se hlava mohla otočit ±180°. Pak kabel vést po rameni do hlavy.
-   - **Před prvním měřením projet celý rozsah ručně** a zkontrolovat, že kabel nikde nedře a nenapíná se.
+1. **Cela.** Fáze 1: E7-V03u (⌀220 × 171, rovné čelo 5 mm nad pískem) na 3 podložkách G10, vystředit na ±1 mm podle rysky na příčce T03. Ve fázi 2 vystředit na tyč víčkem P09.
+2. **Invarový sloupek** ⌀16 do patky P04. Rameno P03 utáhnout tak, aby **spodní plocha terčíku byla 3 mm nad čelem cely** (ve fázi 2 ve výšce límce). Terčík je na straně kamery (−y), nalepit na něj bílou matnou samolepku 12 × 12.
+3. **Oběh – pevná část pod příčníkem:**
+   1. Do jádra P12 zalisovat pouzdro igus RJ4JP-01-12 a do kapsy ve spodní ploše desky zalepit Hall senzor A3144 (vývody kanálkem k okraji).
+   2. Na čep ⌀30 nasunout horní ložisko 6806-2RS, distanční kroužek P12b a spodní ložisko.
+   3. Zespodu je stáhnout svěrným kroužkem P12c (3× M3 × 10).
+   4. Jádro přišroubovat 4× M5 do T-matic ve spodních drážkách T04, otvor pouzdra přesně pod otvor ⌀14.
+4. **Oběh – otočná část:**
+   1. Náboj P13 (věnec z72, magnet ⌀6 × 2 zalepit do kapsy nahoře) nasunout zespodu na vnější kroužky ložisek.
+   2. Pod něj přišroubovat rameno s hlavou P14 (2× M3). Patka ramene drží spodní ložisko.
+   3. Motor 28BYJ-48 přišroubovat pod desku držáku P16 (uši M4, hřídel nahoru), na hřídel nalisovat pastorek P19.
+   4. Držák přišroubovat 2× M5 do spodních drážek na straně −x, pastorek do záběru s věncem s malou vůlí.
+5. **Hlava kamery:**
+   1. Camera Module 3 přišroubovat 4× M2 do hlavy, čočkou do okénka ⌀12.
+   2. LED 1 W na hvězdě ⌀20 přilepit vedle okénka. 2 topné odpory 47 Ω / 1 W vlepit dovnitř hlavy.
+   3. Zavřít víčkem P15.
+6. **Box P06 s RPi 5** na polici držáku P18 na boční straně příčníku (−y, x 76 … 174, 2× M5 do boční drážky). Lid P07 je venku.
+   - Plochý kabel kamery 500 mm vést od boxu pod příčník k náboji.
+   - Kolem náboje nechat volnou smyčku (jeden závit), pak kabel vést po rameni do hlavy, spolu s vodiči LED a topení.
+   - **Před prvním měřením spustit `python3 e7_kamera.py test`** (výchozí poloha, ±90°, zpět) a zkontrolovat, že kabel nikde nedře, nenapíná se a nedotýká se tyče se závažím.
 
 **Příprava vzorku:** hutnit po vrstvách 20 mm jako v kap. 2. Poslední vrstvu srovnat **stěrkou P10u** (příčka leží na čele cely, břit 5 mm) otáčením kolem osy. Povrch je pak přesně 5 mm pod čelem. Hlava je při tom otočená na stranu +y, mimo práci.
 
@@ -213,9 +214,11 @@ Začíná se touto jednodušší fází. Rám, laser, podložky G10 a bod M jsou
 | laser (kap. 7) | pin 11 = GPIO17 → MOSFET | 5 V, svítí jen při snímku |
 | LED 1 W + 6,8 Ω | pin 13 = GPIO27 → druhý MOSFET AO3400 | 5 V (pin 4), GND pin 14 |
 | motor 28BYJ-48 přes ULN2003 | IN1–IN4 = GPIO5, 6, 13, 19 (piny 29, 31, 33, 35) | napájení desky 5 V (pin 2) a GND; po pohybu všechny výstupy vypnout |
-| Hall A3144 | GPIO26 (pin 37) + pull-up 10 kΩ na 3,3 V | napájení 3,3 V (pin 1); magnet = výchozí poloha |
+| Hall A3144 (v desce P12) | GPIO26 (pin 37), interní pull-up | napájení 3,3 V (pin 1); magnet ve věnci = výchozí poloha |
 | topení hlavy 2× 47 Ω paralelně | 5 V trvale (≈ 1 W) | drží Camera Module 3 nad 0 °C (provozní rozsah 0–50 °C), okénko bez rosy |
 | spouštění snímku z CR850 | C4 → optočlen → GPIO22 (pin 15) | jako dosud |
+
+**Řízení:** motor řídí přímo **RPi 5** (to samé, které fotí) přes desku ULN2003 – program `rpi/e7_kamera.py`. Arduino není potřeba: poloha se počítá v krocích, takže na přesném časování nezáleží, a jeden program pak sám otočí, počká, rozsvítí a vyfotí. Příkazy: `test`, `home`, `laser`, `orbit [krok]`, `run` (trvalý běh: puls z CR850 = sada snímků ve výchozí poloze, oběh v nastavených časech). Cíl se vždy najíždí ve stejném směru (vůle převodovky), po pohybu se cívky vypnou, poslední poloha se ukládá do `~/e7/stav.json`.
 
 **Snímání:**
 
@@ -244,4 +247,4 @@ Začíná se touto jednodušší fází. Rám, laser, podložky G10 a bod M jsou
 - z oběhů 3D model povrchu (fotogrammetrie, měřítko ze značek ArUco na čele cely) a jejich rozdíly mezi stavy;
 - fotky povrchu z každého cyklu.
 
-Ve fázi 2 se pak stejný postup opakuje s pístem (zatížená × volná část) a se sublimací (kap. 9). **Oběh ve fázi 2 nejde**, středem vede vodicí tyč zátěže. Hlava se připevní pevně ve výchozí poloze a 3D model se dělá ručně (kap. 8).
+Ve fázi 2 se stejný postup opakuje s pístem (zatížená × volná část) a se sublimací (kap. 9). **Oběh funguje i ve fázi 2**: hlava obíhá kolem tyče se závažím. Tyč a píst zakryjí z každé polohy jen malou část mezikruží. Laser na invarový terčík ve fázi 2 nedosvítí, posun rámu hlídá LVDT.

@@ -109,10 +109,10 @@ aside h2 { font: 600 14px var(--f-body); margin: 0 0 6px; }
 const GLB = { u: "/*__GLB_U__*/", c: "/*__GLB_C__*/" };
 const PHASE = {
   u: { sub: "rám z T-profilů · cela ⌀220 × 171 s rovným čelem · celý povrch volný · kamera OBÍHÁ kolem vzorku ±180° · laser 11 čar · invarový terčík",
-       facts: [["480 mm", "výška sestavy nad dnem mrazáku (s boxem RPi)"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
+       facts: [["486 mm", "výška sestavy nad dnem mrazáku (s boxem RPi)"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
                ["0 kPa", "bez zatížení – měří se celý povrch ⌀100"], ["36 snímků / oběh", "3D model povrchu z jednoho oběhu (10°), laser ve výchozí poloze ≈ 10 µm"]] },
-  c: { sub: "stejný rám, kamera a laser · cela ⌀220 × 200 s límcem · zátěž na pístu ⌀50 · LVDT na invarovém sloupku",
-       facts: [["559 mm", "výška sestavy nad dnem mrazáku"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
+  c: { sub: "stejný rám, laser a OBĚH KAMERY jako ve fázi 1 – hlava obíhá kolem tyče se závažím · cela ⌀220 × 200 s límcem · zátěž na pístu ⌀50 · LVDT",
+       facts: [["520 mm", "výška sestavy nad dnem mrazáku (k horní hraně tyče)"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
                ["5–25 kPa", "zatížení pod pístem ⌀50 (0–4 kotouče)"], ["≈ 1 µm / 10 µm", "rozlišení LVDT / laseru s kamerou"]] },
 };
 // groups: [id, label, supplier text, colour, matcher]
@@ -122,11 +122,11 @@ const GROUPS = [
   ["cell", "Cela a vzorek", "cela: vlastní 3D tisk (PETG-CF, Prusa) · G10: Elektroizolanty Praha · písek a čidla bodu M: máte", "#c9a86a",
    n => /^(cell|unsaturated sand|G10|M )/.test(n)],
   ["load", "Zátěž a vedení", "kotouče a píst: laser grupol.cz (DXF) · Invar: Kovohutě Rokycany · igus: HENNLICH · kroužek, kulička: Fabory / cyklo", "#6f7c8a",
-   n => /^(L0\d|steel ball|guide rod|shaft collar|igus|P01)/.test(n)],
+   n => /^(L0\d|steel ball|guide rod|shaft collar|P01)/.test(n)],
   ["meas", "Měření", "laser: Picotronic · kamera + RPi: RPishop.cz · LED: TME / GME · Invar: Kovohutě Rokycany · LVDT (fáze 2): Elkome · tištěné díly: vlastní tisk", "#d1873a",
    n => /^(LVDT|Invar 36 post|P0[2-8]|line laser|LED)/.test(n)],
-  ["orbit", "Oběh kamery", "Camera Module 3 + kabel 500 mm: RPishop.cz · motor 28BYJ-48 + ULN2003, Hall: GME / LaskaKit · ložiska 6001-2RS: TME / ZKL · hřídel ⌀12 h6: HENNLICH / TME · tištěné díly: vlastní tisk", "#3d7fb8",
-   n => /^(P1[2-9]|shaft|stepper|bearing 6001|Raspberry Pi Camera|P06 box with RPi)/.test(n)],
+  ["orbit", "Oběh kamery", "pro obě fáze · Camera Module 3 + kabel 500 mm: RPishop.cz · motor 28BYJ-48 + ULN2003, Hall: GME / LaskaKit · ložiska 6806-2RS: TME / ZKL · pouzdro igus: HENNLICH · řízení RPi 5 (rpi/e7_kamera.py) · tištěné díly: vlastní tisk", "#3d7fb8",
+   n => /^(P1[2-9]|stepper|bearing 6806|igus|Raspberry Pi Camera|P06 box with RPi)/.test(n)],
 ];
 // [prefix of model name, Czech name, where to buy]
 const CZ = [
@@ -147,7 +147,7 @@ const CZ = [
   ["M Pt100 metal", "Pt100 – sonda", "máte"],
   ["M Pt100 cable", "Pt100 – kabel", "máte"],
   ["P01", "P01 pouzdro ložiska (tisk)", "vlastní 3D tisk"],
-  ["igus", "kluzné pouzdro igus RJ4JP-01-12", "HENNLICH (zastoupení igus) nebo TME"],
+  ["igus", "kluzné pouzdro igus RJ4JP-01-12 (v jádře oběhu)", "HENNLICH (zastoupení igus) nebo TME; ve fázi 2 jím jde vodicí tyč zátěže"],
   ["L05", "L05 píst spodní ⌀50 × 10", "Al 10 mm, laserový řez podle DXF – grupol.cz"],
   ["L04", "L04 píst horní ⌀50 × 10", "Al 10 mm, laserový řez podle DXF – grupol.cz"],
   ["steel ball", "ocelová kulička 5/16\"", "kuličky do ložisek – cyklo prodejna / Fabory CZ"],
@@ -162,19 +162,19 @@ const CZ = [
   ["LVDT plunger", "jádro LVDT", "součást LVDT"],
   ["P03", "P03 rameno s invarovým terčíkem (tisk)", "vlastní 3D tisk; obchází celu zvenku, terčík na straně kamery – reference posunu rámu"],
   ["LED", "bílá LED 1 W na hvězdě ⌀20 (fotky povrchu)", "TME / GM electronic; na hlavě vedle okénka, spíná RPi (GPIO27)"],
-  ["P06 box with RPi", "P06 box s RPi 5 (ve vaničce na příčníku)", "RPi 5 – RPishop.cz, box vlastní 3D tisk"],
+  ["P06 box with RPi", "P06 box s RPi 5 (na boku příčníku)", "RPi 5 – RPishop.cz, box vlastní 3D tisk; řídí motor i kameru"],
   ["P06", "P06 box kamery: RPi 5 + HQ kamera + objektiv 6 mm", "elektronika RPishop.cz, box vlastní 3D tisk"],
-  ["P12", "P12 ložiskový blok na příčníku (tisk)", "vlastní 3D tisk; 2× ložisko 6001-2RS, 4× M5 do horních drážek T04"],
-  ["P14", "P14 rameno s nábojem a hlavou kamery (tisk)", "vlastní 3D tisk; na hřídeli ⌀12 dvěma červíky M4, obíhá ±180°"],
+  ["P12b", "P12b distanční kroužek ložisek (tisk)", "vlastní 3D tisk"],
+  ["P12c", "P12c svěrný kroužek ložisek (tisk)", "vlastní 3D tisk; 3× M3 do jádra"],
+  ["P12", "P12 pevné jádro oběhu pod příčníkem (tisk)", "vlastní 3D tisk; 4× M5 do spodních drážek T04, ve středu pouzdro igus pro vodicí tyč zátěže, Hall senzor výchozí polohy"],
+  ["P13", "P13 otočný náboj s věncem m1 z72 (tisk)", "vlastní 3D tisk; na 2 ložiskách 6806-2RS, magnet výchozí polohy"],
+  ["P14", "P14 rameno s hlavou kamery (tisk)", "vlastní 3D tisk; obíhá ±180° kolem osy (ve fázi 2 kolem tyče se závažím)"],
   ["P15", "P15 víčko hlavy (tisk)", "vlastní 3D tisk"],
-  ["P16", "P16 stojánek motoru (tisk)", "vlastní 3D tisk; Hall senzor A3144 pro výchozí polohu"],
-  ["P17", "P17 ozubené kolo m1 z72 (tisk)", "vlastní 3D tisk; magnet ⌀6 × 2 pro výchozí polohu"],
-  ["P18", "P18 vanička boxu RPi (tisk)", "vlastní 3D tisk"],
+  ["P16", "P16 držák motoru pod příčníkem (tisk)", "vlastní 3D tisk; 2× M5 do spodních drážek"],
+  ["P18", "P18 držák boxu RPi na boku příčníku (tisk)", "vlastní 3D tisk; 2× M5 do boční drážky"],
   ["P19", "P19 pastorek m1 z12 (tisk)", "vlastní 3D tisk; převod 6 : 1"],
-  ["shaft collar DIN 705-A 12 (orbit)", "stavěcí kroužek DIN 705 ⌀12 (oběh)", "Fabory CZ / Hornbach; hřídel na něm visí"],
-  ["shaft D12", "hřídel ⌀12 h6 × 120", "kalená broušená tyč – HENNLICH / TME / e-shopy s díly pro 3D tiskárny"],
-  ["stepper", "krokový motor 28BYJ-48 5 V + ULN2003", "GM electronic / LaskaKit"],
-  ["bearing 6001", "ložisko 6001-2RS (12 × 28 × 8)", "TME nebo ZKL (český výrobce)"],
+  ["stepper", "krokový motor 28BYJ-48 5 V + ULN2003", "GM electronic / LaskaKit; řídí RPi 5"],
+  ["bearing 6806", "ložisko 6806-2RS (30 × 42 × 7)", "TME nebo ZKL (český výrobce)"],
   ["Raspberry Pi Camera", "Raspberry Pi Camera Module 3", "RPishop.cz; 66° × 41°, kabel Standard–Mini 500 mm"],
   ["P08", "P08 závěs kamery (tisk)", "vlastní 3D tisk; kamera 110 mm nad pískem, sklon 38°"],
   ["P05", "P05 držák laseru (tisk)", "vlastní 3D tisk"],
@@ -203,7 +203,7 @@ const parts = []; let center = new THREE.Vector3(), radius = 400, selected = nul
 function nameOf(o) { while (o && o.parent) { if (/^E7/.test(o.parent.name || "")) return o.name.replace(/_/g, " "); o = o.parent; } return ""; }
 
 let root = null, pivot = null, axis = null, playing = false, orbAng = 0, orbDir = 1;
-const ROT = /^(shaft D12|shaft collar DIN 705-A 12 \(orbit\)|P17 |P14 |P15 |Raspberry Pi Camera Module 3|LED white 1 W)/;
+const ROT = /^(P13 |P14 |P15 |Raspberry Pi Camera Module 3|LED white 1 W)/;
 function setOrbit(deg) {
   orbAng = deg; document.getElementById("oAng").value = Math.round(deg); document.getElementById("oVal").textContent = Math.round(deg) + "°";
   if (pivot && axis) pivot.quaternion.setFromAxisAngle(axis, deg * Math.PI / 180);
@@ -215,11 +215,7 @@ function buildPivot() {
   if (!asmNode) return;
   for (const c of [...asmNode.children]) if (ROT.test((c.name || "").replace(/_/g, " "))) nodes.push(c);
   if (!nodes.length) return;
-  const shaft = nodes.find(c => /^shaft D12/.test(c.name.replace(/_/g, " "))) || nodes[0];
-  root.updateMatrixWorld(true);
-  const inv = asmNode.matrixWorld.clone().invert();
-  const bb = new THREE.Box3().setFromObject(shaft).applyMatrix4(inv), s = bb.getSize(new THREE.Vector3());
-  axis = s.z >= s.y && s.z >= s.x ? new THREE.Vector3(0, 0, 1) : (s.y >= s.x ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0));
+  axis = new THREE.Vector3(0, 0, 1);                       // model z = sample axis (assembly node frame, origin on the axis)
   pivot = new THREE.Group(); asmNode.add(pivot);
   for (const n of nodes) pivot.attach(n);
 }

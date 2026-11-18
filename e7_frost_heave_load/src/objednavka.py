@@ -205,7 +205,8 @@ def main():
          "NEKUPUJE: laserové díly L03–L07 (bod 1), LVDT a zdroj 24 V, pouzdro igus, stavěcí kroužky a kulička; Invar ⌀12 "
          "objednat spolu s ⌀16. Cela fáze 1 je E7-V03u (⌀220 × 171), přibývá stěrka P10u a **obíhající kamera** – místo HQ kamery s objektivem 6 mm "
          "a závěsu P08 se kupuje Raspberry Pi Camera Module 3, kabel 500 mm, motor 28BYJ-48 + ULN2003, 2× ložisko "
-         "6001-2RS, hřídel ⌀12 h6 × 120 a stavěcí kroužek; LED a topný odpor jsou na hlavě kamery. "
+         "6806-2RS; **oběh je pro obě fáze stejný** a pouzdro igus vodicí tyče sedí v jeho jádře P12 (pouzdro P01 a závěs "
+         "P08 se netisknou); LED a topný odpor jsou na hlavě kamery; motor řídí RPi 5 (`rpi/e7_kamera.py`). "
          "Rozdělení po firmách a fázích: `dodavatele_E7.md`.",
          "", "**Už máte:** CR850, TDR100/200 + CS645, Pt100, optické vlákno + čtečku, truhlicový mrazák s regulátorem (E6).", "",
          f"Ceny: „ověřeno“ = nalezeno na webu prodejce v 10/2026 (ověřte před objednáním), „odhad/poptat“ = cenu je třeba zjistit. 1 € ≈ {EUR:g} Kč.", ""]

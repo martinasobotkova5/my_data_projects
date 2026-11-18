@@ -300,15 +300,15 @@ def sheet_profile(prof, pdf):
         D.dim_h(bt[0], cx, bt[3], bt[3] + 10 * S, f"{L / 2:g}")
         D.dim_d((cx, cy), 7.0, 45, text="⌀14")
         notes += ["otvor ⌀14 svisle skrz celý profil (40 mm), uprostřed délky i šířky, stojanová vrtačka",
-                  "spodní drážky: 4 T-matice M5 pro pouzdro P01 (rozteč 38 × 40, souměrně k otvoru)",
-                  "boční drážky: T-matice M5 – držák laseru P05 (+y), závěs kamery P08 (−y)"]
+                  "spodní drážky: 4 T-matice M5 pro jádro oběhu P12 (rozteč 48 × 40, souměrně k otvoru) + 2 pro držák motoru P16 (x −68)",
+                  "boční drážky: T-matice M5 – držák laseru P05 (+y), držák boxu RPi P18 (−y)"]
     D.notes(notes, 25 * S, oy - 20 * S)
     D.title_block(scale_txt(S))
     return D.save(prof["no"] + "_" + prof["name"].split(" / ")[-1].replace(" ", "_"), pdf)
 
 
 PRINT_NOTES = {
-    "E7-P01_bearing_housing": ["otvor ⌀21,2 hl. 32 pro igus RJ4JP-01-12 (lisovat rukou, svěrka M4)",
+    "E7-P01_bearing_housing": ["NEPOUŽÍVÁ SE od 18. 11. 2026 – pouzdro igus je v jádře oběhu P12","otvor ⌀21,2 hl. 32 pro igus RJ4JP-01-12 (lisovat rukou, svěrka M4)",
                                "spodem ⌀14 průchozí pro tyč; 4× ⌀5,5 (M5×45) se zahloubením ⌀10 × 5",
                                "rozteč 38 × 40 = T-matice M5 ve spodních drážkách příčníku T04, pouzdro visí pod ním"],
     "E7-P02_lvdt_arm": ["svěrka ⌀16,3 na Invarový sloupek, svěrka ⌀20,9 na LVDT DCTH (⌀20,6)",
@@ -316,17 +316,22 @@ PRINT_NOTES = {
     "E7-P03_target_arm": ["svěrka ⌀16,3 na sloupek; plocha 14 × 14 pro bílý terčík (samolepka)",
                           "rameno obchází celu zvenku (ohyb), terčík na straně kamery – v zorném poli kamery i laseru",
                           "fáze 1 (cela U): spodní plocha 3 mm nad čelem cely; fáze 2: horní plocha ve výšce límce"],
-    "E7-P12_orbit_bearing_block": ["na horní stranu T04: 4× M5 do T-matic (drážky y ±20), otvor ⌀16 nad otvorem ⌀14",
-                                   "2 lůžka ⌀28 × 8 pro 6001-2RS (zalisovat), mezi nimi osazení ⌀24; tisk deskou dolů, 100 % výplň kolem lůžek"],
-    "E7-P14_camera_arm_head": ["náboj ⌀28 na hřídel ⌀12 h6: 2 červíky M4 (matice v kapsách), 4 mm pod příčníkem",
-                               "hlava 34 × 34 × 24, okénko ⌀12, 4× M2 pro Camera Module 3 (21 × 12,5), sklon 36,5°",
-                               "tisknout ramenem naplocho, podpěry pod hlavou; LED na hvězdě a 2 odpory 47 Ω přilepit"],
+    "E7-P12_orbit_core": ["pevné jádro oběhu pod T04: 4× M5 do T-matic ve spodních drážkách (y ±20), otvor ⌀21,2 pod otvor ⌀14",
+                          "do otvoru zalisovat igus RJ4JP-01-12 (vodicí tyč ⌀12 ve fázi 2); čep ⌀30 pro 2× 6806-2RS",
+                          "3× ⌀2,5 dole pro M3 (svěrný kroužek P12c); kapsa + kanálek pro Hall A3144 ve spodní ploše desky",
+                          "tisk deskou dolů, 100 % výplň čepu"],
+    "E7-P12b_bearing_spacer": ["distanční kroužek mezi vnitřními kroužky ložisek 6806-2RS (⌀30,2 / ⌀34 × 6)"],
+    "E7-P12c_clamp_ring": ["svěrný kroužek pod spodním vnitřním kroužkem, 3× M3 × 10 do jádra P12"],
+    "E7-P13_orbit_hub": ["otočný náboj: 2 lůžka ⌀42 × 7 pro 6806-2RS (zalisovat), mezi nimi osazení ⌀38",
+                         "nahoře věnec m1 z72 (šířka 6), dole příruba ⌀60 se 2× M3 pro patku ramene P14",
+                         "kapsa ⌀6,2 × 2,2 pro magnet výchozí polohy; tisk 0,15 mm, 100 % výplň"],
+    "E7-P14_camera_arm_head": ["patka ⌀60 / ⌀36 pod přírubou náboje (2× M3) – drží spodní ložisko",
+                               "rameno vede pod motorem (z 271–279), pak stoupá k hlavě 34 × 34 × 24, okénko ⌀12, sklon 36,5°",
+                               "4× M2 pro Camera Module 3; LED na hvězdě a 2 odpory 47 Ω přilepit; tisk s podpěrami"],
     "E7-P15_head_lid": ["víčko hlavy, výřez 17 × 3 pro plochý kabel kamery a vodiče LED / topení"],
-    "E7-P16_motor_stand": ["stojánek 28BYJ-48 na horní stranu T04 (strana −x), 2× M5; uši motoru M4 (rozteč 35) zespodu",
-                           "osa pastorku 42 mm od osy vzorku (záběr m1 z12 / z72); držák Hall A3144 u věnce"],
-    "E7-P17_gear_z72": ["ozubené kolo m1 z72, šířka 6, náboj ⌀24 s červíkem M4 (matice v kapse)",
-                        "kapsa ⌀6,2 × 2,2 pro magnet výchozí polohy (strana −y); tisk 0,15 mm, 100 % výplň"],
-    "E7-P18_rpi_tray": ["vanička pro box P06 s RPi 5 na horní straně T04 (x 40 … 150), 2× M5 do drážky y −20"],
+    "E7-P16_motor_bracket": ["držák 28BYJ-48 pod T04 (strana −x): 2× M5 do spodních drážek, uši motoru M4 (rozteč 35) zespodu",
+                             "osa pastorku 42 mm od osy vzorku (záběr m1 z12 / z72)"],
+    "E7-P18_rpi_bracket": ["držák boxu P06 s RPi 5 na boční straně T04 (−y): 2× M5 do boční drážky, police nad dráhou hlavy"],
     "E7-P19_pinion_z12": ["pastorek m1 z12 na hřídel 28BYJ-48 (⌀5 s ploškami 3 mm), nalisovat; tisk 0,1 mm, 100 % výplň"],
     "E7-P10u_screed_5mm": ["fáze 1 (cela U): příčka leží na rovném čele cely, břit sahá 5 mm pod čelo (= povrch písku)",
                            "otáčet kolem osy, přebytek písku odebrat; břit tisknout naležato, 100 % výplň"],
@@ -347,7 +352,7 @@ PRINT_NOTES = {
                       "otáčet kolem osy, přebytek písku odebrat; břit tisknout naležato, 100 % výplň"],
     "E7-P11_parking_fork": [f"postavit na horní plochu T04 kolem tyče pod stavěcí kroužek: tyč zvednutá o {bp.PARK_LIFT:g} mm",
                             "pak lze celu vyjmout (směr +y, rameno terčíku P03 natočit stranou)"],
-    "E7-P08_camera_hanger": ["2× ⌀5,5 (M5×12) do T-matic v boční drážce příčníku T04 (−y)", "box kamery přišroubovat 2× M4"],
+    "E7-P08_camera_hanger": ["NEPOUŽÍVÁ SE od 18. 11. 2026 – kamera obíhá (P14), box RPi na držáku P18","2× ⌀5,5 (M5×12) do T-matic v boční drážce příčníku T04 (−y)", "box kamery přišroubovat 2× M4"],
 }
 
 

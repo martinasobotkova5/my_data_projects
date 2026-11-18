@@ -16,6 +16,7 @@ Kde co najdete:
 - Vzorek: nenasycený písek Sr 0,5, cyklus 24 h −10 °C / 24 h +10 °C, 10 cyklů.
 - Povrch písku je celý volný. Kamera s laserem měří jeho zdvih a sednutí po celé ploše ⌀100 (≈ 10 µm).
 - **Kamera obíhá kolem vzorku** (±180°, snímek po 10°): z jednoho oběhu se udělá 3D model povrchu (fotogrammetrie). Laser se snímá ve výchozí poloze.
+- **Oběh je pro obě fáze stejný:** ložiska, věnec a motor jsou pod příčníkem. Ve středu pevného jádra je pouzdro igus pro vodicí tyč zátěže, takže ve fázi 2 hlava obíhá kolem tyče. Motor řídí totéž RPi 5, které fotí (program `rpi/e7_kamera.py`).
 - Bílá LED k tomu dává obyčejné fotky povrchu (námraza, trhliny).
 - Cela má rovné čelo jen 5 mm nad pískem, aby kamera viděla až ke stěně.
 - Teplotní posun rámu ukáže invarový terčík.
@@ -40,9 +41,9 @@ Kde co najdete:
 | 4 | Invar ⌀16 (+ ⌀12 pro fázi 2) | Kovohutě Rokycany | poptávka, řez na míru; obě tyče najednou | 1–3 týdny |
 | 5 | RPi 5 + Camera Module 3 + kabel 500 mm | RPishop.cz | skladem | 1–3 dny |
 | 6 | filament a tisk cely | Prusa | cela ⌀220 × 171 se tiskne ≈ 30–45 h | 2–3 dny + tisk |
-| 7 | G10, elektronika, oběh (ložiska, hřídel, motor), šrouby, spotřební | Elektroizolanty, TME, GME, Fabory, Hornbach | skladem | 1–3 dny |
+| 7 | G10, elektronika, oběh (ložiska 6806, motor, pouzdro igus), šrouby, spotřební | Elektroizolanty, TME, GME, HENNLICH, Fabory, Hornbach | skladem | 1–3 dny |
 
-LVDT (Elkome), laserem řezané kotouče (grupol.cz) a pouzdro igus stačí objednat **až před fází 2**.
+LVDT (Elkome) a laserem řezané kotouče (grupol.cz) stačí objednat **až před fází 2**. Pouzdro igus se kupuje hned, sedí v jádře oběhu.
 
 ## 1 · Fáze 1 – nákup podle firem
 
@@ -131,8 +132,8 @@ Fáze 1 tiskne:
 - P03 rameno s terčíkem (nová trasa);
 - P04 patku sloupku;
 - P05 držák laseru;
-- P06 a P07 box pro RPi 5 (leží ve vaničce P18 na příčníku);
-- oběh kamery: P12 ložiskový blok, P14 rameno s hlavou, P15 víčko hlavy, P16 stojánek motoru, P17 kolo z72, P19 pastorek z12, P18 vanička;
+- P06 a P07 box pro RPi 5 (na polici P18 na boční straně příčníku);
+- oběh kamery (obě fáze): P12 jádro s lůžkem igus, P12b distanční kroužek, P12c svěrný kroužek, P13 náboj s věncem z72, P14 rameno s hlavou, P15 víčko hlavy, P16 držák motoru, P18 držák boxu RPi, P19 pastorek z12;
 - P10u stěrku s břitem 5 mm.
 
 ### 1.8 TME / GM electronic – elektronika
@@ -143,7 +144,8 @@ Fáze 1 tiskne:
 |---|---|---|
 | **bílá LED 1 W na hliníkové hvězdě ⌀20 + odpor 6,8 Ω**, přilepit na hlavu kamery vedle okénka | 1 | ≈ 80–200 Kč |
 | **oběh:** krokový motor 28BYJ-48 5 V + deska ULN2003 | 1 | ≈ 80–150 Kč |
-| **oběh:** ložisko 6001-2RS (12 × 28 × 8) – TME, nebo český výrobce ZKL | 2 | ≈ 60–150 Kč |
+| **oběh:** ložisko 6806-2RS (30 × 42 × 7, tenkostěnné) – TME, nebo český výrobce ZKL | 2 | ≈ 100–250 Kč |
+| **oběh:** kluzné pouzdro igus drylin RJ4JP-01-12 do jádra P12 (ve fázi 2 jím jde vodicí tyč) – HENNLICH / TME | 1 | ≈ 50–120 Kč |
 | **oběh:** Hall senzor A3144 + neodymový magnet ⌀6 × 2 (výchozí poloha) | 1 | ≈ 40–60 Kč |
 | **hlava:** topný odpor 47 Ω / 1 W (2 ks ≈ 1 W, Camera Module 3 nad 0 °C a okénko bez rosy) | 2 | ≈ 10–20 Kč |
 | MOSFET AO3400 / IRLZ44N 2× (laser + LED z GPIO), odpory, kabel, bužírka | 1 sada | ≈ 100–150 Kč |
@@ -157,8 +159,7 @@ Fáze 1 tiskne:
 | položka | ks | cena |
 |---|---|---|
 | šrouby M5 (20/12), M4×20, M3×20 + červík, M2,5×6 + distanční sloupky; M2×6 (Camera Module 3), M4 červíky 3× + matice (náboj ramene a kola) | sada | ≈ 300–500 Kč |
-| **oběh:** kalená broušená tyč ⌀12 h6 × 120 (lineární vedení; nařežou HENNLICH / TME / e-shopy s díly pro 3D tiskárny) | 1 | ≈ 150–300 Kč |
-| **oběh:** stavěcí kroužek DIN 705-A 12 (hřídel na něm visí) | 1 | ≈ 50–100 Kč |
+| **oběh:** šrouby M3 × 10 (3× svěrný kroužek, 2× rameno), M4 × 10 + matice (motor), M2 × 6 (kamera) | sada | ≈ 50 Kč |
 | T-matice M5 navíc (oběh: P12 4×, P16 2×, P18 2×) | 8 | ≈ 1 €/ks |
 | dvousložkový epoxid (dutina cely) | 1 | ≈ 250–400 Kč |
 | PTFE sprej + silikonová vazelína (Molykote 111 – TME) | 1 | ≈ 400–600 Kč |
@@ -179,9 +180,8 @@ Stojan, kamera a laser zůstávají. Přibývá:
 | LVDT RDP DCTH400AG, ±10 mm, DC vstup i výstup – předtím ověřit provoz při −10 °C | [Elkome](https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor) (FI); česká alternativa [Micro-Epsilon CZ, Bechyně](https://www.micro-epsilon.cz/) | 1 | 581 € ≈ 14 500 Kč (ověřeno) |
 | zdroj Mean Well HDR-15-24 (napájení LVDT) | TME | 1 | ≈ 11 € |
 | L03 nosná deska, L04/L05 píst, 4× L06 + L07 závaží (DXF) | [grupol.cz](https://grupol.cz/), alt. [Zamet](https://www.zamet.cz/laserove-rezani) | sada | ≈ 1 800–3 500 Kč |
-| kluzné pouzdro igus drylin RJ4JP-01-12 | HENNLICH (Litoměřice, +420 416 711 333) / TME | 1 | ≈ 50–120 Kč |
 | stavěcí kroužek DIN 705-A 12 (2×), kulička 5/16", šrouby M5×35 | Fabory CZ / cyklo prodejna | sada | ≈ 200–350 Kč |
-| tisk P01, P02, P09, P10, P11 (+ případně vyšší cela V03) | vlastní tisk | – | filament z fáze 1 |
+| tisk P02, P09, P10, P11 (+ případně vyšší cela V03); pouzdro P01 už není potřeba – igus je v jádře oběhu P12 | vlastní tisk | – | filament z fáze 1 |
 | **sublimace:** tenzometr 1 kg + HX711 | [LaskaKit](https://www.laskakit.cz/) / GM electronic | 1 | ≈ 150–300 Kč |
 | **sublimace:** čidlo vlhkosti SHT45 (I²C) – povinné | RPishop.cz / LaskaKit (alt. SHT40) | 1 | ≈ 350–600 Kč |
 | **sublimace:** skleněné misky ⌀90 (Petriho) | [P-LAB](https://www.p-lab.cz/) / [Verkon](https://www.verkon.cz/) | 3 | ≈ 200–400 Kč |
@@ -192,8 +192,8 @@ Stojan, kamera a laser zůstávají. Přibývá:
 
 | fáze | co | cena |
 |---|---|---|
-| 1 – bez zatížení | rám, cela, G10, Invar (obě tyče), laser, obíhající kamera (CM3, motor, ložiska, hřídel) + RPi, LED, Campbell, elektronika, spotřební | ≈ 25 000–34 000 Kč |
-| 2 – zátěž | LVDT + zdroj 24 V, kotouče a píst, igus, kroužky | ≈ 17 000–19 000 Kč |
+| 1 – bez zatížení | rám, cela, G10, Invar (obě tyče), laser, obíhající kamera (CM3, motor, ložiska 6806, igus) + RPi, LED, Campbell, elektronika, spotřební | ≈ 25 000–34 000 Kč |
+| 2 – zátěž | LVDT + zdroj 24 V, kotouče a píst, kroužky | ≈ 17 000–19 000 Kč |
 | 2 – sublimace | váha HX711, SHT45, misky, silikagel, síto | ≈ 1 300–2 400 Kč |
 | **celkem** | | **≈ 43 000–55 000 Kč** |
 
@@ -206,15 +206,15 @@ Fáze 1 je bez LVDT zhruba o 17–19 tisíc Kč levnější. LVDT, největší p
 | ENPRAG | `vyroba/narezy/E7_narezy_profily_ENPRAG.pdf`, text `poptavka_ramu.md` | 1 |
 | Kovohutě Rokycany | `vyroba/narezy/E7_narezy_invar_Rokycany.pdf` (obě tyče) | 1 (+2) |
 | Elektroizolanty Praha | `vyroba/narezy/E7_narezy_G10_Elektroizolanty.pdf` | 1 |
-| vlastní tisk | `vyroba/tisk/E7-V03u_cell_D220x171_bez_zatizeni.stl`, P03–P07, P10u, oběh P12, P14–P19 | 1 |
+| vlastní tisk | `vyroba/tisk/E7-V03u_cell_D220x171_bez_zatizeni.stl`, P03–P07, P10u, oběh P12, P12b, P12c, P13–P16, P18, P19 | 1 |
 | grupol.cz | `vyroba/laser/E7-L03…L07_*.dxf`, kontrola `vyroba/narezy/E7_narezy_laser_grupol.pdf` | 2 |
 | všechny dohromady | `vyroba/narezy/E7_narezove_vykresy.pdf` (přehled N00 se sloupcem „fáze“, plány N01–N03 + výrobní výkresy) | – |
 
 ## 5 · Ověřit před objednáním
 
 - **Tiskárna:** výška tisku ≥ 171 mm (cela fáze 1).
-- **Mrazák:** vnitřní výška ve fázi 1 ≥ 520 mm (sestava s boxem RPi na příčníku 480 mm + kabely); ve fázi 2 se zátěží ≥ 600 mm (559 mm).
+- **Mrazák:** vnitřní výška ve fázi 1 ≥ 530 mm (sestava s boxem RPi na boku příčníku ≈ 486 mm + kabely); ve fázi 2 se zátěží ≥ 560 mm (≈ 520 mm k horní hraně vodicí tyče).
 - **grupol.cz:** zda řeže hliník 10 mm (až pro fázi 2).
 - **LVDT RDP:** provoz při −10 °C (dotaz na Elkome, až pro fázi 2).
 - **Fáze 2:** na straně kamery laser na invarový terčík nedosvítí, zakryje ho zátěžový sloupec. Kamera terčík vidí a posun rámu hlídá i LVDT na invarovém sloupku.
-- **Oběh kamery ve fázi 2:** středem příčníku vede tyč zátěže, oběh v této podobě nepůjde; hlava se připevní pevně ve výchozí poloze (navrhne se před fází 2).
+- **Oběh kamery ve fázi 2:** funguje stejně – hlava obíhá kolem tyče se závažím; ve fázi 2 se nic na oběhu nemění.

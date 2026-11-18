@@ -284,7 +284,7 @@ C_INVAR_D = 16.0                         # sloupek z Invaru 36 ⌀16 z desky →
 C_ROD_INVAR = True                       # vodicí tyč ⌀12 z Invaru 36 (broušená) místo oceli – jinak ocel 249 mm = 57 µm / 20 K
 C_INVAR_XY = (150.0, 108.0)              # rev. B3: na podélníku základny (x 150) za sloupem; poloha sloupku (mimo celu, sloupy, kameru a laser)
 C_LVDT_XY = (30.0, 58.0)                 # rev. B3: vedle příčníku (y > 40), pod nosnou deskou ⌀140; LVDT pod nosnou deskou závaží (r 57 < 60), vedle příčníku
-C_REF_XY = (20.0, -56.0)                 # 16. 11. 2026: invarový referenční terčík pro kameru a laser – na straně kamery (r 59), v zorném poli
+C_REF_XY = (37.0, -44.0)                 # 18. 11. 2026: invarový terčík pro kameru i laser – r 58, mimo stín náboje oběhu (laser) a v zorném poli kamery
 C_REF_VIA = (75.0, -30.0)                # ohyb ramene P03 – rameno obchází celu zvenku, nepřechází nad vzorkem
 ALPHA_G10_Z = 15e-6                      # G10 kolmo k vrstvám ≈ (ověřit), podložky 40 mm
 ALPHA_SAND = 10e-6                       # tepelná roztažnost písku (bez fázové změny)
@@ -300,7 +300,7 @@ C_LED_OFF = 38.0                         # střed LED od osy objektivu (po delš
 # malá hlava s Raspberry Pi Camera Module 3 (25 × 24 mm, 66° × 41°) obíhá na náboji pod středem příčníku T04;
 # RPi 5 zůstává v pevném boxu P06 na horní straně příčníku, kabel kamery 500 mm ve smyčce (±180° od výchozí polohy)
 C_ORB_R, C_ORB_H, C_ORB_TILT = 85.0, 100.0, 36.5   # okénko hlavy: vzdálenost od osy, výška nad pískem, sklon od svislice
-C_ORB_BRG = (30.0, 42.0, 7.0)            # 2× ložisko 6806-2RS (d × D × B) na tištěném čepu, sevřené šroubem M12 skrz otvor ⌀14
+C_ORB_BRG = (30.0, 42.0, 7.0)            # 2× ložisko 6806-2RS (d × D × B) na pevném tištěném jádře P12 pod příčníkem (18. 11. 2026: jedna sestava pro obě fáze)
 C_ORB_GEAR = (1.0, 72, 12)               # modul, zuby věnce na náboji, zuby pastorku na krokovém motoru 28BYJ-48 (převod 6 : 1)
 C_ORB_MOTOR_ANG = 180.0                  # motor na straně −x (mimo vějíř laseru na +y a mimo výchozí polohu kamery na −y)
 C_ORB_STEP_DEG = 10.0                    # snímek po 10° → 36 snímků na jeden oběh (fotogrammetrie)

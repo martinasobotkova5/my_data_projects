@@ -372,7 +372,7 @@ Zorné pole objektivu 6 mm na HQ kameře (6,29 × 4,71 mm): ±27,6° × ±21,4°
 
 ## 23. Kamera obíhající kolem vzorku (16. 11. 2026)
 
-Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° × 41°, 4608 × 2592 px, autofokus) obíhá kolem osy vzorku. Pohon je nad příčníkem: hřídel ⌀12 h6 prochází otvorem ⌀14 v T04, točí se ve dvou ložiskách 6001-2RS v tištěném bloku P12, visí na stavěcím kroužku DIN 705 a nese kolo m1 z72; krokový motor 28BYJ-48 s pastorkem z12 (převod 6 : 1). Pod příčníkem je jen rameno s hlavou (P14) – vějíř laseru i pohled kamery jsou volné. RPi 5 je v pevném boxu P06 na příčníku, plochý kabel 500 mm ve smyčce → rozsah ±180°.
+Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° × 41°, 4608 × 2592 px, autofokus) obíhá kolem osy vzorku – **jedna sestava pro obě fáze** (18. 11. 2026). Pod středem příčníku T04 je pevné jádro P12 s otvorem ve středu, v němž sedí kluzné pouzdro igus vodicí tyče zátěže (nahrazuje pouzdro P01); na jádře dvě ložiska 6806-2RS, na nich otočný náboj P13: dole rameno s hlavou kamery P14, nahoře věnec m1 z72. Krokový motor 28BYJ-48 s pastorkem z12 (převod 6 : 1) visí pod příčníkem na straně −x (držák P16). Ve fázi 2 tedy hlava obíhá kolem tyče se závažím. Rameno vede pod motorem (z 271–279) a teprve za ním stoupá k hlavě. Řídí RPi 5 (program rpi/e7_kamera.py), které zároveň fotí; box s RPi je na boční straně příčníku, plochý kabel 500 mm ve smyčce → rozsah ±180°.
 
 | veličina | hodnota |
 |---|---|
@@ -387,5 +387,7 @@ Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° ×
 
 **Laser se snímá jen ve výchozí poloze (−y)**, kam se hlava vrací přes Hall senzor. Protože se hlava mezi tím otáčí, výška se počítá vůči laserovým čarám na rovném čele cely (5 mm nad pískem) a na invarovém terčíku v témže snímku; malá nepřesnost návratu (≈ 0,1°) se tím vyruší.
 
-**Fáze 2 (se zátěží):** středem příčníku prochází vodicí tyč zátěže a pod ním visí pouzdro P01, takže oběh v této podobě ve fázi 2 nejde; hlava se tam připevní pevně ve výchozí poloze (držák se navrhne před fází 2), nebo se pouzdro P01 přesune nad příčník.
+**Fáze 2 (se zátěží):** vodicí tyč ⌀12 prochází středem jádra (pouzdro igus v P12), náboj s ramenem se točí kolem ní. Tyč a píst zakryjí z každé polohy jen malou část mezikruží, ostatní polohy oběhu ji vidí. Laser na invarový terčík na straně kamery ve fázi 2 nedosvítí (zakryje ho zátěžový sloupec) – posun rámu tam hlídá LVDT.
+
+**Řízení motoru:** RPi 5 (stejné, které fotí) přes desku ULN2003, půlkroky z Pythonu (gpiozero); poloha se jen počítá, takže na časování nezáleží – Arduino není potřeba. Po každém pohybu se cívky vypnou (převod 64 : 1 v motoru drží polohu, motor nehřeje). Výchozí poloha: Hall A3144 v desce P12 nad magnetem ve věnci; cíl se vždy najíždí ve stejném směru (vymezení vůle). Poslední poloha se ukládá, aby se po výpadku proudu kabel nenavíjel dál.
 

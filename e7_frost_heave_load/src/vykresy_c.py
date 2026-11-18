@@ -221,6 +221,10 @@ def _sheet_assembly(pdf):
              ["10", "(2) LVDT RDP DCTH400AG (V02)"],
              ["11", "point M: CS645, Pt100, optical fibre (existing)"]]
     table(sh, 255, y - 18, ["#", "part"], parts, [8, 120], row_h=5.4)
+    sh.ax.text(250, 60, "18. 11. 2026 – KAMERA OBÍHÁ (obě fáze): pevný box kamery, závěs P08 a pouzdro P01\n"
+               "jsou nahrazeny oběhem (jádro P12 s pouzdrem igus, rameno s hlavou Camera Module 3, motor\n"
+               "pod příčníkem). Aktuální sestavy: V07 (fáze 1) a V08 (fáze 2, se zátěží).", fontsize=6.6,
+               color="#c0392b", va="bottom", weight="bold")
     sh.save(pdf, os.path.join(OUT, "E7-V01_rig_C.png"))
 
 
@@ -362,6 +366,10 @@ def _sheet_measurement(pdf):
             "7  NEW sublimation series: −10 °C, silica gel, 14–30 days, ice-rich\n"
             "   sand; annulus lowers, piston (cover) stays → pedestal",
             fontsize=fs(), va="top", linespacing=1.45)
+    sh.ax.text(250, 60, "18. 11. 2026 – KAMERA OBÍHÁ (obě fáze): pevný box kamery, závěs P08 a pouzdro P01\n"
+               "jsou nahrazeny oběhem (jádro P12 s pouzdrem igus, rameno s hlavou Camera Module 3, motor\n"
+               "pod příčníkem). Aktuální sestavy: V07 (fáze 1) a V08 (fáze 2, se zátěží).", fontsize=6.6,
+               color="#c0392b", va="bottom", weight="bold")
     sh.save(pdf, os.path.join(OUT, "E7-V02_measurement.png"))
 
 
@@ -718,7 +726,7 @@ def run(fn):
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
-        if f.endswith((".png", ".pdf")) and not f.startswith("E7-V07"):   # V07 (phase 1) is drawn by vykres_u.py
+        if f.endswith((".png", ".pdf")) and not f.startswith(("E7-V07", "E7-V08")):   # V07, V08 are drawn by vykres_u.py
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E7_drawings.pdf")) as pdf:
         for fn in (_sheet_assembly, _sheet_measurement, _sheet_cell, _sheet_sensors, _sheet_layout, _sheet_parts):

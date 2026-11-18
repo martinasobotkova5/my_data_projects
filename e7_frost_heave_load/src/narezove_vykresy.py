@@ -135,8 +135,6 @@ def n00(pdf):
         ("B02", "sloupek (terčík, LVDT)", "Invar 36 ⌀16", f"{round(bp.POST_L):g} ±0,5", "1", "čela kolmá, sražení 0,5", "N02, B02"),
         ("§Elektroizolanty Praha – sklotextit G10 (výkres N02 + B03)",) + ("",) * 6,
         ("B03", "podložka pod celu", "G10 tyč ⌀20 × 1000", f"{p.C_INS_T:g} ±0,05", "3", "čela rovnoběžná ≤ 0,05", "N02, B03"),
-        ("§HENNLICH / TME – hřídel oběhu kamery (kalená broušená tyč)",) + ("",) * 6,
-        ("H01", "hřídel oběhu", "ocel kalená ⌀12 h6", "120 ±0,5", "1", "čela kolmá, sražení 0,5", "V07"),
         ("§grupol.cz (laser, nahrát DXF) – plechy (výkres N03 + L03–L07)",) + ("",) * 6,
         ("L03", "nosná deska závaží", "Al EN AW-5754, tl. 10", "⌀140, otvor ⌀12,3", "1", "E7-L03_carrier_10mm.dxf", "N03, L03"),
         ("L04", "píst horní", "Al EN AW-5754, tl. 10", "⌀50, otvor ⌀6", "1", "E7-L04_piston_top_10mm.dxf", "N03, L04"),
@@ -144,7 +142,7 @@ def n00(pdf):
         ("L06", "závaží 1 kg", "ocel S235JR, tl. 12", "⌀117,5, otvor ⌀17", "4", "E7-L06_disc_1kg_12mm.dxf", "N03, L06"),
         ("L07", "závaží 0,5 kg", "ocel S235JR, tl. 6", "⌀117,5, otvor ⌀17", "1", "E7-L07_disc_0.5kg_6mm.dxf", "N03, L07"),
     ]
-    PH = {"T": "1", "B02": "1", "B03": "1", "B01": "2 *", "L": "2", "H": "1"}
+    PH = {"T": "1", "B02": "1", "B03": "1", "B01": "2 *", "L": "2"}
     rows = [r + ("",) if r[0].startswith("§") or not r[0] else r + (PH.get(r[0], PH.get(r[0][:1], "")),) for r in rows]
     yy = table(ax, 14, 182, ["poz.", "díl", "materiál / polotovar", "rozměr", "ks", "pozn.", "výkres", "fáze"],
                [12, 30, 62, 34, 9, 52, 22, 12], rows)
@@ -154,7 +152,7 @@ def n00(pdf):
              "Invar: pokud Rokycany čela nezarovnají, objednat B01 270 mm a B02 335 mm a čela srovnat v dílně.",
              "* B01 patří do fáze 2, ale objednat ji spolu s B02 (jedna poptávka, malé množství).",
              "Díly L03–L07 (grupol.cz) stačí objednat až před fází 2. Otvor ⌀14 v T04 vyvrtat hned (rám je společný).",
-             "Tištěné díly (cela E7-V03u, P03–P07, P10u, oběh P12, P14–P19) se neřežou – STL/STEP ve vyroba/tisk."]
+             "Tištěné díly (cela E7-V03u, P03–P07, P10u, oběh P12–P16, P18, P19) se neřežou – STL/STEP ve vyroba/tisk."]
     for k, s in enumerate(notes):
         ax.text(14, yy - 7 - k * 4.6, "• " + s, fontsize=7)
     pdf.savefig(fig); plt.close(fig)
@@ -186,8 +184,8 @@ def n01(pdf):
     dim(ax, x, x + L * s2, y - 13, f"{L:g}", above=False)
     ax.text(x + L * s2 + 4, y + 26, "⌀14 svisle skrz celou výšku profilu (40 mm),\nuprostřed délky i šířky "
                                    "(mezi drážkami)\nstojanová vrtačka, kolmost ≤ 0,2 / 40", fontsize=7)
-    ax.text(x + L * s2 + 4, y + 8, "spodní drážka: 4× T-matice M5 (pouzdro P01)\nboční drážky: T-matice M5 "
-                                  "(držák laseru P05,\nzávěs kamery P08)", fontsize=7, color=MUTE)
+    ax.text(x + L * s2 + 4, y + 8, "spodní drážky: T-matice M5 – jádro oběhu P12 (4×),\ndržák motoru P16 (2×); boční drážky: držák\n"
+                                  "laseru P05 (+y), držák boxu RPi P18 (−y)", fontsize=7, color=MUTE)
     # kit to order with the profiles
     rows = [("úhelník 40×40 drážka 8 + krytka", "12"), ("T-matice M8 vkládací", "32"), ("T-matice M5 vkládací", "12"),
             ("šroub ISO 4762 M8×16 + podložka", "24"), ("stavitelná noha M8, talíř ⌀30–40", "4"),
