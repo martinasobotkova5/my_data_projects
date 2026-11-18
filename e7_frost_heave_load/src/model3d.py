@@ -344,8 +344,8 @@ def variant_c(asm, prefix="", orbit_angle=0.0):
     asm.add(cq.Workplane("XY").sphere(p.C_BALL_D / 2).translate((0, 0, bp.Z_BALL)), name=prefix + "steel ball 5-16in (7.94)",
             color=C["steel"])
     asm.add(cyl(p.C_ROD_D, bp.ROD_L, bp.Z_ROD0), name=prefix + f"guide rod Invar 36 D12 x{bp.ROD_L}", color=C["invar"])
-    asm.add(tube(bp.COLLAR[0], 12, bp.COLLAR[1], bp.Z_COLLAR), name=prefix + "shaft collar DIN 705-A 12", color=C["steel"])
-    asm.add(bp.laser_solid(lp["E7-L03_carrier"]).translate((0, 0, zc)), name=prefix + f"L03 carrier Al D{p.C_CARRIER_D:g}x10",
+    asm.add(cyl(10, 6, zc + p.C_CARRIER_T), name=prefix + "screw M6 carrier to rod (DIN 912)", color=C["steel"])
+    asm.add(bp.laser_solid(lp["E7-L03_carrier"]).translate((0, 0, zc)), name=prefix + f"L03 carrier Al D{p.C_CARRIER_D:g}x{p.C_CARRIER_T:g}",
             color=C["al"])
     z = zc + p.C_CARRIER_T
     for i in range(bp.N_DISC):
@@ -376,8 +376,8 @@ def _frame_c(asm, prefix=""):
         rail = bp.profile_solid((40, 40), p.C_BASE[1]).rotate((0, 0, 0), (0, 0, 1), 90).translate((s_ * p.C_RAIL_X, 0, zb0 - 40))
         asm.add(rail, name=f"{prefix}T02 base rail 40x40 x{p.C_BASE[1]:g} {'L' if s_ < 0 else 'R'}", color=C["profile"])
         for sy in (-1, 1):
-            asm.add(cyl(30, 4, zb0 - 40 - 22, s_ * p.C_RAIL_X, sy * p.C_FOOT_Y).union(cyl(8, 22, zb0 - 40 - 22, s_ * p.C_RAIL_X, sy * p.C_FOOT_Y)),
-                    name=f"{prefix}levelling foot M8 {'L' if s_ < 0 else 'R'}{sy:+d}", color=C["steel"])
+            asm.add(cyl(p.C_RUBBER[0], p.C_RUBBER[1], zb0 - 40 - p.C_RUBBER[1], s_ * p.C_RAIL_X, sy * p.C_FOOT_Y),
+                    name=f"{prefix}rubber pad D30x3 {'L' if s_ < 0 else 'R'}{sy:+d}", color=C["ins"])
     lcb = 2 * (p.C_RAIL_X - 20)
     yc = p.C_CROSS_Y[0]
     asm.add(bp.profile_solid((80, 40), lcb).translate((0, yc, zb0 - 40)), name=f"{prefix}T03 base cross bar 40x80 x{lcb:g}",
@@ -458,22 +458,29 @@ def variant_u(asm, prefix="", orbit_angle=0.0):
 
 
 def freezer_layout():
-    """Rig C on the tray in the chest freezer (sheet V05)."""
-    asm = cq.Assembly(name="E7 freezer layout - rig C")
-    z_tray = 20.0
+    """Rig C (phase 2, the taller one) standing on rubber pads on the floor of the freezer, inner space
+    FRZ_L × FRZ_W × FRZ_H = 590 × 390 × 410 mm (sheet V05). The rig is centred in x incl. the RPi box on the +x column."""
+    asm = cq.Assembly(name="E7 freezer layout - rig C in a freezer 590 x 390 x 410")
     sub = cq.Assembly(name="rig C")
-    zb0 = variant_c(sub)
-    asm.add(box(0, p.FRZ_L, 0, p.FRZ_W, -5, 0), name="freezer floor (inside ≈ 900x550)", color=C["freezer"])
+    variant_c(sub)
+    bb = sub.toCompound().BoundingBox()
+    dx = p.FRZ_L / 2 - (bb.xmin + bb.xmax) / 2
+    dy = p.FRZ_W / 2 - (bb.ymin + bb.ymax) / 2
+    asm.add(box(0, p.FRZ_L, 0, p.FRZ_W, -5, 0), name=f"freezer floor (inside {p.FRZ_L:g}x{p.FRZ_W:g})", color=C["freezer"])
     walls = box(-10, p.FRZ_L + 10, -10, p.FRZ_W + 10, 0, p.FRZ_H).cut(box(0, p.FRZ_L, 0, p.FRZ_W, 0, p.FRZ_H))
-    asm.add(walls, name="freezer walls (≈ 650 high)", color=C["freezer"])
-    asm.add(box(620, 885, 15, 535, 0, 230), name="compressor step (if present)", color=C["freezer"])
-    asm.add(box(25, 610, 70, 480, 0, z_tray), name="insulation mat", color=C["ins"])
-    tray = box(50, 50 + p.TRAY_L, 105, 105 + p.TRAY_W, z_tray, z_tray + 40)
-    tray = tray.cut(box(51.5, 48.5 + p.TRAY_L, 106.5, 103.5 + p.TRAY_W, z_tray + 1.5, z_tray + 41))
-    asm.add(tray, name="stainless tray", color=C["tray"])
-    z_feet = zb0 - p.C_BASE[2] - 22   # base frame height 40
-    asm.add(sub, loc=cq.Location((50 + p.TRAY_L / 2, 105 + p.TRAY_W / 2, z_tray + 1.5 - z_feet)))
+    asm.add(walls, name=f"freezer walls ({p.FRZ_H:g} high inside)", color=C["freezer"])
+    asm.add(sub, loc=cq.Location((dx, dy, -bb.zmin)))
     return asm
+
+
+def freezer_clearance():
+    """(height of the rig, gap to the lid, side gaps x, y) for variant C and U in the freezer."""
+    out = {}
+    for name, fn in (("C", variant_c), ("U", variant_u)):
+        a = cq.Assembly(); fn(a)
+        bb = a.toCompound().BoundingBox()
+        out[name] = (bb.zlen, p.FRZ_H - bb.zlen, (p.FRZ_L - bb.xlen) / 2, (p.FRZ_W - bb.ylen) / 2)
+    return out
 
 
 def export_parts(asm, folder):

@@ -40,7 +40,7 @@ Kde co najdete:
 | 3 | rám z T-profilů | ENPRAG Praha | nařežou podle výkresu, vyvrtají ⌀14 (pro fázi 2) | 1–2 týdny |
 | 4 | Invar ⌀16 (+ ⌀12 pro fázi 2) | Kovohutě Rokycany | poptávka, řez na míru; obě tyče najednou | 1–3 týdny |
 | 5 | RPi 5 + Camera Module 3 + kabel 500 mm | RPishop.cz | skladem | 1–3 dny |
-| 6 | filament a tisk cely | Prusa | cela ⌀220 × 171 se tiskne ≈ 30–45 h | 2–3 dny + tisk |
+| 6 | filament a tisk cely | Prusa | cela ⌀220 × 151 se tiskne ≈ 25–40 h | 2–3 dny + tisk |
 | 7 | G10, elektronika, oběh (ložiska 6806, motor, pouzdro igus), šrouby, spotřební | Elektroizolanty, TME, GME, HENNLICH, Fabory, Hornbach | skladem | 1–3 dny |
 
 LVDT (Elkome) a laserem řezané kotouče (grupol.cz) stačí objednat **až před fází 2**. Pouzdro igus se kupuje hned, sedí v jádře oběhu.
@@ -61,7 +61,7 @@ LVDT (Elkome) a laserem řezané kotouče (grupol.cz) stačí objednat **až př
 | úhelník 40×40 drážka 8 + krytka | 12 | ≈ 3–6 €/ks |
 | T-matice M8 / M5 vkládací | 32 / 12 | ≈ 1 €/ks |
 | šroub ISO 4762 M8×16 + podložka | 24 | sada |
-| stavitelná noha M8, talíř ⌀30–40 | 4 | ≈ 3–5 €/ks |
+| ~~stavitelná noha M8~~ – **nekupovat**: mrazák je vysoký jen 41 cm, rám stojí na 4 pryžových podložkách ⌀30 × 3 (Hornbach / TME, ≈ 50 Kč) | 4 | – |
 | **celkem** | | **≈ 4 000–6 000 Kč** |
 
 Alternativy (české): [Alutec K&K](https://katalog.aluteckk.cz/kategorie-produktu/modul-40-drazka-8/), [Profimet](https://profimet.cz/sluzby/), [eProfily.cz](https://www.eprofily.cz/).
@@ -84,7 +84,7 @@ Alternativy (české): [Alutec K&K](https://katalog.aluteckk.cz/kategorie-produk
 
 | položka | ks | cena |
 |---|---|---|
-| tyč G10 ⌀20 × 1000; nařezat 3× 40 mm, čela rovnoběžná | 1 | 298 Kč (ověřeno) |
+| tyč G10 ⌀20 × 1000; nařezat 3× 20 mm, čela rovnoběžná | 1 | 298 Kč (ověřeno) |
 
 ### 1.4 Picotronic GmbH – čárový laser (Německo)
 
@@ -124,11 +124,11 @@ Telefon +420 251 640 511, [campbellsci.com/ekotechnika](https://campbellsci.com/
 |---|---|---|
 | Prusament PETG Carbon Fiber 1 kg – cela U ≈ 1,1 kg + díly P03–P08, P10u ≈ 0,3 kg | 2 | ≈ 2 400–2 800 Kč |
 
-Tiskárna pro celu: podložka ≥ 240 × 240 mm, **výška tisku ≥ 171 mm** (dříve 200).
+Tiskárna pro celu: podložka ≥ 240 × 240 mm, **výška tisku ≥ 151 mm** (fáze 1; cela fáze 2 s límcem má 180 mm).
 
 Fáze 1 tiskne:
 
-- celu `E7-V03u_cell_D220x171_bez_zatizeni.stl`;
+- celu `E7-V03u_cell_D220x151_bez_zatizeni.stl`;
 - P03 rameno s terčíkem (nová trasa);
 - P04 patku sloupku;
 - P05 držák laseru;
@@ -179,8 +179,8 @@ Stojan, kamera a laser zůstávají. Přibývá:
 |---|---|---|---|
 | LVDT RDP DCTH400AG, ±10 mm, DC vstup i výstup – předtím ověřit provoz při −10 °C | [Elkome](https://shop.elkome.com/en/dcth400ag-lvdt-displacement-sensor) (FI); česká alternativa [Micro-Epsilon CZ, Bechyně](https://www.micro-epsilon.cz/) | 1 | 581 € ≈ 14 500 Kč (ověřeno) |
 | zdroj Mean Well HDR-15-24 (napájení LVDT) | TME | 1 | ≈ 11 € |
-| L03 nosná deska, L04/L05 píst, 4× L06 + L07 závaží (DXF) | [grupol.cz](https://grupol.cz/), alt. [Zamet](https://www.zamet.cz/laserove-rezani) | sada | ≈ 1 800–3 500 Kč |
-| stavěcí kroužek DIN 705-A 12 (2×), kulička 5/16", šrouby M5×35 | Fabory CZ / cyklo prodejna | sada | ≈ 200–350 Kč |
+| L03 nosná deska Al 6, L04/L05 píst Al 10, 4× L06 ⌀165 × 6 (1 kg) + L07 ⌀165 × 3 (0,5 kg) – ocel (DXF) | [grupol.cz](https://grupol.cz/), alt. [Zamet](https://www.zamet.cz/laserove-rezani) | sada | ≈ 1 800–3 500 Kč |
+| kulička 5/16", šroub DIN 912 M6 × 12 (nosná deska do čela tyče), šrouby M5 | Fabory CZ / cyklo prodejna | sada | ≈ 100–200 Kč |
 | tisk P02, P09, P10, P11 (+ případně vyšší cela V03); pouzdro P01 už není potřeba – igus je v jádře oběhu P12 | vlastní tisk | – | filament z fáze 1 |
 | **sublimace:** tenzometr 1 kg + HX711 | [LaskaKit](https://www.laskakit.cz/) / GM electronic | 1 | ≈ 150–300 Kč |
 | **sublimace:** čidlo vlhkosti SHT45 (I²C) – povinné | RPishop.cz / LaskaKit (alt. SHT40) | 1 | ≈ 350–600 Kč |
@@ -193,7 +193,7 @@ Stojan, kamera a laser zůstávají. Přibývá:
 | fáze | co | cena |
 |---|---|---|
 | 1 – bez zatížení | rám, cela, G10, Invar (obě tyče), laser, obíhající kamera (CM3, motor, ložiska 6806, igus) + RPi, LED, Campbell, elektronika, spotřební | ≈ 25 000–34 000 Kč |
-| 2 – zátěž | LVDT + zdroj 24 V, kotouče a píst, kroužky | ≈ 17 000–19 000 Kč |
+| 2 – zátěž | LVDT + zdroj 24 V, kotouče a píst, šroub M6 | ≈ 17 000–19 000 Kč |
 | 2 – sublimace | váha HX711, SHT45, misky, silikagel, síto | ≈ 1 300–2 400 Kč |
 | **celkem** | | **≈ 43 000–55 000 Kč** |
 
@@ -206,14 +206,14 @@ Fáze 1 je bez LVDT zhruba o 17–19 tisíc Kč levnější. LVDT, největší p
 | ENPRAG | `vyroba/narezy/E7_narezy_profily_ENPRAG.pdf`, text `poptavka_ramu.md` | 1 |
 | Kovohutě Rokycany | `vyroba/narezy/E7_narezy_invar_Rokycany.pdf` (obě tyče) | 1 (+2) |
 | Elektroizolanty Praha | `vyroba/narezy/E7_narezy_G10_Elektroizolanty.pdf` | 1 |
-| vlastní tisk | `vyroba/tisk/E7-V03u_cell_D220x171_bez_zatizeni.stl`, P03–P07, P10u, oběh P12, P12b, P12c, P13–P16, P18, P19 | 1 |
+| vlastní tisk | `vyroba/tisk/E7-V03u_cell_D220x151_bez_zatizeni.stl`, P03–P07, P10u, oběh P12, P12b, P12c, P13–P16, P18, P19 | 1 |
 | grupol.cz | `vyroba/laser/E7-L03…L07_*.dxf`, kontrola `vyroba/narezy/E7_narezy_laser_grupol.pdf` | 2 |
 | všechny dohromady | `vyroba/narezy/E7_narezove_vykresy.pdf` (přehled N00 se sloupcem „fáze“, plány N01–N03 + výrobní výkresy) | – |
 
 ## 5 · Ověřit před objednáním
 
-- **Tiskárna:** výška tisku ≥ 171 mm (cela fáze 1).
-- **Mrazák:** vnitřní výška ve fázi 1 ≥ 530 mm (sestava s boxem RPi na boku příčníku ≈ 486 mm + kabely); ve fázi 2 se zátěží ≥ 560 mm (≈ 520 mm k horní hraně vodicí tyče).
+- **Tiskárna:** výška tisku ≥ 151 mm (cela fáze 1), pro fázi 2 ≥ 180 mm.
+- **Mrazák (vnitřní 59 × 39 × 41 cm, š × h × v):** sestava fáze 1 je vysoká 383 mm (27 mm k víku), fáze 2 se zátěží 397 mm (13 mm k víku); půdorys s boxem RPi 415 × 320 mm. Proto: pryžové podložky místo noh, dno cely a podložky G10 20 mm, příčník 130 mm nad pískem, kotouče ⌀165 × 6, nosná deska Al 6 přišroubovaná M6 do tyče, laser 105 mm od osy, box RPi na sloupu (výkres V05).
 - **grupol.cz:** zda řeže hliník 10 mm (až pro fázi 2).
 - **LVDT RDP:** provoz při −10 °C (dotaz na Elkome, až pro fázi 2).
 - **Fáze 2:** na straně kamery laser na invarový terčík nedosvítí, zakryje ho zátěžový sloupec. Kamera terčík vidí a posun rámu hlídá i LVDT na invarovém sloupku.

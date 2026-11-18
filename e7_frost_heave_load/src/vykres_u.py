@@ -138,8 +138,8 @@ def main(var="u"):
     ax.text(ox3, oy3 - p.C_ORB_R * S6 - 3.5, "výchozí poloha (laser)", ha="center", fontsize=5.5, color=CAM)
     # --- parts table (phase 1)
     rows = [("rám T-profily T01–T04, úhelníky, T-matice, nohy", "1 sada", "ENPRAG"),
-            ("cela ⌀220 × 171 s rovným čelem (E7-V03u)" if var == "u" else "cela ⌀220 × 200 s límcem (E7-V03)", "1", "tisk PETG-CF"),
-            ("podložky G10 ⌀20 × 40", "3", "Elektroizolanty"),
+            (f"cela ⌀220 × {p.C_INS_T + p.U_TOP:g} s rovným čelem (E7-V03u)" if var == "u" else f"cela ⌀220 × {p.C_INS_T + p.COLLAR_TOP:g} s límcem (E7-V03)"), "1", "tisk PETG-CF"),
+            (f"podložky G10 ⌀20 × {p.C_INS_T:g}; pryžové podložky ⌀30 × 3", "3 + 4", "Elektroizolanty"),
             ("sloupek Invar ⌀16 × 330 + patka P04, terčík P03", "1", "Rokycany / tisk"),
             ("laser Picotronic DOE253, držák P05", "1", "Picotronic / tisk"),
             ("RPi 5 + Camera Module 3 + kabel 500 mm", "1", "RPishop.cz"),
@@ -153,7 +153,7 @@ def main(var="u"):
                  ("bod M: TDR CS645, Pt100, vlákno; NTC ve dně", "–", "máte / TME")]
     else:
         rows += [("píst L04 + L05, nosná deska L03, závaží L06/L07", "1 sada", "grupol.cz"),
-                 ("tyč Invar ⌀12 × 265, kulička 5/16\", kroužek DIN 705", "1", "Rokycany / Fabory"),
+                 (f"tyč Invar ⌀12 × {bp.ROD_L:g} (M6 nahoře), kulička 5/16\", šroub M6", "1", "Rokycany / Fabory"),
                  ("LVDT RDP DCTH400AG + rameno P02, zdroj 24 V", "1", "Elkome / TME")]
     tx, ty = 330, 246
     ax.text(tx, ty + 4, "DÍLY FÁZE 1" if var == "u" else "DÍLY FÁZE 2 (oběh a rám jako ve fázi 1)", fontsize=8, weight="bold")

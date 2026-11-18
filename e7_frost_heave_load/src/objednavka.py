@@ -47,7 +47,7 @@ SHOPS = [
         ("T-matice drážka 8, M8, vkládací (otočná)", "úhelníky (24) + nohy (4) + 4 rezerva", 32, "≈ 1 €/ks", "odhad"),
         ("T-matice drážka 8, M5, vkládací (otočná)", "pouzdro P01 (4), patka P04 (2), držák laseru P05 (2), závěs kamery P08 (2) + 2 rezerva",
          12, "≈ 1 €/ks", "odhad"),
-        ("Stavitelná noha M8 (talíř ⌀30–40)", f"do T-matic ve spodní drážce podélníků T02 (y ±{p.C_FOOT_Y:g})", 4, "≈ 3–5 €/ks", "odhad"),
+        ("Pryžová podložka ⌀30 × 3 (samolepicí, místo stavitelných noh – mrazák 41 cm)", f"pod podélníky T02 (y ±{p.C_FOOT_Y:g}), vyrovnat podložkami", 4, "≈ 0,5 €/ks", "odhad"),
         ("Krytka čela 40×80 / 40×40 (volitelně)", "konce příčníku a podélníků", 6, "≈ 0,5 €/ks", "odhad")]),
     ("3 · Invar 36 (tyče řezané na délku)",
      "**česky:** [Kovohutě Rokycany](http://www.koro.cz/produkty/nikl-a-slitiny-niklu/) – FeNi36 (1.3912) tyče ⌀10–200 mm, "
@@ -60,7 +60,7 @@ SHOPS = [
       ("—", "obojí ≈ 0,9 kg Invaru", "", "≈ 80–160 €", "odhad")]),
     ("4 · Podložky G10 (sklotextit)",
      "[Elektroizolanty Praha – tyče G10](https://www.elektroizolanty.cz/elektroizonlanty/eshop/57-1-Tyce-G10-130-C-akcni-ceny)",
-     [("Sklotextit G10 tyč ⌀20 × 1000 mm", "požádat o nařezání 3× 40 mm (čela rovnoběžná) – nebo nařezat v dílně", 1,
+     [("Sklotextit G10 tyč ⌀20 × 1000 mm", f"požádat o nařezání 3× {p.C_INS_T:g} mm (čela rovnoběžná) – nebo nařezat v dílně", 1,
        "298 Kč", "ověřeno")]),
     ("5 · Ložisko, kroužek, kulička, šrouby",
      "igus v ČR: [HENNLICH s.r.o., Litoměřice](https://www.igus.eu/Contact/general/CZ) – skladový distributor, "
@@ -68,7 +68,7 @@ SHOPS = [
      "[Fabory CZ – stavěcí kroužky](https://www.fabory.com/cs/Fasteners/Washers-and-Rings/Adjusting-rings/c/011001); "
      "šrouby Hornbach / Fabory; kulička v cyklo obchodě",
      [("igus drylin RJ4JP-01-12", "kluzné pouzdro ⌀12 (⌀21 × 30), bez maziva, do −40 °C", 1, "≈ 2–5 €", "odhad"),
-      ("Stavěcí kroužek DIN 705-A 12 (⌀22 × 12, šroub M6)", "pod nosnou desku závaží (+1 rezerva)", 2, "≈ 2–4 €/ks", "odhad"),
+      ("Šroub DIN 912 M6 × 12 + podložka", "nosná deska závaží L03 do závitu M6 v horním čele vodicí tyče (bez stavěcího kroužku)", 1, "≈ 0,2 €", "odhad"),
       ("Ocelová ložisková kulička 5/16\" (7,94 mm)", "cyklo kuličky, balení", 1, "≈ 1–3 €", "odhad"),
       ("Imbus ISO 4762 M8×16 + podložka", "úhelníky do T-matic", 24, "", "sada"),
       ("Imbus ISO 4762 M5×35 + podložka", "pouzdro ložiska P01 ↔ T-matice ve spodní drážce T04", 4, "", "sada"),
@@ -81,7 +81,7 @@ SHOPS = [
     ("6 · 3D tisk (vlastní tiskárna)",
      "[Prusament PETG Carbon Fiber](https://www.prusa3d.com/product/prusament-petg-carbon-fiber-black-1kg/) (Prusa, CZ)",
      [("Prusament PETG Carbon Fiber 1 kg", "cela ≈ 1,1–1,4 kg + díly P01–P11 ≈ 0,5 kg", 2, "≈ 55 €/ks", "ověřeno (USD cena)"),
-      ("Tiskárna pro celu", "cela ⌀220 × 200: podložka 240 × 240 (10 mm okraj na límec / skirt), výška ≥ 200 mm; ≈ 1,1–1,4 kg, 35–50 h",
+      ("Tiskárna pro celu", f"cela ⌀220 × {p.C_INS_T + p.COLLAR_TOP:g} (fáze 2) / ⌀220 × {p.C_INS_T + p.U_TOP:g} (fáze 1): podložka 240 × 240, výška tisku ≥ {p.C_INS_T + p.COLLAR_TOP:g} mm; ≈ 1,0–1,3 kg, 30–45 h",
        "", "", "info"),
       ("Sklo do okénka boxu kamery", "50 × 50 × 2 mm (sklo z fotorámečku / sklenářství) nebo plexi 2 mm", 1, "≈ 1–3 €", "odhad")]),
     ("7 · Kamera, Raspberry Pi, elektronika",
@@ -170,7 +170,7 @@ ASSEMBLY = [
     "Dutinu cely natřete epoxidem, po vytvrzení PTFE sprej + tenká vrstva silikonové vazelíny.",
     "Píst: kotouče L05 (spodní) a L04 (horní, otvor ⌀6) slepte epoxidem, soustředně.",
     f"Základ: 2 podélníky T02 (40×40 × {p.C_BASE[1]:g}, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = "
-    f"{p.C_CROSS_Y[0]:g}".replace(".", ",") + ") – 4 úhelníky, M8×16 do vkládacích T-matic. Do spodní drážky podélníků 4 stavitelné nohy M8 "
+    f"{p.C_CROSS_Y[0]:g}".replace(".", ",") + ") – 4 úhelníky, M8×16 do vkládacích T-matic. Pod podélníky nalepte 4 pryžové podložky ⌀30 × 3 (místo stavitelných noh – mrazák 41 cm), dříve: do spodní drážky podélníků 4 stavitelné nohy M8 "
     f"(y ±{p.C_FOOT_Y:g}). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).",
     f"Sloupy T01 (40×80 × {bp.COL_H:g}) postavte na podélníky (osa x = ±150, uprostřed délky) a připojte 2 úhelníky "
     "na stranách ±y (M8×16 + T-matice). Srovnejte do pravého úhlu, dotáhněte.",
@@ -185,7 +185,7 @@ ASSEMBLY = [
     "Nasaďte rameno P03 (terčík ve výšce horní hrany límce) a rameno P02 s LVDT.",
     "Navrch písku položte píst, do otvoru ⌀6 kuličku 5/16\". Na límec nasaďte středicí víčko P09 (rameno P03 natočené stranou).",
     "Invarovou tyč zasuňte shora pouzdrem víčkem P09 až na kuličku – posunutím cely ji vystřeďte, víčko vysuňte do strany, "
-    "rameno P03 vraťte na značku. Na tyč stavěcí kroužek, na něj nosná deska L03 a kotouče L06/L07. "
+    "rameno P03 vraťte na značku. Na tyč nosnou desku L03 (šroub M6 do čela tyče) a na ni kotouče L06/L07. "
     f"Kroužek nastavte tak, aby nosná deska byla {bp.ZC - bp.Z_TOP:g} mm nad horní plochou příčníku T04 "
     f"(spodní hrana kroužku {bp.Z_COLLAR - bp.Z_TOP:g} mm nad ním = zdvih ±{p.C_TRAVEL:g}).",
     "LVDT posuňte ve svěrce P02, až je jádro uprostřed rozsahu (výstup ≈ 0 V), dotáhněte.",
@@ -203,7 +203,7 @@ def main():
          "otvor ⌀14 v horním příčníku), kotouče se řežou laserem podle DXF, zbytek se tiskne. Výkresy: V01–V06 (`vykresy/E7_drawings.pdf`), výrobní soubory: `vyroba/laser` (DXF) a `vyroba/tisk` (STL/STEP).",
          "", "**Fáze (16. 11. 2026):** začíná se **fází 1 bez zatížení** (varianta U, výkres V07) – z tohoto seznamu se zatím "
          "NEKUPUJE: laserové díly L03–L07 (bod 1), LVDT a zdroj 24 V, pouzdro igus, stavěcí kroužky a kulička; Invar ⌀12 "
-         "objednat spolu s ⌀16. Cela fáze 1 je E7-V03u (⌀220 × 171), přibývá stěrka P10u a **obíhající kamera** – místo HQ kamery s objektivem 6 mm "
+         "objednat spolu s ⌀16. Cela fáze 1 je E7-V03u (⌀220 × 151; mrazák 41 cm: dno 20 mm, pryžové podložky místo noh, kotouče ⌀165 × 6, laser 105 mm od osy), přibývá stěrka P10u a **obíhající kamera** – místo HQ kamery s objektivem 6 mm "
          "a závěsu P08 se kupuje Raspberry Pi Camera Module 3, kabel 500 mm, motor 28BYJ-48 + ULN2003, 2× ložisko "
          "6806-2RS; **oběh je pro obě fáze stejný** a pouzdro igus vodicí tyče sedí v jeho jádře P12 (pouzdro P01 a závěs "
          "P08 se netisknou); LED a topný odpor jsou na hlavě kamery; motor řídí RPi 5 (`rpi/e7_kamera.py`). "

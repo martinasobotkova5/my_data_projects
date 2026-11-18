@@ -22,7 +22,7 @@ COL_H = p.C_INS_T + p.BODY_BOTTOM + p.H_SAMPLE + p.C_BEAM_GAP
 ZBEAM = ZB0 + COL_H
 ZP = V.Z_S1 + p.C_PISTON_H                        # piston top
 Z_ROD0 = ZP + p.C_BALL_D - 2
-ZC = ZBEAM + p.C_BEAM_H + p.C_TRAVEL + 10         # carrier underside (top plate + housing + travel)
+ZC = ZBEAM + p.C_TOP[2] + p.C_TRAVEL               # carrier underside (19. 11. 2026: travel above the beam, no collar)
 T1 = 1.0 / (math.pi / 4 * ((p.C_DISC_D / 1000) ** 2 - (p.C_DISC_HOLE / 1000) ** 2) * p.RHO_STEEL) * 1000
 ZCAM = V.Z_S1 + p.C_CAM_H
 YL, ZL = p.C_LASER_Y, V.Z_S1 + p.C_LASER_H
@@ -316,7 +316,7 @@ def _sheet_measurement(pdf):
     l_ = View(sh, 200, 190, 0.38, "(c) LVDT ON INVAR POST  1 : 2.6", (198, 252))
     yl_, yi = p.C_LVDT_XY[1], p.C_INVAR_XY[1]
     tp, hh = p.C_TOP[2], p.C_HOUSING[2]
-    zc_ = p.C_BEAM_H + p.C_TRAVEL + 10
+    zc_ = p.C_TOP[2] + p.C_TRAVEL
     tsec(l_, -p.C_TOP[1] / 2, 0, p.C_TOP[1], tp, hole=14.0)
     l_.rect(-p.C_HOUSING[1] / 2, -hh, p.C_HOUSING[1] / 2, 0, fc=V.PETG, lw=THIN, hatch="..")
     l_.rect(-p.C_ROD_D / 2, -hh - 20, p.C_ROD_D / 2, zc_ + 30, fc=V.INVAR, lw=THIN, z=2.2)
@@ -328,7 +328,7 @@ def _sheet_measurement(pdf):
     l_.rect(yl_ - LVD / 2, za, yl_ + LVD / 2, za + LVL, fc=V.SENS, lw=THIN)
     l_.line([(yl_, za + LVL), (yl_, zc_)], lw=THICK)
     l_.dim_v(za + LVL, zc_, yl_ + 14, yl_ + 26, "12 (±10 range)")
-    l_.dim_v(zc_ - 10, zc_, -40, -52, f"{p.C_TRAVEL:g}+ travel" if False else "collar")
+    l_.dim_v(zc_ - p.C_TRAVEL, zc_, -40, -52, f"{p.C_TRAVEL:g}")
     V.tag(l_, yl_, za + 30, -60, -62, "LVDT DCTH400AG ⌀20.6 in a\nprinted clamp arm", V.SENS_TXT, ha="left")
     V.tag(l_, yi, -40, -60, -100, "Invar post ⌀16 from the base rail\n(frame and rod drift bypassed)", "#5b4a99", ha="left")
     V.tag(l_, -50, zc_ + 3, -60, -38, "carrier on a shaft collar (Invar rod)", INK, ha="left")
@@ -531,75 +531,81 @@ def _sheet_sensors(pdf):
 
 # --------------------------------------------------------------------------------------------
 def _sheet_layout(pdf):
-    sh = Sheet("Rig C rev. B3 in the chest freezer", "E7-V05", "1 : 5", 5, TOTAL,
-               "same freezer as E6 (≈ 900 × 550 × 650, to be measured); CR850 outside the freezer")
+    """Rig in the freezer – 19. 11. 2026: inner space 590 × 390 × 410 (W × D × H); numbers from the 3D model."""
+    import model3d as M
+    import orbit as O
+    clr = M.freezer_clearance()
+    hC, gapC, sx, sy = clr["C"]
+    hU, gapU = clr["U"][0], clr["U"][1]
+    sh = Sheet("Rig in the freezer – inner space 590 × 390 × 410", "E7-V05", "1 : 5", 5, TOTAL,
+               "phase 2 (with the load) is the taller one; CR850 outside the freezer")
     k = 0.2
-    v = View(sh, 35, 160, k)
-    v.text(10, 535, "PLAN  1 : 5", fontsize=V.FS + 1, weight="bold", va="top")
+    floor_z = ZB0 - p.C_BASE[2] - p.C_RUBBER[1]                   # model z of the freezer floor
+    x_min, x_max = -p.C_COL_SPAN / 2 - 20, O.rpi_box().val().BoundingBox().xmax
+    ax = p.FRZ_L / 2 - (x_min + x_max) / 2                        # model x = 0 on the paper
+    ay = p.FRZ_W / 2
+    v = View(sh, 35, 170, k)
+    v.text(0, p.FRZ_W + 30, "PLAN  1 : 5", fontsize=V.FS + 1, weight="bold", va="bottom")
     v.rect(0, 0, p.FRZ_L, p.FRZ_W, fc="#f5f9fc", lw=THICK, z=1)
-    tx0, ty0 = 50, 105
-    v.rect(tx0, ty0, tx0 + p.TRAY_L, ty0 + p.TRAY_W, fc="#d6d9dc", lw=THIN, z=1.2)
-    v.rect(620, 15, 885, 535, fc="none", lw=THIN, ls="--", z=1.3)
-    v.text(752, 60, "floor step (if present)", fontsize=fs() - 1, ha="center")
     bw, bd, bt = p.C_BASE
-    ax, ay = tx0 + p.TRAY_L / 2, ty0 + p.TRAY_W / 2
-    for s_ in (-1, 1):                                                               # base rails 40×40
+    for s_ in (-1, 1):
         v.rect(ax + s_ * p.C_RAIL_X - 20, ay - bd / 2, ax + s_ * p.C_RAIL_X + 20, ay + bd / 2, fc=PROF, lw=THIN, z=2)
     v.rect(ax - p.C_RAIL_X + 20, ay + p.C_CROSS_Y[0] - 40, ax + p.C_RAIL_X - 20, ay + p.C_CROSS_Y[0] + 40, fc=PROF,
-           lw=THIN, z=2)                                                             # cross bar 40×80
+           lw=THIN, z=2)
     for s_ in (-1, 1):
         v.rect(ax + s_ * p.C_COL_SPAN / 2 - 20, ay - 40, ax + s_ * p.C_COL_SPAN / 2 + 20, ay + 40, fc="#d9dde1",
                lw=THIN, z=2.2)
     v.rect(ax - p.C_COL_SPAN / 2 - 20, ay - 40, ax + p.C_COL_SPAN / 2 + 20, ay + 40, fc="none", lw=THIN, ls="--", z=2.3)
     v.circle(ax, ay, RO, fc=V.PETG, lw=THIN, z_=2.05)
-    v.circle(ax, ay, p.BODY_D / 2, fc=V.PETG, lw=THIN, z_=2.1)
     v.circle(ax, ay, p.CAV_D / 2, fc="#e9dcb8", lw=THIN, z_=2.15)
     v.circle(ax, ay, p.C_DISC_D / 2, fc="none", ec=INK, lw=THIN, ls="--", z_=2.4)
-    v.rect(ax - 35, ay + p.C_CAM_Y - 35, ax + 35, ay + p.C_CAM_Y + 35, fc="#f3e7c9", lw=THIN, z=2.5)
-    v.rect(ax - 8, ay + YL - 8, ax + 8, ay + YL + 8, fc="#c0392b", lw=THIN, z=2.5)
-    v.text(ax, ay, "C", fontsize=V.FS + 3, weight="bold", ha="center", va="center", zorder=5)
-    v.dim_h(tx0, tx0 + p.TRAY_L, ty0, ty0 - 35, f"tray ≈ {p.TRAY_L:g} × {p.TRAY_W:g}", side="below")
-    v.dim_h(ax - bw / 2, ax + bw / 2, ty0 + p.TRAY_W, ty0 + p.TRAY_W + 40, f"{bw:g}")
+    v.circle(ax, ay, p.C_ORB_R, fc="none", ec="#1f5fa8", lw=THIN, ls=":", z_=2.45)
+    v.rect(ax + 175, ay - 45, ax + 245, ay + 45, fc="#f3e7c9", lw=THIN, z=2.5)
+    v.text(ax + 210, ay, "RPi", fontsize=fs(), ha="center", va="center", zorder=5)
+    v.rect(ax - 8, ay + p.C_LASER_Y - 8, ax + 8, ay + p.C_LASER_Y + 8, fc="#c0392b", lw=THIN, z=2.5)
+    v.dim_h(0, p.FRZ_L, 0, -30, f"{p.FRZ_L:g}", side="below")
+    v.dim_v(0, p.FRZ_W, p.FRZ_L, p.FRZ_L + 30, f"{p.FRZ_W:g}")
+    v.dim_h(ax + x_min, ax + x_max, p.FRZ_W, p.FRZ_W + 18, f"{x_max - x_min:.0f}")
     e = View(sh, 35, 22, k)
-    e.text(10, 650, "ELEVATION  1 : 5", fontsize=V.FS + 1, weight="bold", va="top")
+    e.text(0, p.FRZ_H + 25, "ELEVATION (phase 2)  1 : 5", fontsize=V.FS + 1, weight="bold", va="bottom")
     e.rect(0, 0, p.FRZ_L, p.FRZ_H, fc="#f5f9fc", lw=THICK, z=1)
     e.line([(0, p.FRZ_H), (p.FRZ_L, p.FRZ_H)], lw=THICK, c=RED, ls="--")
-    e.text(p.FRZ_L - 5, p.FRZ_H - 8, "lid", fontsize=fs() - 1, ha="right", va="top", color=RED)
-    e.rect(25, 0, 610, 20, fc="#3a3a3a", lw=0, z=1.2)
-    e.rect(tx0, 20, tx0 + p.TRAY_L, 60, fc="none", lw=THIN, z=1.3)
-    e.rect(620, 0, 885, 230, fc="none", lw=THIN, ls="--", z=1.2)
-    z0 = 60 + 18 + bt                                  # top of the base frame
-    e.rect(ax - RO, z0, ax + RO, z0 + p.C_INS_T + p.BODY_H, fc=V.PETG, lw=THIN, z=2.05)
-    e.rect(ax - bw / 2, z0 - bt, ax + bw / 2, z0, fc=PROF, lw=THIN, z=2)
+    e.text(p.FRZ_L - 5, p.FRZ_H - 6, "lid", fontsize=fs() - 1, ha="right", va="top", color=RED)
+    Z = lambda z: z - floor_z
+    e.rect(ax - bw / 2, Z(ZB0 - bt), ax + bw / 2, Z(ZB0), fc=PROF, lw=THIN, z=2)
+    e.rect(ax - RO, Z(ZB0), ax + RO, Z(ZB0) + p.C_INS_T + p.BODY_H, fc=V.PETG, lw=THIN, z=2.05)
+    e.rect(ax - p.COLLAR_OD / 2, Z(ZB0) + p.C_INS_T + p.BODY_H, ax + p.COLLAR_OD / 2, Z(ZB0) + p.C_INS_T + p.COLLAR_TOP,
+           fc=V.PETG, lw=THIN, z=2.1)
     for s_ in (-1, 1):
-        e.rect(ax + s_ * p.C_COL_SPAN / 2 - 20, z0, ax + s_ * p.C_COL_SPAN / 2 + 20, z0 + COL_H, fc="#d9dde1", lw=THIN, z=2)
-    e.rect(ax - p.C_COL_SPAN / 2 - 20, z0 + COL_H, ax + p.C_COL_SPAN / 2 + 20, z0 + COL_H + p.C_TOP[2], fc="#d9dde1",
-           lw=THIN, z=2)
-    zi = z0 + p.C_INS_T                                # underside of the cell
-    e.rect(ax - p.BODY_D / 2, zi, ax + p.BODY_D / 2, zi + p.BODY_H, fc=V.PETG, lw=THIN, z=2.1)
-    e.rect(ax - p.COLLAR_OD / 2, zi + p.BODY_H, ax + p.COLLAR_OD / 2, zi + p.COLLAR_TOP, fc=V.PETG, lw=THIN, z=2.1)
-    zc = z0 + (ZC - ZB0)
-    top = zc + p.C_CARRIER_T + 4 * T1
-    e.rect(ax - p.C_DISC_D / 2, zc, ax + p.C_DISC_D / 2, top, fc="#8a8f96", lw=THIN, z=2.2)
-    e.rect(ax - 6, zi + p.BODY_BOTTOM + p.H_SAMPLE, ax + 6, zc, fc=V.INVAR, lw=THIN, z=2.15)
-    e.text(ax, z0 + 60, "C", fontsize=V.FS + 2, weight="bold", ha="center", va="center", zorder=5)
-    e.dim_v(0, top, ax + bw / 2 + 10, ax + bw / 2 + 50, f"{top:.0f}")
-    e.dim_v(0, p.FRZ_H, p.FRZ_L, p.FRZ_L + 25, f"≈ {p.FRZ_H:g}")
-    sh.heading(255, 278, "Fit check")
-    rows = [["base frame", f"{bw:g} × {bd:g}", "tray ≈ 530 × 340", "OK"],
-            ["rig height", "frame + discs", f"{top - 60:.0f} above tray", "check"],
-            ["highest point", "above freezer floor", f"{top:.0f}", f"≈ {p.FRZ_H - top:.0f} spare"],
-            ["load travel", "± 25 mm above the beam", f"max {top + 25:.0f}", "lid closes?"]]
-    table(sh, 255, 274, ["item", "size", "value", "status"], rows, [30, 50, 40, 35], row_h=5.6)
-    sh.text(255, 242,
-            "Notes\n"
-            "• The free end of the freezer stays empty (cable bundle, a second rig).\n"
-            f"• Highest point is the disc stack; with 4 discs ≈ {p.FRZ_H - top:.0f} mm under the lid –\n"
-            "  measure the freezer and the tray before ordering the profiles.\n"
-            "• Camera box and laser hang inside the frame – nothing outside the base.\n"
-            "• Rev. B3: frame of T-slot profiles; the bearing housing hangs under the top\n"
-            f"  beam, beam gap {p.C_BEAM_GAP:g} mm above the sand → the rig is lower than rev. B.\n"
-            "• 80 mm fan on the free end mixes the air; run the blank test first.",
+        e.rect(ax + s_ * p.C_COL_SPAN / 2 - 20, Z(ZB0), ax + s_ * p.C_COL_SPAN / 2 + 20, Z(ZBEAM), fc="#d9dde1", lw=THIN, z=2)
+    e.rect(ax - p.C_COL_SPAN / 2 - 20, Z(ZBEAM), ax + p.C_COL_SPAN / 2 + 20, Z(ZBEAM) + p.C_TOP[2], fc="#d9dde1", lw=THIN, z=2)
+    zc = Z(ZBEAM) + p.C_TOP[2] + p.C_TRAVEL
+    top = zc + p.C_CARRIER_T + 4 * p.C_DISC_T + p.C_DISC_T / 2
+    e.rect(ax - p.C_CARRIER_D / 2, zc, ax + p.C_CARRIER_D / 2, zc + p.C_CARRIER_T, fc="#b8c2cc", lw=THIN, z=2.2)
+    e.rect(ax - p.C_DISC_D / 2, zc + p.C_CARRIER_T, ax + p.C_DISC_D / 2, top, fc="#8a8f96", lw=THIN, z=2.2)
+    e.rect(ax - 6, Z(V.Z_S1), ax + 6, zc, fc=V.INVAR, lw=THIN, z=2.15)
+    bz = O.rpi_box().val().BoundingBox()
+    e.rect(ax + bz.xmin, Z(bz.zmin), ax + bz.xmax, Z(bz.zmax), fc="#f3e7c9", lw=THIN, z=2.5)
+    e.dim_v(0, hC, ax + x_max + 15, ax + x_max + 45, f"{hC:.0f}")
+    e.dim_v(hC, p.FRZ_H, ax + x_max + 15, ax + x_max + 45, f"{gapC:.0f}")
+    e.dim_v(0, p.FRZ_H, p.FRZ_L, p.FRZ_L + 30, f"{p.FRZ_H:g}")
+    sh.heading(255, 278, "Fit check (from the 3D model)")
+    rows = [["inner space", "W × D × H", f"{p.FRZ_L:g} × {p.FRZ_W:g} × {p.FRZ_H:g}", ""],
+            ["footprint", "frame + RPi box", f"{x_max - x_min:.0f} × {bd:g}", f"sides {sx:.0f} / {sy:.0f}"],
+            ["phase 2 height", "rubber pads → disc stack", f"{hC:.0f}", f"{gapC:.0f} to lid"],
+            ["phase 1 height", "rubber pads → laser", f"{hU:.0f}", f"{gapU:.0f} to lid"],
+            ["load travel", "carrier above the beam", f"{p.C_TRAVEL:g} mm", "heave ≤ 2 mm"]]
+    table(sh, 255, 274, ["item", "what", "mm", "spare"], rows, [30, 50, 40, 35], row_h=5.6)
+    sh.text(255, 236,
+            "Changes for the 41 cm freezer (19. 11. 2026)\n"
+            "• rubber pads 3 mm instead of levelling feet (level with shims)\n"
+            f"• cell base and G10 pads {p.C_INS_T:g} mm (was 40), beam {p.C_BEAM_GAP:g} mm above the sand (was 140)\n"
+            f"• carrier Al {p.C_CARRIER_T:g} mm screwed (M6) onto the rod, {p.C_TRAVEL:g} mm above the beam; discs\n"
+            f"  steel ⌀{p.C_DISC_D:g} × {p.C_DISC_T:g} = 1 kg (were ⌀117,5 × 12)\n"
+            f"• laser {p.C_LASER_Y:g} mm from the axis, {p.C_LASER_H:g} above the sand ({p.C_LASER_ANG:g}°) – clear of the discs\n"
+            f"• camera window {p.C_ORB_H:g} mm above the sand (orbit moved down with the beam)\n"
+            "• RPi box on the outer face of the +x column\n"
+            "• no tray or mat under the rig – it stands on the freezer floor",
             fontsize=fs(), va="top", linespacing=1.5)
     sh.save(pdf, os.path.join(OUT, "E7-V05_freezer_layout.png"))
 

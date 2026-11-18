@@ -27,14 +27,13 @@ ZC0 = Z_S0 - p.BODY_BOTTOM                       # underside of the core = top o
 ZB0 = ZC0 - p.C_INS_T                            # top of the base frame (T-profiles)
 ZBEAM = Z_S1 + p.C_BEAM_GAP                      # underside of the top beam
 Z_TOP = ZBEAM + p.C_TOP[2]                       # top of the top T-profile (bearing housing hangs below it)
-ZC = ZBEAM + p.C_BEAM_H + p.C_TRAVEL + 10        # underside of the carrier plate
-COLLAR = (22.0, 12.0)                            # stavěcí kroužek DIN 705-A 12 (⌀22 × 12, stavěcí šroub M6)
-Z_COLLAR = ZC - COLLAR[1]                        # under the carrier (carries it)
+ZC = Z_TOP + p.C_TRAVEL                          # underside of the carrier plate (19. 11. 2026: 8 mm above the beam)
+# 19. 11. 2026: no shaft collar – the carrier is screwed (M6) onto the top end of the guide rod
 LV_D, LV_L = p.C_LVDT_BODY
 Z_LV_TOP = ZC - 12                               # LVDT body top (plunger to the carrier ≈ mid-range)
 Z_LV_BOT = Z_LV_TOP - LV_L
 ARM_T = 12.0
-Z_ARM = Z_LV_BOT                                 # LVDT arm z Z_ARM … Z_ARM + ARM_T (clamps the body bottom)
+Z_ARM = ZBEAM - 2.0                              # LVDT arm beside the top beam (clamps the body in its middle, above the camera orbit)
 Z_RIM = ZC0 + p.COLLAR_TOP                       # top of the collar (camera sees it)
 Z_REF_U = ZC0 + p.U_TOP + 3.0                    # variant U: target arm 3 mm above the flat cell top
 COL_H = ZBEAM - ZB0                              # column length
@@ -44,14 +43,14 @@ _bh = math.sqrt((p.C_BALL_D / 2) ** 2 - 3.0 ** 2)   # ball ⌀7.94 sitting in a 
 Z_BALL = Z_S1 + p.C_PISTON_H + _bh               # ball centre
 Z_ROD0 = Z_BALL + p.C_BALL_D / 2                 # rod bottom (flat end on the ball)
 N_DISC = 4
-Z_ROD1 = ZC + p.C_CARRIER_T + N_DISC * p.C_DISC_T + 6 + 10   # rod top: above the disc stack + 0.5 kg disc
-ROD_L = math.ceil(Z_ROD1 - Z_ROD0)
+Z_ROD1 = ZC                                      # rod top = carrier underside (M6 screw from above into the rod)
+ROD_L = math.floor(Z_ROD1 - Z_ROD0)                # whole mm, never into the carrier
 XC = p.C_COL_SPAN / 2
 
 # --- 2D laser parts: outline (w, h, corner r) or circle, holes (x, y, d), slots (x0, y0, x1, y1, w) -------
 def _carrier():
     return dict(name="E7-L03_carrier", mat="Al EN AW-5754 (or 6082)", t=p.C_CARRIER_T, circle=p.C_CARRIER_D,
-                holes=[(0, 0, p.C_ROD_D + 0.3)], slots=[], engrave=[], qty=1)
+                holes=[(0, 0, p.C_CARRIER_SCREW + 0.6)], slots=[], engrave=[], qty=1)
 
 
 def _piston(top):
@@ -310,7 +309,7 @@ def camera_hanger():
 # --- pomůcky pro přípravu a výměnu vzorku (tisk) ---------------------------------------------------------
 SCREED_DEPTH = p.COLLAR_TOP - p.SAND_TOP          # 34 – povrch písku pod horní hranou límce
 PARK_LIFT = 30.0                                  # o kolik se tyč zvedne při výměně cely
-PARK_H = (Z_COLLAR - Z_TOP) + PARK_LIFT           # výška vidlice na horní ploše T04
+PARK_H = (ZC - Z_TOP) + PARK_LIFT                 # výška vidlice na horní ploše T04 (pod nosnou deskou)
 
 
 def centering_cap():
@@ -335,7 +334,7 @@ def screed(depth=None):
 
 def parking_fork():
     """P11 – parkovací vidlice: postaví se na T04 kolem tyče pod stavěcí kroužek → tyč zůstane zvednutá
-    o 30 mm nad límcem cely, cela se dá vyjmout. 40 × 60 × PARK_H, drážka 12,6."""
+    o 30 mm nad límcem cely, cela se dá vyjmout (vidlice pod nosnou deskou). 40 × 60 × PARK_H, drážka 12,6."""
     s = cq.Workplane("XY").box(40, 60, PARK_H, centered=(True, True, False))
     s = s.cut(cq.Workplane("XY").center(0, -15).rect(p.C_ROD_D + 0.6, 30).extrude(PARK_H))
     s = s.cut(cq.Workplane("XY").circle(p.C_ROD_D / 2 + 0.3).extrude(PARK_H))

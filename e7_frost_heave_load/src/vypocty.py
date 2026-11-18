@@ -697,3 +697,31 @@ print("**Řízení motoru:** RPi 5 (stejné, které fotí) přes desku ULN2003, 
       "jen počítá, takže na časování nezáleží – Arduino není potřeba. Po každém pohybu se cívky vypnou (převod 64 : 1 "
       "v motoru drží polohu, motor nehřeje). Výchozí poloha: Hall A3144 v desce P12 nad magnetem ve věnci; cíl se vždy "
       "najíždí ve stejném směru (vymezení vůle). Poslední poloha se ukládá, aby se po výpadku proudu kabel nenavíjel dál.\n")
+
+# ---------------------------------------------------------------------------------------------------------------
+print("## 24. Mrazák 59 × 39 × 41 cm – nižší sestava (19. 11. 2026)\n")
+import model3d as _m                                  # noqa: E402
+_clr = _m.freezer_clearance()
+print(f"Vnitřní prostor mrazáku {p.FRZ_L:g} × {p.FRZ_W:g} × {p.FRZ_H:g} mm (šířka × hloubka × výška). Původní sestava "
+      "měřila 486 mm (fáze 1) a 520 mm (fáze 2), proto byla snížena. Výšky jsou změřené na 3D modelu:\n")
+print("| | výška | k víku | volno po stranách (š / h) |\n|---|---|---|---|")
+for k, lab in (("U", "fáze 1 – bez zatížení"), ("C", "fáze 2 – se zátěží")):
+    h, g, sx, sy = _clr[k]
+    print(f"| {lab} | {h:.0f} mm | {g:.0f} mm | {sx:.0f} / {sy:.0f} mm |")
+_mmin = (7.85e-6 * 0 + 2.7e-6 * math.pi / 4 * p.C_PISTON_D ** 2 * p.C_PISTON_H
+         + 8.1e-6 * math.pi / 4 * p.C_ROD_D ** 2 * bp.ROD_L
+         + 2.7e-6 * math.pi / 4 * (p.C_CARRIER_D ** 2 - 6.6 ** 2) * p.C_CARRIER_T)
+_A = math.pi / 4 * (p.C_PISTON_D / 1000) ** 2
+print(f"\n**Co se změnilo:** pryžové podložky 3 mm místo stavitelných noh (−19 mm); dno cely a podložky G10 {p.C_INS_T:g} mm "
+      f"(dříve 40, −20 mm); příčník {p.C_BEAM_GAP:g} mm nad pískem (dříve 140), oběh kamery se posunul s ním, okénko "
+      f"{p.C_ORB_H:g} mm nad pískem, sklon {p.C_ORB_TILT:g}° (zorné pole s rezervou ≈ 3°, 1 px ≈ 35 µm); nosná deska Al "
+      f"{p.C_CARRIER_T:g} mm přišroubovaná M6 do čela vodicí tyče {p.C_TRAVEL:g} mm nad příčníkem (bez stavěcího kroužku); "
+      f"kotouče ocel ⌀{p.C_DISC_D:g} × {p.C_DISC_T:g} = 1,00 kg (dříve ⌀117,5 × 12); laser {p.C_LASER_Y:g} mm od osy a "
+      f"{p.C_LASER_H:g} mm nad pískem ({p.C_LASER_ANG:g}°, posun čáry {1 / math.tan(math.radians(p.C_LASER_ANG)):.2f} × změna "
+      "výšky) – mimo kotouče; LVDT vedle příčníku; box s RPi na vnější straně pravého sloupu.\n")
+print(f"**Zatížení:** pohyblivá část bez kotoučů (píst, tyč, nosná deska) ≈ {_mmin:.2f} kg → ≈ {_mmin * 9.81 / _A / 1000:.1f} kPa "
+      f"pod pístem ⌀{p.C_PISTON_D:g}; každý kotouč 1 kg přidá ≈ {9.81 / _A / 1000:.1f} kPa (4 kotouče + 0,5 kg ≈ "
+      f"{(_mmin + 4.5) * 9.81 / _A / 1000:.0f} kPa).\n")
+print("**Ověřeno v modelu:** v obou fázích bez kolizí v celém rozsahu oběhu kamery (po 10°); ve fázi 1 kamera i laser vidí "
+      "celý povrch ⌀100 a invarový terčík. Ve fázi 2 laser pod sklonem 60° víc stíní vysoký límec cely (34 mm) – "
+      "před fází 2 zvážit nižší límec nebo celu fáze 1.\n")

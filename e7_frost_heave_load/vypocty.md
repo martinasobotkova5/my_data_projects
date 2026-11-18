@@ -250,23 +250,23 @@ Na povrchu písku nic neleží. Čárový laser svítí šikmo (45° od svislice
 
 ## 14. Varianta C – kombinace: Al rám vede mrtvou váhu, částečný píst, kamera nad volným povrchem
 
-Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 189 168 g + Al nosná deska 416 g = **0.69 kg ≈ 3.5 kPa** (nejmenší přitížení pod pístem).
+Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem něj. Pohyblivá část bez závaží: píst Al 106 g + kulička + tyč ⌀12 × 162 144 g + Al nosná deska 249 g = **0.50 kg ≈ 2.5 kPa** (nejmenší přitížení pod pístem).
 
 | napětí pod pístem [kPa] | celkem [kg] | kotouče 1 kg | 0,5 kg | doladit [kg] |
 |---|---|---|---|---|
-| 5 | 1.00 | 0 | 0 | 0.31 |
-| 10 | 2.00 | 1 | 0 | 0.31 |
-| 15 | 3.00 | 2 | 0 | 0.31 |
-| 20 | 4.00 | 3 | 0 | 0.31 |
-| 25 | 5.00 | 4 | 0 | 0.31 |
+| 5 | 1.00 | 0 | 0 | 0.50 |
+| 10 | 2.00 | 1 | 1 | 0.00 |
+| 15 | 3.00 | 2 | 1 | 0.00 |
+| 20 | 4.00 | 3 | 1 | 0.00 |
+| 25 | 5.00 | 4 | 1 | 0.00 |
 
-Kotouč ⌀117.5/17: 1 kg = 12.0 mm, 0,5 kg = 6.0 mm. Při 25 kPa jen ≈ 4 kotouče.
+Kotouč ⌀165/17: 1 kg = 6.0 mm, 0,5 kg = 3.0 mm. Při 25 kPa jen ≈ 4 kotouče.
 
-**Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±25 mm). Kluzné pouzdro igus drylin RJ4JP-01-12 (bez maziva, do −40 °C) má tření ≈ 0,1–0,25 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,02 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
+**Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±8 mm). Kluzné pouzdro igus drylin RJ4JP-01-12 (bez maziva, do −40 °C) má tření ≈ 0,1–0,25 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,02 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
 
-**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser 66.1° (11 čar po ≈ 11.9 mm, posun čáry = 0.44 × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.
+**Co se měří (jen 1 + 2):** (1) kamera + vícečárový laser 60° (11 čar po ≈ 13.1 mm, posun čáry = 0.58 × zdvih) → mapa výšek **celého povrchu** ⌀100 v každém snímku: volné mezikruží i horní plocha pístu, reference = invarový terčík u límce; (2) LVDT na rameni invarového sloupku pod nosnou deskou = pohyb zátěže (pístu), rozlišení ≈ 1 µm. Tlakové snímače nejsou potřeba – zatížení je známá mrtvá váha.
 
-**Rozměry:** sloupy 40×80 × 306 mm, spodní líc příčníku 140 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 jde ze strany TDR otvorem a nasedá uprostřed přímo nad horní tyčku CS645 (hloubka ≈ 33 mm) – povrch zůstává volný.
+**Rozměry:** sloupy 40×80 × 276 mm, spodní líc příčníku 130 mm nad pískem (místo pro kameru a laser), závaží nad příčníkem mimo zorné pole. Pt100 jde ze strany TDR otvorem a nasedá uprostřed přímo nad horní tyčku CS645 (hloubka ≈ 33 mm) – povrch zůstává volný.
 
 ## 15. Varianta C rev. B – posudek měření (10/2026, přepočteno pro Sr = 0,5 v 11/2026)
 
@@ -280,7 +280,7 @@ Kotouč ⌀117.5/17: 1 kg = 12.0 mm, 0,5 kg = 6.0 mm. Při 25 kPa jen ≈ 4 koto
 
 ## 16. Varianta C rev. B3 – rám z T-profilů (11/2026)
 
-**Rám:** jen hliníkové T-profily drážka 8 řezané na délku – 2 podélníky 40×40 × 260, příčka 40×80 × 260 naplocho (nese 3 podložky G10), 2 sloupy 40×80, horní příčník 40×80 × 340 s jediným otvorem ⌀14; pouzdro ložiska visí pod příčníkem, mezera nad pískem 140 mm. Hliníkové desky L01/L02 odpadly. Rám zátěž jen vede, měření se k rámu nevztahuje (LVDT i terčík kamery jsou na invarovém sloupku), takže drift po korekci zůstává ≤ 6 µm (LVDT) a ≤ 3 µm (kamera).
+**Rám:** jen hliníkové T-profily drážka 8 řezané na délku – 2 podélníky 40×40 × 260, příčka 40×80 × 260 naplocho (nese 3 podložky G10), 2 sloupy 40×80, horní příčník 40×80 × 340 s jediným otvorem ⌀14; pouzdro ložiska visí pod příčníkem, mezera nad pískem 130 mm. Hliníkové desky L01/L02 odpadly. Rám zátěž jen vede, měření se k rámu nevztahuje (LVDT i terčík kamery jsou na invarovém sloupku), takže drift po korekci zůstává ≤ 6 µm (LVDT) a ≤ 3 µm (kamera).
 
 **Pt100 (potvrzeno):** vodorovně ze strany TDR, osa 3.5 mm nad osou horní tyčky CS645, hrot 30 mm od vnitřní stěny.
 
@@ -288,7 +288,7 @@ Kotouč ⌀117.5/17: 1 kg = 12.0 mm, 0,5 kg = 6.0 mm. Při 25 kPa jen ≈ 4 koto
 
 ## 17. Rám z T-profilů – únosnost, tuhost a stabilita (rev. B3, 11/2026)
 
-Hmotnosti: rám 4.4 kg, mrtvá váha až 5.5 kg, písek 1.41 kg (Sr 0.5), cela 1.5 kg, ostatní 1.3 kg → celkem ≈ 14.2 kg. Výška tlaku na T04 nad podlahou 408 mm. Průřezy: konzervativní odhady pro lehké profily drážka 8 (40×80: I_slabá ≈ 12 cm⁴, 40×40: I ≈ 7 cm⁴) – ověřit v technickém listu dodavatele. Součinitel zatížení 1,5, návrhová pevnost 160 MPa.
+Hmotnosti: rám 4.3 kg, mrtvá váha až 5.5 kg, písek 1.41 kg (Sr 0.5), cela 1.5 kg, ostatní 1.3 kg → celkem ≈ 14.0 kg. Výška tlaku na T04 nad podlahou 378 mm. Průřezy: konzervativní odhady pro lehké profily drážka 8 (40×80: I_slabá ≈ 12 cm⁴, 40×40: I ≈ 7 cm⁴) – ověřit v technickém listu dodavatele. Součinitel zatížení 1,5, návrhová pevnost 160 MPa.
 
 | stav | zatížení | výsledek |
 |---|---|---|
@@ -296,12 +296,12 @@ Hmotnosti: rám 4.4 kg, mrtvá váha až 5.5 kg, písek 1.41 kg (Sr 0.5), cela 1
 | ZS3 nesprávné použití: 500 N svisle na T04 (opření, odložená závaží) | 500 N uprostřed | σ = 9.4 MPa, průhyb 33 µm |
 | ZS1 provoz: cela + písek + závaží na příčce T03 (3 podložky u středu) | 83 N | σ = 1.6 MPa, průhyb 5.6 µm |
 | změna zatížení o 1 kg kotouč → změna průhybu T03 (jde do LVDT) | 9.8 N | 0.66 µm |
-| sloup 40×80 tlak (ZS3) vs. Eulerova kritická síla (konzola) | 375 N | N_cr = 221 kN |
+| sloup 40×80 tlak (ZS3) vs. Eulerova kritická síla (konzola) | 375 N | N_cr = 272 kN |
 | úhelník 40 drážka 8, smyk na 1 úhelník (příčka T03, 4 ks) | 21 N | tření spoje M8 (předpětí ≈ 6 kN × 0,2) ≈ 1,2 kN → bez prokluzu |
 | T-matice M5 pouzdra P01 (4 ks) – zatěžuje je jen tření v pouzdře | < 1 N | typ. únosnost T-matice M5 ≥ 500 N |
-| překlopení ve směru y – vodorovná síla na T04, rev. B3 původně (podélníky 260, nohy ±110) | G = 139 N | H_krit ≈ 37 N |
-| překlopení ve směru y – vodorovná síla na T04, nyní (podélníky 320, nohy ±140) | G = 139 N | H_krit ≈ 48 N |
-| překlopení ve směru x (nohy ±150) |  | H_krit ≈ 51 N |
+| překlopení ve směru y – vodorovná síla na T04, rev. B3 původně (podélníky 260, nohy ±110) | G = 138 N | H_krit ≈ 40 N |
+| překlopení ve směru y – vodorovná síla na T04, nyní (podélníky 320, nohy ±140) | G = 138 N | H_krit ≈ 51 N |
+| překlopení ve směru x (nohy ±150) |  | H_krit ≈ 55 N |
 
 **Závěr:** napětí v profilech jsou desetiny až jednotky MPa (rezerva > 20×), průhyby jednotky µm. Rám zátěž jen vede, takže jeho únosnost nerozhoduje; profil 40×80 je zvolen kvůli tuhosti spojů a ploše pro úhelníky, ne kvůli pevnosti. **Rozhoduje stabilita proti překlopení:** s nožkami ±110 by stačil vodorovný tlak ≈ 40 N na horní příčník (např. při nasazování kotoučů). Proto podélníky 320 mm a nohy ±140; v mrazáku rám stojí ve vaně (opře se o stěnu), mimo mrazák manipulovat se závažím jen při přidrženém rámu. Prokluz spojů pod konstantním zatížením nehrozí; při výměně kotoučů se změní průhyb příčky T03 o < 1 µm (jde do LVDT, zanedbatelné).
 
@@ -322,7 +322,7 @@ CR850 (= CR800 s klávesnicí a displejem): 6 SE / 3 DIFF analogových vstupů, 
 
 ## 19. Laser podle nabídky Picotronic A2627918 (13. 11. 2026)
 
-DOE-DER253: úhel mezi čarami 3.1°, vějíř 31° (dříve odhadováno 3,8° / 41°). Z původní polohy (134 mm, 68°) by čáry byly dlouhé jen 74 mm po 7.8 mm → nepokryly by povrch ⌀100. **Nová poloha:** laser vedle horního příčníku, 81 mm od osy, 183 mm nad pískem, vzdálenost 200 mm, sklon 66.1° → čáry ≈ 111 mm dlouhé po ≈ 11.9 mm, na písku ⌀100 ≈ 9 čar, límec ⌀106 pokrytý; posun čáry = 0.44 × zdvih. Držák P05 přepracován (blok mimo poloměr nosné desky 70 mm). Krajní čára u stěny na straně kamery je uprostřed zastíněná pouzdrem ložiska (krátká tětiva, zanedbatelné). Doporučen modul DOE253-635-5-6(10x24) s nastavitelným ohniskem (zaostřit na 200 mm) a 5 mW – rezerva pro tmavý mokrý / zmrzlý písek a krátkou expozici; třída 2M: nedívat se do svazku optickými přístroji.
+DOE-DER253: úhel mezi čarami 3.1°, vějíř 31° (dříve odhadováno 3,8° / 41°). Z původní polohy (134 mm, 68°) by čáry byly dlouhé jen 74 mm po 7.8 mm → nepokryly by povrch ⌀100. **Nová poloha:** laser vedle horního příčníku, 105 mm od osy, 182 mm nad pískem, vzdálenost 210 mm, sklon 60° → čáry ≈ 117 mm dlouhé po ≈ 13.1 mm, na písku ⌀100 ≈ 9 čar, límec ⌀106 pokrytý; posun čáry = 0.58 × zdvih. Držák P05 přepracován (blok mimo poloměr nosné desky 70 mm). Krajní čára u stěny na straně kamery je uprostřed zastíněná pouzdrem ložiska (krátká tětiva, zanedbatelné). Doporučen modul DOE253-635-5-6(10x24) s nastavitelným ohniskem (zaostřit na 200 mm) a 5 mW – rezerva pro tmavý mokrý / zmrzlý písek a krátkou expozici; třída 2M: nedívat se do svazku optickými přístroji.
 
 ## 20. Zjednodušení pro měření (15. 11. 2026)
 
@@ -357,16 +357,16 @@ Nasycená pára nad ledem při −10 °C: 2.14 g/m³. Tok z volné plochy J = h_
 
 *Pozn.: tento oddíl počítá s pevnou kamerou (HQ + 6 mm). Platí výsledky pro nízkou celu a laser; kamera nyní obíhá – její zorné pole a viditelnost jsou v §23.*
 
-Bez pístu a zátěže je celý povrch ⌀100 volný. Aby ho kamera i laser opravdu viděly, cela má **rovné čelo jen 5 mm nad pískem** (bez límce; tisk ⌀220 × 171) a kamera je přesunuta (y -102, 110 mm nad pískem, sklon 38°; dříve −92 / 100 / 43°).
+Bez pístu a zátěže je celý povrch ⌀100 volný. Aby ho kamera i laser opravdu viděly, cela má **rovné čelo jen 5 mm nad pískem** (bez límce; tisk ⌀220 × 151) a kamera je přesunuta (y -102, 110 mm nad pískem, sklon 38°; dříve −92 / 100 / 43°).
 
 | | límec 34 mm (var. C) | čelo 5 mm (var. U) |
 |---|---|---|
 | kamera nevidí | 20.0 % povrchu | 1.1 % povrchu |
-| laser neosvítí | 5.5 % | 0.3 % |
+| laser neosvítí | 11.8 % | 0.9 % |
 
-Zorné pole objektivu 6 mm na HQ kameře (6,29 × 4,71 mm): ±27,6° × ±21,4°; potřeba na celý ⌀100: ±24.4° × -17.7…19.7° → vejde se s rezervou 2–3°. Vzdálenost objektiv–střed 115 mm, 1 pixel ≈ 30 µm; posun čáry = 0.44 × změna výšky, střed čáry na 1/10 pixelu → výška ≈ 5–10 µm.
+Zorné pole objektivu 6 mm na HQ kameře (6,29 × 4,71 mm): ±27,6° × ±21,4°; potřeba na celý ⌀100: ±24.4° × -17.7…19.7° → vejde se s rezervou 2–3°. Vzdálenost objektiv–střed 115 mm, 1 pixel ≈ 30 µm; posun čáry = 0.58 × změna výšky, střed čáry na 1/10 pixelu → výška ≈ 5–10 µm.
 
-**Teplotní posun (−10 ↔ +10 °C):** sloupy rámu 306 mm Al zvednou kameru i laser o ≈ 141 µm – to ukáže invarový terčík P03 (stojí na základně, výška se nemění) a odečte se; dno cely a podložky G10 zvednou písek o ≈ 71 µm – opraví se podle slepé zkoušky S0 (atrapa) a teploty dna (NTC). Bez těchto oprav by posun byl srovnatelný se zdvihem písku.
+**Teplotní posun (−10 ↔ +10 °C):** sloupy rámu 276 mm Al zvednou kameru i laser o ≈ 128 µm – to ukáže invarový terčík P03 (stojí na základně, výška se nemění) a odečte se; dno cely a podložky G10 zvednou písek o ≈ 47 µm – opraví se podle slepé zkoušky S0 (atrapa) a teploty dna (NTC). Bez těchto oprav by posun byl srovnatelný se zdvihem písku.
 
 **Fotky:** bílá LED 5 V vedle okénka kamery; při každém snímání dva snímky – s LED (obraz povrchu: námraza, trhliny, vysychání) a s laserem bez LED (výšková mapa). LVDT se ve fázi 1 nepoužívá – kupuje se až pro fázi 2 (píst = kryt při sublimaci).
 
@@ -376,9 +376,9 @@ Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° ×
 
 | veličina | hodnota |
 |---|---|
-| okénko hlavy | 85 mm od osy, 100 mm nad pískem, sklon 36.5° od svislice |
-| potřebné zorné pole pro celý ⌀100 | ±21.4° × -17.2…+17.0° (kamera má ±33° × ±20.5° → rezerva ≥ 3.3°) |
-| vzdálenost okénko–střed, 1 pixel | 131 mm, ≈ 37 µm → výška laserem ≈ 8–12 µm |
+| okénko hlavy | 85 mm od osy, 90 mm nad pískem, sklon 39° od svislice |
+| potřebné zorné pole pro celý ⌀100 | ±22.7° × -17.7…+17.3° (kamera má ±33° × ±20.5° → rezerva ≥ 2.8°) |
+| vzdálenost okénko–střed, 1 pixel | 124 mm, ≈ 35 µm → výška laserem ≈ 8–12 µm |
 | kroky na otáčku ramene | 2048 × 72/12 = 12288 → 0.029° na krok |
 | vůle převodovky 28BYJ-48 | ≈ 1–3° na hřídeli motoru → 0,2–0,5° na rameni; výchozí poloha vždy najetím ze stejné strany na Hall senzor (magnet v kole P17) → opakovatelnost ≈ 0,1° |
 | moment | motor ≈ 0,03 N·m × 6 ≈ 0,16 N·m; tření 2 ložisek 2RS při −10 °C + smyčka kabelu ≈ 0,02–0,04 N·m → rezerva ≈ 4× |
@@ -390,4 +390,19 @@ Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° ×
 **Fáze 2 (se zátěží):** vodicí tyč ⌀12 prochází středem jádra (pouzdro igus v P12), náboj s ramenem se točí kolem ní. Tyč a píst zakryjí z každé polohy jen malou část mezikruží, ostatní polohy oběhu ji vidí. Laser na invarový terčík na straně kamery ve fázi 2 nedosvítí (zakryje ho zátěžový sloupec) – posun rámu tam hlídá LVDT.
 
 **Řízení motoru:** RPi 5 (stejné, které fotí) přes desku ULN2003, půlkroky z Pythonu (gpiozero); poloha se jen počítá, takže na časování nezáleží – Arduino není potřeba. Po každém pohybu se cívky vypnou (převod 64 : 1 v motoru drží polohu, motor nehřeje). Výchozí poloha: Hall A3144 v desce P12 nad magnetem ve věnci; cíl se vždy najíždí ve stejném směru (vymezení vůle). Poslední poloha se ukládá, aby se po výpadku proudu kabel nenavíjel dál.
+
+## 24. Mrazák 59 × 39 × 41 cm – nižší sestava (19. 11. 2026)
+
+Vnitřní prostor mrazáku 590 × 390 × 410 mm (šířka × hloubka × výška). Původní sestava měřila 486 mm (fáze 1) a 520 mm (fáze 2), proto byla snížena. Výšky jsou změřené na 3D modelu:
+
+| | výška | k víku | volno po stranách (š / h) |
+|---|---|---|---|
+| fáze 1 – bez zatížení | 383 mm | 27 mm | 87 / 35 mm |
+| fáze 2 – se zátěží | 397 mm | 13 mm | 87 / 35 mm |
+
+**Co se změnilo:** pryžové podložky 3 mm místo stavitelných noh (−19 mm); dno cely a podložky G10 20 mm (dříve 40, −20 mm); příčník 130 mm nad pískem (dříve 140), oběh kamery se posunul s ním, okénko 90 mm nad pískem, sklon 39° (zorné pole s rezervou ≈ 3°, 1 px ≈ 35 µm); nosná deska Al 6 mm přišroubovaná M6 do čela vodicí tyče 8 mm nad příčníkem (bez stavěcího kroužku); kotouče ocel ⌀165 × 6 = 1,00 kg (dříve ⌀117,5 × 12); laser 105 mm od osy a 182 mm nad pískem (60°, posun čáry 0.58 × změna výšky) – mimo kotouče; LVDT vedle příčníku; box s RPi na vnější straně pravého sloupu.
+
+**Zatížení:** pohyblivá část bez kotoučů (píst, tyč, nosná deska) ≈ 0.49 kg → ≈ 2.5 kPa pod pístem ⌀50; každý kotouč 1 kg přidá ≈ 5.0 kPa (4 kotouče + 0,5 kg ≈ 25 kPa).
+
+**Ověřeno v modelu:** v obou fázích bez kolizí v celém rozsahu oběhu kamery (po 10°); ve fázi 1 kamera i laser vidí celý povrch ⌀100 a invarový terčík. Ve fázi 2 laser pod sklonem 60° víc stíní vysoký límec cely (34 mm) – před fází 2 zvážit nižší límec nebo celu fáze 1.
 

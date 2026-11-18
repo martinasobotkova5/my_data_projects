@@ -350,7 +350,7 @@ PRINT_NOTES = {
                              "podkova: po vystředění vysunout do strany; tisk 100 % výplň, rovinnost dosedací plochy"],
     "E7-P10_screed": ["příčka leží na límci, břit sahá přesně 34 mm pod jeho hranu (= povrch písku 100 mm)",
                       "otáčet kolem osy, přebytek písku odebrat; břit tisknout naležato, 100 % výplň"],
-    "E7-P11_parking_fork": [f"postavit na horní plochu T04 kolem tyče pod stavěcí kroužek: tyč zvednutá o {bp.PARK_LIFT:g} mm",
+    "E7-P11_parking_fork": [f"postavit na horní plochu T04 kolem tyče pod nosnou desku: tyč zvednutá o {bp.PARK_LIFT:g} mm",
                             "pak lze celu vyjmout (směr +y, rameno terčíku P03 natočit stranou)"],
     "E7-P08_camera_hanger": ["NEPOUŽÍVÁ SE od 18. 11. 2026 – kamera obíhá (P14), box RPi na držáku P18","2× ⌀5,5 (M5×12) do T-matic v boční drážce příčníku T04 (−y)", "box kamery přišroubovat 2× M4"],
 }
@@ -388,7 +388,7 @@ def main():
         made.append(sheet_bar("E7-B01", "invar rod, vodicí tyč ⌀12", "Invar 36 (1.3912), tyč ⌀12 h9", 12, bp.ROD_L, 1,
                               ["⌀12 h9 (−0,043) – kluzné pouzdro igus; Ra ≤ 0,8 na celé délce",
                                "čela kolmá k ose, sražení 0,5 × 45° oba konce",
-                               "spodní čelo dosedá na kuličku 5/16\"; nahoře stavěcí kroužek DIN 705-A 12"], pdf))
+                               "spodní čelo dosedá na kuličku 5/16\"; horní čelo: závit M6 hl. 15 (vrtat ⌀5, závitník) pro šroub nosné desky"], pdf))
         made.append(sheet_bar("E7-B02", "invar post, sloupek ⌀16", "Invar 36 (1.3912), tyč ⌀16", 16, round(bp.POST_L), 1,
                               ["čela kolmá k ose (sloupek stojí ve dně patky P04 na podélníku), sražení 0,5 × 45°",
                                "svěrky P02 a P03 se nasunou shora, P04 drží patu"], pdf))

@@ -9,7 +9,7 @@ nahoře ozubený věnec m1 z72. Pastorek z12 na krokovém motoru 28BYJ-48 (drž�
 
 Vějíř laseru (+y) prochází pod příčníkem nejblíže 41 mm od osy ve výšce věnce → věnec má hlavu zubů na r 37.
 Rameno vede pod motorem (z 271–279) a teprve za ním stoupá k hlavě; nad zorným polem kamery.
-RPi 5 je v boxu P06 na boční straně příčníku (−y, držák P18), plochý kabel 500 mm ve smyčce → rozsah ±180°.
+RPi 5 je v boxu P06 na vnější straně pravého sloupu (+x, držák P18), plochý kabel 500 mm ve smyčce → rozsah ±180°.
 
 Díly se vracejí ve SVĚTOVÝCH souřadnicích sestavy (model3d.py) ve výchozí poloze (úhel 0 = hlava na −y).
 Tisk (PETG-CF): P12 jádro, P12b distanční kroužek, P12c svěrný kroužek, P13 náboj s věncem, P14 rameno s hlavou,
@@ -37,7 +37,7 @@ Z_GEAR = (Z_B1 + 1, Z_SH)           # 307 … 313 – ring teeth
 Z_CLAMP = Z_B0 - 3                  # 290 – clamp ring ⌀34 × 3 under the lower inner ring (3× M3 into the core)
 Z_IGUS = ZB - IGUS[1]               # 290 – igus bushing 290 … 320
 Z_MPL = (Z_B1 - 4, Z_B1)            # 302 … 306 – motor plate under the pinion
-Z_ARM = (271.0, 279.0)              # horizontal run of the arm (under the motor, above the camera's view)
+Z_ARM = (ZB - 49.0, ZB - 41.0)              # horizontal run of the arm (under the motor, above the camera's view)
 HOME_MAG = (0.0, -31.0)             # magnet in the ring / Hall sensor in the plate at the home position
 th = math.radians(p.C_ORB_TILT)
 WIN = (0.0, -p.C_ORB_R, bp.Z_S1 + p.C_ORB_H)   # head window centre at the home position
@@ -157,24 +157,24 @@ def pinion():
         box(-A_DIST - 1.7, -A_DIST + 1.7, -3, 3, Z_GEAR[0] - 1, Z_GEAR[1] + 1)))
 
 
-RPI_X = (76.0, 174.0)
+RPI_Z = ZB - 105.0                  # shelf under the RPi box on the outer face of the +x column
 
 
 def rpi_bracket():
-    """P18 – držák boxu P06 s RPi 5 na boční straně příčníku (−y): svislá deska 2× M5 do boční drážky (z 340),
-    police pod boxem nad dráhou hlavy (z 318 … 322)."""
-    x0, x1 = RPI_X
-    s = box(x0, x1, -44, -40, ZB - 2, ZT - 2).union(box(x0, x1, -118, -40, ZB - 2, ZB + 2))
-    s = s.union(box(x0, x0 + 4, -118, -44, ZB + 2, ZB + 30)).union(box(x1 - 4, x1, -118, -44, ZB + 2, ZB + 30))
-    for x in (x0 + 22, x1 - 22):
-        s = s.cut(cq.Workplane("XZ").workplane(offset=39).center(x, ZB + p.C_TOP[2] / 2).circle(2.75).extrude(6))
+    """P18 – držák boxu P06 s RPi 5 na vnější straně pravého sloupu T01 (+x): svislá deska 2× M5 do drážek sloupu
+    (y ±20), police pod boxem, dvě bočnice. 19. 11. 2026: box mimo rám, aby sestava byla nižší (mrazák 41 cm)."""
+    x0 = p.C_COL_SPAN / 2 + 20                                                              # outer face of the column (170)
+    s = box(x0, x0 + 4, -36, 36, RPI_Z, RPI_Z + 70).union(box(x0, x0 + 76, -48, 48, RPI_Z - 4, RPI_Z))
+    s = s.union(box(x0, x0 + 76, -48, -45, RPI_Z, RPI_Z + 25)).union(box(x0, x0 + 76, 45, 48, RPI_Z, RPI_Z + 25))
+    for y in (-20, 20):
+        s = s.cut(cq.Workplane("YZ").workplane(offset=x0 - 1).center(y, RPI_Z + 50).circle(2.75).extrude(6))
     return s
 
 
 def rpi_box():
-    """Box P06 (RPi 5) stojící na polici P18, víko P07 ven (−y) (model)."""
-    return (bp.camera_box().rotate((0, 0, 0), (1, 0, 0), 90)
-            .translate((125.0, -44 - 35 - 1, ZB + 2 + 50)))
+    """Box P06 (RPi 5) stojící na polici P18 vedle sloupu, víko P07 ven (+x) (model)."""
+    s = bp.camera_box().rotate((0, 0, 0), (1, 0, 0), 90).rotate((0, 0, 0), (0, 0, 1), 90)
+    return s.translate((p.C_COL_SPAN / 2 + 20 + 4 + 35 + 1, 0, RPI_Z + 50))
 
 
 # ------------------------------------------------------------------------------------------------ rotating parts
@@ -225,7 +225,8 @@ def arm_head():
         foot = foot.cut(cyl(3.4, 5, Z_B0 - 8.5, x, -25.0))
     drop = box(-5, 5, -30, -20, Z_ARM[0], Z_B0 - 8)
     run = box(-5, 5, -71, -22, Z_ARM[0], Z_ARM[1])        # under the motor (r ≤ 67), above the view to the far edge
-    riser = box(-5, 5, -76, -69, Z_ARM[0] + 4, 293)       # short post r 69 … 76 up to the axis-side face of the head
+    pr = _local_to_world((0, 18.0, 3.0))                 # point just outside the axis-side face of the head, near its front
+    riser = box(-5, 5, pr[1] - 4.0, pr[1] + 3.0, Z_ARM[0] + 4, pr[2] + 2.0)   # short post up to the head (beyond the motor)
     return foot.union(drop).union(run).union(riser).union(_place_head(_head_local()))
 
 
@@ -254,7 +255,7 @@ FIXED = [("P12 orbit core with igus seat (print)", core), ("P12b bearing spacer 
          ("P12c clamp ring (print)", clamp_ring), ("igus drylin RJ4JP-01-12", igus),
          ("P16 motor bracket (print)", motor_bracket), ("stepper 28BYJ-48 5 V", motor),
          ("P19 pinion m1 z12 (print)", pinion), ("P18 RPi box bracket (print)", rpi_bracket),
-         ("P06 box with RPi 5 (on the beam side)", rpi_box)]
+         ("P06 box with RPi 5 (on the column)", rpi_box)]
 ROTATING = [("P13 orbit hub m1 z72 (print)", hub), ("P14 camera arm + head (print)", arm_head),
             ("P15 head lid (print)", head_lid), ("Raspberry Pi Camera Module 3", cm3),
             ("LED white 1 W on star D20 (photo light)", led)]

@@ -109,20 +109,20 @@ aside h2 { font: 600 14px var(--f-body); margin: 0 0 6px; }
 const GLB = { u: "/*__GLB_U__*/", c: "/*__GLB_C__*/" };
 const PHASE = {
   u: { sub: "rám z T-profilů · cela ⌀220 × 171 s rovným čelem · celý povrch volný · kamera OBÍHÁ kolem vzorku ±180° · laser 11 čar · invarový terčík",
-       facts: [["486 mm", "výška sestavy nad dnem mrazáku (s boxem RPi)"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
+       facts: [["383 mm", "výška sestavy – mrazák 41 cm, 27 mm k víku"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
                ["0 kPa", "bez zatížení – měří se celý povrch ⌀100"], ["36 snímků / oběh", "3D model povrchu z jednoho oběhu (10°), laser ve výchozí poloze ≈ 10 µm"]] },
   c: { sub: "stejný rám, laser a OBĚH KAMERY jako ve fázi 1 – hlava obíhá kolem tyče se závažím · cela ⌀220 × 200 s límcem · zátěž na pístu ⌀50 · LVDT",
-       facts: [["520 mm", "výška sestavy nad dnem mrazáku (k horní hraně tyče)"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
+       facts: [["397 mm", "výška sestavy – mrazák 41 cm, 13 mm k víku"], ["340 × 320 mm", "půdorys rámu (nohy ±150 / ±140)"],
                ["5–25 kPa", "zatížení pod pístem ⌀50 (0–4 kotouče)"], ["≈ 1 µm / 10 µm", "rozlišení LVDT / laseru s kamerou"]] },
 };
 // groups: [id, label, supplier text, colour, matcher]
 const GROUPS = [
   ["frame", "Rám z T-profilů", "ENPRAG, s.r.o., Praha 5 – profily nařezané podle výkresů T01–T04, úhelníky, T-matice, nohy", "#9aa3ab",
-   n => /^(T0\d|angle bracket|levelling foot)/.test(n)],
+   n => /^(T0\d|angle bracket|levelling foot|rubber pad)/.test(n)],
   ["cell", "Cela a vzorek", "cela: vlastní 3D tisk (PETG-CF, Prusa) · G10: Elektroizolanty Praha · písek a čidla bodu M: máte", "#c9a86a",
    n => /^(cell|unsaturated sand|G10|M )/.test(n)],
   ["load", "Zátěž a vedení", "kotouče a píst: laser grupol.cz (DXF) · Invar: Kovohutě Rokycany · igus: HENNLICH · kroužek, kulička: Fabory / cyklo", "#6f7c8a",
-   n => /^(L0\d|steel ball|guide rod|shaft collar|P01)/.test(n)],
+   n => /^(L0\d|steel ball|guide rod|shaft collar|screw M6|P01)/.test(n)],
   ["meas", "Měření", "laser: Picotronic · kamera + RPi: RPishop.cz · LED: TME / GME · Invar: Kovohutě Rokycany · LVDT (fáze 2): Elkome · tištěné díly: vlastní tisk", "#d1873a",
    n => /^(LVDT|Invar 36 post|P0[2-8]|line laser|LED)/.test(n)],
   ["orbit", "Oběh kamery", "pro obě fáze · Camera Module 3 + kabel 500 mm: RPishop.cz · motor 28BYJ-48 + ULN2003, Hall: GME / LaskaKit · ložiska 6806-2RS: TME / ZKL · pouzdro igus: HENNLICH · řízení RPi 5 (rpi/e7_kamera.py) · tištěné díly: vlastní tisk", "#3d7fb8",
@@ -131,7 +131,7 @@ const GROUPS = [
 // [prefix of model name, Czech name, where to buy]
 const CZ = [
   ["T02", "T02 základní nosník 40×40 × 320", "profil 40×40, drážka 8, nařezaný na 320 mm – ENPRAG"],
-  ["levelling", "stavitelná noha M8", "noha M8 do závitu v čele profilu – ENPRAG"],
+  ["rubber pad", "pryžová podložka ⌀30 × 3 (místo noh)", "samolepicí pryžové nožky – Hornbach / TME; vyrovnat podložkami"],
   ["T03", "T03 příčka 40×80 × 260", "profil 40×80, nařezaný na 260 mm – ENPRAG"],
   ["angle bracket 40 base", "úhelník 40 – základna", "úhelník 40, drážka 8 + T-matice M8 – ENPRAG"],
   ["T01", "T01 sloup 40×80 × 306", "profil 40×80, nařezaný na 306 mm – ENPRAG"],
@@ -151,10 +151,11 @@ const CZ = [
   ["L05", "L05 píst spodní ⌀50 × 10", "Al 10 mm, laserový řez podle DXF – grupol.cz"],
   ["L04", "L04 píst horní ⌀50 × 10", "Al 10 mm, laserový řez podle DXF – grupol.cz"],
   ["steel ball", "ocelová kulička 5/16\"", "kuličky do ložisek – cyklo prodejna / Fabory CZ"],
-  ["guide rod", "vodicí tyč Invar ⌀12 × 265", "Invar 36 ⌀12 h9 – Kovohutě Rokycany (nařežou)"],
+  ["guide rod", "vodicí tyč Invar ⌀12 × 151", "Invar 36 ⌀12 h9 – Kovohutě Rokycany (nařežou); nahoře závit M6"],
   ["shaft collar", "stavěcí kroužek DIN 705 ⌀12", "Fabory CZ / Hornbach"],
-  ["L03", "L03 nosná deska ⌀140 × 10", "Al 10 mm, laserový řez – grupol.cz"],
-  ["L06", "L06 závaží 1 kg ⌀117,5 × 12", "ocel S235 12 mm, laserový řez – grupol.cz"],
+  ["L03", "L03 nosná deska ⌀140 × 6", "Al 6 mm, laserový řez – grupol.cz; přišroubovaná M6 do čela tyče"],
+  ["L06", "L06 závaží 1 kg ⌀165 × 6", "ocel S235 6 mm, laserový řez – grupol.cz"],
+  ["screw M6", "šroub M6 – nosná deska do čela tyče", "Fabory / Hornbach (DIN 912 M6 × 12)"],
   ["P04", "P04 patka sloupku (tisk)", "vlastní 3D tisk"],
   ["Invar 36 post", "sloupek Invar ⌀16 × 330", "Invar 36 ⌀16 – Kovohutě Rokycany (nařežou)"],
   ["P02", "P02 rameno LVDT (tisk)", "vlastní 3D tisk"],

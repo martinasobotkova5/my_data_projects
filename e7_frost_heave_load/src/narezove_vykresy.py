@@ -136,11 +136,10 @@ def n00(pdf):
         ("§Elektroizolanty Praha – sklotextit G10 (výkres N02 + B03)",) + ("",) * 6,
         ("B03", "podložka pod celu", "G10 tyč ⌀20 × 1000", f"{p.C_INS_T:g} ±0,05", "3", "čela rovnoběžná ≤ 0,05", "N02, B03"),
         ("§grupol.cz (laser, nahrát DXF) – plechy (výkres N03 + L03–L07)",) + ("",) * 6,
-        ("L03", "nosná deska závaží", "Al EN AW-5754, tl. 10", "⌀140, otvor ⌀12,3", "1", "E7-L03_carrier_10mm.dxf", "N03, L03"),
-        ("L04", "píst horní", "Al EN AW-5754, tl. 10", "⌀50, otvor ⌀6", "1", "E7-L04_piston_top_10mm.dxf", "N03, L04"),
-        ("L05", "píst spodní", "Al EN AW-5754, tl. 10", "⌀50", "1", "E7-L05_piston_bottom_10mm.dxf", "N03, L05"),
-        ("L06", "závaží 1 kg", "ocel S235JR, tl. 12", "⌀117,5, otvor ⌀17", "4", "E7-L06_disc_1kg_12mm.dxf", "N03, L06"),
-        ("L07", "závaží 0,5 kg", "ocel S235JR, tl. 6", "⌀117,5, otvor ⌀17", "1", "E7-L07_disc_0.5kg_6mm.dxf", "N03, L07"),
+        *[(d["name"][3:6], nm, f"{'Al EN AW-5754' if d['mat'].startswith('Al') else 'ocel S235JR'}, tl. {d['t']:g}",
+           f"⌀{d['circle']:g}".replace(".", ",") + ("".join(f", otvor ⌀{h[2]:g}".replace(".", ",") for h in d["holes"])),
+           str(d["qty"]), f"{d['name']}_{d['t']:g}mm.dxf", f"N03, {d['name'][3:6]}")
+          for d, nm in zip(bp.LASER, ("nosná deska závaží", "píst horní", "píst spodní", "závaží 1 kg", "závaží 0,5 kg"))],
     ]
     PH = {"T": "1", "B02": "1", "B03": "1", "B01": "2 *", "L": "2"}
     rows = [r + ("",) if r[0].startswith("§") or not r[0] else r + (PH.get(r[0], PH.get(r[0][:1], "")),) for r in rows]
@@ -149,7 +148,7 @@ def n00(pdf):
     notes = ["Prořez pily počítán 3 mm. Nekótované tolerance ISO 2768-mK, hrany odjehlit.",
              "Hliník 10 mm: ověřit u grupol.cz, že ho laser řeže; jinak stejné DXF na vodní paprsek (Zamet, Light Cut).",
              "Kotouče L06/L07 po výrobě zvážit, rozdíl hmotnosti doladit podložkami (±0,5 mm tloušťky ≈ ±4 %).",
-             "Invar: pokud Rokycany čela nezarovnají, objednat B01 270 mm a B02 335 mm a čela srovnat v dílně.",
+             f"Invar: pokud Rokycany čela nezarovnají, objednat B01 {bp.ROD_L + 5:g} mm a B02 {round(bp.POST_L) + 5:g} mm a čela srovnat v dílně.",
              "* B01 patří do fáze 2, ale objednat ji spolu s B02 (jedna poptávka, malé množství).",
              "Díly L03–L07 (grupol.cz) stačí objednat až před fází 2. Otvor ⌀14 v T04 vyvrtat hned (rám je společný).",
              "Tištěné díly (cela E7-V03u, P03–P07, P10u, oběh P12–P16, P18, P19) se neřežou – STL/STEP ve vyroba/tisk."]
@@ -188,7 +187,7 @@ def n01(pdf):
                                   "laseru P05 (+y), držák boxu RPi P18 (−y)", fontsize=7, color=MUTE)
     # kit to order with the profiles
     rows = [("úhelník 40×40 drážka 8 + krytka", "12"), ("T-matice M8 vkládací", "32"), ("T-matice M5 vkládací", "12"),
-            ("šroub ISO 4762 M8×16 + podložka", "24"), ("stavitelná noha M8, talíř ⌀30–40", "4"),
+            ("šroub ISO 4762 M8×16 + podložka", "24"), ("pryžová podložka ⌀30 × 3 (místo noh)", "4"),
             ("krytka čela 40×80 / 40×40", "6")]
     table(ax, 196, 134, ["spojovací materiál k profilům (ENPRAG)", "ks"], [72, 14], rows)
     pdf.savefig(fig); plt.close(fig)
@@ -203,11 +202,12 @@ def n02(pdf):
         "h9 (−0,043), Ra ≤ 0,8 – jezdí v kluzném pouzdře igus; čela kolmá, sražení 0,5 × 45°")
     bar(ax, 14, 128, [("B02", round(bp.POST_L))], S, 8, f"B02 sloupek LVDT ⌀16 – 1 ks × {round(bp.POST_L):g} mm",
         "čela kolmá, sražení 0,5 × 45°")
-    ax.text(14, 112, "Pokud nedodají řez s kolmými čely: objednat 270 mm a 335 mm, čela zarovnat v dílně.",
+    ax.text(14, 112, f"Pokud nedodají řez s kolmými čely: objednat {bp.ROD_L + 5:g} mm a {round(bp.POST_L) + 5:g} mm, čela zarovnat v dílně. "
+                     "B01: v horním čele závit M6 hl. 15 (šroub nosné desky).",
             fontsize=7, color=MUTE)
     ax.text(14, 98, "Elektroizolanty Praha – sklotextit G10, tyč ⌀20 × 1000 mm", fontsize=9.5, weight="bold", color=CUT)
     S2 = 0.22
-    used = bar(ax, 14, 74, [("B03", p.C_INS_T)] * 3, S2 * 1.6, 8, "B03 podložky ⌀20 × 40 – 3 ks z jedné tyče",
+    used = bar(ax, 14, 74, [("B03", p.C_INS_T)] * 3, S2 * 1.6, 8, f"B03 podložky ⌀20 × {p.C_INS_T:g} – 3 ks z jedné tyče",
                "délka 40 ±0,05, čela rovnoběžná ≤ 0,05 – všechny tři stejné (cela na nich stojí)")
     ax.text(14, 58, f"Zbytek tyče ≈ {1000 - used:g} mm (rezerva). Pokud firma neřeže na přesnou délku: nařezat "
                     "s přídavkem 1 mm a čela srovnat\nbroušením na rovné desce (smirkový papír), všechny tři najednou "
@@ -221,7 +221,7 @@ def n03(pdf):
             fontsize=12, weight="bold")
     ax.text(14, 188.5, f"Mezera mezi díly a k okraji {GAP:g} mm. Do e-shopu nahrát DXF z vyroba/laser – "
                        "1 soubor = 1 díl, v souboru je počet kusů v názvu výkresu.", fontsize=7.5, color=MUTE)
-    s = 0.33
+    s = 0.26
 
     def plate(x, y, title, parts, W, H):
         ax.text(x, y + H * s + 5, title, fontsize=8.5, weight="bold")
@@ -239,17 +239,17 @@ def n03(pdf):
     D3, D4, D6 = p.C_CARRIER_D, p.C_PISTON_D, LAS["E7-L06_disc_1kg"]["circle"]
     hd = LAS["E7-L06_disc_1kg"]["holes"][0][2]
     W1 = GAP + D3 + GAP + D4 + GAP; H1 = GAP + D3 + GAP
-    plate(20, 112, "Al EN AW-5754, tl. 10 mm: L03 + L04 + L05", [
+    plate(20, 112, f"Al EN AW-5754: L03 tl. {LAS['E7-L03_carrier']['t']:g} + L04, L05 tl. {LAS['E7-L04_piston_top']['t']:g} mm", [
         ("L03", GAP + D3 / 2, GAP + D3 / 2, D3, p.C_ROD_D + 0.3),
         ("L04", 2 * GAP + D3 + D4 / 2, H1 - GAP - D4 / 2, D4, 6.0),
         ("L05", 2 * GAP + D3 + D4 / 2, GAP + D4 / 2, D4, 0)], W1, H1)
     W2 = GAP + 2 * D6 + 2 * GAP
-    plate(122, 86, "ocel S235JR, tl. 12 mm: 4× L06 (1 kg)", [
+    plate(130, 70, f"ocel S235JR, tl. {p.C_DISC_T:g} mm: 4× L06 (1 kg)", [
         ("L06", GAP + D6 / 2, GAP + D6 / 2, D6, hd), ("L06", 2 * GAP + 1.5 * D6, GAP + D6 / 2, D6, hd),
         ("L06", GAP + D6 / 2, 2 * GAP + 1.5 * D6, D6, hd), ("L06", 2 * GAP + 1.5 * D6, 2 * GAP + 1.5 * D6, D6, hd)],
         W2, W2)
     W3 = GAP + D6 + GAP
-    plate(20, 44, "ocel S235JR, tl. 6 mm: 1× L07 (0,5 kg)", [("L07", W3 / 2, W3 / 2, D6, hd)], W3, W3)
+    plate(20, 44, f"ocel S235JR, tl. {p.C_DISC_T / 2:g} mm: 1× L07 (0,5 kg)", [("L07", W3 / 2, W3 / 2, D6, hd)], W3, W3)
     ax.text(222, 168, "Po výrobě:\n• kotouče zvážit (cíl 1,000 kg / 0,500 kg),\n  doladit podložkami\n"
                      "• otřepy odstranit, hrany sražení 0,3\n• písty L04 + L05 slepit epoxidem\n  (otvor ⌀6 v L04 nahoru)",
             fontsize=7, va="top")

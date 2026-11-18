@@ -60,7 +60,7 @@ E_FROZEN = 200.0             # MPa, modul zmrzlé zeminy (hrubý odhad)
 THETA = 0.30
 
 # --- mrazák (stejný jako E6, ≈ odhad z fotek – ZMĚŘIT) ---------------------------
-FRZ_L, FRZ_W, FRZ_H = 900.0, 550.0, 650.0
+FRZ_L, FRZ_W, FRZ_H = 590.0, 390.0, 410.0   # 19. 11. 2026: vnitřní prostor mrazáku šířka × hloubka × výška
 TRAY_L, TRAY_W = 530.0, 340.0
 INS = 25.0              # izolace kolem cely
 
@@ -235,14 +235,14 @@ C_PISTON_D, C_PISTON_H = 50.0, 20.0     # částečný píst (patka) ⌀50 – z
 C_BALL_D = 7.94                         # ocelová kulička 5/16" (ložisková, cyklo) – sedí v otvoru ⌀6 horního kotouče pístu
 C_ROD_D = 12.0                          # vodicí tyč (kalená, h6) v kluzném pouzdře igus drylin R RJ4JP-01-12 (bez maziva)
 C_BUSH = (21.0, 30.0)                   # drylin RJ4JP-01-12 = rozměry LM12UU: vnější ⌀ × délka
-C_BEAM_GAP = 140.0                      # rev. B3: 140 (pouzdro visí pod T-profilem); dříve spodní líc příčníku nad povrchem písku (rev. B: 200 → 160, vyrovná izolaci pod celou)
-C_CARRIER_D, C_CARRIER_T = 140.0, 10.0  # rev. B3 ⌀140 (LVDT na r 65); nosná deska závaží (Al 10, laser), na tyči 2 stavěcí kroužky ⌀12
-C_DISC_D, C_DISC_HOLE = 117.5, 17.0     # ocelové kotouče ⌀117,5 × 12 (laser) = 1,00 kg
+C_BEAM_GAP = 130.0                      # 19. 11. 2026: 130 (mrazák 41 cm vysoký); dříve 140 – oběh kamery se posunul s příčníkem
+C_CARRIER_D, C_CARRIER_T = 140.0, 6.0   # 19. 11. 2026: Al 6 mm, přišroubovaná M6 do čela vodicí tyče (bez stavěcího kroužku)
+C_DISC_D, C_DISC_HOLE = 165.0, 17.0     # 19. 11. 2026: ocelové kotouče ⌀165 × 6 = 1,00 kg (nižší sloupec závaží)
 C_DISC_KG = (1.0, 0.5)                  # kotouč 1 kg a 0,5 kg
-C_TRAVEL = 25.0                         # volný zdvih / pokles zátěže
+C_TRAVEL = 8.0                          # 19. 11. 2026: mezera nosná deska – horní líc příčníku (zdvih / pokles vzorku jsou ≤ 2 mm)
 C_SURCHARGES_KPA = (5.0, 10.0, 15.0, 20.0, 25.0)   # pod pístem
 C_CAM_Y, C_CAM_H, C_CAM_TILT = -102.0, 110.0, 38.0  # kamera stranou (−y), výška nad pískem, sklon k ose; 16. 11. 2026: z (−92, 100, 43°) → objektiv 6 mm pokryje celý ⌀100 (var. U)
-C_LASER_Y, C_LASER_H = 81.0, 183.0      # rev. B3a (13. 11. 2026, úhly DOE z nabídky Picotronic): laser vedle horního příčníku, 66°, 200 mm od středu povrchu
+C_LASER_Y, C_LASER_H = 105.0, 182.0     # 19. 11. 2026: laser dál od osy (mimo kotouče ⌀165), 60°, 210 mm od středu povrchu
 C_LASER_DOE = (3.1, 31.0)                # Picotronic DOE-DER253: úhel čára–čára 3,1°, vějíř (délka čáry) 31° – nabídka A2627918
 C_PT100_R, C_PT100_ANG = 37.5, 315.0    # (rev. A, už neplatí) Pt100 svisle ve volném mezikruží
 # rev. B (upřesnění 10/2026): Pt100 jde ze stejné strany jako TDR – vodorovně otvorem, uprostřed (na ose TDR)
@@ -254,8 +254,8 @@ C_PT100_TIP = 30.0                       # hrot 30 mm od vnitřní stěny (potvr
 C_LENS_F = 6.0                           # rev. B: objektiv 6 mm (kamera blíž) → zorné pole ≈ 140 mm
 C_LVDT_X = 45.0                          # LVDT na příčníku, hrot na spodní straně nosné desky
 C_SNAP_MIN = (10, 1)                     # snímek / měření: běžně 10 min, při průchodu 0 °C 1 min
-C_LINES, C_LINE_PITCH = 11, 11.9         # Picotronic DOE253 z 200 mm: 11 čar po ≈ 11,9 mm, každá ≈ 111 mm dlouhá → celý ⌀100 i límec
-C_LASER_ANG = 66.1                       # sklon laserové roviny od vodorovné (= atan(183/81)) → posun čáry Δy = Δh / tan 66° = 0,44 Δh
+C_LINES, C_LINE_PITCH = 11, 13.1         # DOE253 z 210 mm pod 60°: 11 čar po ≈ 13,1 mm, každá ≈ 116 mm dlouhá → celý ⌀100
+C_LASER_ANG = 60.0                       # sklon laserové roviny od vodorovné (= atan(182/105)) → posun čáry Δy = Δh / tan 60° = 0,58 Δh
 
 # --- varianta C, revize B (posudek měření 10/2026) ------------------------------------------
 C_BASE = (340.0, 320.0, 40.0)            # rev. B3: základna z T-profilů drážka 8 (2 podélníky 40×40 × 320 + příčka 40×80), výška 40
@@ -268,13 +268,13 @@ C_TOP = (340.0, 80.0, 40.0)              # rev. B3: horní příčník = T-profi
 C_HOUSING = (50.0, 50.0, 36.0)           # tištěné pouzdro pro igus RJ4JP-01-12 (⌀21 × 30), visí POD příčníkem, 4× M5 do T-matic
 C_BEAM_H = C_TOP[2] + 2.0                # příčník + vůle; nad ním zdvih 25 a stavěcí kroužek pod nosnou deskou
 C_LVDT_BODY = (20.6, 50.0)               # RDP DCTH400: tělo ⌀20,6 (výkres RDP), délka těla ≈ 50
-C_DISC_T = 12.0                          # ocelové kotouče z plechu S235 12 mm (⌀117,5 → 1,00 kg)
+C_DISC_T = 6.0                           # ocelové kotouče z plechu S235 6 mm (⌀165 → 1,00 kg), 0,5 kg z plechu 3 mm
 C_COL_PROFILE = (40.0, 80.0)             # sloupy 40×80, drážka 8 (item kompatibilní), jen řez na délku
 C_COL_SPAN = 300.0                       # osová vzdálenost sloupů (vnitřní líc 130 > objímka r 120)
 # rev. B: cela se tiskne VCELKU s izolací – jádro = Column_one_body_version_1 (BODY_*), k tomu dole a kolem
 # přitištěna nízká výplň (gyroid 10–15 %): stěna 30 mm, dno 40 mm; límec zůstává volný. Výsledek: ⌀220 × 200, jeden kus
 # (15. 11. 2026: stěna 40 → 30 mm, aby se cela vešla na podložku tiskárny 24 cm s okrajem 10 mm; mrznutí zůstává shora).
-C_INS_T = 40.0                           # přitištěné dno pod jádrem (nízká výplň), s 3 kapsami pro podložky G10
+C_INS_T = 20.0                           # 19. 11. 2026: 20 (mrazák 41 cm); přitištěné dno pod jádrem s 3 kapsami pro podložky G10 ⌀20 × 20
 C_NTC_ANG, C_NTC_Z = 30.0, 20.0          # radiální otvor ⌀4 pro NTC ve dně cely (azimut, výška nad spodkem) – teplota dna
 C_SLEEVE_T = 30.0                        # přitištěná stěna kolem pláště (r 80 → 110), cela ⌀220 na podložku 24 cm
 C_INS_K = 0.06                           # λ tištěné nízké výplně [W/mK] – odhad 0,05–0,08 (XPS 0,035)
@@ -283,7 +283,7 @@ C_PAD_D, C_PAD_R = 20.0, 35.0            # podložky G10 ⌀20 × 40 v kapsách 
 C_INVAR_D = 16.0                         # sloupek z Invaru 36 ⌀16 z desky → rameno s LVDT (bez driftu sloupů)
 C_ROD_INVAR = True                       # vodicí tyč ⌀12 z Invaru 36 (broušená) místo oceli – jinak ocel 249 mm = 57 µm / 20 K
 C_INVAR_XY = (150.0, 108.0)              # rev. B3: na podélníku základny (x 150) za sloupem; poloha sloupku (mimo celu, sloupy, kameru a laser)
-C_LVDT_XY = (30.0, 58.0)                 # rev. B3: vedle příčníku (y > 40), pod nosnou deskou ⌀140; LVDT pod nosnou deskou závaží (r 57 < 60), vedle příčníku
+C_LVDT_XY = (34.0, 58.0)                 # 19. 11. 2026: vedle příčníku (y > 40), mimo vějíř laseru, hrot pod nosnou deskou ⌀140 (r 67)
 C_REF_XY = (37.0, -44.0)                 # 18. 11. 2026: invarový terčík pro kameru i laser – r 58, mimo stín náboje oběhu (laser) a v zorném poli kamery
 C_REF_VIA = (75.0, -30.0)                # ohyb ramene P03 – rameno obchází celu zvenku, nepřechází nad vzorkem
 ALPHA_G10_Z = 15e-6                      # G10 kolmo k vrstvám ≈ (ověřit), podložky 40 mm
@@ -299,9 +299,13 @@ C_LED_OFF = 38.0                         # střed LED od osy objektivu (po delš
 # --- oběh kamery kolem vzorku (16. 11. 2026, fáze 1 / varianta U) ----------------------------------------------------
 # malá hlava s Raspberry Pi Camera Module 3 (25 × 24 mm, 66° × 41°) obíhá na náboji pod středem příčníku T04;
 # RPi 5 zůstává v pevném boxu P06 na horní straně příčníku, kabel kamery 500 mm ve smyčce (±180° od výchozí polohy)
-C_ORB_R, C_ORB_H, C_ORB_TILT = 85.0, 100.0, 36.5   # okénko hlavy: vzdálenost od osy, výška nad pískem, sklon od svislice
+C_ORB_R, C_ORB_H, C_ORB_TILT = 85.0, 90.0, 39.0   # okénko hlavy: od osy, nad pískem, sklon; 19. 11.: o 10 níž (s příčníkem), sklon 39°
 C_ORB_BRG = (30.0, 42.0, 7.0)            # 2× ložisko 6806-2RS (d × D × B) na pevném tištěném jádře P12 pod příčníkem (18. 11. 2026: jedna sestava pro obě fáze)
 C_ORB_GEAR = (1.0, 72, 12)               # modul, zuby věnce na náboji, zuby pastorku na krokovém motoru 28BYJ-48 (převod 6 : 1)
 C_ORB_MOTOR_ANG = 180.0                  # motor na straně −x (mimo vějíř laseru na +y a mimo výchozí polohu kamery na −y)
 C_ORB_STEP_DEG = 10.0                    # snímek po 10° → 36 snímků na jeden oběh (fotogrammetrie)
 CM3 = dict(board=(25.0, 24.0), fov=(66.0, 41.0), px=(4608, 2592))   # Raspberry Pi Camera Module 3 (standardní, autofokus)
+
+# --- 19. 11. 2026: mrazák 41 cm vysoký – nižší sestava --------------------------------------------------------------
+C_RUBBER = (30.0, 3.0)                   # pryžové podložky ⌀30 × 3 pod podélníky (místo stavitelných noh M8, vyrovnat podložkami)
+C_CARRIER_SCREW = 6.0                    # nosná deska přišroubovaná šroubem M6 do závitu v horním čele vodicí tyče (⌀5 hl. 15 + závitník)
