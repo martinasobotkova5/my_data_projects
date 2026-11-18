@@ -27,7 +27,7 @@ Stav 19. 11. 2026. Ceny jsou orientační, většinou bez DPH, a je potřeba je 
 
 | firma (CZ) | položky | ks | cena (odhad) |
 |---|---|---|---|
-| **ENPRAG, s.r.o., Praha** – [enprag.cz](https://www.enprag.cz/hlinikove-profily/c-6027) | <ul><li>profily 40×80 drážka 8: T01 2× 276, T03 260, T04 340 s otvorem ⌀14</li><li>profily 40×40: T02 2× 320</li><li>12 úhelníků 40</li><li>32 T-matic M8, 20 T-matic M5</li><li>šrouby M8×16</li></ul><br>Poslat `E7_narezy_profily_ENPRAG.pdf`. | sada | ≈ 4 000–6 000 Kč |
+| **ENPRAG, s.r.o., Praha** – [enprag.cz](https://www.enprag.cz/hlinikove-profily/c-6027) | <ul><li>profily 40×80 drážka 8: T01 2× 276, T03 260, T04 340 s otvorem ⌀14</li><li>profily 40×40: T02 2× 320</li><li>14 úhelníků 40×40 drážka 8 s krytkou</li><li>28 T-matic M8 a 20 T-matic M5 (vkládací)</li><li>28 šroubů M8×16 s podložkou</li><li>krytky čel 4× 40×40, 2× 40×80</li></ul><br>Poslat `E7_narezy_profily_ENPRAG.pdf` – obsahuje nářezový plán N01 a rozpis spojů N04. | sada | ≈ 4 000–6 000 Kč |
 | **Kovohutě Rokycany** – sales@koro.cz | <ul><li>Invar 36 ⌀16 × 283 (B02, sloupek)</li><li>Invar 36 ⌀12 h9 × 150 (B01, vodicí tyč, pro fázi 2): nahoře závit M6 hl. 15, dole středicí důlek 90° ⌀8</li></ul><br>Poslat `E7_narezy_invar_Rokycany.pdf`. | 1 + 1 | ≈ 2 000–4 000 Kč |
 | **Elektroizolanty Praha** – [elektroizolanty.cz](https://www.elektroizolanty.cz/) | tyč G10 ⌀20, nařezat 3× 20 mm | 1 | ≈ 300 Kč |
 | **HENNLICH s.r.o., Litoměřice** (igus) | kluzné pouzdro igus drylin RJ4JP-01-12 (zalisuje se do jádra oběhu) | 1 | ≈ 50–120 Kč |

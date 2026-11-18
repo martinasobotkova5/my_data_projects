@@ -157,6 +157,80 @@ def n00(pdf):
     pdf.savefig(fig); plt.close(fig)
 
 
+# ---------------------------------------------------------------------------------------------------- T-slot kit
+# joints of the frame: (code, joint, where, brackets, M8 screws, M8 T-nuts)
+JOINTS = [("J1", "sloup T01 ↔ podélník T02 (dole)", "boky sloupu ±y + horní drážka podélníku", 4, 8, 8),
+          ("J2", "příčka T03 ↔ podélník T02", "boky příčky ±y + vnitřní drážka podélníku", 4, 8, 8),
+          ("J3", "sloup T01 ↔ horní příčník T04", "vnitřní strana sloupu + spodní drážky T04", 4, 8, 8)]
+# parts screwed into the slots: (code, part, profile / slot, screws, n, T-nuts M5)
+ATTACH = [("A1", "P04 patka invarového sloupku", "T02 pravý, horní drážka", "M5 × 25", 2),
+          ("A2", "P05 držák laseru", "T04, boční drážka +y", "M5 × 12", 2),
+          ("A3", "P12 jádro oběhu kamery (pouzdro igus)", "T04, spodní drážky y ±20", "M5 × 12", 4),
+          ("A4", "P16 držák motoru", "T04, spodní drážky (strana −x)", "M5 × 12", 2),
+          ("A5", "P21 držák optické koncovky", "T04, spodní drážky (strana +x)", "M5 × 12", 2),
+          ("A6", "P18 držák boxu RPi", "T01 pravý, vnější drážka +x", "M5 × 10", 2),
+          ("A7", "P20 dorazy cely (2 ks)", "T03, horní drážky", "M5 × 20", 4)]
+_n5 = sum(a[4] for a in ATTACH)
+_scr5 = {}
+for a in ATTACH:
+    _scr5[a[3]] = _scr5.get(a[3], 0) + a[4]
+KIT = [("úhelník 40×40 drážka 8 (Zn) + krytka", sum(j[3] for j in JOINTS) + 2, "+2 rezerva"),
+       ("T-matice drážka 8 M8, vkládací (otočná)", sum(j[5] for j in JOINTS) + 4, "+4 rezerva"),
+       ("šroub ISO 4762 M8 × 16 + podložka M8", sum(j[4] for j in JOINTS) + 4, "+4 rezerva"),
+       ("T-matice drážka 8 M5, vkládací (otočná)", _n5 + 2, "+2 rezerva"),
+       *[(f"šroub ISO 4762 {k} + podložka M5", v + 1, "+1 rezerva") for k, v in sorted(_scr5.items())],
+       ("krytka čela 40×40 (T02)", 4, ""), ("krytka čela 40×80 (T04)", 2, "")]
+
+
+def n04(pdf):
+    fig, ax = sheet("E7-N04", "spoje T-profilů a spojovací materiál", "ENPRAG, s.r.o. (+ Fabory / Hornbach)")
+    ax.text(14, 194, "Spoje T-profilů drážka 8 – úhelníky, T-matice, šrouby (nic se nevrtá ani nelepí)", fontsize=12,
+            weight="bold")
+    ax.text(14, 188.5, "Všechny spoje rámu jsou úhelníky 40×40 do T-matic M8; přišroubované díly drží T-matice M5. "
+                       "Vkládací (otočné) T-matice se dají vložit i do smontovaného rámu.", fontsize=7.5, color=MUTE)
+    # schematic front view of the frame (x–z), scale 1 : 4
+    s, ox, oy = 0.25, 58, 80
+    R = lambda x0, z0, x1, z1, **k: ax.add_patch(Rectangle((ox + x0 * s, oy + z0 * s), (x1 - x0) * s, (z1 - z0) * s,
+                                                           fill=True, fc=k.get("fc", "#eaf3f8"), ec=CUT, lw=0.7))
+    xc = p.C_COL_SPAN / 2
+    zb, zt = 0.0, float(bp.COL_H)
+    R(-xc - 20, -40, xc + 20, 0)                                         # rails (seen end-on, 40 high)
+    R(-p.C_RAIL_X + 20, -40, p.C_RAIL_X - 20, 0, fc="#d7e7f0")           # cross bar T03
+    for sx in (-1, 1):
+        R(sx * xc - 20, zb, sx * xc + 20, zt)                            # columns
+    R(-p.C_TOP[0] / 2, zt, p.C_TOP[0] / 2, zt + 40)                      # top beam T04
+    lab = lambda x, z, txt, c=INK: ax.text(ox + x * s, oy + z * s, txt, fontsize=6.5, ha="center", va="center",
+                                           color=c, weight="bold", bbox=dict(boxstyle="round,pad=0.15", fc="white", ec=c, lw=0.5))
+    for sx in (-1, 1):
+        lab(sx * (xc + 35), 12, "J1")
+        lab(sx * (xc - 45), -20, "J2")
+        lab(sx * (xc - 38), zt - 22, "J3")
+    for txt, x, z in (("T01", -xc, zt / 2), ("T01", xc, zt / 2), ("T04", 0, zt + 20), ("T02 / T03", 0, -20)):
+        ax.text(ox + x * s, oy + z * s, txt, fontsize=6.5, ha="center", va="center", color=CUT)
+    blue = "#c0392b"
+    lab(0, zt - 30, "A3", blue); lab(-75, zt - 30, "A4", blue); lab(48, zt - 30, "A5", blue)
+    lab(30, zt + 55, "A2", blue); lab(xc + 55, zt - 70, "A6", blue); lab(-118, 22, "A7", blue); lab(118, 22, "A7", blue)
+    lab(xc - 5, 55, "A1", blue)
+    ax.text(ox - xc * s - 8, oy - 22, "POHLED ZEPŘEDU – schéma (1 : 4)", fontsize=7.5, weight="bold")
+    # tables
+    rows = [(j[0], j[1], j[2], f"{j[3]} úhelníky", f"{j[4]}× M8×16", f"{j[5]}") for j in JOINTS]
+    yy = table(ax, 152, 182, ["", "spoj rámu", "kde", "úhelníky", "šrouby", "T-m. M8"], [6, 38, 47, 15, 16, 11],
+               rows, fs=5.8, rh=4.8)
+    rows = [(a[0], a[1], a[2], f"{a[4]}× {a[3]}", f"{a[4]}") for a in ATTACH]
+    yy = table(ax, 152, yy - 5, ["", "přišroubovaný díl", "profil / drážka", "šrouby", "T-m. M5"], [6, 48, 45, 21, 13],
+               rows, fs=5.8, rh=4.8)
+    rows = [(n, str(q), note) for n, q, note in KIT]
+    table(ax, 152, yy - 5, ["CELKEM – ENPRAG (šrouby i Fabory / Hornbach)", "ks", ""], [86, 10, 37], rows,
+          fs=5.8, rh=4.8)
+    notes = ["Úhelníky: 2 šrouby M8 × 16 do T-matic (jeden do každého profilu), utahovat ≈ 15 N·m.",
+             "Profily drážka 8 jsou kompatibilní s item Line 8 / Bosch – vzít úhelníky a T-matice stejného výrobce.",
+             "Kotouče závaží drží závitový čep M6 a matice (N03, V08) – nejsou ve drážkách.",
+             "Pod podélníky jen volně položený pryžový pás 3 mm (bez noh, mrazák 41 cm)."]
+    for k, s_ in enumerate(notes):
+        ax.text(14, 44 - k * 4.2, "• " + s_, fontsize=6.2)
+    pdf.savefig(fig); plt.close(fig)
+
+
 def n01(pdf):
     fig, ax = sheet("E7-N01", "T-profily – nářezový plán", "ENPRAG, s.r.o.")
     ax.text(14, 194, "T-profily drážka 8 (item / Bosch kompatibilní) – nářezový plán", fontsize=12, weight="bold")
@@ -183,13 +257,10 @@ def n01(pdf):
     dim(ax, x, x + L * s2, y - 13, f"{L:g}", above=False)
     ax.text(x + L * s2 + 4, y + 26, "⌀14 svisle skrz celou výšku profilu (40 mm),\nuprostřed délky i šířky "
                                    "(mezi drážkami)\nstojanová vrtačka, kolmost ≤ 0,2 / 40", fontsize=7)
-    ax.text(x + L * s2 + 4, y + 8, "spodní drážky: T-matice M5 – jádro oběhu P12 (4×),\ndržák motoru P16 (2×); boční drážky: držák\n"
-                                  "laseru P05 (+y), držák boxu RPi P18 (−y)", fontsize=7, color=MUTE)
+    ax.text(x + L * s2 + 4, y + 8, "spodní drážky: T-matice M5 – jádro oběhu P12 (4×),\ndržák motoru P16 (2×), držák koncovky P21 (2×);\nboční drážka +y: držák laseru P05 – rozpis na N04", fontsize=7, color=MUTE)
     # kit to order with the profiles
-    rows = [("úhelník 40×40 drážka 8 + krytka", "12"), ("T-matice M8 vkládací", "32"), ("T-matice M5 vkládací", "12"),
-            ("šroub ISO 4762 M8×16 + podložka", "24"), ("pryžová podložka ⌀30 × 3 (místo noh)", "4"),
-            ("krytka čela 40×80 / 40×40", "6")]
-    table(ax, 196, 134, ["spojovací materiál k profilům (ENPRAG)", "ks"], [72, 14], rows)
+    rows = [(n, str(q)) for n, q, _ in KIT[:4]] + [("šrouby M5 a krytky čel – viz list N04", "")]
+    table(ax, 186, 127, ["spojovací materiál k profilům (rozpis N04)", "ks"], [86, 14], rows)
     pdf.savefig(fig); plt.close(fig)
 
 
@@ -259,14 +330,14 @@ def n03(pdf):
 # production-drawing pages per supplier (order in E7_vyrobni_vykresy.pdf: L03–L07, B01–B03, T01–T04, P01–P11)
 PAGES = {"laser_grupol": [0, 1, 2, 3, 4], "invar_Rokycany": [5, 6], "G10_Elektroizolanty": [7],
          "profily_ENPRAG": [8, 9, 10, 11]}
-COVER = {"laser_grupol": [0, 3], "invar_Rokycany": [0, 2], "G10_Elektroizolanty": [0, 2], "profily_ENPRAG": [0, 1]}  # N00..N03
+COVER = {"laser_grupol": [0, 3], "invar_Rokycany": [0, 2], "G10_Elektroizolanty": [0, 2], "profily_ENPRAG": [0, 1, 4]}  # N00..N04
 
 
 def main():
     os.makedirs(OUT, exist_ok=True)
     tmp = os.path.join(OUT, "_narezy.pdf")
     with PdfPages(tmp) as pdf:
-        n00(pdf); n01(pdf); n02(pdf); n03(pdf)
+        n00(pdf); n01(pdf); n02(pdf); n03(pdf); n04(pdf)
     cov, prod = PdfReader(tmp), PdfReader(PROD)
     w = PdfWriter()
     for pg in cov.pages:
