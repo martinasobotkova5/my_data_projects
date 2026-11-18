@@ -47,7 +47,7 @@ SHOPS = [
         ("T-matice drážka 8, M8, vkládací (otočná)", "úhelníky (24) + nohy (4) + 4 rezerva", 32, "≈ 1 €/ks", "odhad"),
         ("T-matice drážka 8, M5, vkládací (otočná)", "pouzdro P01 (4), patka P04 (2), držák laseru P05 (2), závěs kamery P08 (2) + 2 rezerva",
          12, "≈ 1 €/ks", "odhad"),
-        ("Pryžová podložka ⌀30 × 3 (samolepicí, místo stavitelných noh – mrazák 41 cm)", f"pod podélníky T02 (y ±{p.C_FOOT_Y:g}), vyrovnat podložkami", 4, "≈ 0,5 €/ks", "odhad"),
+        ("Pryžový pás 3 mm (volně položený, místo stavitelných noh – mrazák 41 cm)", "pod podélníky T02, bez lepení", 1, "≈ 5 €", "odhad"),
         ("Krytka čela 40×80 / 40×40 (volitelně)", "konce příčníku a podélníků", 6, "≈ 0,5 €/ks", "odhad")]),
     ("3 · Invar 36 (tyče řezané na délku)",
      "**česky:** [Kovohutě Rokycany](http://www.koro.cz/produkty/nikl-a-slitiny-niklu/) – FeNi36 (1.3912) tyče ⌀10–200 mm, "
@@ -105,8 +105,7 @@ SHOPS = [
        "kontrolní miska s ledem / pískem s ledem na váze v mrazáku → rychlost sublimace", 1, "≈ 10–15 €", "odhad"),
       ("Silikagel 2 kg (s indikátorem) + plastový tác, sítko 2 mm (drcený led)", "suchý vzduch v mrazáku; příprava "
        "písku s přebytkem ledu", 1, "≈ 15–20 €", "odhad"),
-      ("Kódové značky ArUco 10 mm (samolepky, 8 ks) + ocelové měřítko 150 mm", "ruční fotogrammetrie: značky na límec cely, "
-       "měřítko vedle cely", 1, "≈ 5 €", "odhad")]),
+      ("Ocelové měřítko 150 mm (bez samolepek)", "měřítko pro 3D model: známý průměr dutiny ⌀100 a invarový terčík; značky ArUco se nelepí", 1, "≈ 3 €", "odhad")]),
     ("8 · Čidla ze zahraničí a Campbell",
      "Picotronic (DE), Elkome (FI), [Ekotechnika Černošice](https://campbellsci.com/ekotechnika) (Campbell pro ČR)",
      [("**Laser Picotronic DOE253-635-5-6(10x24), obj. č. 70132403** (doporučeno)",
@@ -152,10 +151,10 @@ SHOPS = [
        "potřebují převodník", 1, "≈ 390 € (PT ceník)", "info")]),
     ("9 · Spotřební materiál",
      "Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)",
-     [("Dvousložkový epoxid", "nátěr dutiny cely + slepení pístu (L04 + L05)", 1, "≈ 10–15 €", "odhad"),
+     [("Šrouby M3 × 16 (3 ks) + závitník M3", "spojení pístu L04 + L05 (bez lepení)", 1, "≈ 5 €", "odhad"),
       ("PTFE sprej + silikonová vazelína (Molykote 111)", "stěna dutiny", 1, "≈ 15–25 €", "odhad"),
       ("Spároměr 0,05–1,00 mm", "kalibrace kamery (0,1 / 0,5 / 1,0 mm)", 1, "≈ 5–10 €", "odhad"),
-      ("Bílá matná samolepka / papír 12 × 12", "terčík na rameno P03", 1, "", ""),
+      ("Bílý Prusament PETG 250 g", "terčík P03 se tiskne z bílého PETG (bez samolepky)", 1, "≈ 10 €", "odhad"),
       ("Ocelové kolíky / hřebíky ⌀3 × 40 (4 ks) + ocelová tyčinka ⌀3 × 120", "zátky otvorů pro tyčky TDR a Pt100 při "
        "hutnění; předvrtání kanálků před zasunutím čidel", 1, "≈ 3 €", "odhad"),
       ("Kontrolní miska ⌀100 × 20 (sklo / nerez)", "„svědek“ odpařování: stejný písek, váží se každý cyklus (cela se neváží)",
@@ -167,10 +166,10 @@ SHOPS = [
 
 ASSEMBLY = [
     "Vytiskněte celu (V03) a díly P01–P11 (`vyroba/tisk/*.stl`, PETG-CF, 0,2 mm, 3 perimetry, 40 % gyroid; cela podle V03). "
-    "Dutinu cely natřete epoxidem, po vytvrzení PTFE sprej + tenká vrstva silikonové vazelíny.",
-    "Píst: kotouče L05 (spodní) a L04 (horní, otvor ⌀6) slepte epoxidem, soustředně.",
+    "Dutina cely je tištěná vodotěsně (6 perimetrů), bez nátěru – jen PTFE sprej a tenká vrstva silikonové vazelíny.",
+    "Píst: do 3 otvorů ⌀2,5 v L05 (spodní) vyřízněte závit M3, L04 (horní, otvor ⌀6) přišroubujte 3× M3 × 16 – bez lepení.",
     f"Základ: 2 podélníky T02 (40×40 × {p.C_BASE[1]:g}, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = "
-    f"{p.C_CROSS_Y[0]:g}".replace(".", ",") + ") – 4 úhelníky, M8×16 do vkládacích T-matic. Pod podélníky nalepte 4 pryžové podložky ⌀30 × 3 (místo stavitelných noh – mrazák 41 cm), dříve: do spodní drážky podélníků 4 stavitelné nohy M8 "
+    f"{p.C_CROSS_Y[0]:g}".replace(".", ",") + ") – 4 úhelníky, M8×16 do vkládacích T-matic. Pod podélníky položte pryžový pás 3 mm (bez lepení, místo stavitelných noh – mrazák 41 cm), dříve: do spodní drážky podélníků 4 stavitelné nohy M8 "
     f"(y ±{p.C_FOOT_Y:g}). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).",
     f"Sloupy T01 (40×80 × {bp.COL_H:g}) postavte na podélníky (osa x = ±150, uprostřed délky) a připojte 2 úhelníky "
     "na stranách ±y (M8×16 + T-matice). Srovnejte do pravého úhlu, dotáhněte.",
@@ -185,7 +184,7 @@ ASSEMBLY = [
     "Nasaďte rameno P03 (terčík ve výšce horní hrany límce) a rameno P02 s LVDT.",
     "Navrch písku položte píst, do otvoru ⌀6 kuličku 5/16\". Na límec nasaďte středicí víčko P09 (rameno P03 natočené stranou).",
     "Invarovou tyč zasuňte shora pouzdrem víčkem P09 až na kuličku – posunutím cely ji vystřeďte, víčko vysuňte do strany, "
-    "rameno P03 vraťte na značku. Na tyč nosnou desku L03 (šroub M6 do čela tyče) a na ni kotouče L06/L07. "
+    "rameno P03 vraťte na značku. Do čela tyče zašroubujte čep M6 × 45, nasuňte nosnou desku L03 a kotouče L06/L07 a stáhněte je tenkou maticí M6 (vystředěné, nechvějí se). "
     f"Nosná deska má být ≈ {bp.ZC - bp.Z_TOP:g} mm nad horní plochou příčníku T04 (volný zdvih / pokles vzorku); "
     "délka tyče je daná, výška povrchu písku se srovná stěrkou – pokud mezera nesedí, podložit nosnou desku podložkou.",
     "LVDT posuňte ve svěrce P02, až je jádro uprostřed rozsahu (výstup ≈ 0 V), dotáhněte.",

@@ -139,22 +139,22 @@ def main(var="u"):
     # --- parts table (phase 1)
     rows = [("rám T-profily T01–T04, úhelníky, T-matice", "1 sada", "ENPRAG"),
             ((f"cela ⌀220 × {p.C_INS_T + p.U_TOP:g} s rovným čelem (E7-V03u)" if var == "u" else f"cela ⌀220 × {p.C_INS_T + p.COLLAR_TOP:g} s límcem (E7-V03)"), "1", "tisk PETG-CF"),
-            (f"podložky G10 ⌀20 × {p.C_INS_T:g}; pryžové podložky ⌀30 × 3", "3 + 4", "Elektroizolanty"),
+            (f"podložky G10 ⌀20 × {p.C_INS_T:g}, dorazy cely P20, pryžový pás", "3 + 2", "Elektroizol. / tisk"),
             ("sloupek Invar ⌀16 × 330 + patka P04, terčík P03", "1", "Rokycany / tisk"),
             ("laser Picotronic DOE253, držák P05", "1", "Picotronic / tisk"),
-            ("RPi 5 + Camera Module 3 + kabel 500 mm", "1", "RPishop.cz"),
-            ("box P06 + víko P07 na držáku P18 (sloup +x)", "1", "tisk"),
-            ("oběh: 2× 6806-2RS, pouzdro igus RJ4JP-01-12", "1", "TME / HENNLICH"),
-            ("oběh: P12, P12b, P12c, P13, P14, P15, P16, P19", "1", "tisk"),
-            ("motor 28BYJ-48 + ULN2003, Hall A3144", "1", "GME / LaskaKit"),
-            ("LED 1 W + topení hlavy 2× 47 Ω, MOSFETy", "1", "GME / TME")]
+            ("RPi Zero 2 WH + Camera Module 3 + svork. HAT", "1", "RPishop.cz"),
+            ("box P06 + P07 na držáku P18, izolace XPS", "1", "tisk / Hornbach"),
+            ("oběh: 2× 6806-2RS, pouzdro igus RJ4JP-01-12", "1", "ložiska / HENNLICH"),
+            ("oběh: P12–P16, P19, koncovka P21", "1", "tisk"),
+            ("motor 28BYJ-48 + ULN2003, optická koncovka", "1", "GME / LaskaKit"),
+            ("LED modul 3 W, PTC 5 V, DS18B20, relé 2×", "1", "GME / LaskaKit")]
     if var == "u":
-        rows += [("stěrka P10u (břit 5 mm)", "1", "tisk"),
+        rows += [("stěrka-pravítko P10u", "1", "tisk"),
                  ("bod M: TDR CS645, Pt100, vlákno; NTC ve dně", "–", "máte / TME")]
     else:
-        rows += [("píst L04 + L05, nosná deska L03, závaží L06/L07", "1 sada", "grupol.cz"),
-                 (f"tyč Invar ⌀12 × {bp.ROD_L:g} (M6), kulička, šroub M6", "1", "Rokycany / Fabory"),
-                 ("LVDT RDP DCTH400AG + rameno P02, zdroj 24 V", "1", "Elkome / TME")]
+        rows += [("píst L04+L05 (3× M3), deska L03, kotouče L06/L07", "1 sada", "grupol.cz"),
+                 (f"tyč Invar ⌀12 × {bp.ROD_L:g}, čep M6×45, matice, kulička", "1", "Rokycany / Fabory"),
+                 ("LVDT ±10 mm + rameno P02, zdroj 24 V", "1", "Micro-Epsilon CZ / GME")]
     tx, ty = 330, 246
     ax.text(tx, ty + 4, "DÍLY FÁZE 1" if var == "u" else "DÍLY FÁZE 2 (oběh a rám jako ve fázi 1)", fontsize=8, weight="bold")
     wc = (52, 9, 22)
@@ -167,7 +167,7 @@ def main(var="u"):
     ny = ty - len(rows) * 5.6 - 5
     notes = ["Ověřeno v modelu (§22, §23):", *CHECK[var],
              "• CM3 66° × 41°: celý ⌀100 s rezervou ≈ 3°", "• 1 pixel ≈ 35 µm, výška ≈ 8–12 µm",
-             "Řízení: RPi 5 + ULN2003,", "program rpi/e7_kamera.py."]
+             "Řízení z počítače: RPi Zero 2 W,", "web + SSH, rpi/e7_kamera.py."]
     for k, s in enumerate(notes):
         ax.text(tx, ny - k * 4.4, s, fontsize=6.2, weight="bold" if s.endswith(":") else None)
     # title block

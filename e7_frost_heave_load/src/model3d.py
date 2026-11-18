@@ -335,7 +335,8 @@ def variant_c(asm, prefix="", orbit_angle=0.0):
         a = math.radians(90 + 120 * k)
         x, y = p.C_PAD_R * math.cos(a), p.C_PAD_R * math.sin(a)
         asm.add(cyl(p.C_PAD_D, p.C_INS_T, zb0, x, y), name=f"{prefix}G10 pad D20x40 {k + 1}", color=C["g10"])
-    body_a(asm, prefix, temps=[], pv=False, pb=False, opt=False, ins=True, pt_port=True)
+    body_a(asm, prefix, temps=[], pv=False, pb=False, opt=False, ins=True, pt_port=True, top=p.U_TOP)   # same cell as phase 1
+    asm.add(bp.pad_locator().translate((0, 0, zb0)), name=prefix + "P20 cell stops on T03 (print)", color=C["petg"])
     # moving load: piston (2 laser discs), ball 5/16", Invar rod, shaft collar, carrier, discs
     asm.add(bp.laser_solid(lp["E7-L05_piston_bottom"]).translate((0, 0, Z_S1)), name=prefix + "L05 piston bottom",
             color=C["al"])
@@ -343,8 +344,14 @@ def variant_c(asm, prefix="", orbit_angle=0.0):
             name=prefix + "L04 piston top (ball seat)", color=C["al"])
     asm.add(cq.Workplane("XY").sphere(p.C_BALL_D / 2).translate((0, 0, bp.Z_BALL)), name=prefix + "steel ball 5-16in (7.94)",
             color=C["steel"])
-    asm.add(cyl(p.C_ROD_D, bp.ROD_L, bp.Z_ROD0), name=prefix + f"guide rod Invar 36 D12 x{bp.ROD_L}", color=C["invar"])
-    asm.add(cyl(10, 6, zc + p.C_CARRIER_T), name=prefix + "screw M6 carrier to rod (DIN 912)", color=C["steel"])
+    rod = cyl(p.C_ROD_D, bp.ROD_L, bp.Z_ROD0)
+    rod = rod.cut(cq.Workplane("XY").add(cq.Solid.makeCone(p.C_ROD_CONE / 2, 0, p.C_ROD_CONE / 2,
+                                                           cq.Vector(0, 0, bp.Z_ROD0 - 0.01))))
+    rod = rod.cut(cyl(5.0, 15.5, bp.Z_ROD0 + bp.ROD_L - 15.0))                       # M6 thread for the stud (model: ⌀5 × 15)
+    asm.add(rod, name=prefix + f"guide rod Invar 36 D12 x{bp.ROD_L}", color=C["invar"])
+    zs = zc - 10.0                                   # M6 stud: 10 mm in the rod, through carrier and discs
+    asm.add(cyl(5.0, 10.0, zs).union(cyl(p.C_STUD[0], p.C_STUD[1] - 10.0, zc)), name=prefix + f"M6 stud DIN 913 x{p.C_STUD[1]:g} (carrier + discs)",
+            color=C["steel"])
     asm.add(bp.laser_solid(lp["E7-L03_carrier"]).translate((0, 0, zc)), name=prefix + f"L03 carrier Al D{p.C_CARRIER_D:g}x{p.C_CARRIER_T:g}",
             color=C["al"])
     z = zc + p.C_CARRIER_T
@@ -352,6 +359,11 @@ def variant_c(asm, prefix="", orbit_angle=0.0):
         asm.add(bp.laser_solid(lp["E7-L06_disc_1kg"]).translate((0, 0, z)), name=f"{prefix}L06 steel disc {i + 1} 1 kg",
                 color=C["weight"])
         z += p.C_DISC_T
+    asm.add(bp.laser_solid(lp["E7-L07_disc_0.5kg"]).translate((0, 0, z)), name=f"{prefix}L07 steel disc 0.5 kg",
+            color=C["weight"])
+    z += p.C_DISC_T / 2
+    nut = cq.Workplane("XY").polygon(6, 11.5).extrude(3.2).translate((0, 0, z))
+    asm.add(nut.cut(cyl(6, 4, z)), name=prefix + "thin nut M6 DIN 439 (clamps the discs)", color=C["steel"])
     # Invar post on the base rail (printed foot), printed arms with the LVDT and the camera target
     xi, yi = p.C_INVAR_XY
     asm.add(bp.post_foot().translate((0, 0, zb0)), name=prefix + "P04 post foot (print)", color=C["petg"])
@@ -361,7 +373,7 @@ def variant_c(asm, prefix="", orbit_angle=0.0):
     xl, yl = p.C_LVDT_XY
     asm.add(cyl(bp.LV_D, bp.LV_L, bp.Z_LV_BOT, xl, yl), name=prefix + "LVDT RDP DCTH400AG", color=C["sensor"])
     asm.add(cyl(4, zc - bp.Z_LV_TOP, bp.Z_LV_TOP, xl, yl), name=prefix + "LVDT plunger", color=C["steel"])
-    asm.add(bp.target_arm().translate((0, 0, bp.Z_RIM)), name=prefix + "P03 target arm (print)", color=C["petg"])
+    asm.add(bp.target_arm().translate((0, 0, bp.Z_REF_U)), name=prefix + "P03 target arm (print)", color=C["petg"])
     _optics_c(asm, prefix, orbit_angle=orbit_angle)
     return zb0
 
@@ -448,6 +460,7 @@ def variant_u(asm, prefix="", orbit_angle=0.0):
         asm.add(cyl(p.C_PAD_D, p.C_INS_T, zb0, x, y), name=f"{prefix}G10 pad D20x40 {k + 1}", color=C["g10"])
     body_a(asm, prefix, temps=[], pv=False, pb=False, opt=False, ins=True, pt_port=True, top=p.U_TOP)
     import buildparts as bp
+    asm.add(bp.pad_locator().translate((0, 0, zb0)), name=prefix + "P20 cell stops on T03 (print)", color=C["petg"])
     xi, yi = p.C_INVAR_XY                            # Invar post + reference target only (no LVDT in phase 1)
     asm.add(bp.post_foot().translate((0, 0, zb0)), name=prefix + "P04 post foot (print)", color=C["petg"])
     asm.add(cyl(p.C_INVAR_D, bp.POST_L, zb0 + bp.POST_FLOOR, xi, yi), name=prefix + f"Invar 36 post D16 x{bp.POST_L:.0f}",

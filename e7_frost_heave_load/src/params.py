@@ -237,9 +237,9 @@ C_ROD_D = 12.0                          # vodicí tyč (kalená, h6) v kluzném 
 C_BUSH = (21.0, 30.0)                   # drylin RJ4JP-01-12 = rozměry LM12UU: vnější ⌀ × délka
 C_BEAM_GAP = 130.0                      # 19. 11. 2026: 130 (mrazák 41 cm vysoký); dříve 140 – oběh kamery se posunul s příčníkem
 C_CARRIER_D, C_CARRIER_T = 140.0, 6.0   # 19. 11. 2026: Al 6 mm, přišroubovaná M6 do čela vodicí tyče (bez stavěcího kroužku)
-C_DISC_D, C_DISC_HOLE = 165.0, 17.0     # 19. 11. 2026: ocelové kotouče ⌀165 × 6 = 1,00 kg (nižší sloupec závaží)
+C_DISC_D, C_DISC_HOLE = 165.0, 6.6      # ocelové kotouče ⌀165 × 6 = 1,00 kg, otvor ⌀6,6 – nasunou se na závitový čep M6 a stáhnou maticí (vystředěné, nechvějí se)
 C_DISC_KG = (1.0, 0.5)                  # kotouč 1 kg a 0,5 kg
-C_TRAVEL = 8.0                          # 19. 11. 2026: mezera nosná deska – horní líc příčníku (zdvih / pokles vzorku jsou ≤ 2 mm)
+C_TRAVEL = 5.0                          # 19. 11. 2026: mezera nosná deska – horní líc příčníku 5 mm (zdvih písku ≤ 1,7 mm podle simulace)
 C_SURCHARGES_KPA = (5.0, 10.0, 15.0, 20.0, 25.0)   # pod pístem
 C_CAM_Y, C_CAM_H, C_CAM_TILT = -102.0, 110.0, 38.0  # kamera stranou (−y), výška nad pískem, sklon k ose; 16. 11. 2026: z (−92, 100, 43°) → objektiv 6 mm pokryje celý ⌀100 (var. U)
 C_LASER_Y, C_LASER_H = 105.0, 182.0     # 19. 11. 2026: laser dál od osy (mimo kotouče ⌀165), 60°, 210 mm od středu povrchu
@@ -291,7 +291,7 @@ ALPHA_SAND = 10e-6                       # tepelná roztažnost písku (bez fáz
 C_CYCLE_H = (24.0, 24.0)                 # mrznutí / tání [h] – podle simulace s izolací (sim_thaw.py)
 
 # --- varianta U (16. 11. 2026): fáze 1 BEZ ZATÍŽENÍ – stejný rám, kamera a laser; bez pístu, zátěže a LVDT ------------
-C_U_RIM = 5.0                            # horní hrana cely jen 5 mm nad pískem (rovné čelo, bez límce) → kamera vidí celý ⌀100
+C_U_RIM = 0.0                            # 19. 11. 2026: dutina přesně ⌀100 × 100 – povrch písku = čelo cely (srovná se pravítkem), stejná cela pro obě fáze
 U_TOP = SAND_TOP + C_U_RIM               # 131 nad spodkem jádra (místo COLLAR_TOP 160)
 C_LED = (20.0, 6.0)                      # bílá LED 5 V na hliníkové hvězdě ⌀20, přilepená na čelo boxu kamery vedle okénka
 C_LED_OFF = 38.0                         # střed LED od osy objektivu (po delší straně boxu, dál od vzorku)
@@ -309,3 +309,9 @@ CM3 = dict(board=(25.0, 24.0), fov=(66.0, 41.0), px=(4608, 2592))   # Raspberry 
 # --- 19. 11. 2026: mrazák 41 cm vysoký – nižší sestava --------------------------------------------------------------
 C_RUBBER = (30.0, 3.0)                   # pryžové podložky ⌀30 × 3 pod podélníky (místo stavitelných noh M8, vyrovnat podložkami)
 C_CARRIER_SCREW = 6.0                    # nosná deska přišroubovaná šroubem M6 do závitu v horním čele vodicí tyče (⌀5 hl. 15 + závitník)
+
+# --- 19. 11. 2026: bez pájení a lepení, vše šroubované a ovládané z počítače ---------------------------------------
+C_STUD = (6.0, 45.0)                     # závitový čep M6 × 45 (DIN 913), 10 mm v čele vodicí tyče: nese nosnou desku a kotouče
+C_ROD_CONE = 8.0                         # spodní čelo vodicí tyče: středicí důlek 90° ⌀8 – sedí na kuličce (tyč vedená dole i nahoře)
+C_FLAG = (25.0, 32.0, 1.6, 8.0)          # vodorovná clona optické koncovky na náboji P13 (r od–do, tloušťka, šířka) – výchozí poloha
+C_FORK = (25.0, 6.4, 11.0, 3.2)          # optická vidlicová koncovka (modul pro 3D tiskárny): délka, šířka, výška, štěrbina

@@ -578,6 +578,7 @@ print("## 22. Fáze 1 bez zatížení – varianta U (16. 11. 2026)\n")
 print("*Pozn.: tento oddíl počítá s pevnou kamerou (HQ + 6 mm). Platí výsledky pro nízkou celu a laser; kamera nyní "
       "obíhá – její zorné pole a viditelnost jsou v §23.*\n")
 import buildparts as bp                              # noqa: E402
+import orbit                                         # noqa: E402
 _th = math.radians(p.C_CAM_TILT)
 
 
@@ -725,3 +726,71 @@ print(f"**Zatížení:** pohyblivá část bez kotoučů (píst, tyč, nosná de
 print("**Ověřeno v modelu:** v obou fázích bez kolizí v celém rozsahu oběhu kamery (po 10°); ve fázi 1 kamera i laser vidí "
       "celý povrch ⌀100 a invarový terčík. Ve fázi 2 laser pod sklonem 60° víc stíní vysoký límec cely (34 mm) – "
       "před fází 2 zvážit nižší límec nebo celu fáze 1.\n")
+
+# ---------------------------------------------------------------------------------------------------------------
+print("## 25. Kontrola zadání 19. 11. 2026 – vedení zátěže, překlopení, teplotní roztažnost, baterie 24 h při −20 °C\n")
+_g = 9.81
+# lumped masses (kg) and centres (x, y, z) in model coordinates – profiles by catalogue mass per metre
+_frame_z = (bp.ZB0 - p.C_BASE[2] / 2 + bp.Z_TOP) / 2
+_items = [
+    ("rám z T-profilů (40×80 ≈ 2,6 kg/m, 40×40 ≈ 1,5 kg/m) + úhelníky", 2.6 * (2 * bp.COL_H + p.C_TOP[0] + 2 * (p.C_RAIL_X - 20)) / 1000
+     + 1.5 * 2 * p.C_BASE[1] / 1000 + 0.6, (0, 0, _frame_z)),
+    ("cela PETG + podložky G10", 1.1, (0, 0, bp.ZB0 + 60)),
+    ("písek ⌀100 × 100 (vlhký)", 1.6, (0, 0, (bp.Z_S0 + bp.Z_S1) / 2)),
+    ("zátěž: 4 kotouče + 0,5 kg + nosná deska + tyč + píst", 4.5 + 0.25 + 0.15 + 0.11, (0, 0, bp.ZC + 15)),
+    ("oběh kamery, motor, laser", 0.45, (0, -10, bp.ZBEAM - 15)),
+    ("box s RPi Zero 2 W na sloupu (+x)", 0.35, (210, 0, orbit.RPI_Z + 55) if False else (210, 0, bp.ZBEAM - 50)),
+    ("sloupek Invar + ramena + LVDT", 0.5, (130, 90, bp.ZB0 + 150)),
+]
+_M = sum(m for _, m, _ in _items)
+_cg = [sum(m * c[i] for _, m, c in _items) / _M for i in range(3)]
+_floor = bp.ZB0 - p.C_BASE[2] - p.C_RUBBER[1]
+_h = _cg[2] - _floor
+_ex = p.C_RAIL_X + 20                                  # outer edge of the base rails (x)
+_ey = p.C_BASE[1] / 2                                  # rail ends (y)
+print("**Překlopení (bod 5).** Sestava fáze 2 (nejtěžší, 4,5 kg závaží nahoře) stojí celou délkou podélníků T02 na pryžovém "
+      "pásu. Hmotnosti jsou odhad (profily podle katalogové hmotnosti na metr):\n")
+print("| část | kg |\n|---|---|")
+for n, m, _ in _items:
+    print(f"| {n} | {m:.2f} |")
+print(f"| **celkem** | **{_M:.1f}** |\n")
+_ax = math.degrees(math.atan((_ex - abs(_cg[0])) / _h))
+_ay = math.degrees(math.atan((_ey - abs(_cg[1])) / _h))
+_top = bp.ZC + 40 - _floor
+_F = min((_ex - abs(_cg[0])), (_ey - abs(_cg[1]))) * _M * _g / _top
+print(f"Těžiště {_h:.0f} mm nad dnem, posunuté o {_cg[0]:.0f} mm k boxu RPi. Sestava se převrhne až po naklonění o "
+      f"{min(_ax, _ay):.0f}° (do strany x {_ax:.0f}°, y {_ay:.0f}°) nebo vodorovnou silou ≈ {_F:.0f} N na horní hranu "
+      f"({_top:.0f} mm) – kabely ani zavírání víka ji nepřevrhnou.\n")
+_clear = 0.06                                          # mm, radial clearance igus RJ4JP-01-12 on h9 (estimate)
+_base = (orbit.Z_IGUS + orbit.IGUS[1] / 2) - bp.Z_BALL
+print(f"**Vedení zátěže (bod 4).** Tyč je vedená ve dvou místech: nahoře kluzným pouzdrem igus ⌀12 × 30 v jádře oběhu, "
+      f"dole středicím důlkem 90° na kuličce v pístu (píst drží v písku tření pod zatížením). Vzdálenost obou míst "
+      f"{_base:.0f} mm, vůle pouzdra ≈ {_clear * 1000:.0f} µm → náklon tyče nejvýš ≈ {math.degrees(_clear / _base):.2f}°, "
+      f"u kotoučů ≈ {_clear / _base * (bp.ZC + 15 - orbit.Z_IGUS - orbit.IGUS[1] / 2) * 1000:.0f} µm do strany. Kotouče "
+      "(otvor ⌀6,6) sedí na závitovém čepu M6 a maticí jsou staženy k nosné desce a k tyči – jsou vystředěné, nevrzají "
+      "a nechvějí se; těžiště zátěže je v ose tyče. Chvění od kompresoru tlumí pryžový pás pod rámem.\n")
+_dT = 40.0
+_rows = [("sloupy rámu Al (kamera, laser)", p.ALPHA_AL, bp.COL_H, "invarový terčík P03 – odečte se v každém snímku"),
+         ("vodicí tyč Invar (píst → LVDT)", p.ALPHA_INVAR, bp.ROD_L, "zanedbatelné"),
+         ("sloupek LVDT Invar", p.ALPHA_INVAR, bp.POST_L, "zanedbatelné"),
+         ("dno cely PETG pod pískem (+ jádro)", p.ALPHA_PETG, p.C_INS_T + p.BODY_BOTTOM, "slepá zkouška S0 + teplota dna (NTC)"),
+         ("podložky G10", p.ALPHA_G10_Z, p.C_INS_T, "slepá zkouška S0"),
+         ("písek (bez fázové změny)", p.ALPHA_SAND, p.H_SAMPLE, "patří k měřenému signálu")]
+print(f"**Teplotní roztažnost (bod 6)** pro změnu −20 → +20 °C (ΔT = {_dT:g} K):\n")
+print("| část | α [1/K] | délka [mm] | změna [µm] | jak se řeší |\n|---|---|---|---|---|")
+for n, a_, L_, how in _rows:
+    print(f"| {n} | {a_:.1e} | {L_:.0f} | {a_ * L_ * _dT * 1000:.0f} | {how} |")
+print("\nMěřicí řetězec je tedy teplotně stabilní tam, kde to jde (Invar), a zbytek se odečte: rám přes invarový terčík "
+      "v témže snímku, cela a podložky podle slepé zkoušky s hliníkovou atrapou. Zdvih písku při mrznutí je řádově "
+      "stovky µm až 1,7 mm.\n")
+_P = {"Raspberry Pi Zero 2 W (průměr)": 0.8, "topení hlavy PTC 5 V (termostat, −20 °C, s pěnou 5 mm)": 0.55,
+      "relé, LED, laser, motor (krátce)": 0.15}
+_Wd = sum(_P.values()) * 24
+print("**Baterie 24 h při −20 °C (zadání).** Odhad spotřeby oběhu a kamery (RPi Zero 2 W místo RPi 5):\n")
+print("| spotřebič | W |\n|---|---|")
+for n, w in _P.items():
+    print(f"| {n} | {w:.2f} |")
+print(f"| **celkem** | **{sum(_P.values()):.1f} W → {_Wd:.0f} Wh / den** |\n")
+print(f"Powerbanka 26 800 mAh (≈ 99 Wh, výstup 5 V ≈ 80 Wh) **mimo mrazák** (v teple, trvale v zásuvce, s průchozím "
+      f"nabíjením) vydrží bez sítě ≈ {80 / sum(_P.values()):.0f} h. CR850 má vlastní napájení 12 V (záložní akumulátor "
+      "podle vybavení E6); LVDT (fáze 2) a ventilátor jsou ze sítě – při výpadku proudu se zastaví i mrazák.\n")

@@ -260,7 +260,7 @@ Píst ⌀50 (plocha 1963 mm² = 25 % vzorku), volné mezikruží 25 mm kolem ně
 | 20 | 4.00 | 3 | 1 | 0.00 |
 | 25 | 5.00 | 4 | 1 | 0.00 |
 
-Kotouč ⌀165/17: 1 kg = 6.0 mm, 0,5 kg = 3.0 mm. Při 25 kPa jen ≈ 4 kotouče.
+Kotouč ⌀165/6.6: 1 kg = 6.0 mm, 0,5 kg = 3.0 mm. Při 25 kPa jen ≈ 4 kotouče.
 
 **Konstantní zatížení:** zátěž leží jen na pístu a s povrchem volně stoupá i klesá (zdvih ±8 mm). Kluzné pouzdro igus drylin RJ4JP-01-12 (bez maziva, do −40 °C) má tření ≈ 0,1–0,25 × boční síla; při náklonu tyče 0,5° je boční síla < 0,1 N → změna zatížení < 0,02 kPa. Kulička mezi tyčí a pístem dovolí pístu se naklonit, tyč zůstává svislá.
 
@@ -357,12 +357,12 @@ Nasycená pára nad ledem při −10 °C: 2.14 g/m³. Tok z volné plochy J = h_
 
 *Pozn.: tento oddíl počítá s pevnou kamerou (HQ + 6 mm). Platí výsledky pro nízkou celu a laser; kamera nyní obíhá – její zorné pole a viditelnost jsou v §23.*
 
-Bez pístu a zátěže je celý povrch ⌀100 volný. Aby ho kamera i laser opravdu viděly, cela má **rovné čelo jen 5 mm nad pískem** (bez límce; tisk ⌀220 × 151) a kamera je přesunuta (y -102, 110 mm nad pískem, sklon 38°; dříve −92 / 100 / 43°).
+Bez pístu a zátěže je celý povrch ⌀100 volný. Aby ho kamera i laser opravdu viděly, cela má **rovné čelo jen 0 mm nad pískem** (bez límce; tisk ⌀220 × 146) a kamera je přesunuta (y -102, 110 mm nad pískem, sklon 38°; dříve −92 / 100 / 43°).
 
 | | límec 34 mm (var. C) | čelo 5 mm (var. U) |
 |---|---|---|
-| kamera nevidí | 20.0 % povrchu | 1.1 % povrchu |
-| laser neosvítí | 11.8 % | 0.9 % |
+| kamera nevidí | 20.0 % povrchu | 0.0 % povrchu |
+| laser neosvítí | 11.8 % | 0.0 % |
 
 Zorné pole objektivu 6 mm na HQ kameře (6,29 × 4,71 mm): ±27,6° × ±21,4°; potřeba na celý ⌀100: ±24.4° × -17.7…19.7° → vejde se s rezervou 2–3°. Vzdálenost objektiv–střed 115 mm, 1 pixel ≈ 30 µm; posun čáry = 0.58 × změna výšky, střed čáry na 1/10 pixelu → výška ≈ 5–10 µm.
 
@@ -398,11 +398,54 @@ Vnitřní prostor mrazáku 590 × 390 × 410 mm (šířka × hloubka × výška)
 | | výška | k víku | volno po stranách (š / h) |
 |---|---|---|---|
 | fáze 1 – bez zatížení | 383 mm | 27 mm | 87 / 35 mm |
-| fáze 2 – se zátěží | 397 mm | 13 mm | 87 / 35 mm |
+| fáze 2 – se zátěží | 412 mm | -2 mm | 87 / 35 mm |
 
 **Co se změnilo:** pryžové podložky 3 mm místo stavitelných noh (−19 mm); dno cely a podložky G10 20 mm (dříve 40, −20 mm); příčník 130 mm nad pískem (dříve 140), oběh kamery se posunul s ním, okénko 90 mm nad pískem, sklon 39° (zorné pole s rezervou ≈ 3°, 1 px ≈ 35 µm); nosná deska Al 6 mm přišroubovaná M6 do čela vodicí tyče 8 mm nad příčníkem (bez stavěcího kroužku); kotouče ocel ⌀165 × 6 = 1,00 kg (dříve ⌀117,5 × 12); laser 105 mm od osy a 182 mm nad pískem (60°, posun čáry 0.58 × změna výšky) – mimo kotouče; LVDT vedle příčníku; box s RPi na vnější straně pravého sloupu.
 
-**Zatížení:** pohyblivá část bez kotoučů (píst, tyč, nosná deska) ≈ 0.49 kg → ≈ 2.5 kPa pod pístem ⌀50; každý kotouč 1 kg přidá ≈ 5.0 kPa (4 kotouče + 0,5 kg ≈ 25 kPa).
+**Zatížení:** pohyblivá část bez kotoučů (píst, tyč, nosná deska) ≈ 0.50 kg → ≈ 2.5 kPa pod pístem ⌀50; každý kotouč 1 kg přidá ≈ 5.0 kPa (4 kotouče + 0,5 kg ≈ 25 kPa).
 
 **Ověřeno v modelu:** v obou fázích bez kolizí v celém rozsahu oběhu kamery (po 10°); ve fázi 1 kamera i laser vidí celý povrch ⌀100 a invarový terčík. Ve fázi 2 laser pod sklonem 60° víc stíní vysoký límec cely (34 mm) – před fází 2 zvážit nižší límec nebo celu fáze 1.
+
+## 25. Kontrola zadání 19. 11. 2026 – vedení zátěže, překlopení, teplotní roztažnost, baterie 24 h při −20 °C
+
+**Překlopení (bod 5).** Sestava fáze 2 (nejtěžší, 4,5 kg závaží nahoře) stojí celou délkou podélníků T02 na pryžovém pásu. Hmotnosti jsou odhad (profily podle katalogové hmotnosti na metr):
+
+| část | kg |
+|---|---|
+| rám z T-profilů (40×80 ≈ 2,6 kg/m, 40×40 ≈ 1,5 kg/m) + úhelníky | 4.56 |
+| cela PETG + podložky G10 | 1.10 |
+| písek ⌀100 × 100 (vlhký) | 1.60 |
+| zátěž: 4 kotouče + 0,5 kg + nosná deska + tyč + píst | 5.01 |
+| oběh kamery, motor, laser | 0.45 |
+| box s RPi Zero 2 W na sloupu (+x) | 0.35 |
+| sloupek Invar + ramena + LVDT | 0.50 |
+| **celkem** | **13.6** |
+
+Těžiště 254 mm nad dnem, posunuté o 10 mm k boxu RPi. Sestava se převrhne až po naklonění o 32° (do strany x 32°, y 32°) nebo vodorovnou silou ≈ 51 N na horní hranu (407 mm) – kabely ani zavírání víka ji nepřevrhnou.
+
+**Vedení zátěže (bod 4).** Tyč je vedená ve dvou místech: nahoře kluzným pouzdrem igus ⌀12 × 30 v jádře oběhu, dole středicím důlkem 90° na kuličce v pístu (píst drží v písku tření pod zatížením). Vzdálenost obou míst 92 mm, vůle pouzdra ≈ 60 µm → náklon tyče nejvýš ≈ 0.04°, u kotoučů ≈ 51 µm do strany. Kotouče (otvor ⌀6,6) sedí na závitovém čepu M6 a maticí jsou staženy k nosné desce a k tyči – jsou vystředěné, nevrzají a nechvějí se; těžiště zátěže je v ose tyče. Chvění od kompresoru tlumí pryžový pás pod rámem.
+
+**Teplotní roztažnost (bod 6)** pro změnu −20 → +20 °C (ΔT = 40 K):
+
+| část | α [1/K] | délka [mm] | změna [µm] | jak se řeší |
+|---|---|---|---|---|
+| sloupy rámu Al (kamera, laser) | 2.3e-05 | 276 | 255 | invarový terčík P03 – odečte se v každém snímku |
+| vodicí tyč Invar (píst → LVDT) | 1.2e-06 | 155 | 7 | zanedbatelné |
+| sloupek LVDT Invar | 1.2e-06 | 283 | 14 | zanedbatelné |
+| dno cely PETG pod pískem (+ jádro) | 4.5e-05 | 46 | 83 | slepá zkouška S0 + teplota dna (NTC) |
+| podložky G10 | 1.5e-05 | 20 | 12 | slepá zkouška S0 |
+| písek (bez fázové změny) | 1.0e-05 | 100 | 40 | patří k měřenému signálu |
+
+Měřicí řetězec je tedy teplotně stabilní tam, kde to jde (Invar), a zbytek se odečte: rám přes invarový terčík v témže snímku, cela a podložky podle slepé zkoušky s hliníkovou atrapou. Zdvih písku při mrznutí je řádově stovky µm až 1,7 mm.
+
+**Baterie 24 h při −20 °C (zadání).** Odhad spotřeby oběhu a kamery (RPi Zero 2 W místo RPi 5):
+
+| spotřebič | W |
+|---|---|
+| Raspberry Pi Zero 2 W (průměr) | 0.80 |
+| topení hlavy PTC 5 V (termostat, −20 °C, s pěnou 5 mm) | 0.55 |
+| relé, LED, laser, motor (krátce) | 0.15 |
+| **celkem** | **1.5 W → 36 Wh / den** |
+
+Powerbanka 26 800 mAh (≈ 99 Wh, výstup 5 V ≈ 80 Wh) **mimo mrazák** (v teple, trvale v zásuvce, s průchozím nabíjením) vydrží bez sítě ≈ 53 h. CR850 má vlastní napájení 12 V (záložní akumulátor podle vybavení E6); LVDT (fáze 2) a ventilátor jsou ze sítě – při výpadku proudu se zastaví i mrazák.
 

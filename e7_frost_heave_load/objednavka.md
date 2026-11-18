@@ -35,7 +35,7 @@ Kde: **doporučeno: [ENPRAG, s.r.o., Praha 5](https://www.enprag.cz/hlinikove-pr
 | Úhelník 40×40 drážka 8 (Zn) s krytkou | 4 příčka ↔ podélníky, 4 sloupy ↔ podélníky, 4 sloupy ↔ příčník | 12 | ≈ 3–6 €/ks | odhad |
 | T-matice drážka 8, M8, vkládací (otočná) | úhelníky (24) + nohy (4) + 4 rezerva | 32 | ≈ 1 €/ks | odhad |
 | T-matice drážka 8, M5, vkládací (otočná) | pouzdro P01 (4), patka P04 (2), držák laseru P05 (2), závěs kamery P08 (2) + 2 rezerva | 12 | ≈ 1 €/ks | odhad |
-| Pryžová podložka ⌀30 × 3 (samolepicí, místo stavitelných noh – mrazák 41 cm) | pod podélníky T02 (y ±140), vyrovnat podložkami | 4 | ≈ 0,5 €/ks | odhad |
+| Pryžový pás 3 mm (volně položený, místo stavitelných noh – mrazák 41 cm) | pod podélníky T02, bez lepení | 1 | ≈ 5 € | odhad |
 | Krytka čela 40×80 / 40×40 (volitelně) | konce příčníku a podélníků | 6 | ≈ 0,5 €/ks | odhad |
 
 ## 3 · Invar 36 (tyče řezané na délku)
@@ -44,7 +44,7 @@ Kde: **česky:** [Kovohutě Rokycany](http://www.koro.cz/produkty/nikl-a-slitiny
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
-| Invar 36 ⌀12 | délka 151 mm, tolerance h9 nebo lepší (vodicí tyč pro kluzné pouzdro), čela kolmá, sražení 0,5×45° | 1 |  | poptat |
+| Invar 36 ⌀12 | délka 155 mm, tolerance h9 nebo lepší (vodicí tyč pro kluzné pouzdro), čela kolmá, sražení 0,5×45° | 1 |  | poptat |
 | Invar 36 ⌀16 | délka 283 mm, čela kolmá | 1 |  | poptat |
 | — | obojí ≈ 0,9 kg Invaru |  | ≈ 80–160 € | odhad |
 
@@ -81,7 +81,7 @@ Kde: [Prusament PETG Carbon Fiber](https://www.prusa3d.com/product/prusament-pet
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
 | Prusament PETG Carbon Fiber 1 kg | cela ≈ 1,1–1,4 kg + díly P01–P11 ≈ 0,5 kg | 2 | ≈ 55 €/ks | ověřeno (USD cena) |
-| Tiskárna pro celu | cela ⌀220 × 180 (fáze 2) / ⌀220 × 151 (fáze 1): podložka 240 × 240, výška tisku ≥ 180 mm; ≈ 1,0–1,3 kg, 30–45 h |  |  | info |
+| Tiskárna pro celu | cela ⌀220 × 180 (fáze 2) / ⌀220 × 146 (fáze 1): podložka 240 × 240, výška tisku ≥ 180 mm; ≈ 1,0–1,3 kg, 30–45 h |  |  | info |
 | Sklo do okénka boxu kamery | 50 × 50 × 2 mm (sklo z fotorámečku / sklenářství) nebo plexi 2 mm | 1 | ≈ 1–3 € | odhad |
 
 ## 7 · Kamera, Raspberry Pi, elektronika
@@ -103,7 +103,7 @@ Kde: [RPishop.cz](https://rpishop.cz/), [LaskaKit](https://www.laskakit.cz/), [G
 | Optočlen / relé modul 5 V pro spouštění snímku | CR850 C4 → GPIO RPi | 1 | ≈ 3–5 € | odhad |
 | **Sublimační série:** tenzometr 1 kg (TAL220 nebo podobný) + převodník HX711 na RPi, skleněné misky ⌀90 (3 ks) | kontrolní miska s ledem / pískem s ledem na váze v mrazáku → rychlost sublimace | 1 | ≈ 10–15 € | odhad |
 | Silikagel 2 kg (s indikátorem) + plastový tác, sítko 2 mm (drcený led) | suchý vzduch v mrazáku; příprava písku s přebytkem ledu | 1 | ≈ 15–20 € | odhad |
-| Kódové značky ArUco 10 mm (samolepky, 8 ks) + ocelové měřítko 150 mm | ruční fotogrammetrie: značky na límec cely, měřítko vedle cely | 1 | ≈ 5 € | odhad |
+| Ocelové měřítko 150 mm (bez samolepek) | měřítko pro 3D model: známý průměr dutiny ⌀100 a invarový terčík; značky ArUco se nelepí | 1 | ≈ 3 € | odhad |
 
 ## 8 · Čidla ze zahraničí a Campbell
 
@@ -139,10 +139,10 @@ Kde: Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
-| Dvousložkový epoxid | nátěr dutiny cely + slepení pístu (L04 + L05) | 1 | ≈ 10–15 € | odhad |
+| Šrouby M3 × 16 (3 ks) + závitník M3 | spojení pístu L04 + L05 (bez lepení) | 1 | ≈ 5 € | odhad |
 | PTFE sprej + silikonová vazelína (Molykote 111) | stěna dutiny | 1 | ≈ 15–25 € | odhad |
 | Spároměr 0,05–1,00 mm | kalibrace kamery (0,1 / 0,5 / 1,0 mm) | 1 | ≈ 5–10 € | odhad |
-| Bílá matná samolepka / papír 12 × 12 | terčík na rameno P03 | 1 |  |  |
+| Bílý Prusament PETG 250 g | terčík P03 se tiskne z bílého PETG (bez samolepky) | 1 | ≈ 10 € | odhad |
 | Ocelové kolíky / hřebíky ⌀3 × 40 (4 ks) + ocelová tyčinka ⌀3 × 120 | zátky otvorů pro tyčky TDR a Pt100 při hutnění; předvrtání kanálků před zasunutím čidel | 1 | ≈ 3 € | odhad |
 | Kontrolní miska ⌀100 × 20 (sklo / nerez) | „svědek“ odpařování: stejný písek, váží se každý cyklus (cela se neváží) | 1 | ≈ 5 € | odhad |
 | Pěch ⌀95 (ocel / PETG) + kovové pravítko | hutnění po vrstvách 20 mm mimo rám na rovné podložce | 1 | ≈ 10 € | odhad |
@@ -150,16 +150,16 @@ Kde: Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)
 
 ## Rozměry pro kontrolu (z modelu)
 
-- sloupy 276 mm, Invarová tyč 151 mm, Invarový sloupek 283 mm
+- sloupy 276 mm, Invarová tyč 155 mm, Invarový sloupek 283 mm
 - nosná deska závaží 324 mm nad horní plochou rámu; spodní líc příčníku 276 mm
-- kotouč 165 × 6 mm = 1.00 kg, poloviční 0.50 kg
+- kotouč 165 × 6 mm = 1.01 kg, poloviční 0.50 kg
 - kontrola kolizí v 3D sestavě (model3d.py): bez kolizí
 
 ## Postup sestavení
 
-1. Vytiskněte celu (V03) a díly P01–P11 (`vyroba/tisk/*.stl`, PETG-CF, 0,2 mm, 3 perimetry, 40 % gyroid; cela podle V03). Dutinu cely natřete epoxidem, po vytvrzení PTFE sprej + tenká vrstva silikonové vazelíny.
-2. Píst: kotouče L05 (spodní) a L04 (horní, otvor ⌀6) slepte epoxidem, soustředně.
-3. Základ: 2 podélníky T02 (40×40 × 320, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = 8,75) – 4 úhelníky, M8×16 do vkládacích T-matic. Pod podélníky nalepte 4 pryžové podložky ⌀30 × 3 (místo stavitelných noh – mrazák 41 cm), dříve: do spodní drážky podélníků 4 stavitelné nohy M8 (y ±140). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).
+1. Vytiskněte celu (V03) a díly P01–P11 (`vyroba/tisk/*.stl`, PETG-CF, 0,2 mm, 3 perimetry, 40 % gyroid; cela podle V03). Dutina cely je tištěná vodotěsně (6 perimetrů), bez nátěru – jen PTFE sprej a tenká vrstva silikonové vazelíny.
+2. Píst: do 3 otvorů ⌀2,5 v L05 (spodní) vyřízněte závit M3, L04 (horní, otvor ⌀6) přišroubujte 3× M3 × 16 – bez lepení.
+3. Základ: 2 podélníky T02 (40×40 × 320, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = 8,75) – 4 úhelníky, M8×16 do vkládacích T-matic. Pod podélníky položte pryžový pás 3 mm (bez lepení, místo stavitelných noh – mrazák 41 cm), dříve: do spodní drážky podélníků 4 stavitelné nohy M8 (y ±140). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).
 4. Sloupy T01 (40×80 × 276) postavte na podélníky (osa x = ±150, uprostřed délky) a připojte 2 úhelníky na stranách ±y (M8×16 + T-matice). Srovnejte do pravého úhlu, dotáhněte.
 5. Pouzdro P01 přišroubujte zespodu na horní příčník T04 (4× M5×35 do T-matic ve spodních drážkách), souose s otvorem ⌀14; vložte igus RJ4JP-01-12 a stáhněte svěrný šroub M4.
 6. Příčník T04 položte naplocho na sloupy, 2 úhelníky na vnitřní straně každého sloupu (pod příčníkem). Otvor ⌀14 musí být nad středem cely – srovnejte podle olovnice nebo trnu ⌀12 v pouzdře, pak dotáhněte.

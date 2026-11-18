@@ -87,7 +87,7 @@ def gear(m, z, width, z0, x=0.0, y=0.0, bore=0.0, phase=0.0):
 def core():
     """P12 – pevné jádro pod příčníkem: deska 64 × 72 × 6 (4× M5 do spodních drážek y ±20), osazení ⌀34 × 1,
     čep ⌀30 pro 2× 6806-2RS, středem lůžko ⌀21 pro igus RJ4JP-01-12 (vodicí tyč zátěže ve fázi 2);
-    3× M3 dole pro svěrný kroužek; kapsa pro Hall A3144 ve spodní ploše desky nad magnetem věnce (výchozí poloha)."""
+    3× M3 dole pro svěrný kroužek."""
     s = box(-32, 32, -36, 36, Z_PLATE, ZB)
     s = s.union(cyl(34, 1, Z_SH)).union(cyl(d_b, Z_SH - Z_B0, Z_B0))
     s = s.cut(cyl(IGUS[0] + 0.2, ZB - Z_B0 + 1, Z_B0 - 0.5))
@@ -97,8 +97,7 @@ def core():
     for k in range(3):
         a = math.radians(90 + 120 * k)
         s = s.cut(cyl(2.5, 8, Z_B0 - 0.5, 12.75 * math.cos(a), 12.75 * math.sin(a)))
-    s = s.cut(box(HOME_MAG[0] - 2.6, HOME_MAG[0] + 2.6, HOME_MAG[1] - 2.0, HOME_MAG[1] + 2.0, Z_PLATE - 0.1, Z_PLATE + 3.5))
-    return s.cut(box(-1.5, 1.5, -36.5, HOME_MAG[1], Z_PLATE + 1.5, Z_PLATE + 3.5))     # wire channel to the edge
+    return s
 
 
 def spacer():
@@ -157,6 +156,29 @@ def pinion():
         box(-A_DIST - 1.7, -A_DIST + 1.7, -3, 3, Z_GEAR[0] - 1, Z_GEAR[1] + 1)))
 
 
+def endstop_holder():
+    """P21 – držák optické vidlicové koncovky pod příčníkem (strana +x): příruba 2× M5 do spodních drážek (y ±20),
+    noha dolů, na ní 2× M3 pro modul koncovky; vidlice obepíná dráhu clony náboje (výchozí poloha)."""
+    zl, zf = Z_B0 + 1, Z_PLATE
+    flange = box(34, 56, -28, 28, zf, ZB)
+    for y in (-20, 20):
+        flange = flange.cut(cyl(5.5, 8, zf - 1, 45, y))
+    leg = box(40, 46, -9, 9, zl, zf)
+    for z in (zl + 4, zl + 10):
+        leg = leg.cut(cq.Workplane("YZ").workplane(offset=39).center(0, z).circle(1.6).extrude(8))
+    return flange.union(leg)
+
+
+def endstop():
+    """Optická vidlicová koncovka (modul pro 3D tiskárny, 3 piny) – model: základna u nohy P21, 2 ramena okolo clony."""
+    r0, r1, tf, wf = p.C_FLAG
+    zf = Z_B0 + 8
+    base = box(34, 40, -6, 6, zf - tf / 2 - 3.8, zf + tf / 2 + 3.8)
+    up = box(27, 34, -6, 6, zf + tf / 2 + 0.8, zf + tf / 2 + 3.8)      # arms above and below the flag path
+    dn = box(27, 34, -6, 6, zf - tf / 2 - 3.8, zf - tf / 2 - 0.8)
+    return base.union(up).union(dn)
+
+
 RPI_Z = ZB - 105.0                  # shelf under the RPi box on the outer face of the +x column
 
 
@@ -180,13 +202,16 @@ def rpi_box():
 # ------------------------------------------------------------------------------------------------ rotating parts
 def hub():
     """P13 – otočný náboj: ⌀50 se dvěma lůžky ⌀42 × 7 pro 6806-2RS (mezi nimi osazení ⌀38), nahoře věnec m1 z72,
-    dole příruba ⌀60 × 4 (spodní ložisko se zasouvá zespodu, drží ho patka ramene); kapsa ⌀6 × 2 pro magnet."""
+    dole příruba ⌀60 × 4 (spodní ložisko se zasouvá zespodu, drží ho patka ramene); clona pro optickou koncovku
+    (výchozí poloha) – bez magnetu a lepení."""
     s = cyl(50, Z_GEAR[0] - Z_B0, Z_B0).union(gear(M_G, Z_RING, Z_GEAR[1] - Z_GEAR[0], Z_GEAR[0]))
     s = s.union(cyl(60, 4, Z_B0 - 4))
     s = s.cut(cyl(D_b, B_b + 4, Z_B0 - 4)).cut(cyl(D_b, B_b, Z_B1)).cut(cyl(38, 6, Z_B0 + B_b))
     for x in (-5.0, 5.0):
         s = s.cut(cyl(2.5, 8, Z_B0 - 4, x, -25.0))                                           # 2× M3 for the arm foot
-    return s.cut(cyl(6.2, 2.2, Z_GEAR[1] - 2.2, *HOME_MAG))                               # magnet ⌀6 × 2
+    r0, r1, tf, wf = p.C_FLAG                                     # horizontal flag (tf thick in z, wf wide) for the endstop
+    zf = Z_B0 + 8
+    return s.union(box(r0 - 1, r1, -wf / 2, wf / 2, zf - tf / 2, zf + tf / 2))
 
 
 def _head_local():
@@ -197,6 +222,7 @@ def _head_local():
     for x in (-10.5, 10.5):
         for y in (-6.25, 6.25):
             s = s.cut(cyl(2.2, 4, -0.5, x, y))
+    s = s.union(box(-7, 7, -31, -16, 0, 3)).cut(cyl(3.2, 4, -0.5, 0, -25))                  # tab + M3 for the LED module
     return s
 
 
@@ -231,11 +257,14 @@ def arm_head():
 
 
 def head_lid():
-    """P15 – víčko hlavy 34 × 34 × 2 s výřezem 17 × 3 pro plochý kabel a 2 vodiče (LED, topný odpor)."""
+    """P15 – víčko hlavy 34 × 34 × 2 s výřezem 17 × 3 pro plochý kabel a vodiče; 2× M3 pro topné tělísko PTC 5 V
+    a sponu teploměru DS18B20 (vše přišroubované, bez lepení)."""
     s = cq.Workplane("XY").box(34, 34, 2, centered=(True, True, False)).edges("|Z").fillet(3).translate((0, 0, 24))
     s = s.union(cq.Workplane("XY").workplane(offset=22).rect(27.6, 27.6).extrude(2).cut(
         cq.Workplane("XY").workplane(offset=22).rect(24, 24).extrude(2)))
     s = s.cut(cq.Workplane("XY").workplane(offset=21).center(0, 12).rect(17, 3).extrude(6))
+    for x in (-8, 8):
+        s = s.cut(cq.Workplane("XY").workplane(offset=21).center(x, -6).circle(1.6).extrude(6))   # M3: PTC heater, DS18B20 clip
     return _place_head(s)
 
 
@@ -247,22 +276,24 @@ def cm3():
 
 
 def led():
-    """Bílá LED 1 W na hvězdě ⌀20 vedle okénka na straně dál od osy, svítí podél osy kamery."""
-    return _place_head(cyl(20, 3, 1.0, 0, -28.0).union(box(-6, 6, -20, -17, 1.0, 10.0)))
+    """Modul výkonové LED (bílá, 1–3 W, 3 piny VCC / GND / řízení) přišroubovaný M3 zespodu na výstupek hlavy vedle
+    okénka, svítí podél osy kamery; bez pájení (Dupont kabely do svorkovnice)."""
+    return _place_head(box(-10, 10, -35, -15, -1.6, 0).union(cyl(6, 1.5, -3.1, 0, -25)))
 
 
 FIXED = [("P12 orbit core with igus seat (print)", core), ("P12b bearing spacer (print)", spacer),
          ("P12c clamp ring (print)", clamp_ring), ("igus drylin RJ4JP-01-12", igus),
          ("P16 motor bracket (print)", motor_bracket), ("stepper 28BYJ-48 5 V", motor),
          ("P19 pinion m1 z12 (print)", pinion), ("P18 RPi box bracket (print)", rpi_bracket),
-         ("P06 box with RPi 5 (on the column)", rpi_box)]
+         ("P21 endstop holder (print)", endstop_holder), ("optical endstop module (home)", endstop),
+         ("P06 box with RPi Zero 2 W (on the column)", rpi_box)]
 ROTATING = [("P13 orbit hub m1 z72 (print)", hub), ("P14 camera arm + head (print)", arm_head),
             ("P15 head lid (print)", head_lid), ("Raspberry Pi Camera Module 3", cm3),
-            ("LED white 1 W on star D20 (photo light)", led)]
+            ("LED module 3 W white (photo light, M3)", led)]
 PRINT_ORBIT = [("E7-P12_orbit_core", core, 1), ("E7-P12b_bearing_spacer", spacer, 1), ("E7-P12c_clamp_ring", clamp_ring, 1),
                ("E7-P13_orbit_hub", hub, 1), ("E7-P14_camera_arm_head", arm_head, 1), ("E7-P15_head_lid", head_lid, 1),
                ("E7-P16_motor_bracket", motor_bracket, 1), ("E7-P18_rpi_bracket", rpi_bracket, 1),
-               ("E7-P19_pinion_z12", pinion, 1)]
+               ("E7-P19_pinion_z12", pinion, 1), ("E7-P21_endstop_holder", endstop_holder, 1)]
 
 
 def rotating(angle=0.0):

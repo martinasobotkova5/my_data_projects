@@ -41,7 +41,7 @@ POST_FLOOR = 3.0                                 # printed floor of the post foo
 POST_L = Z_ARM + ARM_T - ZB0 - POST_FLOOR        # Invar post: stands in its foot on the cross bar, top flush with the arm
 _bh = math.sqrt((p.C_BALL_D / 2) ** 2 - 3.0 ** 2)   # ball ⌀7.94 sitting in a ⌀6 hole of the top piston disc
 Z_BALL = Z_S1 + p.C_PISTON_H + _bh               # ball centre
-Z_ROD0 = Z_BALL + p.C_BALL_D / 2                 # rod bottom (flat end on the ball)
+Z_ROD0 = Z_BALL + p.C_BALL_D / 2 * math.sqrt(2) - p.C_ROD_CONE / 2   # rod end: 90° countersink ⌀8 touches the ball (apex R·√2 above its centre)
 N_DISC = 4
 Z_ROD1 = ZC                                      # rod top = carrier underside (M6 screw from above into the rod)
 ROD_L = math.floor(Z_ROD1 - Z_ROD0)                # whole mm, never into the carrier
@@ -54,7 +54,11 @@ def _carrier():
 
 
 def _piston(top):
-    holes = [(0, 0, 6.0)] if top else []
+    """L04 horní (⌀6 pro kuličku + 3× ⌀3,4) a L05 spodní (3× ⌀2,5 pro závit M3): spojí se 3 šrouby M3 × 16 shora,
+    bez lepení (závit M3 v L05 ručním závitníkem; šroub nevyčnívá ze spodní plochy)."""
+    r = 17.0
+    pts = [(r * math.cos(math.radians(90 + 120 * k)), r * math.sin(math.radians(90 + 120 * k))) for k in range(3)]
+    holes = [(0, 0, 6.0)] + [(x, y, 3.4) for x, y in pts] if top else [(x, y, 2.5) for x, y in pts]
     return dict(name="E7-L04_piston_top" if top else "E7-L05_piston_bottom", mat="Al EN AW-5754 (or 6082)",
                 t=p.C_PISTON_H / 2, circle=p.C_PISTON_D, holes=holes, slots=[], engrave=[], qty=1)
 
@@ -342,8 +346,27 @@ def parking_fork():
 
 
 def screed_u():
-    """P10u – stěrka pro celu varianty U: příčka leží na rovném čele cely ⌀220, břit sahá 5 mm pod čelo."""
+    """P10u – stěrka (pravítko) pro celu U: povrch písku = čelo cely, takže stačí rovná příčka 124 × 16 × 6 s držadlem;
+    při C_U_RIM > 0 má břit, který sahá C_U_RIM pod čelo."""
+    if p.C_U_RIM <= 0:
+        bar = cq.Workplane("XY").box(124, 16, 6, centered=(True, True, False))
+        return bar.union(cq.Workplane("XY").box(16, 16, 30, centered=(True, True, False)).translate((0, 0, 6)))
     return screed(p.C_U_RIM)
+
+
+def pad_locator():
+    """P20 – dva dorazy cely na příčce T03 (x ±110 … 126): oblouk R110,2 obepíná čelo dna cely ⌀220, každý 2× M5 do
+    horních drážek T03 → cela je vždy souosá s rámem a vedením tyče, výška se nemění. Lokální z = 0 je horní plocha T03."""
+    yc = p.C_CROSS_Y[0]
+    s = None
+    for sx in (-1, 1):
+        x0, x1 = sorted((sx * 108.0, sx * 126.0))
+        blk = cq.Workplane("XY").box(x1 - x0, 60, 12, centered=False).translate((x0, yc - 30, 0))
+        blk = blk.cut(cq.Workplane("XY").circle(p.BODY_D / 2 + p.C_SLEEVE_T + 0.2).extrude(13))
+        for dy in (-20, 20):
+            blk = blk.cut(cq.Workplane("XY").center(sx * 119.0, yc + dy).circle(2.75).extrude(13))
+        s = blk if s is None else s.union(blk)
+    return s
 
 
 PRINT = [("E7-P01_bearing_housing", housing, 1), ("E7-P02_lvdt_arm", lvdt_arm, 1),
@@ -353,7 +376,7 @@ PRINT = [("E7-P01_bearing_housing", housing, 1), ("E7-P02_lvdt_arm", lvdt_arm, 1
          ("E7-P09_centering_cap", centering_cap, 1), ("E7-P10_screed", screed, 1), ("E7-P11_parking_fork", parking_fork, 1)]
 # fáze 1 – varianta U bez zatížení: tisknou se jen tyto díly (+ cela E7-V03u z model3d)
 PRINT_U = ["E7-P05_laser_holder", "E7-P06_camera_box", "E7-P07_camera_box_lid", "E7-P08_camera_hanger"]
-PRINT_U_EXTRA = [("E7-P10u_screed_5mm", screed_u, 1)]
+PRINT_U_EXTRA = [("E7-P10u_screed_5mm", screed_u, 1), ("E7-P20_pad_locator", pad_locator, 1)]
 
 
 def export_all():
@@ -364,7 +387,8 @@ def export_all():
         out.append(write_dxf(part, os.path.join(OUT, "laser")))
         cq.exporters.export(laser_solid(part), os.path.join(OUT, "laser", f"{part['name']}_{part['t']:g}mm.step"))
     import orbit                                     # local import: orbit.py imports this module
-    OBSOLETE = ("E7-P01_bearing_housing", "E7-P08_camera_hanger")   # 18. 11. 2026: replaced by the camera orbit
+    OBSOLETE = ("E7-P01_bearing_housing", "E7-P08_camera_hanger",   # 18. 11. 2026: replaced by the camera orbit
+                "E7-P09_centering_cap", "E7-P10_screed")            # 19. 11. 2026: one cell for both phases + locator P20
     os.makedirs(os.path.join(OUT, "tisk", "_nepouzivat"), exist_ok=True)
     for name, fn, _ in PRINT + PRINT_U_EXTRA + orbit.PRINT_ORBIT:
         s = fn()
