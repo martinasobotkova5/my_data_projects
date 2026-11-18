@@ -37,7 +37,7 @@ Z_GEAR = (Z_B1 + 1, Z_SH)           # 307 … 313 – ring teeth
 Z_CLAMP = Z_B0 - 3                  # 290 – clamp ring ⌀34 × 3 under the lower inner ring (3× M3 into the core)
 Z_IGUS = ZB - IGUS[1]               # 290 – igus bushing 290 … 320
 Z_MPL = (Z_B1 - 4, Z_B1)            # 302 … 306 – motor plate under the pinion
-Z_ARM = (272.0, 279.0)              # horizontal run of the arm (under the motor, above the camera's view)
+Z_ARM = (271.0, 279.0)              # horizontal run of the arm (under the motor, above the camera's view)
 HOME_MAG = (0.0, -31.0)             # magnet in the ring / Hall sensor in the plate at the home position
 th = math.radians(p.C_ORB_TILT)
 WIN = (0.0, -p.C_ORB_R, bp.Z_S1 + p.C_ORB_H)   # head window centre at the home position
@@ -218,16 +218,15 @@ def _bar(y0, z0, y1, z1, w, t):
 
 def arm_head():
     """P14 – rameno s hlavou kamery (jeden díl): patka ⌀60 / ⌀36 × 4 pod přírubou náboje (2× M3, drží spodní
-    ložisko), svislý pás, vodorovné rameno pod motorem a nad zorným polem, šikmý konec k hlavě;
+    ložisko), svislý pás, vodorovné rameno pod motorem a nad zorným polem, krátký sloupek k hlavě (mimo motor);
     hlava 34 × 34 × 24 s okénkem ⌀12 pro Camera Module 3 (sklon 36,5°)."""
     foot = cyl(60, 4, Z_B0 - 8).cut(cyl(36, 4, Z_B0 - 8))
     for x in (-5.0, 5.0):
         foot = foot.cut(cyl(3.4, 5, Z_B0 - 8.5, x, -25.0))
     drop = box(-5, 5, -30, -20, Z_ARM[0], Z_B0 - 8)
-    run = box(-5, 5, -75, -22, Z_ARM[0], Z_ARM[1])                                           # under the motor (r ≤ 67)
-    top = _local_to_world((0, 19, 4))                    # low on the axis-side face of the head, 2 mm outside the wall
-    slope = _bar(-73, (Z_ARM[0] + Z_ARM[1]) / 2, top[1], top[2], 10, 7)                      # rises only beyond r 72
-    return foot.union(drop).union(run).union(slope).union(_place_head(_head_local()))
+    run = box(-5, 5, -71, -22, Z_ARM[0], Z_ARM[1])        # under the motor (r ≤ 67), above the view to the far edge
+    riser = box(-5, 5, -76, -69, Z_ARM[0] + 4, 293)       # short post r 69 … 76 up to the axis-side face of the head
+    return foot.union(drop).union(run).union(riser).union(_place_head(_head_local()))
 
 
 def head_lid():

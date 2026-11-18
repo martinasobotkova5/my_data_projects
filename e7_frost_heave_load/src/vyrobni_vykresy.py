@@ -326,7 +326,7 @@ PRINT_NOTES = {
                          "nahoře věnec m1 z72 (šířka 6), dole příruba ⌀60 se 2× M3 pro patku ramene P14",
                          "kapsa ⌀6,2 × 2,2 pro magnet výchozí polohy; tisk 0,15 mm, 100 % výplň"],
     "E7-P14_camera_arm_head": ["patka ⌀60 / ⌀36 pod přírubou náboje (2× M3) – drží spodní ložisko",
-                               "rameno vede pod motorem (z 271–279), pak stoupá k hlavě 34 × 34 × 24, okénko ⌀12, sklon 36,5°",
+                               "rameno vede pod motorem (z 271–279) do r 71, krátký sloupek k hlavě 34 × 34 × 24, okénko ⌀12, sklon 36,5°",
                                "4× M2 pro Camera Module 3; LED na hvězdě a 2 odpory 47 Ω přilepit; tisk s podpěrami"],
     "E7-P15_head_lid": ["víčko hlavy, výřez 17 × 3 pro plochý kabel kamery a vodiče LED / topení"],
     "E7-P16_motor_bracket": ["držák 28BYJ-48 pod T04 (strana −x): 2× M5 do spodních drážek, uši motoru M4 (rozteč 35) zespodu",
