@@ -2,7 +2,7 @@
 
 Vše, co je potřeba koupit, nechat vyrobit podle rozměrů a sestavit. Sestava je navržená tak, aby **nebylo potřeba soustružit ani frézovat**: celý rám je z T-profilů drážka 8, které se jen řežou na délku (jediný otvor ⌀14 v horním příčníku), kotouče se řežou laserem podle DXF, zbytek se tiskne. Výkresy: V01–V06 (`vykresy/E7_drawings.pdf`), výrobní soubory: `vyroba/laser` (DXF) a `vyroba/tisk` (STL/STEP).
 
-**Fáze (16. 11. 2026):** začíná se **fází 1 bez zatížení** (varianta U, výkres V07) – z tohoto seznamu se zatím NEKUPUJE: laserové díly L03–L07 (bod 1), LVDT a zdroj 24 V, pouzdro igus, stavěcí kroužky a kulička; Invar ⌀12 objednat spolu s ⌀16. Cela fáze 1 je E7-V03u (⌀220 × 171), přibývá stěrka P10u a **obíhající kamera** – místo HQ kamery s objektivem 6 mm a závěsu P08 se kupuje Raspberry Pi Camera Module 3, kabel 500 mm, motor 28BYJ-48 + ULN2003, 2× ložisko 6806-2RS; **oběh je pro obě fáze stejný** a pouzdro igus vodicí tyče sedí v jeho jádře P12 (pouzdro P01 a závěs P08 se netisknou); LED a topný odpor jsou na hlavě kamery; motor řídí RPi 5 (`rpi/e7_kamera.py`). Rozdělení po firmách a fázích: `dodavatele_E7.md`.
+**Fáze (16. 11. 2026):** začíná se **fází 1 bez zatížení** (varianta U, výkres V07) – z tohoto seznamu se zatím NEKUPUJE: laserové díly L03–L07 (bod 1), LVDT a zdroj 24 V, pouzdro igus, stavěcí kroužky a kulička; Invar ⌀12 objednat spolu s ⌀16. Cela fáze 1 je E7-V03u (⌀220 × 151; mrazák 41 cm: dno 20 mm, pryžové podložky místo noh, kotouče ⌀165 × 6, laser 105 mm od osy), přibývá stěrka P10u a **obíhající kamera** – místo HQ kamery s objektivem 6 mm a závěsu P08 se kupuje Raspberry Pi Camera Module 3, kabel 500 mm, motor 28BYJ-48 + ULN2003, 2× ložisko 6806-2RS; **oběh je pro obě fáze stejný** a pouzdro igus vodicí tyče sedí v jeho jádře P12 (pouzdro P01 a závěs P08 se netisknou); LED a topný odpor jsou na hlavě kamery; motor řídí RPi 5 (`rpi/e7_kamera.py`). Rozdělení po firmách a fázích: `dodavatele_E7.md`.
 
 **Už máte:** CR850, TDR100/200 + CS645, Pt100, optické vlákno + čtečku, truhlicový mrazák s regulátorem (E6).
 
@@ -14,11 +14,11 @@ Kde: [grupol.cz](https://grupol.cz/) – nahrát DXF, cena hned; alternativy [Za
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
-| E7-L03_carrier | Al EN AW-5754, tl. 10 mm – soubor `vyroba/laser/E7-L03_carrier_10mm.dxf` | 1 |  |  |
+| E7-L03_carrier | Al EN AW-5754, tl. 6 mm – soubor `vyroba/laser/E7-L03_carrier_6mm.dxf` | 1 |  |  |
 | E7-L04_piston_top | Al EN AW-5754, tl. 10 mm – soubor `vyroba/laser/E7-L04_piston_top_10mm.dxf` | 1 |  |  |
 | E7-L05_piston_bottom | Al EN AW-5754, tl. 10 mm – soubor `vyroba/laser/E7-L05_piston_bottom_10mm.dxf` | 1 |  |  |
-| E7-L06_disc_1kg | steel S235JR, tl. 12 mm – soubor `vyroba/laser/E7-L06_disc_1kg_12mm.dxf` | 4 |  |  |
-| E7-L07_disc_0.5kg | steel S235JR, tl. 6 mm – soubor `vyroba/laser/E7-L07_disc_0.5kg_6mm.dxf` | 1 |  |  |
+| E7-L06_disc_1kg | steel S235JR, tl. 6 mm – soubor `vyroba/laser/E7-L06_disc_1kg_6mm.dxf` | 4 |  |  |
+| E7-L07_disc_0.5kg | steel S235JR, tl. 3 mm – soubor `vyroba/laser/E7-L07_disc_0.5kg_3mm.dxf` | 1 |  |  |
 | — | Hliník 10 mm: ověřit, že ho laser zvládne; jinak stejné DXF na vodní paprsek. Ocel 12 mm: kotouče převážit, ±0,5 mm tloušťky = ±4 % hmotnosti |  | ≈ 70–140 € celkem | odhad |
 
 ## 2 · Hliníkové T-profily (drážka 8) a spojovací díly rámu – celý rám jako jedna sada
@@ -27,15 +27,15 @@ Kde: **doporučeno: [ENPRAG, s.r.o., Praha 5](https://www.enprag.cz/hlinikove-pr
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
-| T01 profil 40×80 drážka 8 – sloup | řez na délku 306 mm, kolmý řez ±0,2 | 2 | 31,43 €/m bez DPH (+ řez) | ověřeno (Enprag EN) |
+| T01 profil 40×80 drážka 8 – sloup | řez na délku 276 mm, kolmý řez ±0,2 | 2 | 31,43 €/m bez DPH (+ řez) | ověřeno (Enprag EN) |
 | T02 profil 40×40 drážka 8 – podélník základny | řez na délku 320 mm, kolmý řez ±0,2 | 2 | ≈ 15–20 €/m (+ řez) | odhad |
 | T03 profil 40×80 drážka 8 – příčka základny | řez na délku 260 mm, kolmý řez ±0,2 | 1 | 31,43 €/m bez DPH (+ řez) | ověřeno (Enprag EN) |
 | T04 profil 40×80 drážka 8 – horní příčník | řez na délku 340 mm, kolmý řez ±0,2; uprostřed svislý otvor ⌀14 skrz | 1 | 31,43 €/m bez DPH (+ řez) | ověřeno (Enprag EN) |
-| — | celkem 40×80: 1,21 m, 40×40: 0,64 m |  |  |  |
+| — | celkem 40×80: 1,15 m, 40×40: 0,64 m |  |  |  |
 | Úhelník 40×40 drážka 8 (Zn) s krytkou | 4 příčka ↔ podélníky, 4 sloupy ↔ podélníky, 4 sloupy ↔ příčník | 12 | ≈ 3–6 €/ks | odhad |
 | T-matice drážka 8, M8, vkládací (otočná) | úhelníky (24) + nohy (4) + 4 rezerva | 32 | ≈ 1 €/ks | odhad |
 | T-matice drážka 8, M5, vkládací (otočná) | pouzdro P01 (4), patka P04 (2), držák laseru P05 (2), závěs kamery P08 (2) + 2 rezerva | 12 | ≈ 1 €/ks | odhad |
-| Stavitelná noha M8 (talíř ⌀30–40) | do T-matic ve spodní drážce podélníků T02 (y ±140) | 4 | ≈ 3–5 €/ks | odhad |
+| Pryžová podložka ⌀30 × 3 (samolepicí, místo stavitelných noh – mrazák 41 cm) | pod podélníky T02 (y ±140), vyrovnat podložkami | 4 | ≈ 0,5 €/ks | odhad |
 | Krytka čela 40×80 / 40×40 (volitelně) | konce příčníku a podélníků | 6 | ≈ 0,5 €/ks | odhad |
 
 ## 3 · Invar 36 (tyče řezané na délku)
@@ -44,8 +44,8 @@ Kde: **česky:** [Kovohutě Rokycany](http://www.koro.cz/produkty/nikl-a-slitiny
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
-| Invar 36 ⌀12 | délka 265 mm, tolerance h9 nebo lepší (vodicí tyč pro kluzné pouzdro), čela kolmá, sražení 0,5×45° | 1 |  | poptat |
-| Invar 36 ⌀16 | délka 330 mm, čela kolmá | 1 |  | poptat |
+| Invar 36 ⌀12 | délka 151 mm, tolerance h9 nebo lepší (vodicí tyč pro kluzné pouzdro), čela kolmá, sražení 0,5×45° | 1 |  | poptat |
+| Invar 36 ⌀16 | délka 283 mm, čela kolmá | 1 |  | poptat |
 | — | obojí ≈ 0,9 kg Invaru |  | ≈ 80–160 € | odhad |
 
 ## 4 · Podložky G10 (sklotextit)
@@ -54,7 +54,7 @@ Kde: [Elektroizolanty Praha – tyče G10](https://www.elektroizolanty.cz/elektr
 
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
-| Sklotextit G10 tyč ⌀20 × 1000 mm | požádat o nařezání 3× 40 mm (čela rovnoběžná) – nebo nařezat v dílně | 1 | 298 Kč | ověřeno |
+| Sklotextit G10 tyč ⌀20 × 1000 mm | požádat o nařezání 3× 20 mm (čela rovnoběžná) – nebo nařezat v dílně | 1 | 298 Kč | ověřeno |
 
 ## 5 · Ložisko, kroužek, kulička, šrouby
 
@@ -63,7 +63,7 @@ Kde: igus v ČR: [HENNLICH s.r.o., Litoměřice](https://www.igus.eu/Contact/gen
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
 | igus drylin RJ4JP-01-12 | kluzné pouzdro ⌀12 (⌀21 × 30), bez maziva, do −40 °C | 1 | ≈ 2–5 € | odhad |
-| Stavěcí kroužek DIN 705-A 12 (⌀22 × 12, šroub M6) | pod nosnou desku závaží (+1 rezerva) | 2 | ≈ 2–4 €/ks | odhad |
+| Šroub DIN 912 M6 × 12 + podložka | nosná deska závaží L03 do závitu M6 v horním čele vodicí tyče (bez stavěcího kroužku) | 1 | ≈ 0,2 € | odhad |
 | Ocelová ložisková kulička 5/16" (7,94 mm) | cyklo kuličky, balení | 1 | ≈ 1–3 € | odhad |
 | Imbus ISO 4762 M8×16 + podložka | úhelníky do T-matic | 24 |  | sada |
 | Imbus ISO 4762 M5×35 + podložka | pouzdro ložiska P01 ↔ T-matice ve spodní drážce T04 | 4 |  | sada |
@@ -81,7 +81,7 @@ Kde: [Prusament PETG Carbon Fiber](https://www.prusa3d.com/product/prusament-pet
 | položka | specifikace | ks | cena | stav |
 |---|---|---|---|---|
 | Prusament PETG Carbon Fiber 1 kg | cela ≈ 1,1–1,4 kg + díly P01–P11 ≈ 0,5 kg | 2 | ≈ 55 €/ks | ověřeno (USD cena) |
-| Tiskárna pro celu | cela ⌀220 × 200: podložka 240 × 240 (10 mm okraj na límec / skirt), výška ≥ 200 mm; ≈ 1,1–1,4 kg, 35–50 h |  |  | info |
+| Tiskárna pro celu | cela ⌀220 × 180 (fáze 2) / ⌀220 × 151 (fáze 1): podložka 240 × 240, výška tisku ≥ 180 mm; ≈ 1,0–1,3 kg, 30–45 h |  |  | info |
 | Sklo do okénka boxu kamery | 50 × 50 × 2 mm (sklo z fotorámečku / sklenářství) nebo plexi 2 mm | 1 | ≈ 1–3 € | odhad |
 
 ## 7 · Kamera, Raspberry Pi, elektronika
@@ -150,23 +150,23 @@ Kde: Hornbach / OBI, [TME](https://www.tme.eu/cz/) (Molykote)
 
 ## Rozměry pro kontrolu (z modelu)
 
-- sloupy 306 mm, Invarová tyč 265 mm, Invarový sloupek 330 mm
-- nosná deska závaží 383 mm nad horní plochou rámu; spodní líc příčníku 306 mm
-- kotouč 117.5 × 12 mm = 1.00 kg, poloviční 0.50 kg
+- sloupy 276 mm, Invarová tyč 151 mm, Invarový sloupek 283 mm
+- nosná deska závaží 324 mm nad horní plochou rámu; spodní líc příčníku 276 mm
+- kotouč 165 × 6 mm = 1.00 kg, poloviční 0.50 kg
 - kontrola kolizí v 3D sestavě (model3d.py): bez kolizí
 
 ## Postup sestavení
 
 1. Vytiskněte celu (V03) a díly P01–P11 (`vyroba/tisk/*.stl`, PETG-CF, 0,2 mm, 3 perimetry, 40 % gyroid; cela podle V03). Dutinu cely natřete epoxidem, po vytvrzení PTFE sprej + tenká vrstva silikonové vazelíny.
 2. Píst: kotouče L05 (spodní) a L04 (horní, otvor ⌀6) slepte epoxidem, soustředně.
-3. Základ: 2 podélníky T02 (40×40 × 320, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = 8,75) – 4 úhelníky, M8×16 do vkládacích T-matic. Do spodní drážky podélníků 4 stavitelné nohy M8 (y ±140). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).
-4. Sloupy T01 (40×80 × 306) postavte na podélníky (osa x = ±150, uprostřed délky) a připojte 2 úhelníky na stranách ±y (M8×16 + T-matice). Srovnejte do pravého úhlu, dotáhněte.
+3. Základ: 2 podélníky T02 (40×40 × 320, osy x = ±150) a mezi ně příčku T03 (40×80 naplocho × 260, osa y = 8,75) – 4 úhelníky, M8×16 do vkládacích T-matic. Pod podélníky nalepte 4 pryžové podložky ⌀30 × 3 (místo stavitelných noh – mrazák 41 cm), dříve: do spodní drážky podélníků 4 stavitelné nohy M8 (y ±140). Rám vyrovnejte vodováhou. Na příčku položte 3 podložky G10 (poloha podle kapes ve dně cely, V06).
+4. Sloupy T01 (40×80 × 276) postavte na podélníky (osa x = ±150, uprostřed délky) a připojte 2 úhelníky na stranách ±y (M8×16 + T-matice). Srovnejte do pravého úhlu, dotáhněte.
 5. Pouzdro P01 přišroubujte zespodu na horní příčník T04 (4× M5×35 do T-matic ve spodních drážkách), souose s otvorem ⌀14; vložte igus RJ4JP-01-12 a stáhněte svěrný šroub M4.
 6. Příčník T04 položte naplocho na sloupy, 2 úhelníky na vnitřní straně každého sloupu (pod příčníkem). Otvor ⌀14 musí být nad středem cely – srovnejte podle olovnice nebo trnu ⌀12 v pouzdře, pak dotáhněte.
 7. Připravte vzorek mimo rám podle `postup_zkousky.md` (vlhčení, hutnění po vrstvách se zátkami v otvorech čidel, srovnání stěrkou P10, zasunutí čidel). Celu postavte na podložky G10 – kapsy ve dně na podložky; cela se nedotýká rámu.
 8. Invarový sloupek ⌀16 postavte do patky P04 (2× M5×20 do T-matic v horní drážce pravého podélníku, y = 108); sloupek stojí na dně patky, svěrku dotáhněte. Nasaďte rameno P03 (terčík ve výšce horní hrany límce) a rameno P02 s LVDT.
 9. Navrch písku položte píst, do otvoru ⌀6 kuličku 5/16". Na límec nasaďte středicí víčko P09 (rameno P03 natočené stranou).
-10. Invarovou tyč zasuňte shora pouzdrem víčkem P09 až na kuličku – posunutím cely ji vystřeďte, víčko vysuňte do strany, rameno P03 vraťte na značku. Na tyč stavěcí kroužek, na něj nosná deska L03 a kotouče L06/L07. Kroužek nastavte tak, aby nosná deska byla 37 mm nad horní plochou příčníku T04 (spodní hrana kroužku 25 mm nad ním = zdvih ±25).
+10. Invarovou tyč zasuňte shora pouzdrem víčkem P09 až na kuličku – posunutím cely ji vystřeďte, víčko vysuňte do strany, rameno P03 vraťte na značku. Na tyč nosnou desku L03 (šroub M6 do čela tyče) a na ni kotouče L06/L07. Nosná deska má být ≈ 8 mm nad horní plochou příčníku T04 (volný zdvih / pokles vzorku); délka tyče je daná, výška povrchu písku se srovná stěrkou – pokud mezera nesedí, podložit nosnou desku podložkou.
 11. LVDT posuňte ve svěrce P02, až je jádro uprostřed rozsahu (výstup ≈ 0 V), dotáhněte.
 12. Laser do držáku P05 (2× M5×12 do boční drážky T04, +y), kameru + RPi 5 do boxu P06/P07 (sklo do drážky, kabel přes PG7), box na závěs P08 (2× M5×12 do boční drážky T04, −y). Laser natočte, aby čáry ležely napříč přes celý povrch ⌀100; kameru zaostřete (zadní ohnisková vzdálenost).
 13. Slepá zkouška s hliníkovou atrapou (V02) → kalibrace podložkami → první cyklus.

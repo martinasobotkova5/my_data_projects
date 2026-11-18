@@ -102,14 +102,14 @@ def main(var="u"):
         ax.plot([x0, x1], [y0, y1], c=LAS, lw=0.6)
     ax.text(16, oy1 + (wz + 95) * S, f"hlava s Camera Module 3 (výchozí poloha)\n{p.C_ORB_R:g} mm od osy, {p.C_ORB_H:g} nad pískem,\n"
             f"sklon {p.C_ORB_TILT:g}° od svislice, bílá LED;\nobíhá ±180° kolem osy vzorku", color=CAM, fontsize=6.5, ha="left")
-    ax.text(16, oy1 + (wz + 150) * S, "oběh: věnec z72, 2× 6806 a motor 28BYJ-48\npod příčníkem; RPi 5 v boxu P06 na boku T04\nřídí motor i kameru", fontsize=6,
+    ax.text(16, oy1 + (wz + 150) * S, "oběh: věnec z72, 2× 6806 a motor 28BYJ-48\npod příčníkem; RPi 5 v boxu P06 na pravém\nsloupu řídí motor i kameru", fontsize=6,
             color=MUTE, ha="left")
     ax.text(*P(ly + 25, lz + 22), f"laser 11 čar, 635 nm\ny {ly:g}, {p.C_LASER_H:g} nad pískem,\n{p.C_LASER_ANG:g}° od vodorovné",
             color=LAS, fontsize=6.5)
     ax.annotate("invarový terčík P03\n(reference posunu rámu)", P(yr, zr), (18, oy1 + (zr - 75) * S), color=CAM, fontsize=6,
                 arrowprops=dict(arrowstyle="-", lw=0.4, color=CAM))
     # dimensions
-    zf = -48.0
+    zf = bp.ZB0 - p.C_BASE[2] - p.C_RUBBER[1]            # freezer floor (under the rubber pads)
     bbz = comp.BoundingBox().zmax
     dim_v(ax, 185, zf, bbz, ox1, oy1, f"{bbz - zf:.0f} celková výška", side=1)
     dim_v(ax, -180, zf, z_sand, ox1, oy1, f"{z_sand - zf:g} povrch písku", side=-1)
@@ -117,7 +117,7 @@ def main(var="u"):
     ax.annotate(T["rimtxt"], P(60 if var == "u" else 53, zt), P(116, zt - 45), fontsize=6.5,
                 arrowprops=dict(arrowstyle="-", lw=0.4))
     # --- front view (paper x = world x)
-    ox2, oy2 = 255, oy1
+    ox2, oy2 = 243, oy1
     draw_view(ax, comp, "front", ox2, oy2)
     ax.text(ox2 - 60, 252, "POHLED ZEPŘEDU (rovina x–z)", fontsize=8, weight="bold")
     X = lambda x: ox2 + x * S
@@ -125,7 +125,7 @@ def main(var="u"):
                 arrowprops=dict(arrowstyle="<->", lw=0.5, shrinkA=0, shrinkB=0))
     ax.text(X(0), oy2 + (zf - 8) * S - 1.2, "340 (horní příčník T04)", ha="center", va="top", fontsize=6.5)
     # --- small top view with the orbit path (1 : 6)
-    S6, ox3, oy3 = 1 / 6.0, 372, 70
+    S6, ox3, oy3 = 1 / 6.0, 358, 70
     vis, hid, _ = ob_project(comp)
     for pl in vis:
         xs, ys = zip(*pl)
@@ -137,13 +137,13 @@ def main(var="u"):
     ax.text(ox3, oy3 + 30, "SHORA 1 : 6 – dráha okénka ⌀170", ha="center", fontsize=6.5, weight="bold")
     ax.text(ox3, oy3 - p.C_ORB_R * S6 - 3.5, "výchozí poloha (laser)", ha="center", fontsize=5.5, color=CAM)
     # --- parts table (phase 1)
-    rows = [("rám T-profily T01–T04, úhelníky, T-matice, nohy", "1 sada", "ENPRAG"),
-            (f"cela ⌀220 × {p.C_INS_T + p.U_TOP:g} s rovným čelem (E7-V03u)" if var == "u" else f"cela ⌀220 × {p.C_INS_T + p.COLLAR_TOP:g} s límcem (E7-V03)"), "1", "tisk PETG-CF"),
+    rows = [("rám T-profily T01–T04, úhelníky, T-matice", "1 sada", "ENPRAG"),
+            ((f"cela ⌀220 × {p.C_INS_T + p.U_TOP:g} s rovným čelem (E7-V03u)" if var == "u" else f"cela ⌀220 × {p.C_INS_T + p.COLLAR_TOP:g} s límcem (E7-V03)"), "1", "tisk PETG-CF"),
             (f"podložky G10 ⌀20 × {p.C_INS_T:g}; pryžové podložky ⌀30 × 3", "3 + 4", "Elektroizolanty"),
             ("sloupek Invar ⌀16 × 330 + patka P04, terčík P03", "1", "Rokycany / tisk"),
             ("laser Picotronic DOE253, držák P05", "1", "Picotronic / tisk"),
             ("RPi 5 + Camera Module 3 + kabel 500 mm", "1", "RPishop.cz"),
-            ("box P06 + víko P07 na držáku P18 (bok T04)", "1", "tisk"),
+            ("box P06 + víko P07 na držáku P18 (sloup +x)", "1", "tisk"),
             ("oběh: 2× 6806-2RS, pouzdro igus RJ4JP-01-12", "1", "TME / HENNLICH"),
             ("oběh: P12, P12b, P12c, P13, P14, P15, P16, P19", "1", "tisk"),
             ("motor 28BYJ-48 + ULN2003, Hall A3144", "1", "GME / LaskaKit"),
@@ -153,7 +153,7 @@ def main(var="u"):
                  ("bod M: TDR CS645, Pt100, vlákno; NTC ve dně", "–", "máte / TME")]
     else:
         rows += [("píst L04 + L05, nosná deska L03, závaží L06/L07", "1 sada", "grupol.cz"),
-                 (f"tyč Invar ⌀12 × {bp.ROD_L:g} (M6 nahoře), kulička 5/16\", šroub M6", "1", "Rokycany / Fabory"),
+                 (f"tyč Invar ⌀12 × {bp.ROD_L:g} (M6), kulička, šroub M6", "1", "Rokycany / Fabory"),
                  ("LVDT RDP DCTH400AG + rameno P02, zdroj 24 V", "1", "Elkome / TME")]
     tx, ty = 330, 246
     ax.text(tx, ty + 4, "DÍLY FÁZE 1" if var == "u" else "DÍLY FÁZE 2 (oběh a rám jako ve fázi 1)", fontsize=8, weight="bold")
@@ -166,7 +166,7 @@ def main(var="u"):
         ax.text(tx + wc[0] + wc[1] + 1, y, r[2], fontsize=5.6)
     ny = ty - len(rows) * 5.6 - 5
     notes = ["Ověřeno v modelu (§22, §23):", *CHECK[var],
-             "• CM3 66° × 41°: celý ⌀100 s rezervou ≈ 3°", "• 1 pixel ≈ 37 µm, výška ≈ 8–12 µm",
+             "• CM3 66° × 41°: celý ⌀100 s rezervou ≈ 3°", "• 1 pixel ≈ 35 µm, výška ≈ 8–12 µm",
              "Řízení: RPi 5 + ULN2003,", "program rpi/e7_kamera.py."]
     for k, s in enumerate(notes):
         ax.text(tx, ny - k * 4.4, s, fontsize=6.2, weight="bold" if s.endswith(":") else None)

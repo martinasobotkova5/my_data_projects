@@ -184,7 +184,7 @@ Začíná se fází 1 bez zatížení. Rám, laser, podložky G10, bod M a **ob�
 
 **Sestavení (oproti kap. 1–3):**
 
-1. **Cela.** Fáze 1: E7-V03u (⌀220 × 171, rovné čelo 5 mm nad pískem) na 3 podložkách G10, vystředit na ±1 mm podle rysky na příčce T03. Ve fázi 2 vystředit na tyč víčkem P09.
+1. **Cela.** Fáze 1: E7-V03u (⌀220 × 151, rovné čelo 5 mm nad pískem) na 3 podložkách G10, vystředit na ±1 mm podle rysky na příčce T03. Ve fázi 2 vystředit na tyč víčkem P09.
 2. **Invarový sloupek** ⌀16 do patky P04. Rameno P03 utáhnout tak, aby **spodní plocha terčíku byla 3 mm nad čelem cely** (ve fázi 2 ve výšce límce). Terčík je na straně kamery (−y), nalepit na něj bílou matnou samolepku 12 × 12.
 3. **Oběh – pevná část pod příčníkem:**
    1. Do jádra P12 zalisovat pouzdro igus RJ4JP-01-12 a do kapsy ve spodní ploše desky zalepit Hall senzor A3144 (vývody kanálkem k okraji).
@@ -204,6 +204,13 @@ Začíná se fází 1 bez zatížení. Rám, laser, podložky G10, bod M a **ob�
    - Plochý kabel kamery 500 mm vést od boxu pod příčník k náboji.
    - Kolem náboje nechat volnou smyčku (jeden závit), pak kabel vést po rameni do hlavy, spolu s vodiči LED a topení.
    - **Před prvním měřením spustit `python3 e7_kamera.py test`** (výchozí poloha, ±90°, zpět) a zkontrolovat, že kabel nikde nedře, nenapíná se a nedotýká se tyče se závažím.
+
+**Umístění v mrazáku (vnitřní 59 × 39 × 41 cm):**
+
+- Sestava stojí přímo na dně na 4 pryžových podložkách 3 mm. Nemá stavitelné nohy, nerovnost se vyrovná podložkami pod podložky.
+- Box s RPi je na vnější straně pravého sloupu (+x), sestava je uprostřed šířky (výkres V05).
+- Výška je 383 mm ve fázi 1 a 397 mm ve fázi 2. **Ve fázi 2 zbývá k víku jen ≈ 13 mm.** Před prvním zavřením zkontrolovat, že víko nic netlačí, hlavně těsnění a výstupek víka.
+- Kabely vést po stranách, ne přes sestavu.
 
 **Příprava vzorku:** hutnit po vrstvách 20 mm jako v kap. 2. Poslední vrstvu srovnat **stěrkou P10u** (příčka leží na čele cely, břit 5 mm) otáčením kolem osy. Povrch je pak přesně 5 mm pod čelem. Hlava je při tom otočená na stranu +y, mimo práci.
 

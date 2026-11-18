@@ -186,8 +186,8 @@ ASSEMBLY = [
     "Navrch písku položte píst, do otvoru ⌀6 kuličku 5/16\". Na límec nasaďte středicí víčko P09 (rameno P03 natočené stranou).",
     "Invarovou tyč zasuňte shora pouzdrem víčkem P09 až na kuličku – posunutím cely ji vystřeďte, víčko vysuňte do strany, "
     "rameno P03 vraťte na značku. Na tyč nosnou desku L03 (šroub M6 do čela tyče) a na ni kotouče L06/L07. "
-    f"Kroužek nastavte tak, aby nosná deska byla {bp.ZC - bp.Z_TOP:g} mm nad horní plochou příčníku T04 "
-    f"(spodní hrana kroužku {bp.Z_COLLAR - bp.Z_TOP:g} mm nad ním = zdvih ±{p.C_TRAVEL:g}).",
+    f"Nosná deska má být ≈ {bp.ZC - bp.Z_TOP:g} mm nad horní plochou příčníku T04 (volný zdvih / pokles vzorku); "
+    "délka tyče je daná, výška povrchu písku se srovná stěrkou – pokud mezera nesedí, podložit nosnou desku podložkou.",
     "LVDT posuňte ve svěrce P02, až je jádro uprostřed rozsahu (výstup ≈ 0 V), dotáhněte.",
     "Laser do držáku P05 (2× M5×12 do boční drážky T04, +y), kameru + RPi 5 do boxu P06/P07 (sklo do drážky, kabel přes PG7), "
     "box na závěs P08 (2× M5×12 do boční drážky T04, −y). "
