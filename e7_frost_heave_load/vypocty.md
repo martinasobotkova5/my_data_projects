@@ -372,7 +372,7 @@ Zorné pole objektivu 6 mm na HQ kameře (6,29 × 4,71 mm): ±27,6° × ±21,4°
 
 ## 23. Kamera obíhající kolem vzorku (16. 11. 2026)
 
-Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° × 41°, 4608 × 2592 px, autofokus) obíhá kolem osy vzorku – **jedna sestava pro obě fáze** (18. 11. 2026). Pod středem příčníku T04 je pevné jádro P12 s otvorem ve středu, v němž sedí kluzné pouzdro igus vodicí tyče zátěže (nahrazuje pouzdro P01); na jádře dvě ložiska 6806-2RS, na nich otočný náboj P13: dole rameno s hlavou kamery P14, nahoře věnec m1 z72. Krokový motor 28BYJ-48 s pastorkem z12 (převod 6 : 1) visí pod příčníkem na straně −x (držák P16). Ve fázi 2 tedy hlava obíhá kolem tyče se závažím. Rameno vede pod motorem (z 271–279) a teprve za ním stoupá k hlavě. Řídí RPi 5 (program rpi/e7_kamera.py), které zároveň fotí; box s RPi je na boční straně příčníku, plochý kabel 500 mm ve smyčce → rozsah ±180°.
+Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° × 41°, 4608 × 2592 px, autofokus) obíhá kolem osy vzorku – **jedna sestava pro obě fáze** (18. 11. 2026). Pod středem příčníku T04 je pevné jádro P12 s otvorem ve středu, v němž sedí kluzné pouzdro igus vodicí tyče zátěže (nahrazuje pouzdro P01); na jádře dvě ložiska 6806-2RS, na nich otočný náboj P13: dole rameno s hlavou kamery P14, nahoře věnec m1 z72. Krokový motor 28BYJ-48 s pastorkem z12 (převod 6 : 1) visí pod příčníkem na straně −x (držák P16). Ve fázi 2 tedy hlava obíhá kolem tyče se závažím. Rameno vede pod motorem (z 271–279) do 71 mm od osy, pak krátký sloupek k hlavě. Řídí RPi 5 (program rpi/e7_kamera.py), které zároveň fotí; box s RPi je na boční straně příčníku, plochý kabel 500 mm ve smyčce → rozsah ±180°.
 
 | veličina | hodnota |
 |---|---|

@@ -670,7 +670,7 @@ print("Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 
       "s otvorem ve středu, v němž sedí kluzné pouzdro igus vodicí tyče zátěže (nahrazuje pouzdro P01); na jádře dvě "
       "ložiska 6806-2RS, na nich otočný náboj P13: dole rameno s hlavou kamery P14, nahoře věnec m1 z72. Krokový motor "
       "28BYJ-48 s pastorkem z12 (převod 6 : 1) visí pod příčníkem na straně −x (držák P16). Ve fázi 2 tedy hlava obíhá "
-      "kolem tyče se závažím. Rameno vede pod motorem (z 271–279) a teprve za ním stoupá k hlavě. Řídí RPi 5 "
+      "kolem tyče se závažím. Rameno vede pod motorem (z 271–279) do 71 mm od osy, pak krátký sloupek k hlavě. Řídí RPi 5 "
       "(program rpi/e7_kamera.py), které zároveň fotí; box s RPi je na boční straně příčníku, plochý kabel 500 mm ve "
       "smyčce → rozsah ±180°.\n")
 print("| veličina | hodnota |\n|---|---|")
