@@ -60,6 +60,7 @@ Stav 19. 11. 2026. Ceny jsou orientační, většinou bez DPH, a je potřeba je 
 | HENNLICH (igus) | `poptavka_igus_HENNLICH.md` |
 | Kovohutě Rokycany | `vyroba/narezy/E7_narezy_invar_Rokycany.pdf` (B01: závit M6 nahoře, důlek 90° dole), `poptavka_invar_Rokycany.md` |
 | Elektroizolanty Praha | `vyroba/narezy/E7_narezy_G10_Elektroizolanty.pdf`, `poptavka_G10_Elektroizolanty.md` |
+| Micro-Epsilon CZ | `poptavka_LVDT_MicroEpsilon.md`, `vykresy/E7-V08_se_zatezi.pdf` |
 | grupol.cz | `vyroba/laser/*.dxf` |
 | vlastní tisk | `vyroba/tisk/*.stl` – cela `E7-V03u_cell_D220x146_bez_zatizeni`, P02–P07, P10u, P12–P16, P18–P21 (P01, P08–P10 jsou ve složce `_nepouzivat`) |
 
