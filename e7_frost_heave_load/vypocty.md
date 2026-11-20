@@ -351,7 +351,7 @@ Nasycená pára nad ledem při −10 °C: 2.14 g/m³. Tok z volné plochy J = h_
 | pórový led (Sr ≈ 1, bez přebytku) | 0.38 | 2.4 mm | 6.3 mm | 9.2 mm | 0.00 mm |
 | přebytek ledu (zrna 40 %, led 60 %) | 0.60 | 1.9 mm | 5.0 mm | 7.3 mm | 1.77 mm |
 
-**Pod pístem** led nesublimuje (kryt), páru může odvést jen boční difuze od okraje pístu → vznikne **podstavec**: volné mezikruží klesá (laser), píst zůstává (LVDT). Tečení ledu pod pístem při 25 kPa za 30 dní je řádově 1.4 µm (Glenův zákon) – zatížení samo pokles neudělá, srovnání 3,5 a 25 kPa ukáže jen jeho vedlejší vliv. **Měřitelnost:** u písku s přebytkem ledu klesne volný povrch o desetiny mm za několik dní a o mm za týdny – laser (≈ 10 µm) ho zachytí den po dni; u pórového ledu pokles téměř nulový (kontrolní vzorek: suchá vrstva vznikne, kostra zrn stojí). Teplota se během sublimační série nemění (−10 °C), takže teplotní drift sestavy je prakticky nulový. Odhady ověří předzkouška (miska ledu na váze v mrazáku).
+**Pod pístem** led nesublimuje (kryt), páru může odvést jen boční difuze od okraje pístu → vznikne **podstavec**: volné mezikruží klesá (laser), píst zůstává (LVDT). Tečení ledu pod pístem při 25 kPa za 30 dní je řádově 1.4 µm (Glenův zákon) – zatížení samo pokles neudělá, srovnání 3,5 a 25 kPa ukáže jen jeho vedlejší vliv. **Měřitelnost:** u písku s přebytkem ledu klesne volný povrch o desetiny mm za několik dní a o mm za týdny – laser (≈ 10 µm) ho zachytí den po dni; u pórového ledu pokles téměř nulový (kontrolní vzorek: suchá vrstva vznikne, kostra zrn stojí). Teplota se během sublimační série nemění (−10 °C), takže teplotní drift sestavy je prakticky nulový. Odhady ověří první 3 dny série (pokles volného povrchu laserem).
 
 ## 22. Fáze 1 bez zatížení – varianta U (16. 11. 2026)
 

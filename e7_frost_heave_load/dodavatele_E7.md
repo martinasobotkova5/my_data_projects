@@ -48,8 +48,8 @@ Stav 19. 11. 2026. Ceny jsou orientační, většinou bez DPH, a je potřeba je 
 | **Micro-Epsilon Czech Republic, Bechyně** | LVDT ±10 mm s vestavěnou elektronikou (induSENSOR DTD-10G8, výstup 0–5 V do CR850, napájení 24 V) – poptat; svěrka P02 se upraví na jeho tělo | 1 | poptat |
 | **GM electronic** | zdroj Mean Well HDR-15-24 (napájení LVDT, šroubovací svorky) | 1 | ≈ 300 Kč |
 | **Fabory CZ / cyklo prodejna** | ocelová kulička 5/16" | 1 | ≈ 30 Kč |
-| **LaskaKit / GM electronic** | <ul><li>tenzometr 1 kg + HX711 (verze se svorkami)</li><li>čidlo vlhkosti SHT45 s konektorem (bez pájení)</li></ul> | 1 + 1 | ≈ 500–900 Kč |
-| **P-LAB / Verkon** (CZ, laboratorní potřeby) | skleněné misky ⌀90 (3 ks), síto 2 mm | sada | ≈ 400–800 Kč |
+| **LaskaKit / GM electronic** | čidlo vlhkosti SHT45 s konektorem (bez pájení) | 1 | ≈ 300–500 Kč |
+| **P-LAB / Verkon** (CZ, laboratorní potřeby) | síto 2 mm (drcený led) | 1 | ≈ 200–400 Kč |
 | **Hornbach** | silikagel s indikátorem 2 kg + tác | 1 | ≈ 400–700 Kč |
 
 ## Soubory pro firmy

@@ -33,7 +33,6 @@ a s krátkými táními podle antarktické lokality.
 | série | vzorek | podmínky | délka | co dá |
 |---|---|---|---|---|
 | S0 slepá zkouška | hliníková atrapa | celý teplotní cyklus | 2 dny | drift sestavy, kalibrace kamery |
-| S1 předzkouška | miska ledu + miska písku s ledem na váze | −10 °C, silikagel, ventilátor | 2–3 dny | rychlost sublimace vs. RH → délka sérií |
 | S2 kontrola | **A – pórový led** (Sr ≈ 1) | −10 °C, suchý vzduch, píst 3,5 kPa | 14–30 dní | H2 |
 | S3 hlavní | **B – přebytek ledu** (≈ 60 % ledu) | −10 °C, suchý vzduch, píst **3,5** a **25 kPa** | 14–30 dní | H1, H3 |
 | S4 s táním | B | jako S3 + každých 7 dní 6 h při +5 °C (podle Ostrova Jamese Rosse) | 28 dní | H4 |
@@ -45,7 +44,7 @@ a s krátkými táními podle antarktické lokality.
 |---|---|---|
 | pokles volného povrchu (mezikruží ⌀100/⌀50) | laser 11 čar + kamera | ≈ 10 µm |
 | pohyb krytu (pístu) | LVDT na invarovém sloupku | ≈ 1 µm |
-| úbytek ledu (rychlost sublimace) | váha s miskou v mrazáku (HX711), vážení cely na začátku a konci | 0,01 g |
+| úbytek ledu (rychlost sublimace) | pokles volného povrchu (laser) v čase, vážení cely na začátku a konci | ≈ 10 µm, 0,01 g |
 | vlhkost a teplota vzduchu | SHT45, Campbell 109 | 2 % RH, 0,2 °C |
 | teplota písku a dna | Pt100, NTC | 0,1 °C |
 | obsah vody / ledu | TDR CS645 | – |
@@ -70,7 +69,7 @@ a s krátkými táními podle antarktické lokality.
 
 | riziko | opatření |
 |---|---|
-| sublimace v mrazáku příliš pomalá / rychlá | předzkouška S1, silikagel / ventilátor, délka série |
+| sublimace v mrazáku příliš pomalá / rychlá | rychlost z prvních 3 dnů série (laser), silikagel / ventilátor, délka série |
 | námraza na stěnách mrazáku mění vlhkost | SHT45 průběžně, silikagel měnit (indikátor) |
 | příprava písku s přebytkem ledu nerovnoměrná | vážit vrstvy, příprava celá v mrazáku, dva vzorky |
 | laser na suchém / zmrzlém povrchu | pevná expozice, kalibrace podložkami v obou stavech |

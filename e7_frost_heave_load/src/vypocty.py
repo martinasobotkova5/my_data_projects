@@ -571,7 +571,7 @@ print(f"\n**Pod pístem** led nesublimuje (kryt), páru může odvést jen bočn
       "jen jeho vedlejší vliv. **Měřitelnost:** u písku s přebytkem ledu klesne volný povrch o desetiny mm za několik "
       "dní a o mm za týdny – laser (≈ 10 µm) ho zachytí den po dni; u pórového ledu pokles téměř nulový (kontrolní "
       "vzorek: suchá vrstva vznikne, kostra zrn stojí). Teplota se během sublimační série nemění (−10 °C), takže "
-      "teplotní drift sestavy je prakticky nulový. Odhady ověří předzkouška (miska ledu na váze v mrazáku).\n")
+      "teplotní drift sestavy je prakticky nulový. Odhady ověří první 3 dny série (pokles volného povrchu laserem).\n")
 
 # ---------------------------------------------------------------------------------------------------------------
 print("## 22. Fáze 1 bez zatížení – varianta U (16. 11. 2026)\n")

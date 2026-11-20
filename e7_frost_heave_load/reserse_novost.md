@@ -67,4 +67,4 @@ krytého a volného povrchu měřený současně laserem (≈ 10 µm) a LVDT (�
 1. Přečíst plné texty: Peterson & Krantz 2003 (+ disertace 1999), CRST 2019 (zatěžovací dráhy), Chevrier 2007/2008,
    SCITEAS, PNAS 2021 – rozhodnou, zda A a B zůstanou „nikdo neudělal“.
 2. Ověřit v Scopusu / WoS dotazy S1, S2, S3, S6 (`reserse_scopus_wos.md`).
-3. Předzkouška: rychlost sublimace v mrazáku (miska čistého ledu + miska písku s ledem, vážení, RH).
+3. Rychlost sublimace v mrazáku z prvních dnů série (pokles povrchu laserem, RH).

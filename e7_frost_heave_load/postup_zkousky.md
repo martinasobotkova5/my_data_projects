@@ -15,8 +15,8 @@ optické vlákno), datalogger **CR850**. Výpočty: `vypocty.md` §15–18.
 | 5 | **Hutnění na celě stojící na 3 podložkách** | ohyb dna, posun podložek | hutnit **mimo rám** na rovné tuhé desce (celé dno podepřené), pak celu přenést |
 | 6 | **Nestejné zhutnění po výšce** | rozdílné sedání, nepřesná Sr | 5 vrstev po 20 mm, každá na **stejnou hmotnost** (tabulka níže), povrch vrstvy zdrsnit; výšku kontrolovat |
 | 7 | **Kabely tahají za celu** (RG58 TDR je tuhý) | posun cely, šum LVDT a kamery | kabely přichytit do drážky podélníku (příchytky drážka 8), smyčka bez napětí mezi celou a rámem |
-| 8 | **Vážení cely každý cyklus** = vyndat ji z rámu | rozhodí čidla, nulu LVDT a kamery | celu během série **nevážit**; místo toho kontrolní miska („svědek“) se stejným pískem vedle cely, váží se každý cyklus; celu zvážit jen na začátku a na konci série + na konci vlhkost po vrstvách (sušení) |
-| 9 | **Vymrzání / sublimace z volného mezikruží**, námraza a rosa při začátku tání | zdánlivý zdvih desítky µm, pokles Sr u povrchu | RH vzduchu (SHT45), svědek, ventilátor; začátek tání vyhodnocovat opatrně; počet cyklů na jeden vzorek omezit (např. 5) |
+| 8 | **Vážení cely každý cyklus** = vyndat ji z rámu | rozhodí čidla, nulu LVDT a kamery | celu během série **nevážit**; zvážit ji jen na začátku a na konci série + na konci vlhkost po vrstvách (sušení); průběh úbytku ledu ukazuje pokles povrchu (laser) |
+| 9 | **Vymrzání / sublimace z volného mezikruží**, námraza a rosa při začátku tání | zdánlivý zdvih desítky µm, pokles Sr u povrchu | RH vzduchu (SHT45), ventilátor; začátek tání vyhodnocovat opatrně; počet cyklů na jeden vzorek omezit (např. 5) |
 | 10 | **Výměna vzorku**: tyč sedí v límci, kamera visí 6 mm nad límcem (−y), rameno terčíku je v úrovni límce (+y) | náraz do kamery = nová kalibrace | ✓ parkovací vidlice **P11** (tyč nahoru o 30 mm); celu vyjímat **směrem +y** (k laseru) po natočení ramene P03 stranou – ověřeno v 3D modelu (−y projde jen s vůlí 6 mm pod kamerou) |
 | 11 | **Změna zatížení** (přidání kotouče) | průhyb příčky T03 se změní o 0,7 µm/kg → jde do LVDT | zanedbatelné; zatížení měnit jen mezi sériemi, po změně vynulovat |
 | 12 | **CR850 má jen porty C1–C4** (C1–C3 bere TDR), LVDT na SE dává jen 2,7 µm | – | ✓ jen 3 teploty → bez multiplexoru; C4 spouští snímek; LVDT a ventilátor trvale napájené; LVDT **diferenciálně** (1,3 µm, průměr ≈ 0,5 µm), plán kanálů §18 |
@@ -42,7 +42,7 @@ Po stanovení skutečné hustoty zrn a cílové ρd hodnoty přepočítat.
 4. Poslední vrstvu srovnat stěrkou **P10** (otáčet na límci) – povrch přesně 34 mm pod hranou límce.
 5. Kolíky vytáhnout, tyčinkou ⌀3 předvrtat kanálky, zasunout CS645 (hlavu do portu), Pt100 (osa 3,5 mm nad horní
    tyčkou, hrot 30 mm od stěny) a vlákno. Zkontrolovat průběh TDR a odečet vlhkosti.
-6. Zvážit celu (začátek série), vzorek písku do kontrolní misky (svědek) a zvážit.
+6. Zvážit celu (začátek série).
 
 ## 3 · Vložení do rámu a start
 
@@ -119,17 +119,15 @@ v klíčových stavech – vždy na konci fáze, kdy je teplota ustálená:
 
 **Co se měří:** led z písku v suchém mrazivém vzduchu sublimuje (mění se přímo v páru). Volné mezikruží kolem pístu
 proto klesá, pod pístem („kámen“) je led zakrytý a zůstává → vzniká podstavec. Laser měří pokles volného povrchu
-(≈ 10 µm), LVDT pohyb pístu (≈ 1 µm), váha v mrazáku úbytek ledu z kontrolní misky, SHT45 vlhkost vzduchu.
+(≈ 10 µm), LVDT pohyb pístu (≈ 1 µm), SHT45 vlhkost vzduchu; úbytek ledu = vážení cely na začátku a na konci.
 Odhady rychlostí: `vypocty.md` §21.
 
-**Navíc oproti ostatním sériím:** tác se silikagelem (1–2 kg) do mrazáku, malá váha (tenzometr 1 kg + HX711 na RPi)
-s miskou, sítko 2 mm na drcený led, čidlo SHT45 na kabelu u vzorku (povinné).
+**Navíc oproti ostatním sériím:** tác se silikagelem (1–2 kg) do mrazáku, sítko 2 mm na drcený led, čidlo SHT45
+na kabelu u vzorku (povinné).
 
-### 9.1 Předzkouška (2–3 dny, bez cely)
-1. Na váhu v mrazáku dát skleněnou misku ⌀90 s čistým ledem (vrstva 10 mm) a vedle misku s pískem nasyceným ledem.
-2. Mrazák −10 °C, ventilátor zapnutý, silikagel v tácu; RPi zapisuje hmotnost a RH každých 10 min.
-3. Výsledek: rychlost sublimace čistého ledu [mm/den] a písku s ledem při dané RH → podle ní zvolit délku série
-   (cíl: pokles volného povrchu ≥ 0,5 mm).
+### 9.1 Délka série (bez předzkoušky)
+Předzkouška s miskami na váze se nedělá. Rychlost sublimace se odečte z prvních 3 dnů série: pokles volného
+povrchu (laser) za den při dané RH → podle něj zvolit délku série (cíl: pokles volného povrchu ≥ 0,5 mm).
 
 ### 9.2 Příprava vzorku
 - **A – pórový led (kontrola):** písek nasytit vodou (Sr ≈ 1), hutnit po vrstvách jako v kap. 2, zmrazit shora
@@ -142,15 +140,15 @@ s miskou, sítko 2 mm na drcený led, čidlo SHT45 na kabelu u vzorku (povinné)
 ### 9.3 Průběh
 1. Celu vložit do rámu (kap. 3), píst na střed: **bez kotoučů** (3,5 kPa – „samotný kámen“) nebo **s kotouči**
    (25 kPa) – dva vzorky / dvě série.
-2. Mrazák stále −10 °C, ventilátor, silikagel; laser + kamera a LVDT každých 10 min, váha a RH na RPi.
-3. Délka 14–30 dní podle předzkoušky. Volitelně **série B2:** stejné, ale každých 7 dní krátké tání (6 h při +5 °C)
+2. Mrazák stále −10 °C, ventilátor, silikagel; laser + kamera a LVDT každých 10 min, RH na RPi.
+3. Délka 14–30 dní podle prvních 3 dnů (9.1). Volitelně **série B2:** stejné, ale každých 7 dní krátké tání (6 h při +5 °C)
    jako letní oteplení na Ostrově Jamese Rosse – ukáže, jestli tání podstavec „rozmaže“.
 4. Konec: zvážit celu, vzorek rozříznout svisle (ve zmrzlém stavu) a změřit tloušťku suché vrstvy pod volným
    povrchem a pod pístem (posuvné měřítko, foto s měřítkem); ruční 3D model povrchu (kap. 8) před a po.
 
 ### 9.4 Vyhodnocení
 - výška podstavce h(t) = pokles volného mezikruží (laser) − pohyb pístu (LVDT);
-- rychlost sublimace z misky [mm/den] a z cely (úbytek hmotnosti) vs. RH;
+- rychlost sublimace z cely: pokles volného povrchu [mm/den] (laser) a celkový úbytek hmotnosti (vážení na začátku a konci) vs. RH;
 - tloušťka suché vrstvy L(t) – srovnat s √t (difuze, `vypocty.md` §21);
 - srovnání: pórový led × přebytek ledu, 3,5 × 25 kPa, bez tání × s krátkými táními;
 - vztah k terénu: rychlost ústupu ledu v Antarktidě (Victoria Valley ≈ 0,22 mm/rok – model; laboratoř je řádově
