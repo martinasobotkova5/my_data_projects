@@ -32,7 +32,7 @@ Stav 19. 11. 2026. Ceny jsou orientační, většinou bez DPH, a je potřeba je 
 | **Elektroizolanty Praha** – [elektroizolanty.cz](https://www.elektroizolanty.cz/) | tyč G10 ⌀20, nařezat 3× 20 mm | 1 | ≈ 300 Kč |
 | **HENNLICH s.r.o., Litoměřice** (igus) | kluzné pouzdro igus drylin RJ4JP-01-12 (zalisuje se do jádra oběhu) | 1 | ≈ 50–120 Kč |
 | **Prusa Research, Praha** | <ul><li>Prusament PETG-CF 2 kg (cela ⌀220 × 146 a díly)</li><li>Prusament PETG bílý 0,25–1 kg (terčík P03)</li></ul> | 2 + 1 | ≈ 3 000 Kč |
-| **RPishop.cz, České Budějovice** | <ul><li>Raspberry Pi **Zero 2 WH** (s osazenou lištou – nepájí se)</li><li>Camera Module 3 (standardní)</li><li>kabel kamery Mini–Standard 500 mm</li><li>microSD 32 GB</li><li>adaptér micro-USB → Ethernet</li><li>svorkovnicový HAT pro GPIO (šroubovací svorky)</li></ul> | sada | ≈ 2 000–2 500 Kč |
+| **RPishop.cz, České Budějovice** | <ul><li>Raspberry Pi **Zero 2 WH** (s osazenou lištou – nepájí se)</li><li>Camera Module 3 (standardní)</li><li>kabel kamery Mini–Standard 500 mm</li><li>microSD 32 GB (2 ks)</li><li>adaptér micro-USB → Ethernet</li><li>svorkovnicový HAT pro GPIO (šroubovací svorky)</li><li>napájecí kabel → micro-USB 3 m (od powerbanky)</li></ul> | sada | ≈ 2 000–2 500 Kč |
 | **LaskaKit / GM electronic** (CZ) | <ul><li>krokový motor 28BYJ-48 + deska ULN2003</li><li>optická vidlicová koncovka (modul pro 3D tiskárny)</li><li>modul relé 2 kanály (3,3 V)</li><li>modul výkonové LED 3 W s řídicím pinem</li><li>teploměr DS18B20 (sonda s kabelem + modul)</li><li>modul optočlenu (spouštění z CR850)</li><li>topné tělísko PTC 5 V ≈ 2–3 W s otvory</li><li>kabely Dupont</li><li>svorky WAGO 221</li><li>ventilátor 80 mm 12 V + zdroj</li></ul> | sada | ≈ 900–1 400 Kč |
 | obchody s ložisky (CZ, např. výrobce ZKL) | ložisko 6806-2RS (30 × 42 × 7) | 2 | ≈ 100–250 Kč |
 | **Fabory CZ / Hornbach** | <ul><li>sada šroubů M2, M3, M4, M5, M6 s maticemi a podložkami</li><li>závitový čep DIN 913 M6 × 45</li><li>tenká matice M6 DIN 439</li><li>pryžový pás 3 mm</li><li>deska XPS 20 mm, pěna 5 mm</li><li>stahovací pásky</li><li>PTFE sprej, silikonová vazelína</li><li>závitník M3</li></ul> | sada | ≈ 800–1 200 Kč |
@@ -61,6 +61,7 @@ Stav 19. 11. 2026. Ceny jsou orientační, většinou bez DPH, a je potřeba je 
 | Kovohutě Rokycany | `vyroba/narezy/E7_narezy_invar_Rokycany.pdf` (B01: závit M6 nahoře, důlek 90° dole), `poptavka_invar_Rokycany.md` |
 | Elektroizolanty Praha | `vyroba/narezy/E7_narezy_G10_Elektroizolanty.pdf`, `poptavka_G10_Elektroizolanty.md` |
 | Micro-Epsilon CZ | `poptavka_LVDT_MicroEpsilon.md`, `vykresy/E7-V08_se_zatezi.pdf` |
+| RPishop.cz | `poptavka_RPishop.md` |
 | grupol.cz | `vyroba/laser/*.dxf` |
 | vlastní tisk | `vyroba/tisk/*.stl` – cela `E7-V03u_cell_D220x146_bez_zatizeni`, P02–P07, P10u, P12–P16, P18–P21 (P01, P08–P10 jsou ve složce `_nepouzivat`) |
 
