@@ -22,7 +22,7 @@ Prosím o sdělení:
 2. zda podložky nařežete a zarovnáte na uvedenou přesnost. Pokud ne, stačí řez na 21 mm a čela si srovnáme sami;
 3. zda lze koupit jen krátký kus tyče (asi 100 mm), nebo jen celou tyč 1 000 mm. V tom případě ji vezmeme celou.
 
-Podložky budou v provozu při −20 až +20 °C, nesou jen malou zátěž (asi 50 N na všechny tři dohromady).
+Podložky budou v provozu při −20 až +20 °C, nesou jen malou zátěž (do 100 N na všechny tři dohromady: cela s pískem a závaží).
 
 Výkres je v příloze.
 
