@@ -82,6 +82,11 @@
 - Při hutnění se otvory zaslepí kolíky ⌀6, po hutnění se předvrtá tyčinkou ⌀6 a sonda se zasune po značku.
 - Okraje otvorů se tisknou se 6 perimetry, aby voda nevnikla do výplně.
 
+**Směr mrznutí (přepočteno pro současnou celu).** Válec obklopuje tištěná izolace: stěna 30 mm a dno 20 mm z řídké výplně (λ ≈ 0,06 W/mK).
+- 95 % vzorku zmrzne za ≈ 13,75 h.
+- Shora promrzá ≈ 83 % výšky. Spodních ≈ 17 mm promrzne zespodu, protože po snížení sestavy kvůli mrazáku má dno jen 20 mm.
+- Boční izolace navíc není potřeba. Mrznutí zespodu zachytí T5 a NTC ve dně.
+
 **Alternativa (nedoporučuji měnit):** tyčky TDR ve vodorovné rovině by měřily tenčí vrstvu (ostřejší čelo). Bod M je ale uspořádaný jako v terénu, a to je pro srovnání s CALM-S cennější.
 
 ## 4 · Co se při revizi našlo a opravilo

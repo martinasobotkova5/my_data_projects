@@ -845,6 +845,11 @@ _gb = (_orb_day * _pos + _set_day * 5) * _img / 1000
 print(f"**Data:** oběh {_pos} snímků (36 pozic × 2 ostření) každé 3 h + sada laser/LED/tma (5 snímků) každých 10 min "
       f"≈ {_gb:.1f} GB/den → série 10 cyklů (20 dní) ≈ {_gb * 20:.0f} GB. Karta 128 GB „high endurance“ a denní stažení "
       "do PC přes Ethernet (rsync).\n")
+print("**Směr mrznutí v současné cele** (sim_thaw.py, 20. 11. 2026; tištěná izolace: stěna 30 mm a dno 20 mm z řídké "
+      "výplně λ ≈ 0,06, podložky G10 na Al příčce): 95 % vzorku zmrzne za ≈ 13,75 h, celý za ≈ 14,25 h; poslední "
+      "nezmrzlé místo je na ose 17 mm nade dnem → **≈ 83 % výšky promrzá shora**, spodních ≈ 17 mm zespodu (dno je po "
+      "snížení sestavy jen 20 mm, dříve 40 mm → 13 mm). Stěna izoluje dostatečně, boční XPS není potřeba; dno ukáže "
+      "T5 (90 mm) a NTC ve dně. Roztátí ≈ 13,75 h po přepnutí na +10 °C → cyklus 24 h + 24 h stačí.\n")
 print("**Napájení:** powerbanka mimo mrazák je trvale na nabíječce USB-C PD (≥ 45 W) – slouží jako záložní zdroj; "
       f"ze sítě běží neomezeně, při výpadku ≈ {80 / sum(_P.values()):.0f} h. Spotřeba se dvěma polohami ostření "
       "se prakticky nemění (oběh trvá ≈ 3 min místo 1,5 min).\n")
