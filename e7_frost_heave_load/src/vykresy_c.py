@@ -511,13 +511,13 @@ def _sheet_sensors(pdf):
           ["C1–C3", "TDR100/200 → CS645", "SDM"],
           ["C4", "pulse → RPi GPIO (opto)", "triggers photo + laser"],
           ["12 V", "fan; LVDT own 24 V supply", "both always on"],
-          ["–", "(1) camera + RH sensor", "RPi 5 in the camera box"],
+          ["–", "(1) camera, T1–T5, RH", "RPi Zero 2 W (box P06, column +x)"],
           ["–", "optical fibre", "own reader"]]
     y = table(sh, 255, 274, ["terminal", "connected to", "measurement"], ch, [24, 56, 75], row_h=5.6)
     sh.text(255, y - 4,
             "Notes\n"
-            "• CR850 and TDR outside; RPi 5 inside the camera box\n"
-            "  (no CSI ribbon through the seal, its ≈ 5 W heat the box).\n"
+            "• CR850 and TDR outside; RPi Zero 2 W in box P06 on the\n"
+            "  right column, camera on the orbit arm (ribbon 500 mm).\n"
             "  Through the lid seal: Ethernet, 5 V, LVDT, sensor cables.\n"
             "• Scan 10 min, 1 min around 0 °C; the photo is triggered\n"
             "  by the CR850 (C4) → one time stamp for all data.\n"
@@ -732,7 +732,7 @@ def run(fn):
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
-        if f.endswith((".png", ".pdf")) and not f.startswith(("E7-V07", "E7-V08")):   # V07, V08 are drawn by vykres_u.py
+        if f.endswith((".png", ".pdf")) and not f.startswith(("E7-V07", "E7-V08", "E7-V09")):   # V07, V08 vykres_u.py, V09 vykres_cidla.py
             os.remove(os.path.join(OUT, f))
     with PdfPages(os.path.join(OUT, "E7_drawings.pdf")) as pdf:
         for fn in (_sheet_assembly, _sheet_measurement, _sheet_cell, _sheet_sensors, _sheet_layout, _sheet_parts):

@@ -1,6 +1,6 @@
 # E7 – dodavatelé a objednávka (jen české firmy, nic se nepájí ani nelepí)
 
-Stav 19. 11. 2026. Ceny jsou orientační, většinou bez DPH, a je potřeba je před objednáním potvrdit. Výpočty jsou ve `vypocty.md` (§24 mrazák, §25 kontrola zadání), postup v `postup_zkousky.md` (kap. 7 a 10). Výkresy: V05 (sestava v mrazáku), V07 (fáze 1), V08 (fáze 2), nářezové výkresy `vyroba/narezy/`.
+Stav 20. 11. 2026 (revize: `revize_E7.md`). Ceny jsou orientační, většinou bez DPH, a je potřeba je před objednáním potvrdit. Výpočty jsou ve `vypocty.md` (§24 mrazák, §25 kontrola zadání), postup v `postup_zkousky.md` (kap. 7 a 10). Výkresy: V05 (sestava v mrazáku), V07 (fáze 1), V08 (fáze 2), nářezové výkresy `vyroba/narezy/`.
 
 ## Kontrola zadání
 
@@ -32,11 +32,11 @@ Stav 19. 11. 2026. Ceny jsou orientační, většinou bez DPH, a je potřeba je 
 | **Elektroizolanty Praha** – [elektroizolanty.cz](https://www.elektroizolanty.cz/) | tyč G10 ⌀20, nařezat 3× 20 mm | 1 | ≈ 300 Kč |
 | **HENNLICH s.r.o., Litoměřice** (igus) | kluzné pouzdro igus drylin RJ4JP-01-12 (zalisuje se do jádra oběhu) | 1 | ≈ 50–120 Kč |
 | **Prusa Research, Praha** | <ul><li>Prusament PETG-CF 2 kg (cela ⌀220 × 146 a díly)</li><li>Prusament PETG bílý 0,25–1 kg (terčík P03)</li></ul> | 2 + 1 | ≈ 3 000 Kč |
-| **RPishop.cz, České Budějovice** | <ul><li>Raspberry Pi **Zero 2 WH** (s osazenou lištou – nepájí se)</li><li>Camera Module 3 (standardní)</li><li>kabel kamery Mini–Standard 500 mm</li><li>microSD 32 GB</li><li>adaptér micro-USB → Ethernet</li><li>svorkovnicový HAT pro GPIO (šroubovací svorky)</li></ul> | sada | ≈ 2 000–2 500 Kč |
-| **LaskaKit / GM electronic** (CZ) | <ul><li>krokový motor 28BYJ-48 + deska ULN2003</li><li>optická vidlicová koncovka (modul pro 3D tiskárny)</li><li>modul relé 2 kanály (3,3 V)</li><li>modul výkonové LED 3 W s řídicím pinem</li><li>teploměr DS18B20 (sonda s kabelem + modul)</li><li>modul optočlenu (spouštění z CR850)</li><li>topné tělísko PTC 5 V ≈ 2–3 W s otvory</li><li>kabely Dupont</li><li>svorky WAGO 221</li><li>ventilátor 80 mm 12 V + zdroj</li></ul> | sada | ≈ 900–1 400 Kč |
+| **RPishop.cz, České Budějovice** | <ul><li>Raspberry Pi **Zero 2 WH** (s osazenou lištou – nepájí se)</li><li>**Camera Module 3 Wide** (ostří od 5 cm; ne standardní – ten ostří až od 10 cm)</li><li>kabel kamery Mini–Standard 500 mm</li><li>microSD 128 GB „high endurance“ + 32 GB záložní (data ≈ 5 GB/den)</li><li>adaptér micro-USB → Ethernet</li><li>svorkovnicový HAT pro GPIO (šroubovací svorky)</li><li>napájecí kabel → micro-USB 3 m (od powerbanky)</li></ul> | sada | ≈ 2 000–2 500 Kč |
+| **LaskaKit / GM electronic** (CZ) | <ul><li>krokový motor 28BYJ-48 + deska ULN2003</li><li>optická vidlicová koncovka (modul pro 3D tiskárny)</li><li>modul relé 2 kanály (3,3 V)</li><li>modul výkonové LED 3 W s řídicím pinem</li><li>teploměr DS18B20 (sonda s kabelem + modul s rezistorem) – hlava kamery</li><li>**6× DS18B20 vodotěsná sonda, nerez ⌀6 × 50, kabel 1–2 m** (T1–T5 ve vzorku + 1 rezerva)</li><li>**5× kabelová vývodka M12×1,5 pro kabel 3–6,5 mm** (sondy T1–T5 v cele)</li><li>modul optočlenu (spouštění z CR850)</li><li>topné tělísko PTC 5 V ≈ 2–3 W s otvory</li><li>kabely Dupont</li><li>svorky WAGO 221 (≈ 20 ks, sběrnice 1-Wire pro 6 čidel)</li><li>termistor NTC 10 kΩ v nerezové jímce ⌀3 + odpor 10 kΩ 0,1 % (teplota dna, CR850 SE6 – odpor se zašroubuje do svorek loggeru)</li><li>ventilátor 80 mm 12 V + zdroj</li></ul> | sada | ≈ 900–1 400 Kč |
 | obchody s ložisky (CZ, např. výrobce ZKL) | ložisko 6806-2RS (30 × 42 × 7) | 2 | ≈ 100–250 Kč |
-| **Fabory CZ / Hornbach** | <ul><li>sada šroubů M2, M3, M4, M5, M6 s maticemi a podložkami</li><li>závitový čep DIN 913 M6 × 45</li><li>tenká matice M6 DIN 439</li><li>pryžový pás 3 mm</li><li>deska XPS 20 mm, pěna 5 mm</li><li>stahovací pásky</li><li>PTFE sprej, silikonová vazelína</li><li>závitník M3</li></ul> | sada | ≈ 800–1 200 Kč |
-| **Alza.cz** | <ul><li>powerbanka ≈ 100 Wh (26 800 mAh, USB-C PD, průchozí nabíjení) – stojí **mimo mrazák**</li><li>plochý kabel Ethernet 3 m</li></ul> | 1 | ≈ 1 500–2 500 Kč |
+| **Fabory CZ / Hornbach** | <ul><li>sada šroubů M2, M3, M4, M5, M6 s maticemi a podložkami</li><li>závitový čep DIN 913 M6 × 45</li><li>tenká matice M6 DIN 439</li><li>pryžový pás 3 mm</li><li>deska XPS 20 mm, pěna 5 mm</li><li>stahovací pásky</li><li>PTFE sprej, silikonová vazelína</li><li>závitník M3 a **M12×1,5** (závity pro vývodky v tištěné cele)</li><li>příchytky kabelů do drážky 8</li><li>volitelně: práškový pigment (oxid železa) na obarvení tenkých vrstev písku – značky vnitřní deformace</li><li>ocelové kolíky ⌀3 × 40 (4 ks) + tyčinka ⌀3 × 120, kolíky ⌀6 × 60 (5 ks) + tyčinka ⌀6 × 120 (otvory pro čidla při hutnění)</li><li>spároměr 0,05–1,00 mm, ocelové měřítko 150 mm (kalibrace kamery a laseru)</li></ul> | sada | ≈ 800–1 200 Kč |
+| **Alza.cz** | <ul><li>powerbanka ≈ 100 Wh (26 800 mAh, USB-C PD, průchozí nabíjení) – stojí **mimo mrazák**</li><li>plochý kabel Ethernet 3 m</li><li>**nabíječka USB-C PD ≥ 45 W** pro powerbanku (trvale v zásuvce → powerbanka slouží jako záložní zdroj, výdrž neomezená, při výpadku ≈ 2 dny)</li></ul> | 1 | ≈ 1 500–2 500 Kč |
 | **Ekotechnika, Černošice** (Campbell) | 4WPB100 (modul pro Pt100), 109-L (teplota vzduchu) | 1 + 1 | ≈ 5 300–8 500 Kč |
 | **laser 11 čar** | ⚠ bez českého dodavatele – viz otevřené body; dnes Picotronic DOE253-635-5-6(10x24) | 1 | ≈ 2 900 Kč |
 
@@ -48,8 +48,8 @@ Stav 19. 11. 2026. Ceny jsou orientační, většinou bez DPH, a je potřeba je 
 | **Micro-Epsilon Czech Republic, Bechyně** | LVDT ±10 mm s vestavěnou elektronikou (induSENSOR DTD-10G8, výstup 0–5 V do CR850, napájení 24 V) – poptat; svěrka P02 se upraví na jeho tělo | 1 | poptat |
 | **GM electronic** | zdroj Mean Well HDR-15-24 (napájení LVDT, šroubovací svorky) | 1 | ≈ 300 Kč |
 | **Fabory CZ / cyklo prodejna** | ocelová kulička 5/16" | 1 | ≈ 30 Kč |
-| **LaskaKit / GM electronic** | <ul><li>tenzometr 1 kg + HX711 (verze se svorkami)</li><li>čidlo vlhkosti SHT45 s konektorem (bez pájení)</li></ul> | 1 + 1 | ≈ 500–900 Kč |
-| **P-LAB / Verkon** (CZ, laboratorní potřeby) | skleněné misky ⌀90 (3 ks), síto 2 mm | sada | ≈ 400–800 Kč |
+| **LaskaKit / GM electronic** | čidlo vlhkosti SHT45 s konektorem (bez pájení) | 1 | ≈ 300–500 Kč |
+| **P-LAB / Verkon** (CZ, laboratorní potřeby) | síto 2 mm (drcený led) | 1 | ≈ 200–400 Kč |
 | **Hornbach** | silikagel s indikátorem 2 kg + tác | 1 | ≈ 400–700 Kč |
 
 ## Soubory pro firmy
@@ -57,14 +57,18 @@ Stav 19. 11. 2026. Ceny jsou orientační, většinou bez DPH, a je potřeba je 
 | firma | soubory |
 |---|---|
 | ENPRAG | `vyroba/narezy/E7_narezy_profily_ENPRAG.pdf`, `poptavka_ramu.md` |
-| Kovohutě Rokycany | `vyroba/narezy/E7_narezy_invar_Rokycany.pdf` (B01: závit M6 nahoře, důlek 90° dole) |
-| Elektroizolanty Praha | `vyroba/narezy/E7_narezy_G10_Elektroizolanty.pdf` |
+| HENNLICH (igus) | `poptavka_igus_HENNLICH.md` |
+| Kovohutě Rokycany | `vyroba/narezy/E7_narezy_invar_Rokycany.pdf` (B01: závit M6 nahoře, důlek 90° dole), `poptavka_invar_Rokycany.md` |
+| Elektroizolanty Praha | `vyroba/narezy/E7_narezy_G10_Elektroizolanty.pdf`, `poptavka_G10_Elektroizolanty.md` |
+| Micro-Epsilon CZ | `poptavka_LVDT_MicroEpsilon.md`, `vykresy/E7-V08_se_zatezi.pdf` |
+| RPishop.cz | `poptavka_RPishop.md` |
 | grupol.cz | `vyroba/laser/*.dxf` |
-| vlastní tisk | `vyroba/tisk/*.stl` – cela `E7-V03u_cell_D220x146_bez_zatizeni`, P02–P07, P10u, P12–P16, P18–P21 (P01, P08–P10 jsou ve složce `_nepouzivat`) |
+| vlastní tisk | `vyroba/tisk/*.stl` – cela `E7-V03u_cell_D220x146_bez_zatizeni`, P02–P07, P10u, P12–P16, P18–P22 (P22 = pěch ⌀95) (P01, P08–P10 jsou ve složce `_nepouzivat`) |
 
 ## Ověřit před objednáním
 
 - **Mrazák:** ve fázi 2 zbývá k víku ≈ 10 mm (s maticí na čepu). Před zavřením víka zkontrolovat.
 - **Laser:** rozhodnout o dodavateli (viz otevřené body).
 - **Regulátor mrazáku:** lze ho ovládat z počítače? Jinak řízení přes CR850 a relé SSR.
+- **Sondy DS18B20 ⌀6:** ověřit průměr pláště (⌀6,0) – otvory v cele jsou ⌀6,3; delší kabel (2 m) pohodlnější.
 - **Elektronické moduly** (topné tělísko PTC 5 V, LED modul s řídicím pinem, svorkovnicový HAT pro Zero): ověřit skladovou dostupnost u LaskaKit, GM electronic a RPishop.

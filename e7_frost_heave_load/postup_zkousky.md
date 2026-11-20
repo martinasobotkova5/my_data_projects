@@ -37,12 +37,18 @@ Po stanovení skutečné hustoty zrn a cílové ρd hodnoty přepočítat.
 
 1. Písek navlhčit na w = 11,6 % (+ ≈ 0,3 % na odpar při míchání), promíchat, uzavřít 24 h v sáčku.
 2. Celu postavit na rovnou tuhou desku (celé dno podepřené). Otvory pro tyčky TDR a Pt100 ve vnitřní stěně zaslepit
-   kolíky ⌀3 zevnitř portu.
-3. Hutnit 5 vrstev po 288 g pěchem ⌀95 na výšku 20 mm (značky na tyčce pěchu), povrch každé vrstvy zdrsnit.
-4. Poslední vrstvu srovnat stěrkou **P10** (otáčet na límci) – povrch přesně 34 mm pod hranou límce.
-5. Kolíky vytáhnout, tyčinkou ⌀3 předvrtat kanálky, zasunout CS645 (hlavu do portu), Pt100 (osa 3,5 mm nad horní
-   tyčkou, hrot 30 mm od stěny) a vlákno. Zkontrolovat průběh TDR a odečet vlhkosti.
-6. Zvážit celu (začátek série).
+   kolíky ⌀3 zevnitř portu, otvory sond T1–T5 kolíky ⌀6 zvenku (konec kolíku zarovnat s vnitřní stěnou).
+3. Hutnit 5 vrstev po 288 g pěchem **P22** ⌀95 na výšku 20 mm (značky na rukojeti), povrch každé vrstvy zdrsnit.
+   Volitelně (vnitřní deformace): na každou vrstvu nasypat ≈ 1 mm stejného písku obarveného pigmentem; na konci
+   série vzorek zmrazit, svisle rozříznout a změřit polohy barevných vrstev.
+4. Poslední vrstvu srovnat příčkou **P10u** (leží na čele cely, otáčet kolem osy) – povrch písku = čelo cely.
+5. Kolíky vytáhnout, tyčinkou ⌀3 předvrtat kanálky, zasunout CS645 (hlavu do portu, **2–3 mm od vnitřní stěny**),
+   Pt100 (osa 3,5 mm nad horní tyčkou, hrot 30 mm od stěny) a vlákno; kabel Pt100 a vlákno ohnout nahoru do kanálu
+   nad hlavou CS645 (port je o 4 mm vyšší). Zkontrolovat průběh TDR a odečet vlhkosti.
+6. **Teplotní profil T1–T5** (hloubky 10, 30, 50, 70, 90 mm; výkres V09): tyčinkou ⌀6 předvrtat 30 mm od vnitřní
+   stěny, sondu DS18B20 zasunout po značku (hrot 30 mm od stěny), vývodku M12 dotáhnout rukou + ¼ otáčky. Kabely
+   vést spolu s kabely bodu M na straně −y a příchytkami do drážky k boxu RPi. Nic se nelepí.
+7. Zvážit celu (začátek série).
 
 ## 3 · Vložení do rámu a start
 
@@ -178,7 +184,7 @@ Začíná se fází 1 bez zatížení. Rám, laser, podložky G10, bod M a **ob�
    4. Držák přišroubovat 2× M5 do spodních drážek na straně −x, pastorek do záběru s věncem s malou vůlí.
    5. Držák koncovky **P21** přišroubovat 2× M5 do spodních drážek na straně +x, na něj 2× M3 optickou vidlicovou koncovku tak, aby clona náboje procházela štěrbinou.
 5. **Hlava kamery:**
-   1. Camera Module 3 přišroubovat 4× M2 do hlavy, čočkou do okénka ⌀12.
+   1. Camera Module 3 **Wide** přišroubovat 4× M2 do hlavy, čočkou do okénka ⌀12.
    2. Modul výkonové LED přišroubovat M3 na výstupek hlavy vedle okénka.
    3. Na víčko P15 přišroubovat (M3) topné tělísko PTC 5 V a sponu s teploměrem DS18B20; zavřít víčkem.
 6. **Box P06 s Raspberry Pi Zero 2 WH** (svorkovnicový HAT, modul relé, deska ULN2003, modul optočlenu) na polici držáku P18 na vnější straně pravého sloupu (2× M5). Box obalit deskou XPS 20 mm (stažená páskami, nelepí se). Vše se propojuje kabely Dupont a svorkami – nic se nepájí.
@@ -207,7 +213,9 @@ Začíná se fází 1 bez zatížení. Rám, laser, podložky G10, bod M a **ob�
 | teploměr DS18B20 (modul / sonda s kabelem) | GPIO4 (1-Wire) | 3,3 V, GND; v config.txt `dtoverlay=w1-gpio` |
 | spouštění snímku z CR850 | C4 → modul optočlenu → GPIO22 | jako dosud |
 | spojení s počítačem | adaptér USB-Ethernet + plochý kabel přes těsnění víka | webová stránka `http://e7-kamera:8080` nebo SSH |
-| napájení | powerbanka ≈ 100 Wh mimo mrazák → USB kabel přes těsnění | ≥ 24 h bez sítě (§25) |
+| teplotní profil T1–T5 (5× DS18B20 ⌀6) | GPIO4 (1-Wire, stejná sběrnice jako hlava) | 3 vodiče každé sondy do WAGO u modulu DS18B20; adresy vypíše `python3 e7_kamera.py teploty` → doplnit `PROFILE` |
+| napájení | powerbanka ≈ 100 Wh mimo mrazák, **nabíječka USB-C PD trvale v zásuvce** → USB kabel přes těsnění | ze sítě neomezeně, při výpadku ≈ 2 dny (§25) |
+| data | karta 128 GB (≈ 5 GB/den) | denně stáhnout do PC: `rsync -a pi@e7-kamera:e7/ D:/E7/` (plánovač na PC) |
 
 **Řízení – vše z počítače:** motor, LED, laser, topení i kameru řídí **Raspberry Pi Zero 2 W** (podle výrobce funguje od −20 °C) programem `rpi/e7_kamera.py`. Na počítači stačí otevřít v prohlížeči jeho webovou stránku (tlačítka *Výchozí poloha, Sada laser + LED, Oběh, Test*, teplota hlavy, poslední snímek) nebo se připojit přes SSH; CR850 se obsluhuje jako dosud z LoggerNetu. Arduino není potřeba: poloha se počítá v krocích, takže na přesném časování nezáleží, a jeden program pak sám otočí, počká, rozsvítí a vyfotí. Příkazy: `test`, `home`, `laser`, `orbit [krok]`, `run` (trvalý běh: puls z CR850 = sada snímků ve výchozí poloze, oběh v nastavených časech). Cíl se vždy najíždí ve stejném směru (vůle převodovky), po pohybu se cívky vypnou, poslední poloha se ukládá do `~/e7/stav.json`.
 

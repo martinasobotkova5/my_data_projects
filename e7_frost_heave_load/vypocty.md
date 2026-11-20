@@ -372,24 +372,26 @@ Zorné pole objektivu 6 mm na HQ kameře (6,29 × 4,71 mm): ±27,6° × ±21,4°
 
 ## 23. Kamera obíhající kolem vzorku (16. 11. 2026)
 
-Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° × 41°, 4608 × 2592 px, autofokus) obíhá kolem osy vzorku – **jedna sestava pro obě fáze** (18. 11. 2026). Pod středem příčníku T04 je pevné jádro P12 s otvorem ve středu, v němž sedí kluzné pouzdro igus vodicí tyče zátěže (nahrazuje pouzdro P01); na jádře dvě ložiska 6806-2RS, na nich otočný náboj P13: dole rameno s hlavou kamery P14, nahoře věnec m1 z72. Krokový motor 28BYJ-48 s pastorkem z12 (převod 6 : 1) visí pod příčníkem na straně −x (držák P16). Ve fázi 2 tedy hlava obíhá kolem tyče se závažím. Rameno vede pod motorem (z 271–279) do 71 mm od osy, pak krátký sloupek k hlavě. Řídí RPi 5 (program rpi/e7_kamera.py), které zároveň fotí; box s RPi je na boční straně příčníku, plochý kabel 500 mm ve smyčce → rozsah ±180°.
+Hlava s **Raspberry Pi Camera Module 3 Wide** (deska 25 × 24 mm, zorné pole 102° × 67°, 4608 × 2592 px, autofokus, ostří od 5 cm; revize 20. 11. 2026 – standardní modul ostří až od 10 cm) obíhá kolem osy vzorku – **jedna sestava pro obě fáze** (18. 11. 2026). Pod středem příčníku T04 je pevné jádro P12 s otvorem ve středu, v němž sedí kluzné pouzdro igus vodicí tyče zátěže (nahrazuje pouzdro P01); na jádře dvě ložiska 6806-2RS, na nich otočný náboj P13: dole rameno s hlavou kamery P14, nahoře věnec m1 z72. Krokový motor 28BYJ-48 s pastorkem z12 (převod 6 : 1) visí pod příčníkem na straně −x (držák P16). Ve fázi 2 tedy hlava obíhá kolem tyče se závažím. Rameno vede pod motorem (z 271–279) do 71 mm od osy, pak krátký sloupek k hlavě. Řídí Raspberry Pi Zero 2 W (program rpi/e7_kamera.py), které zároveň fotí; box s RPi je na vnější straně pravého sloupu (+x), plochý kabel 500 mm ve smyčce → rozsah ±180°.
 
 | veličina | hodnota |
 |---|---|
 | okénko hlavy | 85 mm od osy, 90 mm nad pískem, sklon 39° od svislice |
-| potřebné zorné pole pro celý ⌀100 | ±22.7° × -17.7…+17.3° (kamera má ±33° × ±20.5° → rezerva ≥ 2.8°) |
-| vzdálenost okénko–střed, 1 pixel | 124 mm, ≈ 35 µm → výška laserem ≈ 8–12 µm |
+| potřebné zorné pole pro celý ⌀100 | ±22.7° × -17.7…+17.3° (kamera má ±51° × ±33.5° → rezerva ≥ 15.8°) |
+| vzdálenost okénko–střed, 1 pixel | 124 mm, ≈ 66 µm → výška laserem ≈ 11–23 µm (čára na 0,1–0,2 px) |
 | kroky na otáčku ramene | 2048 × 72/12 = 12288 → 0.029° na krok |
-| vůle převodovky 28BYJ-48 | ≈ 1–3° na hřídeli motoru → 0,2–0,5° na rameni; výchozí poloha vždy najetím ze stejné strany na Hall senzor (magnet v kole P17) → opakovatelnost ≈ 0,1° |
+| vůle převodovky 28BYJ-48 | ≈ 1–3° na hřídeli motoru → 0,2–0,5° na rameni; výchozí poloha vždy najetím ze stejné strany na optickou vidlicovou koncovku (clona na náboji, držák P21) → opakovatelnost ≈ 0,1° |
 | moment | motor ≈ 0,03 N·m × 6 ≈ 0,16 N·m; tření 2 ložisek 2RS při −10 °C + smyčka kabelu ≈ 0,02–0,04 N·m → rezerva ≈ 4× |
-| oběh pro 3D model | 36 snímků po 10° (−180 … +170°), ≈ 2 s na pozici → ≈ 1,5 min; při snímku svítí LED na hlavě |
-| teplo | motor 1,2 W jen při pohybu (pak vypnout cívky – převod drží); hlava: topný odpor 2× 47 Ω (≈ 1 W) drží Camera Module 3 nad 0 °C (provozní rozsah 0–50 °C) a okénko bez rosy |
+| oběh pro 3D model | 36 pozic po 10° (−180 … +170°) × 2 polohy ostření = 72 snímků, ≈ 2,5 s na pozici → ≈ 3 min; při snímku svítí LED na hlavě |
+| teplo | motor 1,2 W jen při pohybu (pak vypnout cívky – převod drží); hlava: topné tělísko PTC 5 V (≈ 2–3 W přes relé, termostat 5–8 °C podle DS18B20 na víčku) drží kameru nad 0 °C a okénko bez rosy – provozní teplotu modulu výrobce neuvádí, proto vyhřívaná hlava |
 
-**Laser se snímá jen ve výchozí poloze (−y)**, kam se hlava vrací přes Hall senzor. Protože se hlava mezi tím otáčí, výška se počítá vůči laserovým čarám na rovném čele cely (5 mm nad pískem) a na invarovém terčíku v témže snímku; malá nepřesnost návratu (≈ 0,1°) se tím vyruší.
+**Ostření a hloubka ostrosti (revize 20. 11. 2026).** Okénko je od písku 97–162 mm (šikmý pohled). Standardní Camera Module 3 ostří až od 100 mm a při zaostření na 121 mm je ostrý jen pás 118–124 mm (rozmazání ≤ 2 px) – nejbližší okraj nezaostří a většina povrchu je neostrá. Verze **Wide** (f = 2,75 mm, f/2,2) ostří od 50 mm; se **2 polohami ostření** na každé pozici oběhu (108 a 140 mm, rozmazání ≤ 3 px) pokryje 95–169 mm, tj. celý povrch. Za ostřejší obraz se platí hrubším pixelem (≈ 2× větší než u standardního modulu); přesnost výšky drží laser a vyhodnocení z 36 pohledů.
+
+**Laser se snímá jen ve výchozí poloze (−y)**, kam se hlava vrací přes optickou koncovku. Protože se hlava mezi tím otáčí, výška se počítá vůči laserovým čarám na rovném čele cely (v úrovni povrchu písku) a na invarovém terčíku v témže snímku; malá nepřesnost návratu (≈ 0,1°) se tím vyruší.
 
 **Fáze 2 (se zátěží):** vodicí tyč ⌀12 prochází středem jádra (pouzdro igus v P12), náboj s ramenem se točí kolem ní. Tyč a píst zakryjí z každé polohy jen malou část mezikruží, ostatní polohy oběhu ji vidí. Laser na invarový terčík na straně kamery ve fázi 2 nedosvítí (zakryje ho zátěžový sloupec) – posun rámu tam hlídá LVDT.
 
-**Řízení motoru:** RPi 5 (stejné, které fotí) přes desku ULN2003, půlkroky z Pythonu (gpiozero); poloha se jen počítá, takže na časování nezáleží – Arduino není potřeba. Po každém pohybu se cívky vypnou (převod 64 : 1 v motoru drží polohu, motor nehřeje). Výchozí poloha: Hall A3144 v desce P12 nad magnetem ve věnci; cíl se vždy najíždí ve stejném směru (vymezení vůle). Poslední poloha se ukládá, aby se po výpadku proudu kabel nenavíjel dál.
+**Řízení motoru:** Raspberry Pi Zero 2 W (stejné, které fotí) přes desku ULN2003, půlkroky z Pythonu (gpiozero); poloha se jen počítá, takže na časování nezáleží – Arduino není potřeba. Po každém pohybu se cívky vypnou (převod 64 : 1 v motoru drží polohu, motor nehřeje). Výchozí poloha: optická vidlicová koncovka (držák P21) a vodorovná clona na náboji; cíl se vždy najíždí ve stejném směru (vymezení vůle). Poslední poloha se ukládá, aby se po výpadku proudu kabel nenavíjel dál.
 
 ## 24. Mrazák 59 × 39 × 41 cm – nižší sestava (19. 11. 2026)
 
@@ -400,7 +402,7 @@ Vnitřní prostor mrazáku 590 × 390 × 410 mm (šířka × hloubka × výška)
 | fáze 1 – bez zatížení | 383 mm | 27 mm | 87 / 35 mm |
 | fáze 2 – se zátěží | 400 mm | 10 mm | 87 / 35 mm |
 
-**Co se změnilo:** pryžové podložky 3 mm místo stavitelných noh (−19 mm); dno cely a podložky G10 20 mm (dříve 40, −20 mm); příčník 130 mm nad pískem (dříve 140), oběh kamery se posunul s ním, okénko 90 mm nad pískem, sklon 39° (zorné pole s rezervou ≈ 3°, 1 px ≈ 35 µm); nosná deska Al 6 mm přišroubovaná M6 do čela vodicí tyče 5 mm nad příčníkem (bez stavěcího kroužku); kotouče ocel ⌀165 × 6 = 1,00 kg (dříve ⌀117,5 × 12); laser 105 mm od osy a 182 mm nad pískem (60°, posun čáry 0.58 × změna výšky) – mimo kotouče; LVDT vedle příčníku; box s RPi na vnější straně pravého sloupu.
+**Co se změnilo:** pryžové podložky 3 mm místo stavitelných noh (−19 mm); dno cely a podložky G10 20 mm (dříve 40, −20 mm); příčník 130 mm nad pískem (dříve 140), oběh kamery se posunul s ním, okénko 90 mm nad pískem, sklon 39° (Camera Module 3 Wide, celý povrch v zorném poli, 1 px ≈ 66 µm, 2 polohy ostření); nosná deska Al 6 mm přišroubovaná M6 do čela vodicí tyče 5 mm nad příčníkem (bez stavěcího kroužku); kotouče ocel ⌀165 × 6 = 1,00 kg (dříve ⌀117,5 × 12); laser 105 mm od osy a 182 mm nad pískem (60°, posun čáry 0.58 × změna výšky) – mimo kotouče; LVDT vedle příčníku; box s RPi na vnější straně pravého sloupu.
 
 **Zatížení:** pohyblivá část bez kotoučů (píst, tyč, nosná deska) ≈ 0.49 kg → ≈ 2.5 kPa pod pístem ⌀50; každý kotouč 1 kg přidá ≈ 5.0 kPa (4 kotouče + 0,5 kg ≈ 25 kPa).
 
@@ -448,4 +450,28 @@ Měřicí řetězec je tedy teplotně stabilní tam, kde to jde (Invar), a zbyte
 | **celkem** | **1.5 W → 36 Wh / den** |
 
 Powerbanka 26 800 mAh (≈ 99 Wh, výstup 5 V ≈ 80 Wh) **mimo mrazák** (v teple, trvale v zásuvce, s průchozím nabíjením) vydrží bez sítě ≈ 53 h. CR850 má vlastní napájení 12 V (záložní akumulátor podle vybavení E6); LVDT (fáze 2) a ventilátor jsou ze sítě – při výpadku proudu se zastaví i mrazák.
+
+## 26. Revize 20. 11. 2026 – čidla ve vzorku, kamera, data, napájení
+
+Cíl upřesněn: **deformace a posun při cyklech mrznutí a tání** (koncepce, `revize_E7.md`). Vzorek ⌀100 × 100, mrazák 590 × 390 × 410 mm (délka × šířka × výška).
+
+**Čidla ve vzorku** (hloubka pod povrchem písku; úhel v půdorysu, 270° = strana −y, kde je port bodu M):
+
+| čidlo | hloubka [mm] | úhel | poloha | připojení |
+|---|---|---|---|---|
+| TDR CS645 (bod M) | 36 / 45 / 54 (3 tyčky ⌀3.2 × 75, rozteč 8.9) | 270° | vodorovně ze strany, přes osu | TDR100/200 → CR850 C1–C3 |
+| Pt100 (bod M) | ≈ 33 (3,5 mm nad horní tyčkou) | 270° | hrot 30 mm od stěny | 4WPB100 → CR850 DIFF2 |
+| optické vlákno FBG (bod M) | ≈ 31 | 270°, bočně 4,7 mm | hrot 37,5 mm od stěny | vlastní vyhodnocovací jednotka |
+| T1 DS18B20 ⌀6 × 50 | 10 | 240° | hrot 30 mm od stěny (r 20) | RPi GPIO4 (1-Wire), vývodka M12 |
+| T2 DS18B20 ⌀6 × 50 | 30 | 330° | hrot 30 mm od stěny (r 20) | RPi GPIO4 (1-Wire), vývodka M12 |
+| T3 DS18B20 ⌀6 × 50 | 50 | 210° | hrot 30 mm od stěny (r 20) | RPi GPIO4 (1-Wire), vývodka M12 |
+| T4 DS18B20 ⌀6 × 50 | 70 | 330° | hrot 30 mm od stěny (r 20) | RPi GPIO4 (1-Wire), vývodka M12 |
+| T5 DS18B20 ⌀6 × 50 | 90 | 240° | hrot 30 mm od stěny (r 20) | RPi GPIO4 (1-Wire), vývodka M12 |
+| NTC 10 kΩ (dno) | pod pískem, v tištěném dně | 30° | radiální otvor ⌀4 | CR850 SE6 |
+
+Bod M (TDR + Pt100 + vlákno) zůstává jako v terénu (potvrzeno 9. 11. 2026), uprostřed výšky vzorku – čelo mrznutí jím projde v polovině cyklu. Teplotní profil T1–T5 po 20 mm dává polohu izotermy 0 °C (čelo) s přesností ≈ 2–5 mm (lineární interpolace). Sondy jsou ve šroubovici kolem strany −y (kabely vedou spolu s bodem M), od tyček TDR ≥ 14,6 mm (≈ 1,6 × rozteč tyček – mimo citlivou oblast), od stěny 30 mm. Na CR850 už nejsou volné vstupy (DIFF1 LVDT, DIFF2 Pt100, SE5 vzduch, SE6 dno, C1–C3 TDR, C4 spouštění), proto profil čte RPi po sběrnici 1-Wire – bez pájení, 3 vodiče každé sondy do svorek WAGO. Port bodu M je o 4 mm vyšší: kabel Pt100 a vlákno vedou nad hlavou CS645, ne skrz ni (dříve by nešly smontovat).
+
+**Data:** oběh 72 snímků (36 pozic × 2 ostření) každé 3 h + sada laser/LED/tma (5 snímků) každých 10 min ≈ 5.2 GB/den → série 10 cyklů (20 dní) ≈ 104 GB. Karta 128 GB „high endurance“ a denní stažení do PC přes Ethernet (rsync).
+
+**Napájení:** powerbanka mimo mrazák je trvale na nabíječce USB-C PD (≥ 45 W) – slouží jako záložní zdroj; ze sítě běží neomezeně, při výpadku ≈ 53 h. Spotřeba se dvěma polohami ostření se prakticky nemění (oběh trvá ≈ 3 min místo 1,5 min).
 

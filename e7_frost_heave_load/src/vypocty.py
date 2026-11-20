@@ -666,37 +666,59 @@ _do = math.dist(_W, (0, 0, bp.Z_S1))
 _hf, _vf = (f / 2 for f in p.CM3["fov"])
 _pxo = 2 * _do * math.tan(math.radians(_hf)) / p.CM3["px"][0] * 1000
 _steps = 2048 * _o.Z_RING / _o.Z_PIN
-print("Hlava s **Raspberry Pi Camera Module 3** (deska 25 × 24 mm, zorné pole 66° × 41°, 4608 × 2592 px, autofokus) "
+print("Hlava s **Raspberry Pi Camera Module 3 Wide** (deska 25 × 24 mm, zorné pole 102° × 67°, 4608 × 2592 px, "
+      "autofokus, ostří od 5 cm; revize 20. 11. 2026 – standardní modul ostří až od 10 cm) "
       "obíhá kolem osy vzorku – **jedna sestava pro obě fáze** (18. 11. 2026). Pod středem příčníku T04 je pevné jádro P12 "
       "s otvorem ve středu, v němž sedí kluzné pouzdro igus vodicí tyče zátěže (nahrazuje pouzdro P01); na jádře dvě "
       "ložiska 6806-2RS, na nich otočný náboj P13: dole rameno s hlavou kamery P14, nahoře věnec m1 z72. Krokový motor "
       "28BYJ-48 s pastorkem z12 (převod 6 : 1) visí pod příčníkem na straně −x (držák P16). Ve fázi 2 tedy hlava obíhá "
-      "kolem tyče se závažím. Rameno vede pod motorem (z 271–279) do 71 mm od osy, pak krátký sloupek k hlavě. Řídí RPi 5 "
-      "(program rpi/e7_kamera.py), které zároveň fotí; box s RPi je na boční straně příčníku, plochý kabel 500 mm ve "
-      "smyčce → rozsah ±180°.\n")
+      "kolem tyče se závažím. Rameno vede pod motorem (z 271–279) do 71 mm od osy, pak krátký sloupek k hlavě. Řídí Raspberry Pi "
+      "Zero 2 W (program rpi/e7_kamera.py), které zároveň fotí; box s RPi je na vnější straně pravého sloupu (+x), "
+      "plochý kabel 500 mm ve smyčce → rozsah ±180°.\n")
 print("| veličina | hodnota |\n|---|---|")
 print(f"| okénko hlavy | {p.C_ORB_R:g} mm od osy, {p.C_ORB_H:g} mm nad pískem, sklon {p.C_ORB_TILT:g}° od svislice |")
 print(f"| potřebné zorné pole pro celý ⌀100 | ±{max(map(abs, _xo)):.1f}° × {min(_yo):.1f}…+{max(_yo):.1f}° "
       f"(kamera má ±{_hf:g}° × ±{_vf:g}° → rezerva ≥ {min(_hf - max(map(abs, _xo)), _vf - max(_yo), _vf + min(_yo)):.1f}°) |")
-print(f"| vzdálenost okénko–střed, 1 pixel | {_do:.0f} mm, ≈ {_pxo:.0f} µm → výška laserem ≈ 8–12 µm |")
+print(f"| vzdálenost okénko–střed, 1 pixel | {_do:.0f} mm, ≈ {_pxo:.0f} µm → výška laserem ≈ {_pxo / 10 / 0.58:.0f}–{_pxo / 5 / 0.58:.0f} µm (čára na 0,1–0,2 px) |")
 print(f"| kroky na otáčku ramene | 2048 × {_o.Z_RING}/{_o.Z_PIN} = {_steps:.0f} → {360 / _steps:.3f}° na krok |")
 print("| vůle převodovky 28BYJ-48 | ≈ 1–3° na hřídeli motoru → 0,2–0,5° na rameni; výchozí poloha vždy najetím ze "
-      "stejné strany na Hall senzor (magnet v kole P17) → opakovatelnost ≈ 0,1° |")
+      "stejné strany na optickou vidlicovou koncovku (clona na náboji, držák P21) → opakovatelnost ≈ 0,1° |")
 print("| moment | motor ≈ 0,03 N·m × 6 ≈ 0,16 N·m; tření 2 ložisek 2RS při −10 °C + smyčka kabelu ≈ 0,02–0,04 N·m "
       "→ rezerva ≈ 4× |")
-print(f"| oběh pro 3D model | {360 / p.C_ORB_STEP_DEG:.0f} snímků po {p.C_ORB_STEP_DEG:g}° (−180 … +170°), ≈ 2 s na pozici → "
-      "≈ 1,5 min; při snímku svítí LED na hlavě |")
-print("| teplo | motor 1,2 W jen při pohybu (pak vypnout cívky – převod drží); hlava: topný odpor 2× 47 Ω (≈ 1 W) "
-      "drží Camera Module 3 nad 0 °C (provozní rozsah 0–50 °C) a okénko bez rosy |\n")
-print("**Laser se snímá jen ve výchozí poloze (−y)**, kam se hlava vrací přes Hall senzor. Protože se hlava mezi "
-      "tím otáčí, výška se počítá vůči laserovým čarám na rovném čele cely (5 mm nad pískem) a na invarovém terčíku "
+print(f"| oběh pro 3D model | {360 / p.C_ORB_STEP_DEG:.0f} pozic po {p.C_ORB_STEP_DEG:g}° (−180 … +170°) × 2 polohy ostření "
+      "= 72 snímků, ≈ 2,5 s na pozici → ≈ 3 min; při snímku svítí LED na hlavě |")
+print("| teplo | motor 1,2 W jen při pohybu (pak vypnout cívky – převod drží); hlava: topné tělísko PTC 5 V "
+      "(≈ 2–3 W přes relé, termostat 5–8 °C podle DS18B20 na víčku) drží kameru nad 0 °C a okénko bez rosy – provozní "
+      "teplotu modulu výrobce neuvádí, proto vyhřívaná hlava |\n")
+_ds = [math.dist(_W, (r_ * math.cos(k_ * math.pi / 36), r_ * math.sin(k_ * math.pi / 36), bp.Z_S1))
+       for r_ in range(0, 51, 5) for k_ in range(72)]
+_dmin, _dmax = min(_ds), max(_ds)
+
+
+def _dof(cam, s, coc_px):
+    c = coc_px * 1.4e-3
+    H = cam["f"] ** 2 / (cam["N"] * c) + cam["f"]
+    return H * s / (H + s), H * s / (H - s)
+
+
+print("**Ostření a hloubka ostrosti (revize 20. 11. 2026).** Okénko je od písku "
+      f"{_dmin:.0f}–{_dmax:.0f} mm (šikmý pohled). Standardní Camera Module 3 ostří až od "
+      f"{p.CM3_STD['focus_min']:.0f} mm a při zaostření na {2 * _dmin * _dmax / (_dmin + _dmax):.0f} mm je ostrý jen pás "
+      "{:.0f}–{:.0f} mm (rozmazání ≤ 2 px) – nejbližší okraj nezaostří a většina povrchu je neostrá. Verze **Wide** "
+      "(f = 2,75 mm, f/2,2) ostří od 50 mm; se **2 polohami ostření** na každé pozici oběhu ({:.0f} a {:.0f} mm, "
+      "rozmazání ≤ 3 px) pokryje {:.0f}–{:.0f} mm, tj. celý povrch. Za ostřejší obraz se platí hrubším pixelem "
+      "(≈ 2× větší než u standardního modulu); přesnost výšky drží laser a vyhodnocení z 36 pohledů.\n"
+      .format(*_dof(p.CM3_STD, 2 * _dmin * _dmax / (_dmin + _dmax), 2), p.C_FOCUS[0], p.C_FOCUS[1],
+              _dof(p.CM3, p.C_FOCUS[0], 3)[0], _dof(p.CM3, p.C_FOCUS[1], 3)[1]))
+print("**Laser se snímá jen ve výchozí poloze (−y)**, kam se hlava vrací přes optickou koncovku. Protože se hlava mezi "
+      "tím otáčí, výška se počítá vůči laserovým čarám na rovném čele cely (v úrovni povrchu písku) a na invarovém terčíku "
       "v témže snímku; malá nepřesnost návratu (≈ 0,1°) se tím vyruší.\n")
 print("**Fáze 2 (se zátěží):** vodicí tyč ⌀12 prochází středem jádra (pouzdro igus v P12), náboj s ramenem se točí "
       "kolem ní. Tyč a píst zakryjí z každé polohy jen malou část mezikruží, ostatní polohy oběhu ji vidí. Laser na "
       "invarový terčík na straně kamery ve fázi 2 nedosvítí (zakryje ho zátěžový sloupec) – posun rámu tam hlídá LVDT.\n")
-print("**Řízení motoru:** RPi 5 (stejné, které fotí) přes desku ULN2003, půlkroky z Pythonu (gpiozero); poloha se "
+print("**Řízení motoru:** Raspberry Pi Zero 2 W (stejné, které fotí) přes desku ULN2003, půlkroky z Pythonu (gpiozero); poloha se "
       "jen počítá, takže na časování nezáleží – Arduino není potřeba. Po každém pohybu se cívky vypnou (převod 64 : 1 "
-      "v motoru drží polohu, motor nehřeje). Výchozí poloha: Hall A3144 v desce P12 nad magnetem ve věnci; cíl se vždy "
+      "v motoru drží polohu, motor nehřeje). Výchozí poloha: optická vidlicová koncovka (držák P21) a vodorovná clona na náboji; cíl se vždy "
       "najíždí ve stejném směru (vymezení vůle). Poslední poloha se ukládá, aby se po výpadku proudu kabel nenavíjel dál.\n")
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -715,7 +737,7 @@ _mmin = (7.85e-6 * 0 + 2.7e-6 * math.pi / 4 * p.C_PISTON_D ** 2 * p.C_PISTON_H
 _A = math.pi / 4 * (p.C_PISTON_D / 1000) ** 2
 print(f"\n**Co se změnilo:** pryžové podložky 3 mm místo stavitelných noh (−19 mm); dno cely a podložky G10 {p.C_INS_T:g} mm "
       f"(dříve 40, −20 mm); příčník {p.C_BEAM_GAP:g} mm nad pískem (dříve 140), oběh kamery se posunul s ním, okénko "
-      f"{p.C_ORB_H:g} mm nad pískem, sklon {p.C_ORB_TILT:g}° (zorné pole s rezervou ≈ 3°, 1 px ≈ 35 µm); nosná deska Al "
+      f"{p.C_ORB_H:g} mm nad pískem, sklon {p.C_ORB_TILT:g}° (Camera Module 3 Wide, celý povrch v zorném poli, 1 px ≈ 66 µm, 2 polohy ostření); nosná deska Al "
       f"{p.C_CARRIER_T:g} mm přišroubovaná M6 do čela vodicí tyče {p.C_TRAVEL:g} mm nad příčníkem (bez stavěcího kroužku); "
       f"kotouče ocel ⌀{p.C_DISC_D:g} × {p.C_DISC_T:g} = 1,00 kg (dříve ⌀117,5 × 12); laser {p.C_LASER_Y:g} mm od osy a "
       f"{p.C_LASER_H:g} mm nad pískem ({p.C_LASER_ANG:g}°, posun čáry {1 / math.tan(math.radians(p.C_LASER_ANG)):.2f} × změna "
@@ -794,3 +816,35 @@ print(f"| **celkem** | **{sum(_P.values()):.1f} W → {_Wd:.0f} Wh / den** |\n")
 print(f"Powerbanka 26 800 mAh (≈ 99 Wh, výstup 5 V ≈ 80 Wh) **mimo mrazák** (v teple, trvale v zásuvce, s průchozím "
       f"nabíjením) vydrží bez sítě ≈ {80 / sum(_P.values()):.0f} h. CR850 má vlastní napájení 12 V (záložní akumulátor "
       "podle vybavení E6); LVDT (fáze 2) a ventilátor jsou ze sítě – při výpadku proudu se zastaví i mrazák.\n")
+
+# ---------------------------------------------------------------------------------------------------------------
+print("## 26. Revize 20. 11. 2026 – čidla ve vzorku, kamera, data, napájení\n")
+print("Cíl upřesněn: **deformace a posun při cyklech mrznutí a tání** (koncepce, `revize_E7.md`). Vzorek ⌀100 × 100, "
+      "mrazák 590 × 390 × 410 mm (délka × šířka × výška).\n")
+print("**Čidla ve vzorku** (hloubka pod povrchem písku; úhel v půdorysu, 270° = strana −y, kde je port bodu M):\n")
+print("| čidlo | hloubka [mm] | úhel | poloha | připojení |\n|---|---|---|---|---|")
+_t = p.TDR_CS645
+print(f"| TDR CS645 (bod M) | 36 / 45 / 54 (3 tyčky ⌀{_t['rod_d']:g} × {_t['rod_l']:g}, rozteč {_t['pitch']:g}) | 270° "
+      "| vodorovně ze strany, přes osu | TDR100/200 → CR850 C1–C3 |")
+print(f"| Pt100 (bod M) | ≈ 33 (3,5 mm nad horní tyčkou) | 270° | hrot {p.C_PT100_TIP:g} mm od stěny | 4WPB100 → CR850 DIFF2 |")
+print("| optické vlákno FBG (bod M) | ≈ 31 | 270°, bočně 4,7 mm | hrot 37,5 mm od stěny | vlastní vyhodnocovací jednotka |")
+for tag, d, a in p.C_TEMPS:
+    print(f"| {tag} DS18B20 ⌀{p.C_TEMP_D:g} × {p.C_TEMP_L:g} | {d:g} | {a:g}° | hrot {p.C_TEMP_TIP:g} mm od stěny (r 20) "
+          "| RPi GPIO4 (1-Wire), vývodka M12 |")
+print("| NTC 10 kΩ (dno) | pod pískem, v tištěném dně | 30° | radiální otvor ⌀4 | CR850 SE6 |\n")
+print("Bod M (TDR + Pt100 + vlákno) zůstává jako v terénu (potvrzeno 9. 11. 2026), uprostřed výšky vzorku – čelo mrznutí "
+      "jím projde v polovině cyklu. Teplotní profil T1–T5 po 20 mm dává polohu izotermy 0 °C (čelo) s přesností ≈ 2–5 mm "
+      "(lineární interpolace). Sondy jsou ve šroubovici kolem strany −y (kabely vedou spolu s bodem M), od tyček TDR "
+      "≥ 14,6 mm (≈ 1,6 × rozteč tyček – mimo citlivou oblast), od stěny 30 mm. Na CR850 už nejsou volné vstupy "
+      "(DIFF1 LVDT, DIFF2 Pt100, SE5 vzduch, SE6 dno, C1–C3 TDR, C4 spouštění), proto profil čte RPi po sběrnici 1-Wire – "
+      "bez pájení, 3 vodiče každé sondy do svorek WAGO. Port bodu M je o 4 mm vyšší: kabel Pt100 a vlákno vedou nad hlavou "
+      "CS645, ne skrz ni (dříve by nešly smontovat).\n")
+_img, _pos = 4.0, 36 * 2                              # MB na snímek (JPEG 12 Mpx), snímků na oběh
+_orb_day, _set_day = 8, 144
+_gb = (_orb_day * _pos + _set_day * 5) * _img / 1000
+print(f"**Data:** oběh {_pos} snímků (36 pozic × 2 ostření) každé 3 h + sada laser/LED/tma (5 snímků) každých 10 min "
+      f"≈ {_gb:.1f} GB/den → série 10 cyklů (20 dní) ≈ {_gb * 20:.0f} GB. Karta 128 GB „high endurance“ a denní stažení "
+      "do PC přes Ethernet (rsync).\n")
+print("**Napájení:** powerbanka mimo mrazák je trvale na nabíječce USB-C PD (≥ 45 W) – slouží jako záložní zdroj; "
+      f"ze sítě běží neomezeně, při výpadku ≈ {80 / sum(_P.values()):.0f} h. Spotřeba se dvěma polohami ostření "
+      "se prakticky nemění (oběh trvá ≈ 3 min místo 1,5 min).\n")

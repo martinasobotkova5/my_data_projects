@@ -4,6 +4,8 @@ Vzorek ⌀100 × 100 mm (vnitřní) v plné cele z PETG-CF vytištěné 3D tiske
 
 ## ★ Aktuální návrh: varianta C, měření deformace 1 + 2 (výkresy V01–V05)
 
+**Revize 20. 11. 2026 (`revize_E7.md` / `E7_revize.docx`):** cíl = deformace a posun při cyklech mrznutí a tání (koncepce přepracovaná, program F1–F4); kamera **Camera Module 3 Wide** (ostří od 5 cm) se 2 polohami ostření; teplotní profil T1–T5 (DS18B20 v hloubkách 10–90 mm) + bod M v hloubce 45 mm – výkres **V09**; port bodu M o 4 mm vyšší (kabely nad hlavou CS645); nová krabička elektroniky P06/P07 pro Zero 2 W; podložky G10 vyčnívají 0,5 mm; pěch P22; úplný seznam dílů jen `dodavatele_E7.md`; kontrola kolizí `src/kontrola_kolizi.py`.
+
 **Sublimace – hlavní nová série (16. 11. 2026):** led z písku sublimuje v suchém mrazivém vzduchu; volné mezikruží klesá, pod pístem („kámen“) led zůstává → podstavec, měřený laserem a LVDT na µm; pórový led × přebytek ledu, 3,5 × 25 kPa, volitelně krátká tání podle Ostrova Jamese Rosse (`koncepce_E7.md`, `postup_zkousky.md` kap. 9, `vypocty.md` §21, rešerše `reserse_novost.md`).
 
 **Zjednodušení pro měření (15. 11. 2026):** jediná pohyblivá část je zátěž; průběžně LVDT, pevná kamera s laserem, Pt100, TDR, teplota vzduchu a dna cely (CR850 bez multiplexoru); 3D model povrchu ručně fotogrammetrií v klíčových stavech (`postup_zkousky.md` kap. 8, `vypocty.md` §20).
@@ -193,7 +195,7 @@ Podle výkresu M. Vrány (23. 6. 2026) a náčrtu čidel:
 - uvnitř epoxid + PTFE sprej + silikonový tuk (tření o stěnu).
 - Otvory: PV1 kabel ⌀3,5 (z = 51, 90°), PB1 drážka ve dně + otvor ⌀3,5 (288°), Pt100 kabel ⌀4 (z ≈ 125, 0°), volitelně T1/T2 ⌀2.
 
-## 1d. Varianta C – kombinace A + B: mrtvá váha na částečném pístu, volný povrch, kamera (E7-V09, `vypocty.md` §14)
+## 1d. Varianta C – kombinace A + B: mrtvá váha na částečném pístu, volný povrch, kamera (dřívější výkres E7-V09 – nahrazen V01/V08; dnešní V09 = čidla ve vzorku, `vypocty.md` §14)
 
 Spojuje hliníkový rám z varianty A a kameru s laserem z varianty B. Zatížení je **gravitační a konstantní**: celá zátěž leží na písku a s povrchem se volně pohybuje nahoru (zdvih) i dolů (tání).
 

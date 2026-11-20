@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461363.7085763887
+2461365.5929050925
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461363.7085763887
+2461365.5929050925
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-16A
+16C
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{3C274E84-A382-44FF-A902-978A5396EA2C}
+{F4425248-6437-4837-9728-6A31E47799B0}
   9
 $VERSIONGUID
   2
-{3E98E2E5-7339-4D85-AB02-900005E14124}
+{BC11910A-9DFE-48EB-B514-A0115A42474A}
   9
 $EXTNAMES
 290
@@ -3237,7 +3237,7 @@ ACAD
   0
 APPID
   5
-167
+169
 330
 3
 100
@@ -3251,7 +3251,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-168
+16A
 330
 3
 100
@@ -10871,7 +10871,7 @@ AcDbText
  40
 6.0
   1
-držák boxu P06 s RPi 5 na boční straně T04 (−y): 2× M5 do boční drážky, police nad dráhou hlavy
+držák krabičky P06 s RPi Zero 2 WH na vnější straně pravého sloupu T01 (+x): 2× M5 do
   7
 OpenSans
  11
@@ -10903,7 +10903,7 @@ AcDbText
  40
 6.0
   1
-průměry otvorů v pohledu shora: 
+  drážek sloupu
   7
 OpenSans
  11
@@ -10935,7 +10935,7 @@ AcDbText
  40
 6.0
   1
-přesná geometrie: vyroba/tisk/E7-P18_rpi_bracket.step / .stl
+police pod krabičkou, dvě bočnice; krabička se na polici jen postaví a stáhne páskou
   7
 OpenSans
  11
@@ -10947,9 +10947,73 @@ OpenSans
 100
 AcDbText
   0
-LWPOLYLINE
+TEXT
   5
 15B
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+176.0
+ 20
+308.0
+ 30
+0.0
+ 40
+6.0
+  1
+průměry otvorů v pohledu shora:
+  7
+OpenSans
+ 11
+176.0
+ 21
+308.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+15C
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+176.0
+ 20
+298.0
+ 30
+0.0
+ 40
+6.0
+  1
+přesná geometrie: vyroba/tisk/E7-P18_rpi_bracket.step / .stl
+  7
+OpenSans
+ 11
+176.0
+ 21
+298.0
+ 31
+0.0
+100
+AcDbText
+  0
+LWPOLYLINE
+  5
+15D
 330
 17
 100
@@ -10981,55 +11045,55 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-15C
-330
-17
-100
-AcDbEntity
-  8
-FRAME
-100
-AcDbPolyline
- 90
-2
- 70
-0
- 10
-214.0
- 20
-32.0
- 10
-574.0
- 20
-32.0
-  0
-LWPOLYLINE
-  5
-15D
-330
-17
-100
-AcDbEntity
-  8
-FRAME
-100
-AcDbPolyline
- 90
-2
- 70
-0
- 10
-214.0
- 20
-48.0
- 10
-574.0
- 20
-48.0
-  0
-LWPOLYLINE
-  5
 15E
+330
+17
+100
+AcDbEntity
+  8
+FRAME
+100
+AcDbPolyline
+ 90
+2
+ 70
+0
+ 10
+214.0
+ 20
+32.0
+ 10
+574.0
+ 20
+32.0
+  0
+LWPOLYLINE
+  5
+15F
+330
+17
+100
+AcDbEntity
+  8
+FRAME
+100
+AcDbPolyline
+ 90
+2
+ 70
+0
+ 10
+214.0
+ 20
+48.0
+ 10
+574.0
+ 20
+48.0
+  0
+LWPOLYLINE
+  5
+160
 330
 17
 100
@@ -11053,7 +11117,7 @@ AcDbPolyline
   0
 TEXT
   5
-15F
+161
 330
 17
 100
@@ -11085,7 +11149,7 @@ AcDbText
   0
 TEXT
   5
-160
+162
 330
 17
 100
@@ -11119,7 +11183,7 @@ AcDbText
   0
 TEXT
   5
-161
+163
 330
 17
 100
@@ -11151,7 +11215,7 @@ AcDbText
   0
 TEXT
   5
-162
+164
 330
 17
 100
@@ -11185,7 +11249,7 @@ AcDbText
   0
 TEXT
   5
-163
+165
 330
 17
 100
@@ -11217,7 +11281,7 @@ AcDbText
   0
 TEXT
   5
-164
+166
 330
 17
 100
@@ -11251,7 +11315,7 @@ AcDbText
   0
 TEXT
   5
-165
+167
 330
 17
 100
@@ -11283,7 +11347,7 @@ AcDbText
   0
 TEXT
   5
-166
+168
 330
 17
 100
@@ -11301,7 +11365,7 @@ AcDbText
  40
 6.0
   1
-2026-11-18  návrh
+2026-11-20  návrh
   7
 OpenSans
  72
@@ -12405,7 +12469,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-169
+16B
   0
 DICTIONARYVAR
   5
@@ -12417,7 +12481,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-18T17:00:21.714089+00:00
+1.4.5 @ 2026-11-20T14:13:47.220103+00:00
   0
 VISUALSTYLE
   5
@@ -13121,7 +13185,7 @@ X-Ray
   0
 DICTIONARYVAR
   5
-169
+16B
 330
 2D
 100
@@ -13129,7 +13193,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-18T17:00:21.747854+00:00
+1.4.5 @ 2026-11-20T14:13:47.270670+00:00
   0
 ENDSEC
   0

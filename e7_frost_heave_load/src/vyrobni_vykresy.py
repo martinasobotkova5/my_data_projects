@@ -151,7 +151,11 @@ class Drawing:
             self.text(b, (x0 + w - 2 * S, yy), h=3.0, align=TextEntityAlignment.RIGHT)
 
     def notes(self, lines, x, y):
-        for k, s in enumerate(lines):
+        """Poznámky se zalomí na šířku, která zbývá do pravého okraje listu (≈ 1,75 mm na znak při výšce 3 mm)."""
+        import textwrap
+        n = max(30, int((self.W - x) / self.S / 2.3) - 2)
+        out = [w for s in lines for w in (textwrap.wrap(s, n, subsequent_indent="  ") or [""])]
+        for k, s in enumerate(out):
             self.text(s, (x, y - k * 5 * self.S), h=3.0)
 
     def hole_table(self, circles, ref, x, y, title="OTVORY (od výchozího bodu ◎)"):
@@ -315,37 +319,39 @@ PRINT_NOTES = {
                         "drážky 1,6 + šroub M3 (svěrky)", "výška ramene 12"],
     "E7-P03_target_arm": ["svěrka ⌀16,3 na sloupek; plocha 14 × 14 = terčík – tisknout z BÍLÉHO PETG (bez samolepky)",
                           "rameno obchází celu zvenku (ohyb), terčík na straně kamery – v zorném poli kamery i laseru",
-                          "fáze 1 (cela U): spodní plocha 3 mm nad čelem cely; fáze 2: horní plocha ve výšce límce"],
+                          "spodní plocha terčíku 3 mm nad čelem cely (čelo = povrch písku), stejně ve fázi 1 i 2"],
     "E7-P12_orbit_core": ["pevné jádro oběhu pod T04: 4× M5 do T-matic ve spodních drážkách (y ±20), otvor ⌀21,2 pod otvor ⌀14",
                           "do otvoru zalisovat igus RJ4JP-01-12 (vodicí tyč ⌀12 ve fázi 2); čep ⌀30 pro 2× 6806-2RS",
-                          "3× ⌀2,5 dole pro M3 (svěrný kroužek P12c); kapsa + kanálek pro Hall A3144 ve spodní ploše desky",
+                          "3× ⌀2,5 dole pro M3 (svěrný kroužek P12c); výchozí polohu hlásí optická koncovka na držáku P21 (ne Hall)",
                           "tisk deskou dolů, 100 % výplň čepu"],
     "E7-P12b_bearing_spacer": ["distanční kroužek mezi vnitřními kroužky ložisek 6806-2RS (⌀30,2 / ⌀34 × 6)"],
     "E7-P12c_clamp_ring": ["svěrný kroužek pod spodním vnitřním kroužkem, 3× M3 × 10 do jádra P12"],
     "E7-P13_orbit_hub": ["otočný náboj: 2 lůžka ⌀42 × 7 pro 6806-2RS (zalisovat), mezi nimi osazení ⌀38",
                          "nahoře věnec m1 z72 (šířka 6), dole příruba ⌀60 se 2× M3 pro patku ramene P14",
-                         "kapsa ⌀6,2 × 2,2 pro magnet výchozí polohy; tisk 0,15 mm, 100 % výplň"],
+                         "vodorovná clona 25–32 mm od osy pro optickou koncovku (výchozí poloha, bez magnetu); tisk 0,15 mm, 100 % výplň"],
     "E7-P14_camera_arm_head": ["patka ⌀60 / ⌀36 pod přírubou náboje (2× M3) – drží spodní ložisko",
-                               "rameno vede pod motorem (z 271–279) do r 71, krátký sloupek k hlavě 34 × 34 × 24, okénko ⌀12, sklon 36,5°",
-                               "4× M2 pro Camera Module 3; výstupek s M3 pro LED modul; topení PTC a DS18B20 na víčku P15 (šrouby M3)"],
+                               "rameno vede pod motorem (z 271–279) do r 71, krátký sloupek k hlavě 34 × 34 × 24, okénko ⌀12, sklon {:g}°".format(p.C_ORB_TILT),
+                               "4× M2 pro Camera Module 3 Wide; výstupek s M3 pro LED modul; topení PTC a DS18B20 na víčku P15 (šrouby M3)"],
     "E7-P15_head_lid": ["víčko hlavy, výřez 17 × 3 pro plochý kabel kamery a vodiče LED / topení"],
     "E7-P16_motor_bracket": ["držák 28BYJ-48 pod T04 (strana −x): 2× M5 do spodních drážek, uši motoru M4 (rozteč 35) zespodu",
                              "osa pastorku 42 mm od osy vzorku (záběr m1 z12 / z72)"],
-    "E7-P18_rpi_bracket": ["držák boxu P06 s RPi 5 na boční straně T04 (−y): 2× M5 do boční drážky, police nad dráhou hlavy"],
+    "E7-P18_rpi_bracket": ["držák krabičky P06 s RPi Zero 2 WH na vnější straně pravého sloupu T01 (+x): 2× M5 do drážek sloupu",
+                           "police pod krabičkou, dvě bočnice; krabička se na polici jen postaví a stáhne páskou"],
     "E7-P19_pinion_z12": ["pastorek m1 z12 na hřídel 28BYJ-48 (⌀5 s ploškami 3 mm), nalisovat; tisk 0,1 mm, 100 % výplň"],
-    "E7-P10u_screed_5mm": ["fáze 1 (cela U): příčka leží na rovném čele cely, břit sahá 5 mm pod čelo (= povrch písku)",
-                           "otáčet kolem osy, přebytek písku odebrat; břit tisknout naležato, 100 % výplň"],
-    "E7-V03u_cell_bez_zatizeni": ["fáze 1: cela ⌀220 × 171 v jednom kuse, rovné čelo 5 mm nad pískem (bez límce)",
-                                  "dutina ⌀100, dno pod pískem 26; port bodu M (TDR, vlákno, Pt100), NTC ⌀4 ve dně",
-                                  "3 kapsy ⌀20,4 hl. 40 pro podložky G10; tisk dnem na podložku, bez podpěr v dutině",
-                                  "stěna dutiny 6 perimetrů (vodotěsná, bez nátěru) + 10–15 % gyroid (izolace); dutina ⌀100 × 100"],
+    "E7-P10u_screed_5mm": ["rovná příčka bez břitu (čelo cely = povrch písku): položit na čelo a otáčet kolem osy",
+                           "přebytek písku odebrat; tisknout naležato, 100 % výplň"],
+    "E7-V03u_cell_bez_zatizeni": [f"cela pro obě fáze, ⌀220 × {p.C_INS_T + p.U_TOP:g} v jednom kuse; rovné čelo = povrch písku; dutina přesně ⌀100 × 100",
+                                  "port bodu M (TDR CS645, vlákno, Pt100) o 4 mm vyšší nad hlavou CS645 pro kabely; NTC ⌀4 ve dně",
+                                  "T1–T5: otvory ⌀6,3 v hloubkách 10/30/50/70/90 mm (240/330/210/330/240°), zvenku předvrt ⌀10,5 hl. 15 → závitník M12×1,5 pro vývodku",
+                                  f"3 kapsy ⌀20,4 hl. {p.C_INS_T - p.C_PAD_OUT:g} pro podložky G10 ⌀20 × {p.C_INS_T:g} (vyčnívají {p.C_PAD_OUT:g} mm); tisk dnem na podložku, bez podpěr v dutině",
+                                  "stěna dutiny a okraje všech otvorů 6 perimetrů (vodotěsné – voda nevnikne do výplně) + 10–15 % gyroid (izolace)"],
     "E7-P04_post_foot": ["otvor ⌀16,3 se dnem 3 mm (přemostí drážku) – sloupek stojí na dně patky",
                          "2× ⌀5,5 (M5×20) do T-matic v horní drážce podélníku T02, zahloubení ⌀10 × 6; svěrka M3"],
     "E7-P05_laser_holder": [f"otvor ⌀10,2 pod úhlem {p.C_LASER_ANG:g}° pro laser ⌀10; červík M3",
                             "2× ⌀5,5 (M5×12) do T-matic v boční drážce příčníku T04 (+y)"],
-    "E7-P06_camera_box": ["okénko ⌀34 + drážka 51 × 51 × 2,5 pro sklo 50 × 50 × 2",
-                          "4× ⌀2,6 (M2,5) pro HQ kameru (30 × 30); vývodka PG7 ⌀12,4", "úchyt 2× ⌀4,4 (M4)"],
-    "E7-P07_camera_box_lid": ["sloupky pro RPi 5 (58 × 49, M2,5)", "víko zapadá 4 mm do boxu"],
+    "E7-P06_camera_box": ["krabička elektroniky (dříve box kamery): dno s drážkami 3,4 po 8 mm – relé, ULN2003, optočlen,",
+                          "modul DS18B20 a WAGO přišroubovat M3 + matice; otvor 50 × 15 pro kabely (ucpat pěnou)", "úchyt 2× ⌀4,4 (M4)"],
+    "E7-P07_camera_box_lid": ["4 sloupky M2,5 pro Raspberry Pi Zero 2 WH (58 × 23), HAT nasadit na lištu", "víko zapadá 4 mm do krabičky"],
     "E7-P09_centering_cap": ["nasadit na límec plné cely (⌀106,6 × 6), tyč ⌀12 projde otvorem ⌀12,4 → cela souosá s vedením",
                              "podkova: po vystředění vysunout do strany; tisk 100 % výplň, rovinnost dosedací plochy"],
     "E7-P10_screed": ["příčka leží na límci, břit sahá přesně 34 mm pod jeho hranu (= povrch písku 100 mm)",
@@ -408,7 +414,7 @@ def main():
         cu = [f for f in os.listdir(os.path.join(HERE, "..", "vyroba", "tisk")) if f.startswith("E7-V03u") and f.endswith(".step")][0]
         made.append(sheet_print("E7-V03u_cell_bez_zatizeni",
                                 lambda: cq.importers.importStep(os.path.join(HERE, "..", "vyroba", "tisk", cu)), 1, pdf,
-                                mat="PETG-CF, 0,2 mm, 3 perimetry, gyroid 10–15 %"))
+                                mat="PETG-CF, 0,2 mm, 6 perimetrů, gyroid 10–15 %"))
     print(len(made), "sheets →", OUT)
 
 

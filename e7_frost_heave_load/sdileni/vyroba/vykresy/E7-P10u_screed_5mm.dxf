@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461363.7083680555
+2461365.592604167
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461363.7083680555
+2461365.592604167
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-131
+134
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{336CA59D-D655-4E49-97EB-06494F28CCB6}
+{684A950A-8347-4EA7-B991-981A36A87DBE}
   9
 $VERSIONGUID
   2
-{CF50839E-FAF7-4F9B-9AF2-CBFB06D38F2E}
+{57FB34DF-BEA3-4C06-B4AD-E7EE9468609C}
   9
 $EXTNAMES
 290
@@ -3237,7 +3237,7 @@ ACAD
   0
 APPID
   5
-12E
+131
 330
 3
 100
@@ -3251,7 +3251,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-12F
+132
 330
 3
 100
@@ -8663,7 +8663,7 @@ AcDbText
  40
 3.0
   1
-fáze 1 (cela U): příčka leží na rovném čele cely, břit sahá 5 mm pod čelo (= povrch písku)
+rovná příčka bez břitu (čelo cely = povrch písku):
   7
 OpenSans
  11
@@ -8695,7 +8695,7 @@ AcDbText
  40
 3.0
   1
-otáčet kolem osy, přebytek písku odebrat; břit tisknout naležato, 100 % výplň
+  položit na čelo a otáčet kolem osy
   7
 OpenSans
  11
@@ -8727,7 +8727,7 @@ AcDbText
  40
 3.0
   1
-průměry otvorů v pohledu shora: 
+přebytek písku odebrat; tisknout naležato, 100 %
   7
 OpenSans
  11
@@ -8759,7 +8759,7 @@ AcDbText
  40
 3.0
   1
-přesná geometrie: vyroba/tisk/E7-P10u_screed_5mm.step / .stl
+  výplň
   7
 OpenSans
  11
@@ -8771,9 +8771,105 @@ OpenSans
 100
 AcDbText
   0
-LWPOLYLINE
+TEXT
   5
 122
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+174.0
+ 20
+116.0
+ 30
+0.0
+ 40
+3.0
+  1
+průměry otvorů v pohledu shora:
+  7
+OpenSans
+ 11
+174.0
+ 21
+116.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+123
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+174.0
+ 20
+111.0
+ 30
+0.0
+ 40
+3.0
+  1
+přesná geometrie:
+  7
+OpenSans
+ 11
+174.0
+ 21
+111.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+124
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+174.0
+ 20
+106.0
+ 30
+0.0
+ 40
+3.0
+  1
+  vyroba/tisk/E7-P10u_screed_5mm.step / .stl
+  7
+OpenSans
+ 11
+174.0
+ 21
+106.0
+ 31
+0.0
+100
+AcDbText
+  0
+LWPOLYLINE
+  5
+125
 330
 17
 100
@@ -8805,7 +8901,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-123
+126
 330
 17
 100
@@ -8829,7 +8925,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-124
+127
 330
 17
 100
@@ -8853,7 +8949,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-125
+128
 330
 17
 100
@@ -8877,7 +8973,7 @@ AcDbPolyline
   0
 TEXT
   5
-126
+129
 330
 17
 100
@@ -8909,7 +9005,7 @@ AcDbText
   0
 TEXT
   5
-127
+12A
 330
 17
 100
@@ -8943,7 +9039,7 @@ AcDbText
   0
 TEXT
   5
-128
+12B
 330
 17
 100
@@ -8975,7 +9071,7 @@ AcDbText
   0
 TEXT
   5
-129
+12C
 330
 17
 100
@@ -9009,7 +9105,7 @@ AcDbText
   0
 TEXT
   5
-12A
+12D
 330
 17
 100
@@ -9041,7 +9137,7 @@ AcDbText
   0
 TEXT
   5
-12B
+12E
 330
 17
 100
@@ -9075,7 +9171,7 @@ AcDbText
   0
 TEXT
   5
-12C
+12F
 330
 17
 100
@@ -9107,7 +9203,7 @@ AcDbText
   0
 TEXT
   5
-12D
+130
 330
 17
 100
@@ -9125,7 +9221,7 @@ AcDbText
  40
 3.0
   1
-2026-11-18  návrh
+2026-11-20  návrh
   7
 OpenSans
  72
@@ -10229,7 +10325,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-130
+133
   0
 DICTIONARYVAR
   5
@@ -10241,7 +10337,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-18T17:00:03.689496+00:00
+1.4.5 @ 2026-11-20T14:13:21.304735+00:00
   0
 VISUALSTYLE
   5
@@ -10945,7 +11041,7 @@ X-Ray
   0
 DICTIONARYVAR
   5
-130
+133
 330
 2D
 100
@@ -10953,7 +11049,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-18T17:00:03.704470+00:00
+1.4.5 @ 2026-11-20T14:13:21.323672+00:00
   0
 ENDSEC
   0

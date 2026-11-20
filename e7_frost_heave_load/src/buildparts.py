@@ -251,18 +251,17 @@ def laser_holder():
 
 
 def camera_box():
-    """Box for RPi HQ camera + 6 mm lens + RPi 5 (90 × 100 × 70, walls 3), lens window ⌀34 with a recess for
-    a 50 × 50 × 2 glass; local frame: lens axis = −z, box centred at the origin (placed tilted by model3d)."""
+    """P06 – krabička elektroniky (20. 11. 2026, dříve box HQ kamery): RPi Zero 2 WH se svorkovnicovým HATem na víku P07,
+    na dně relé 2 kanály, ULN2003, optočlen, modul DS18B20 a svorky WAGO. 90 × 100 × 70, stěny 3; dno s drážkami 3,4 mm
+    po 8 mm → moduly se přišroubují M3 + matice v libovolné rozteči (bez lepení); otvor 50 × 15 ve stěně pro kabely
+    (ucpat pěnou). Lokální soustava: dno = −z, střed v počátku (natočení dělá model)."""
     W, L, H = 90.0, 100.0, 70.0
     s = cq.Workplane("XY").box(W, L, H).edges("|Z").fillet(5)
     s = s.cut(cq.Workplane("XY").box(W - 6, L - 6, H - 6))
-    s = s.cut(cq.Workplane("XY").workplane(offset=-H / 2 - 1).circle(17).extrude(5))
-    s = s.cut(cq.Workplane("XY").workplane(offset=-H / 2 - 1).rect(51, 51).extrude(2.5))
-    for sx in (-1, 1):
-        for sy in (-1, 1):
-            s = s.cut(cq.Workplane("XY").workplane(offset=-H / 2).center(sx * 15, sy * 15).circle(1.3).extrude(5))
-    s = s.cut(cq.Workplane("XY").workplane(offset=H / 2 - 4).rect(W - 6, L - 6).extrude(5))   # open top (lid)
-    s = s.cut(cq.Workplane("YZ").workplane(offset=W / 2 - 4).center(0, 10).circle(6.2).extrude(5))  # cable gland PG7
+    for k in range(-4, 5):                                                    # montážní drážky ve dně
+        s = s.cut(cq.Workplane("XY").workplane(offset=-H / 2 - 1).center(k * 8, 0).slot2D(L - 24, 3.4, 90).extrude(5))
+    s = s.cut(cq.Workplane("XY").workplane(offset=H / 2 - 4).rect(W - 6, L - 6).extrude(5))   # otevřený vrch (víko)
+    s = s.cut(cq.Workplane("YZ").workplane(offset=W / 2 - 4).center(0, -H / 2 + 14).rect(50, 15).extrude(5))  # kabely
     tab = cq.Workplane("XY").workplane(offset=H / 2 - 4).center(0, L / 2 + 8).rect(40, 16).extrude(4)
     for dx in (-12, 12):
         tab = tab.cut(cq.Workplane("XY").workplane(offset=H / 2 - 4).center(dx, L / 2 + 8).circle(2.2).extrude(4))
@@ -270,11 +269,12 @@ def camera_box():
 
 
 def camera_box_lid():
+    """P07 – víko krabičky: 4 sloupky M2,5 pro Raspberry Pi Zero 2 WH (rozteč 58 × 23), HAT nasazený na liště."""
     W, L = 90.0, 100.0
     s = cq.Workplane("XY").rect(W, L).extrude(3).edges("|Z").fillet(5)
     s = s.union(cq.Workplane("XY").workplane(offset=-4).rect(W - 6.4, L - 6.4).extrude(4)
                 .cut(cq.Workplane("XY").workplane(offset=-4).rect(W - 10, L - 10).extrude(4)))
-    for x, y in ((-29, -24.5), (29, -24.5), (-29, 24.5), (29, 24.5)):          # RPi 5 holes 58 × 49
+    for x, y in ((-29, -11.5), (29, -11.5), (-29, 11.5), (29, 11.5)):          # RPi Zero 2 W: díry 58 × 23
         s = s.union(cq.Workplane("XY").workplane(offset=-8).center(x, y).circle(3).extrude(8)
                     .cut(cq.Workplane("XY").workplane(offset=-8).center(x, y).circle(1.2).extrude(8)))
     return s
@@ -376,7 +376,13 @@ PRINT = [("E7-P01_bearing_housing", housing, 1), ("E7-P02_lvdt_arm", lvdt_arm, 1
          ("E7-P09_centering_cap", centering_cap, 1), ("E7-P10_screed", screed, 1), ("E7-P11_parking_fork", parking_fork, 1)]
 # fáze 1 – varianta U bez zatížení: tisknou se jen tyto díly (+ cela E7-V03u z model3d)
 PRINT_U = ["E7-P05_laser_holder", "E7-P06_camera_box", "E7-P07_camera_box_lid", "E7-P08_camera_hanger"]
-PRINT_U_EXTRA = [("E7-P10u_screed_5mm", screed_u, 1), ("E7-P20_pad_locator", pad_locator, 1)]
+def tamper():
+    """P22 – pěch ⌀95 × 12 s rukojetí ⌀22 × 80 (hutnění po vrstvách 20 mm, 20. 11. 2026)."""
+    return (cq.Workplane("XY").circle(47.5).extrude(12)
+            .union(cq.Workplane("XY").workplane(offset=12).circle(11).extrude(80)))
+
+
+PRINT_U_EXTRA = [("E7-P10u_screed_5mm", screed_u, 1), ("E7-P20_pad_locator", pad_locator, 1), ("E7-P22_tamper_D95", tamper, 1)]
 
 
 def export_all():

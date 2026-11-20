@@ -192,7 +192,10 @@ ASSEMBLY = [
 
 
 def main():
-    L = ["# E7 – varianta C rev. B3: objednávka a sestavení", "",
+    L = ["# E7 – varianta C rev. B3: objednávka a sestavení (ARCHIV)", "",
+         "> **⚠ Neplatí pro nákup (revize 20. 11. 2026).** Úplný a platný seznam dílů podle českých dodavatelů je "
+         "`dodavatele_E7.md` / `E7_dodavatele.docx`, kontrola sestavy v `revize_E7.md`. Tady zůstávají starší položky "
+         "(HQ kamera, RPi 5, spínání laseru tranzistorem – vyžadovalo by pájení) jen pro dohledání.", "",
          "Vše, co je potřeba koupit, nechat vyrobit podle rozměrů a sestavit. Sestava je navržená tak, aby **nebylo "
          "potřeba soustružit ani frézovat**: celý rám je z T-profilů drážka 8, které se jen řežou na délku (jediný "
          "otvor ⌀14 v horním příčníku), kotouče se řežou laserem podle DXF, zbytek se tiskne. Výkresy: V01–V06 (`vykresy/E7_drawings.pdf`), výrobní soubory: `vyroba/laser` (DXF) a `vyroba/tisk` (STL/STEP).",

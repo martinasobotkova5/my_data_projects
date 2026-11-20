@@ -37,7 +37,7 @@ TXT = {
     "u": dict(no="E7-V07", fn="E7-V07_bez_zatizeni",
               title="Fáze 1 – sestava BEZ ZATÍŽENÍ (varianta U): kamera OBÍHÁ kolem vzorku, laser vidí celý povrch ⌀100",
               sub="Stejný rám, laser, oběh kamery a podložky G10 jako ve fázi 2 (V08). Bez pístu, závaží a LVDT. Dutina cely "
-                  "⌀100 × 100. Hlava s Camera Module 3 obíhá ±180°; ložiska, věnec a motor pod příčníkem. 1 : 3.",
+                  "⌀100 × 100. Hlava s Camera Module 3 Wide obíhá ±180°; ložiska, věnec a motor pod příčníkem. 1 : 3.",
               tb="Fáze 1 – sestava bez zatížení (varianta U)", rim=p.C_U_RIM, rimtxt="čelo cely =\npovrch písku"),
     "c": dict(no="E7-V08", fn="E7-V08_se_zatezi",
               title="Fáze 2 – sestava SE ZÁTĚŽÍ (varianta C): kamera obíhá kolem tyče se závažím, LVDT na pístu",
@@ -100,9 +100,9 @@ def main(var="u"):
     for y in (-59.5, 0, 59.5):
         (x0, y0), (x1, y1) = P(ly, lz), P(y, z_sand)
         ax.plot([x0, x1], [y0, y1], c=LAS, lw=0.6)
-    ax.text(16, oy1 + (wz + 95) * S, f"hlava s Camera Module 3 (výchozí poloha)\n{p.C_ORB_R:g} mm od osy, {p.C_ORB_H:g} nad pískem,\n"
+    ax.text(16, oy1 + (wz + 95) * S, f"hlava s Camera Module 3 Wide (výchozí poloha)\n{p.C_ORB_R:g} mm od osy, {p.C_ORB_H:g} nad pískem,\n"
             f"sklon {p.C_ORB_TILT:g}° od svislice, bílá LED;\nobíhá ±180° kolem osy vzorku", color=CAM, fontsize=6.5, ha="left")
-    ax.text(16, oy1 + (wz + 150) * S, "oběh: věnec z72, 2× 6806 a motor 28BYJ-48\npod příčníkem; RPi 5 v boxu P06 na pravém\nsloupu řídí motor i kameru", fontsize=6,
+    ax.text(16, oy1 + (wz + 150) * S, "oběh: věnec z72, 2× 6806 a motor 28BYJ-48\npod příčníkem; RPi Zero 2 W v krabičce P06 na\npravém sloupu řídí motor, kameru i T1–T5", fontsize=6,
             color=MUTE, ha="left")
     ax.text(*P(ly + 25, lz + 22), f"laser 11 čar, 635 nm\ny {ly:g}, {p.C_LASER_H:g} nad pískem,\n{p.C_LASER_ANG:g}° od vodorovné",
             color=LAS, fontsize=6.5)
@@ -142,8 +142,9 @@ def main(var="u"):
             (f"podložky G10 ⌀20 × {p.C_INS_T:g}, dorazy cely P20, pryžový pás", "3 + 2", "Elektroizol. / tisk"),
             ("sloupek Invar ⌀16 × 330 + patka P04, terčík P03", "1", "Rokycany / tisk"),
             ("laser Picotronic DOE253, držák P05", "1", "Picotronic / tisk"),
-            ("RPi Zero 2 WH + Camera Module 3 + svork. HAT", "1", "RPishop.cz"),
-            ("box P06 + P07 na držáku P18, izolace XPS", "1", "tisk / Hornbach"),
+            ("RPi Zero 2 WH + Camera Module 3 Wide + svork. HAT", "1", "RPishop.cz"),
+            ("teplotní profil T1–T5: 5× DS18B20 ⌀6 + vývodka M12 (V09)", "5", "GME / LaskaKit"),
+            ("krabička elektroniky P06 + P07 na držáku P18, izolace XPS", "1", "tisk / Hornbach"),
             ("oběh: 2× 6806-2RS, pouzdro igus RJ4JP-01-12", "1", "ložiska / HENNLICH"),
             ("oběh: P12–P16, P19, koncovka P21", "1", "tisk"),
             ("motor 28BYJ-48 + ULN2003, optická koncovka", "1", "GME / LaskaKit"),
@@ -166,7 +167,8 @@ def main(var="u"):
         ax.text(tx + wc[0] + wc[1] + 1, y, r[2], fontsize=5.6)
     ny = ty - len(rows) * 5.6 - 5
     notes = ["Ověřeno v modelu (§22, §23):", *CHECK[var],
-             "• CM3 66° × 41°: celý ⌀100 s rezervou ≈ 3°", "• 1 pixel ≈ 35 µm, výška ≈ 8–12 µm",
+             "• CM3 Wide 102° × 67°: celý ⌀100, rezerva ≈ 16°", "• 2 polohy ostření (108 a 140 mm): ostré 95–169 mm",
+             "• 1 pixel ≈ 66 µm, výška laserem ≈ 11–23 µm",
              "Řízení z počítače: RPi Zero 2 W,", "web + SSH, rpi/e7_kamera.py."]
     for k, s in enumerate(notes):
         ax.text(tx, ny - k * 4.4, s, fontsize=6.2, weight="bold" if s.endswith(":") else None)

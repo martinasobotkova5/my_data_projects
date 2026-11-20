@@ -75,6 +75,11 @@ def radial(ang, r0, r1, z, d):
     return c.rotate((0, 0, 0), (0, 0, 1), ang)
 
 
+def _polar(r, ang):
+    """(x, y) bodu ve vzdálenosti r od osy pod úhlem ang (°)."""
+    return r * math.cos(math.radians(ang)), r * math.sin(math.radians(ang))
+
+
 def radial_off(ang, r0, r1, z, d, w=0.0):
     """Like radial(), but shifted sideways by w (perpendicular to the radius) before rotating."""
     c = cq.Workplane("YZ").circle(d / 2).extrude(r1 - r0).translate((r0, w, z))
@@ -126,7 +131,7 @@ def variant_b(asm, prefix=""):
     asm.add(radial(180, p.STAND_R - 6, p.STAND_R + 20, 230, 1.6), name=prefix + "Tstand 109SS", color=C["temp"])
 
 def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt_ang=None, ins=False, pt_port=False,
-           top=None):
+           top=None, temp_d=2.0, gland=False):
     """Variant A cell per drawing Column_one_body_version_1: body ⌀160 × 130 + collar ⌀106 to 160,
     cavity ⌀100 from z 26 (z = 0 at the underside), side port 13 wide at 67.5–94.5 (PORT_ANG).
     Point M: CS645 in the port, optical fibre, Pt100 vertical. Returns z of the underside of the core.
@@ -144,13 +149,16 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt
         body = body.union(cyl(2 * ro, (p.BODY_H if top is None else top) + p.C_INS_T, zb - p.C_INS_T))
         for k in range(3):
             a_ = math.radians(90 + 120 * k)
-            body = body.cut(cyl(p.C_PAD_D + 0.4, p.C_INS_T, zb - p.C_INS_T, p.C_PAD_R * math.cos(a_),
+            body = body.cut(cyl(p.C_PAD_D + 0.4, p.C_INS_T - p.C_PAD_OUT, zb - p.C_INS_T, p.C_PAD_R * math.cos(a_),
                                 p.C_PAD_R * math.sin(a_)))
         body = body.cut(radial(p.C_NTC_ANG, 0, ro + 1, zb - p.C_INS_T + p.C_NTC_Z, 4.0))   # NTC in the base
     body = body.cut(cyl(p.CAV_D, ztop - p.BODY_BOTTOM, zb + p.BODY_BOTTOM))
     rb = ro
     port = box(ri + p.CUP_WALL_IN, rb + 1, -p.PORT_W / 2, p.PORT_W / 2, zb + p.PORT_Z0, zb + p.PORT_Z1)
     body = body.cut(port.rotate((0, 0, 0), (0, 0, 1), p.PORT_ANG))
+    if pt_port:                                      # 20. 11. 2026: kanál +4 mm nad hlavou CS645 pro kabel Pt100 a vlákno
+        body = body.cut(box(ri + p.CUP_WALL_IN, rb + 1, -p.PORT_W / 2, p.PORT_W / 2, zb + p.PORT_Z1 - 0.5,
+                            zb + p.PORT_Z1 + p.C_PORT_CABLE).rotate((0, 0, 0), (0, 0, 1), p.PORT_ANG))
     t = p.TDR_CS645
     z_top = zb + p.COLLAR_TOP - t["top_from_collar"]
     a = p.PORT_ANG
@@ -161,10 +169,13 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt
         body = body.cut(radial(a, ri - 1, ri + p.CUP_WALL_IN + 1, z_top + p.C_PT100_DZ, 3.3))
     temps = [(d, ang) for _, d, ang in p.AM_TEMPS] if temps is None else temps
     for d, ang in temps:
-        body = body.cut(radial(ang, ri - 1, rb + 1, Z_S1 - d, 2.0))
+        body = body.cut(radial(ang, ri - 1, rb + 1, Z_S1 - d, temp_d))
+        if gland:                                    # 20. 11. 2026: vývodka M12×1,5 – závit vyřezat závitníkem do předvrtu
+            body = body.cut(radial(ang, rb - p.C_GLAND[1], rb + 1, Z_S1 - d, p.C_GLAND[0]))
     if pv:
         body = body.cut(radial(90, ri - 1, rb + 1, Z_S1 - p.AM_PV[1], 3.5))
-    body = body.cut(radial(0, ri - 1, rb + 1, Z_S1 - 1, 4.0))
+    if not pt_port:                                  # stará trasa svislého Pt100 – u cely rev. B (Pt100 z portu) není
+        body = body.cut(radial(0, ri - 1, rb + 1, Z_S1 - 1, 4.0))
     xb, yb = 25 * math.cos(math.radians(p.AM_PB[2])), 25 * math.sin(math.radians(p.AM_PB[2]))
     if pb:
         body = body.cut(cyl(8.2, 1.6, Z_S0 - 1.6, xb, yb))
@@ -176,18 +187,28 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt
         asm.add(cyl(8, 1.5, Z_S0 - 1.5, xb, yb), name=prefix + "PB1 TML PDA-PA (flush)", color=C["pressure"])
     asm.add(cyl(p.D_SAMPLE, p.H_SAMPLE, Z_S0), name=prefix + "unsaturated sand D100x100", color=C["sand"])
     # point M
-    asm.add(box(ri + p.CUP_WALL_IN, ri + p.CUP_WALL_IN + t["head_l"], -6, 6, zb + p.PORT_Z0 + 0.5, zb + p.PORT_Z1 - 0.5)
+    asm.add(box(ri + p.CUP_WALL_IN + (p.C_HEAD_GAP if pt_port else 0), ri + p.CUP_WALL_IN + (p.C_HEAD_GAP if pt_port else 0) + t["head_l"], -6, 6, zb + p.PORT_Z0 + 0.5, zb + p.PORT_Z1 - 0.5)
             .rotate((0, 0, 0), (0, 0, 1), a), name=prefix + "M TDR CS645 head", color=C["tdr"])
     for k in range(3):
         asm.add(radial_off(a, ri - t["rod_l"], ri, z_top - k * t["pitch"], t["rod_d"]),
                 name=f"{prefix}M TDR CS645 rod {k + 1}", color=C["steel"])
-    asm.add(radial_off(a, ri - p.OF_TIP_FROM_WALL, rb + 30, z_top + 2, 1.0, w=p.OF_SIDE),
-            name=prefix + "M optical fibre", color=C["fbg"])
+    if pt_port:                                      # vlákno: v písku vodorovně, za vnitřní stěnou nahoru nad hlavu CS645
+        zc = zb + p.PORT_Z1 + p.C_PORT_CABLE / 2
+        r_w = ri + p.CUP_WALL_IN
+        fib = (radial_off(a, ri - p.OF_TIP_FROM_WALL, r_w, z_top + 2, 1.0, w=p.OF_SIDE)
+               .union(radial_off(a, r_w - 0.5, r_w + 0.5, z_top + 2, 1.0, w=p.OF_SIDE).translate((0, 0, 0)))
+               .union(radial_off(a, r_w, rb + 30, zc, 1.0, w=p.OF_SIDE)))
+        asm.add(fib, name=prefix + "M optical fibre", color=C["fbg"])
+    else:
+        asm.add(radial_off(a, ri - p.OF_TIP_FROM_WALL, rb + 30, z_top + 2, 1.0, w=p.OF_SIDE),
+                name=prefix + "M optical fibre", color=C["fbg"])
     if pt_port:
         zp = z_top + p.C_PT100_DZ
         r_tip, r_m = ri - p.C_PT100_TIP, ri - p.C_PT100_TIP + p.PT100_METAL
         asm.add(radial(a, r_tip, r_m, zp, 3.0), name=prefix + "M Pt100 metal part", color=C["pt100"])
-        asm.add(radial(a, r_m, rb + 30, zp, 2.0), name=prefix + "M Pt100 cable", color=C["pt100"])
+        zc = zb + p.PORT_Z1 + p.C_PORT_CABLE / 2         # kabel vede nad hlavou CS645 (kanál nad portem)
+        asm.add(radial(a, r_m, ri + p.CUP_WALL_IN + p.C_HEAD_GAP / 2, zp, 2.0).union(cyl(2.0, zc - zp + 1, zp, *_polar(ri + p.CUP_WALL_IN + p.C_HEAD_GAP / 2, a)))
+                .union(radial(a, ri + p.CUP_WALL_IN, rb + 30, zc, 2.0)), name=prefix + "M Pt100 cable", color=C["pt100"])
     else:
         pt_r = p.PT100_R if pt_r is None else pt_r
         pa = a + 90 if pt_ang is None else pt_ang
@@ -196,6 +217,15 @@ def body_a(asm, prefix="", temps=None, pv=True, pb=True, opt=True, pt_r=None, pt
         asm.add(cyl(2.0, p.PT100_L - p.PT100_METAL, Z_S1 - (p.PT100_L - p.PT100_METAL), xp, yp),
                 name=prefix + "M Pt100 cable", color=C["pt100"])
     for i_, (d, ang) in enumerate(temps, 1):
+        if gland:                                    # 20. 11. 2026: sonda DS18B20 ⌀6 × 50, vývodka M12, kabel
+            r0 = ri - p.C_TEMP_TIP
+            asm.add(radial(ang, r0, r0 + p.C_TEMP_L, Z_S1 - d, p.C_TEMP_D), name=f"{prefix}T{i_} DS18B20 D6 depth {d:g}",
+                    color=C["temp"])
+            asm.add(radial(ang, r0 + p.C_TEMP_L, rb + p.C_GLAND[3] + 12, Z_S1 - d, 4.0), name=f"{prefix}T{i_} cable",
+                    color=C["temp"])
+            asm.add(radial(ang, rb, rb + p.C_GLAND[3], Z_S1 - d, p.C_GLAND[2]), name=f"{prefix}T{i_} gland M12",
+                    color=C["steel"])
+            continue
         asm.add(radial(ang, p.T_TIP_R, rb + 8, Z_S1 - d, 1.6),
                 name=f"{prefix}T{i_} 109SS" + (" (opt.)" if opt else ""), color=C["temp"])
     if not pv:
@@ -335,7 +365,7 @@ def variant_c(asm, prefix="", orbit_angle=0.0):
         a = math.radians(90 + 120 * k)
         x, y = p.C_PAD_R * math.cos(a), p.C_PAD_R * math.sin(a)
         asm.add(cyl(p.C_PAD_D, p.C_INS_T, zb0, x, y), name=f"{prefix}G10 pad D20x40 {k + 1}", color=C["g10"])
-    body_a(asm, prefix, temps=[], pv=False, pb=False, opt=False, ins=True, pt_port=True, top=p.U_TOP)   # same cell as phase 1
+    body_a(asm, prefix, temps=[(d, a) for _, d, a in p.C_TEMPS], temp_d=p.C_TEMP_HOLE, gland=True, pv=False, pb=False, opt=False, ins=True, pt_port=True, top=p.U_TOP)   # same cell as phase 1
     asm.add(bp.pad_locator().translate((0, 0, zb0)), name=prefix + "P20 cell stops on T03 (print)", color=C["petg"])
     # moving load: piston (2 laser discs), ball 5/16", Invar rod, shaft collar, carrier, discs
     asm.add(bp.laser_solid(lp["E7-L05_piston_bottom"]).translate((0, 0, Z_S1)), name=prefix + "L05 piston bottom",
@@ -458,7 +488,7 @@ def variant_u(asm, prefix="", orbit_angle=0.0):
         a = math.radians(90 + 120 * k)
         x, y = p.C_PAD_R * math.cos(a), p.C_PAD_R * math.sin(a)
         asm.add(cyl(p.C_PAD_D, p.C_INS_T, zb0, x, y), name=f"{prefix}G10 pad D20x40 {k + 1}", color=C["g10"])
-    body_a(asm, prefix, temps=[], pv=False, pb=False, opt=False, ins=True, pt_port=True, top=p.U_TOP)
+    body_a(asm, prefix, temps=[(d, a) for _, d, a in p.C_TEMPS], temp_d=p.C_TEMP_HOLE, gland=True, pv=False, pb=False, opt=False, ins=True, pt_port=True, top=p.U_TOP)
     import buildparts as bp
     asm.add(bp.pad_locator().translate((0, 0, zb0)), name=prefix + "P20 cell stops on T03 (print)", color=C["petg"])
     xi, yi = p.C_INVAR_XY                            # Invar post + reference target only (no LVDT in phase 1)
@@ -533,7 +563,7 @@ if __name__ == "__main__":
     vu = cq.Assembly(name="E7 U - phase 1 without load, camera + laser + LED see the whole surface")
     variant_u(vu)
     mu = cq.Assembly(name="E7 cell variant U - flat top 5 mm above the sand")
-    body_a(mu, temps=[], pv=False, pb=False, opt=False, ins=True, pt_port=True, top=p.U_TOP)
+    body_a(mu, temps=[(d, a) for _, d, a in p.C_TEMPS], temp_d=p.C_TEMP_HOLE, gland=True, pv=False, pb=False, opt=False, ins=True, pt_port=True, top=p.U_TOP)
     cu = [sh.moved(loc) for sh, n, loc, c in mu if n.split("/")[-1].startswith("cell PETG")][0]
     bu = cu.BoundingBox()
     cu = cu.translate(cq.Vector(-(bu.xmin + bu.xmax) / 2, -(bu.ymin + bu.ymax) / 2, -bu.zmin))

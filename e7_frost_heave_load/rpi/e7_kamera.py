@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """E7 – řízení obíhající kamery: Raspberry Pi Zero 2 W (krokový motor 28BYJ-48, optická koncovka, LED modul,
-laser, topení hlavy s teploměrem) + Camera Module 3. Vše se ovládá z počítače – přes webovou stránku nebo SSH.
+laser, topení hlavy s teploměrem) + Camera Module 3 Wide (ostří od 5 cm) + 5 teplotních sond DS18B20 ve vzorku. Vše se ovládá z počítače – přes webovou stránku nebo SSH.
 
 Bez pájení a lepení: Raspberry Pi Zero 2 WH (s osazenou lištou) + svorkovnicový HAT (šroubovací svorky),
 moduly s piny propojené kabely Dupont, prodloužení vodičů svorkami WAGO 221.
@@ -12,6 +12,7 @@ Zapojení (číslo GPIO → svorka HAT):
   relé 1 – laser     GPIO17                               laser 5 V přes kontakt relé (svorky)
   relé 2 – topení    GPIO23                               topné tělísko PTC 5 V v hlavě kamery přes kontakt relé
   teploměr DS18B20   GPIO4 (1-Wire), 3,3 V, GND           modul s rezistorem; v /boot/firmware/config.txt: dtoverlay=w1-gpio
+  sondy T1–T5        na stejné sběrnici GPIO4             3 vodiče každé sondy do svorek WAGO 221 u modulu (VDD, GND, DQ)
   spouštění z CR850  GPIO22 přes modul optočlenu (aktivní v nule)
 
 Použití (z počítače: ssh pi@e7-kamera … nebo prohlížeč http://e7-kamera:8080):
@@ -20,6 +21,11 @@ Použití (z počítače: ssh pi@e7-kamera … nebo prohlížeč http://e7-kamer
   python3 e7_kamera.py laser          # jedna sada snímků ve výchozí poloze (LED / laser / tma)
   python3 e7_kamera.py orbit [krok]   # oběh −180 … +170° po `krok` stupních (výchozí 10), fotky s LED
   python3 e7_kamera.py run            # trvalý běh bez webu: pulsy z CR850 + oběh v časech ORBIT_AT + termostat
+  python3 e7_kamera.py teploty        # vypíše adresy všech DS18B20 a teploty → doplnit HEAD_ID a PROFILE níže
+                                      # (sondu po jedné ohřát v dlani a sledovat, které adrese stoupne teplota)
+
+Data (≈ 5 GB/den): oběh 36 pozic × 2 ostření každé 3 h + sada laser/LED každých 10 min → karta 128 GB
+a denně stáhnout do počítače, např. rsync -a pi@e7-kamera:e7/ D:/E7/ (spustit plánovačem na PC).
 
 NEVYZKOUŠENO NA HARDWARU – první spuštění s rukou u napájení a s volně visícím kabelem.
 """
@@ -47,11 +53,15 @@ LIMIT_DEG = 180.0                           # kabel ve smyčce: nikdy dál než 
 STEP_DELAY = 0.002                          # s mezi půlkroky (pomaleji v mrazu)
 BACKLASH_DEG = 3.0
 SETTLE_S = 1.0
-ORBIT_AT = ("06:00", "18:00")
+ORBIT_AT = tuple(f"{h:02d}:00" for h in range(0, 24, 3))   # oběh každé 3 h
 HEAD_T = (5.0, 8.0)                         # termostat hlavy kamery: zapnout pod 5 °C, vypnout nad 8 °C
 OUT = Path.home() / "e7"
 STATE = OUT / "stav.json"
 CAMERA = dict(exposure_us=20000, gain=1.0, lens_dioptre=8.0, colour_gains=(1.8, 1.6))   # 8 dpt ≈ 0,125 m
+FOCUS_DPT = (1000 / 108, 1000 / 140)       # Camera Module 3 Wide: 2 polohy ostření (108 a 140 mm) → ostrý celý povrch
+HEAD_ID = None                              # adresa DS18B20 v hlavě kamery, např. "28-3c01d607c1aa" (příkaz teploty)
+PROFILE = {"T1": None, "T2": None, "T3": None, "T4": None, "T5": None}   # hloubky 10/30/50/70/90 mm
+PROFILE_S = 60                              # zápis teplotního profilu každých 60 s do teploty.csv
 HALF_SEQ = ((1, 0, 0, 0), (1, 1, 0, 0), (0, 1, 0, 0), (0, 1, 1, 0),
             (0, 0, 1, 0), (0, 0, 1, 1), (0, 0, 0, 1), (1, 0, 0, 1))
 LOCK = threading.Lock()                     # jedna akce najednou (web, CR850, plán)
@@ -131,6 +141,34 @@ class Relay(OutputDevice):
         super().__init__(pin, active_high=RELAY_ACTIVE_HIGH, initial_value=False)
 
 
+def w1_all():
+    """Všechna čidla DS18B20 na sběrnici: {adresa: teplota °C}."""
+    out = {}
+    for f in sorted(glob.glob("/sys/bus/w1/devices/28-*/temperature")):
+        try:
+            out[Path(f).parent.name] = int(Path(f).read_text()) / 1000.0
+        except Exception:
+            out[Path(f).parent.name] = None
+    return out
+
+
+def profile_loop():
+    """Teplotní profil T1–T5 (+ hlava) do teploty.csv každých PROFILE_S sekund."""
+    f = OUT / "teploty.csv"
+    while True:
+        allt = w1_all()
+        row = [dt.datetime.now().isoformat(timespec="seconds")] + [allt.get(PROFILE[k]) if PROFILE[k] else None
+                                                                   for k in PROFILE] + [allt.get(HEAD_ID) if HEAD_ID else None]
+        OUT.mkdir(parents=True, exist_ok=True)
+        new = not f.exists()
+        with f.open("a", newline="") as fh:
+            w = csv.writer(fh)
+            if new:
+                w.writerow(["cas"] + [f"{k}_C" for k in PROFILE] + ["hlava_C"])
+            w.writerow(row)
+        time.sleep(PROFILE_S)
+
+
 class Head:
     """Topení hlavy kamery (relé + PTC 5 V) a teploměr DS18B20 – termostat běží ve vlákně."""
 
@@ -141,12 +179,11 @@ class Head:
 
     @staticmethod
     def read():
-        for f in glob.glob("/sys/bus/w1/devices/28-*/temperature"):
-            try:
-                return int(Path(f).read_text()) / 1000.0
-            except Exception:
-                pass
-        return None
+        allt = w1_all()
+        if HEAD_ID:
+            return allt.get(HEAD_ID)
+        rest = [v for k, v in allt.items() if k not in PROFILE.values() and v is not None]
+        return rest[0] if len(rest) == 1 else None               # dokud není HEAD_ID, jen při jediném volném čidle
 
     def _loop(self):
         while True:
@@ -174,7 +211,10 @@ class Cam:
         time.sleep(2)
         self.led, self.laser = OutputDevice(PIN_LED), Relay(PIN_LASER)
 
-    def shot(self, path, led=False, laser=False):
+    def shot(self, path, led=False, laser=False, dpt=None):
+        if dpt is not None:
+            self.cam.set_controls({"LensPosition": dpt})
+            time.sleep(0.5)
         self.led.value = led
         self.laser.value = laser
         time.sleep(0.3)
@@ -206,9 +246,10 @@ def laser_set(orb, cam, head):
         time.sleep(SETTLE_S)
         t = dt.datetime.now().strftime("%H%M%S")
         for kind, led, las in (("led", True, False), ("laser", False, True), ("tma", False, False)):
-            f = _folder() / f"{t}_{kind}_000.jpg"
-            cam.shot(f, led, las)
-            _log([dt.datetime.now().isoformat(timespec="seconds"), kind, 0, head.t, f.name])
+            for k, d in enumerate(FOCUS_DPT if kind != "tma" else FOCUS_DPT[:1]):
+                f = _folder() / f"{t}_{kind}_000_f{k}.jpg"
+                cam.shot(f, led, las, dpt=d)
+                _log([dt.datetime.now().isoformat(timespec="seconds"), kind, 0, head.t, f.name])
 
 
 def orbit_set(orb, cam, head, step=10.0):
@@ -219,9 +260,10 @@ def orbit_set(orb, cam, head, step=10.0):
         while a < LIMIT_DEG - 1e-6:
             orb.goto(a)
             time.sleep(SETTLE_S)
-            f = _folder() / f"{t}_obeh_{a:+04.0f}.jpg"
-            cam.shot(f, led=True)
-            _log([dt.datetime.now().isoformat(timespec="seconds"), "obeh", a, head.t, f.name])
+            for k, d in enumerate(FOCUS_DPT):
+                f = _folder() / f"{t}_obeh_{a:+04.0f}_f{k}.jpg"
+                cam.shot(f, led=True, dpt=d)
+                _log([dt.datetime.now().isoformat(timespec="seconds"), "obeh", a, head.t, f.name])
             a += step
         orb.goto(0.0)
 
@@ -241,11 +283,16 @@ def scheduler(orb, cam, head):
             orbit_set(orb, cam, head)
 
 
+def _prof_text():
+    allt = w1_all()
+    return " / ".join("–" if not PROFILE[k] or allt.get(PROFILE[k]) is None else f"{allt[PROFILE[k]]:.1f}" for k in PROFILE) + " °C"
+
+
 PAGE = """<!doctype html><html lang="cs"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>E7 kamera</title><style>body{{font:16px system-ui;margin:24px;max-width:640px}}button{{font:inherit;padding:8px 14px;
 margin:4px}}td{{padding:2px 10px}}</style><h1>E7 – kamera</h1>
 <table><tr><td>poloha ramene</td><td>{pos}</td></tr><tr><td>výchozí poloha (koncovka)</td><td>{home}</td></tr>
-<tr><td>teplota hlavy</td><td>{t}</td></tr><tr><td>topení hlavy</td><td>{heat}</td></tr>
+<tr><td>teplota hlavy</td><td>{t}</td></tr><tr><td>vzorek T1–T5 (10/30/50/70/90 mm)</td><td>{prof}</td></tr><tr><td>topení hlavy</td><td>{heat}</td></tr>
 <tr><td>poslední snímek</td><td>{last}</td></tr><tr><td>stav</td><td>{busy}</td></tr></table>
 <form method="post"><button name="a" value="home">Výchozí poloha</button><button name="a" value="laser">Sada laser + LED</button>
 <button name="a" value="orbit">Oběh (36 snímků)</button><button name="a" value="test">Test ±90°</button>
@@ -262,7 +309,8 @@ def web(orb, cam, head, port=8080):
         def _page(self):
             body = PAGE.format(pos="neznámá" if orb.pos is None else f"{orb.pos:+.1f}°", home="ano" if orb.at_home() else "ne",
                                t="–" if head.t is None else f"{head.t:.1f} °C", heat="zapnuto" if head.heat.value else "vypnuto",
-                               last=last(), busy="pracuje…" if LOCK.locked() else "připraveno")
+                               last=last(), busy="pracuje…" if LOCK.locked() else "připraveno",
+                               prof=_prof_text())
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
@@ -294,7 +342,15 @@ def web(orb, cam, head, port=8080):
 
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else "web"
+    if cmd == "teploty":
+        names = {v: k for k, v in PROFILE.items() if v}
+        if HEAD_ID:
+            names[HEAD_ID] = "hlava"
+        for k, v in w1_all().items():
+            print(f"{k}  {v if v is None else round(v, 2)} °C  {names.get(k, '(nepřiřazeno)')}")
+        return
     orb, head = Orbit(), Head()
+    threading.Thread(target=profile_loop, daemon=True).start()
     try:
         if cmd == "test":
             orb.home()

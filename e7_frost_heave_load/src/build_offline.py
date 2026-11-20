@@ -48,7 +48,11 @@ EXTRA = [("vykresy/E7_drawings.pdf", "E7_drawings.pdf"),
          ("cad/E7_V04_cell.dxf", "cad/E7_V04_cell.dxf"),
          ("3d/E7_V01_variant_C.step", "3d/E7_V01_variant_C.step"),
          ("3d/E7_V03_cell.step", "3d/E7_V03_cell.step"),
-         ("3d/E7_V05_freezer_layout.step", "3d/E7_V05_freezer_layout.step")]
+         ("3d/E7_V05_freezer_layout.step", "3d/E7_V05_freezer_layout.step"),
+         ("vykresy/E7-V09_cidla_ve_vzorku.pdf", "E7-V09_cidla_ve_vzorku.pdf"),
+         ("revize_E7.md", "E7_revize_CZ.md"),
+         ("E7_revize.docx", "E7_revize_CZ.docx"),
+         ("vypocty.md", "E7_vypocty_CZ.md")]
 
 
 def read(p):
@@ -102,6 +106,7 @@ def build():
         "One-page measurement review: E7_review.pdf (also E7_review.html).\n"
         "Drawings: E7_drawings.pdf (rev. B3, sheets V01–V06). Purchase list: E7_purchase_list.md;\n"
         "order by shop + assembly (Czech): E7_objednavka_CZ.md; suppliers by phase: E7_dodavatele_CZ.docx.\n"
+        "Revision 20. 11. 2026: E7_revize_CZ.docx, sensors in the sample: E7-V09_cidla_ve_vzorku.pdf.\n"
         "Phase 1 without load: E7-V07_faze1_bez_zatizeni.pdf, 3d/E7_V07_bez_zatizeni.step, print vyroba/tisk/E7-V03u_*.\n"
         "Final rig 3D, phase 1 / phase 2 switch (parts + suppliers): E7_sestava_3D.html. Cutting drawings: vyroba/narezy/E7_narezove_vykresy.pdf.\n"
         " Manufacturing files: vyroba/laser (DXF), vyroba/tisk (STL).\n"

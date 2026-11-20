@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461363.708425926
+2461365.5926851854
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461363.708449074
+2461365.5927083334
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-21A4
+21A5
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{77693120-0846-46C2-B70E-B21D4704F901}
+{308B61C9-E118-4D00-8FEE-62A514095463}
   9
 $VERSIONGUID
   2
-{7BEFA858-8E3A-4362-B769-7403B2FF6C7F}
+{9FEA6FC9-2D3C-4262-BDB8-F4AAF55608A7}
   9
 $EXTNAMES
 290
@@ -3237,7 +3237,7 @@ ACAD
   0
 APPID
   5
-21A1
+21A2
 330
 3
 100
@@ -3251,7 +3251,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-21A2
+21A3
 330
 3
 100
@@ -222567,7 +222567,7 @@ AcDbText
  40
 4.5
   1
-kapsa ⌀6,2 × 2,2 pro magnet výchozí polohy; tisk 0,15 mm, 100 % výplň
+vodorovná clona 25–32 mm od osy pro optickou koncovku (výchozí poloha, bez
   7
 OpenSans
  11
@@ -222599,7 +222599,7 @@ AcDbText
  40
 4.5
   1
-průměry otvorů v pohledu shora: ⌀42, ⌀38
+  magnetu); tisk 0,15 mm, 100 % výplň
   7
 OpenSans
  11
@@ -222631,7 +222631,7 @@ AcDbText
  40
 4.5
   1
-přesná geometrie: vyroba/tisk/E7-P13_orbit_hub.step / .stl
+průměry otvorů v pohledu shora: ⌀42, ⌀38
   7
 OpenSans
  11
@@ -222643,9 +222643,41 @@ OpenSans
 100
 AcDbText
   0
-LWPOLYLINE
+TEXT
   5
 2195
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+148.99573549188426
+ 20
+186.49573549188426
+ 30
+0.0
+ 40
+4.5
+  1
+přesná geometrie: vyroba/tisk/E7-P13_orbit_hub.step / .stl
+  7
+OpenSans
+ 11
+148.99573549188426
+ 21
+186.49573549188426
+ 31
+0.0
+100
+AcDbText
+  0
+LWPOLYLINE
+  5
+2196
 330
 17
 100
@@ -222677,30 +222709,6 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-2196
-330
-17
-100
-AcDbEntity
-  8
-FRAME
-100
-AcDbPolyline
- 90
-2
- 70
-0
- 10
-160.5
- 20
-24.0
- 10
-430.5
- 20
-24.0
-  0
-LWPOLYLINE
-  5
 2197
 330
 17
@@ -222717,6 +222725,30 @@ AcDbPolyline
  10
 160.5
  20
+24.0
+ 10
+430.5
+ 20
+24.0
+  0
+LWPOLYLINE
+  5
+2198
+330
+17
+100
+AcDbEntity
+  8
+FRAME
+100
+AcDbPolyline
+ 90
+2
+ 70
+0
+ 10
+160.5
+ 20
 36.0
  10
 430.5
@@ -222725,7 +222757,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-2198
+2199
 330
 17
 100
@@ -222749,7 +222781,7 @@ AcDbPolyline
   0
 TEXT
   5
-2199
+219A
 330
 17
 100
@@ -222781,7 +222813,7 @@ AcDbText
   0
 TEXT
   5
-219A
+219B
 330
 17
 100
@@ -222815,7 +222847,7 @@ AcDbText
   0
 TEXT
   5
-219B
+219C
 330
 17
 100
@@ -222847,7 +222879,7 @@ AcDbText
   0
 TEXT
   5
-219C
+219D
 330
 17
 100
@@ -222881,7 +222913,7 @@ AcDbText
   0
 TEXT
   5
-219D
+219E
 330
 17
 100
@@ -222913,7 +222945,7 @@ AcDbText
   0
 TEXT
   5
-219E
+219F
 330
 17
 100
@@ -222947,7 +222979,7 @@ AcDbText
   0
 TEXT
   5
-219F
+21A0
 330
 17
 100
@@ -222979,7 +223011,7 @@ AcDbText
   0
 TEXT
   5
-21A0
+21A1
 330
 17
 100
@@ -222997,7 +223029,7 @@ AcDbText
  40
 4.5
   1
-2026-11-18  návrh
+2026-11-20  návrh
   7
 OpenSans
  72
@@ -224101,7 +224133,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-21A3
+21A4
   0
 DICTIONARYVAR
   5
@@ -224113,7 +224145,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-18T17:00:08.755777+00:00
+1.4.5 @ 2026-11-20T14:13:28.155988+00:00
   0
 VISUALSTYLE
   5
@@ -224817,7 +224849,7 @@ X-Ray
   0
 DICTIONARYVAR
   5
-21A3
+21A4
 330
 2D
 100
@@ -224825,7 +224857,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-18T17:00:10.112121+00:00
+1.4.5 @ 2026-11-20T14:13:30.177373+00:00
   0
 ENDSEC
   0

@@ -5,7 +5,7 @@ v něm je kluzné pouzdro igus RJ4JP-01-12 pro vodicí tyč zátěže (nahrazuje
 tyč prochází středem oběhu a hlava kamery obíhá kolem ní. Na jádře jsou vnitřní kroužky dvou ložisek 6806-2RS
 (30 × 42 × 7); na jejich vnějších kroužcích je otočný náboj P13 – dole příruba s ramenem a hlavou kamery P14,
 nahoře ozubený věnec m1 z72. Pastorek z12 na krokovém motoru 28BYJ-48 (držák P16, pod příčníkem, strana −x)
-→ převod 6 : 1. Výchozí polohu hlásí Hall senzor zalitý ve spodní ploše desky P12 nad magnetem ve věnci.
+→ převod 6 : 1. Výchozí polohu hlásí optická vidlicová koncovka (držák P21), do které zajede clona náboje.
 
 Vějíř laseru (+y) prochází pod příčníkem nejblíže 41 mm od osy ve výšce věnce → věnec má hlavu zubů na r 37.
 Rameno vede pod motorem (z 271–279) a teprve za ním stoupá k hlavě; nad zorným polem kamery.

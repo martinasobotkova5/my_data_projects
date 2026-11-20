@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461363.7085532406
+2461365.592847222
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461363.7085532406
+2461365.592847222
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-2CA
+2CC
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{E15D14EE-D56E-47C8-8584-7479B59F1582}
+{4F734182-D123-47B4-B28F-22B89C5D23DF}
   9
 $VERSIONGUID
   2
-{A8871AC0-A9F0-4135-96AA-1430A057E1B5}
+{1A5B6B7C-39A8-4229-8CD8-54C2C7855830}
   9
 $EXTNAMES
 290
@@ -3237,7 +3237,7 @@ ACAD
   0
 APPID
   5
-2C7
+2C9
 330
 3
 100
@@ -3251,7 +3251,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-2C8
+2CA
 330
 3
 100
@@ -28283,7 +28283,7 @@ AcDbText
  40
 7.5
   1
-rameno vede pod motorem (z 271–279) do r 71, krátký sloupek k hlavě 34 × 34 × 24, okénko ⌀12, sklon 36,5°
+rameno vede pod motorem (z 271–279) do r 71, krátký sloupek k hlavě 34 × 34 × 24, okénko ⌀12,
   7
 OpenSans
  11
@@ -28315,7 +28315,7 @@ AcDbText
  40
 7.5
   1
-4× M2 pro Camera Module 3; výstupek s M3 pro LED modul; topení PTC a DS18B20 na víčku P15 (šrouby M3)
+  sklon 39°
   7
 OpenSans
  11
@@ -28347,7 +28347,7 @@ AcDbText
  40
 7.5
   1
-průměry otvorů v pohledu shora: ⌀60, ⌀36, ⌀3.4
+4× M2 pro Camera Module 3 Wide; výstupek s M3 pro LED modul; topení PTC a DS18B20 na víčku P15
   7
 OpenSans
  11
@@ -28379,7 +28379,7 @@ AcDbText
  40
 7.5
   1
-přesná geometrie: vyroba/tisk/E7-P14_camera_arm_head.step / .stl
+  (šrouby M3)
   7
 OpenSans
  11
@@ -28391,9 +28391,73 @@ OpenSans
 100
 AcDbText
   0
-LWPOLYLINE
+TEXT
   5
 2BB
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+185.0
+ 20
+339.67405257532414
+ 30
+0.0
+ 40
+7.5
+  1
+průměry otvorů v pohledu shora: ⌀60, ⌀36, ⌀3.4
+  7
+OpenSans
+ 11
+185.0
+ 21
+339.67405257532414
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2BC
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+185.0
+ 20
+327.17405257532414
+ 30
+0.0
+ 40
+7.5
+  1
+přesná geometrie: vyroba/tisk/E7-P14_camera_arm_head.step / .stl
+  7
+OpenSans
+ 11
+185.0
+ 21
+327.17405257532414
+ 31
+0.0
+100
+AcDbText
+  0
+LWPOLYLINE
+  5
+2BD
 330
 17
 100
@@ -28425,55 +28489,55 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-2BC
-330
-17
-100
-AcDbEntity
-  8
-FRAME
-100
-AcDbPolyline
- 90
-2
- 70
-0
- 10
-267.5
- 20
-40.0
- 10
-717.5
- 20
-40.0
-  0
-LWPOLYLINE
-  5
-2BD
-330
-17
-100
-AcDbEntity
-  8
-FRAME
-100
-AcDbPolyline
- 90
-2
- 70
-0
- 10
-267.5
- 20
-60.0
- 10
-717.5
- 20
-60.0
-  0
-LWPOLYLINE
-  5
 2BE
+330
+17
+100
+AcDbEntity
+  8
+FRAME
+100
+AcDbPolyline
+ 90
+2
+ 70
+0
+ 10
+267.5
+ 20
+40.0
+ 10
+717.5
+ 20
+40.0
+  0
+LWPOLYLINE
+  5
+2BF
+330
+17
+100
+AcDbEntity
+  8
+FRAME
+100
+AcDbPolyline
+ 90
+2
+ 70
+0
+ 10
+267.5
+ 20
+60.0
+ 10
+717.5
+ 20
+60.0
+  0
+LWPOLYLINE
+  5
+2C0
 330
 17
 100
@@ -28497,7 +28561,7 @@ AcDbPolyline
   0
 TEXT
   5
-2BF
+2C1
 330
 17
 100
@@ -28529,7 +28593,7 @@ AcDbText
   0
 TEXT
   5
-2C0
+2C2
 330
 17
 100
@@ -28563,7 +28627,7 @@ AcDbText
   0
 TEXT
   5
-2C1
+2C3
 330
 17
 100
@@ -28595,7 +28659,7 @@ AcDbText
   0
 TEXT
   5
-2C2
+2C4
 330
 17
 100
@@ -28629,7 +28693,7 @@ AcDbText
   0
 TEXT
   5
-2C3
+2C5
 330
 17
 100
@@ -28661,7 +28725,7 @@ AcDbText
   0
 TEXT
   5
-2C4
+2C6
 330
 17
 100
@@ -28695,7 +28759,7 @@ AcDbText
   0
 TEXT
   5
-2C5
+2C7
 330
 17
 100
@@ -28727,7 +28791,7 @@ AcDbText
   0
 TEXT
   5
-2C6
+2C8
 330
 17
 100
@@ -28745,7 +28809,7 @@ AcDbText
  40
 7.5
   1
-2026-11-18  návrh
+2026-11-20  návrh
   7
 OpenSans
  72
@@ -29849,7 +29913,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-2C9
+2CB
   0
 DICTIONARYVAR
   5
@@ -29861,7 +29925,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-18T17:00:19.686055+00:00
+1.4.5 @ 2026-11-20T14:13:42.594056+00:00
   0
 VISUALSTYLE
   5
@@ -30565,7 +30629,7 @@ X-Ray
   0
 DICTIONARYVAR
   5
-2C9
+2CB
 330
 2D
 100
@@ -30573,7 +30637,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-18T17:00:19.850967+00:00
+1.4.5 @ 2026-11-20T14:13:42.818083+00:00
   0
 ENDSEC
   0

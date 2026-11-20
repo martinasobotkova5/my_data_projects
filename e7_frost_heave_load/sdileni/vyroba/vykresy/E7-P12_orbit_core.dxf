@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461363.7083796295
+2461365.592627315
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461363.7083796295
+2461365.592627315
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-1BB
+1BE
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{BF9D767F-534D-42B1-B569-A33066B5604D}
+{C593F15F-1E67-4DA1-BCBC-9F4DA6A6ED8B}
   9
 $VERSIONGUID
   2
-{B85878CA-A43C-44F6-8D7E-D47173AC9C13}
+{760DF852-F130-4816-BB29-54D51C511F8C}
   9
 $EXTNAMES
 290
@@ -3237,7 +3237,7 @@ ACAD
   0
 APPID
   5
-1B8
+1BB
 330
 3
 100
@@ -3251,7 +3251,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-1B9
+1BC
 330
 3
 100
@@ -19255,7 +19255,7 @@ AcDbText
  40
 4.5
   1
-pevné jádro oběhu pod T04: 4× M5 do T-matic ve spodních drážkách (y ±20), otvor ⌀21,2 pod otvor ⌀14
+pevné jádro oběhu pod T04: 4× M5 do T-matic ve spodních drážkách (y ±20), otvor ⌀21,2
   7
 OpenSans
  11
@@ -19287,7 +19287,7 @@ AcDbText
  40
 4.5
   1
-do otvoru zalisovat igus RJ4JP-01-12 (vodicí tyč ⌀12 ve fázi 2); čep ⌀30 pro 2× 6806-2RS
+  pod otvor ⌀14
   7
 OpenSans
  11
@@ -19319,7 +19319,7 @@ AcDbText
  40
 4.5
   1
-3× ⌀2,5 dole pro M3 (svěrný kroužek P12c); kapsa + kanálek pro Hall A3144 ve spodní ploše desky
+do otvoru zalisovat igus RJ4JP-01-12 (vodicí tyč ⌀12 ve fázi 2); čep ⌀30 pro 2×
   7
 OpenSans
  11
@@ -19351,7 +19351,7 @@ AcDbText
  40
 4.5
   1
-tisk deskou dolů, 100 % výplň čepu
+  6806-2RS
   7
 OpenSans
  11
@@ -19383,7 +19383,7 @@ AcDbText
  40
 4.5
   1
-průměry otvorů v pohledu shora: ⌀21.2, ⌀5.5
+3× ⌀2,5 dole pro M3 (svěrný kroužek P12c); výchozí polohu hlásí optická koncovka na
   7
 OpenSans
  11
@@ -19415,7 +19415,7 @@ AcDbText
  40
 4.5
   1
-přesná geometrie: vyroba/tisk/E7-P12_orbit_core.step / .stl
+  držáku P21 (ne Hall)
   7
 OpenSans
  11
@@ -19427,9 +19427,105 @@ OpenSans
 100
 AcDbText
   0
-LWPOLYLINE
+TEXT
   5
 1AC
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+139.0
+ 20
+180.0
+ 30
+0.0
+ 40
+4.5
+  1
+tisk deskou dolů, 100 % výplň čepu
+  7
+OpenSans
+ 11
+139.0
+ 21
+180.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+1AD
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+139.0
+ 20
+172.5
+ 30
+0.0
+ 40
+4.5
+  1
+průměry otvorů v pohledu shora: ⌀21.2, ⌀5.5
+  7
+OpenSans
+ 11
+139.0
+ 21
+172.5
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+1AE
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+139.0
+ 20
+165.0
+ 30
+0.0
+ 40
+4.5
+  1
+přesná geometrie: vyroba/tisk/E7-P12_orbit_core.step / .stl
+  7
+OpenSans
+ 11
+139.0
+ 21
+165.0
+ 31
+0.0
+100
+AcDbText
+  0
+LWPOLYLINE
+  5
+1AF
 330
 17
 100
@@ -19461,7 +19557,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-1AD
+1B0
 330
 17
 100
@@ -19485,7 +19581,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-1AE
+1B1
 330
 17
 100
@@ -19509,7 +19605,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-1AF
+1B2
 330
 17
 100
@@ -19533,7 +19629,7 @@ AcDbPolyline
   0
 TEXT
   5
-1B0
+1B3
 330
 17
 100
@@ -19565,7 +19661,7 @@ AcDbText
   0
 TEXT
   5
-1B1
+1B4
 330
 17
 100
@@ -19599,7 +19695,7 @@ AcDbText
   0
 TEXT
   5
-1B2
+1B5
 330
 17
 100
@@ -19631,7 +19727,7 @@ AcDbText
   0
 TEXT
   5
-1B3
+1B6
 330
 17
 100
@@ -19665,7 +19761,7 @@ AcDbText
   0
 TEXT
   5
-1B4
+1B7
 330
 17
 100
@@ -19697,7 +19793,7 @@ AcDbText
   0
 TEXT
   5
-1B5
+1B8
 330
 17
 100
@@ -19731,7 +19827,7 @@ AcDbText
   0
 TEXT
   5
-1B6
+1B9
 330
 17
 100
@@ -19763,7 +19859,7 @@ AcDbText
   0
 TEXT
   5
-1B7
+1BA
 330
 17
 100
@@ -19781,7 +19877,7 @@ AcDbText
  40
 4.5
   1
-2026-11-18  návrh
+2026-11-20  návrh
   7
 OpenSans
  72
@@ -20885,7 +20981,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-1BA
+1BD
   0
 DICTIONARYVAR
   5
@@ -20897,7 +20993,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-18T17:00:04.845193+00:00
+1.4.5 @ 2026-11-20T14:13:23.174654+00:00
   0
 VISUALSTYLE
   5
@@ -21601,7 +21697,7 @@ X-Ray
   0
 DICTIONARYVAR
   5
-1BA
+1BD
 330
 2D
 100
@@ -21609,7 +21705,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-18T17:00:04.962668+00:00
+1.4.5 @ 2026-11-20T14:13:23.334059+00:00
   0
 ENDSEC
   0

@@ -315,3 +315,17 @@ C_STUD = (6.0, 45.0)                     # závitový čep M6 × 45 (DIN 913), 1
 C_ROD_CONE = 8.0                         # spodní čelo vodicí tyče: středicí důlek 90° ⌀8 – sedí na kuličce (tyč vedená dole i nahoře)
 C_FLAG = (25.0, 32.0, 1.6, 8.0)          # vodorovná clona optické koncovky na náboji P13 (r od–do, tloušťka, šířka) – výchozí poloha
 C_FORK = (25.0, 6.4, 11.0, 3.2)          # optická vidlicová koncovka (modul pro 3D tiskárny): délka, šířka, výška, štěrbina
+
+# --- 20. 11. 2026: revize – teplotní profil ve vzorku, kamera Wide -----------------------------------------------------
+# bod M (TDR CS645 + Pt100 + vlákno) zůstává v hloubce ≈ 50 mm (jako v terénu, potvrzeno 9. 11. 2026);
+# navíc 5 sond DS18B20 v nerezovém plášti ⌀6 × 50 vodorovně ze strany, hrot 30 mm od stěny (r 20), šroubovice kolem
+# strany −y (kabely ven na stejné straně jako bod M), ≥ 16 mm od roviny tyček TDR; na RPi (1-Wire GPIO4), ne na CR850
+C_TEMPS = [("T1", 10.0, 240.0), ("T2", 30.0, 330.0), ("T3", 50.0, 210.0), ("T4", 70.0, 330.0), ("T5", 90.0, 240.0)]
+C_TEMP_D, C_TEMP_HOLE, C_TEMP_L, C_TEMP_TIP = 6.0, 6.3, 50.0, 30.0
+C_GLAND = (10.5, 15.0, 18.0, 16.0)       # předvrt ⌀10,5 hl. 15 pro závitník M12×1,5; vývodka M12 (model ⌀18, vyčnívá 16)
+CM3 = dict(board=(25.0, 24.0), fov=(102.0, 67.0), px=(4608, 2592), f=2.75, N=2.2, focus_min=50.0)   # Camera Module 3 WIDE
+CM3_STD = dict(board=(25.0, 24.0), fov=(66.0, 41.0), px=(4608, 2592), f=4.74, N=1.8, focus_min=100.0)
+C_FOCUS = (108.0, 140.0)                 # 2 polohy ostření na každé pozici oběhu (hloubka ostrosti pokryje 97–162 mm)
+C_PORT_CABLE = 4.0                      # port bodu M o 4 mm vyšší – kabel Pt100 a vlákno vedou nad hlavou CS645 (ne skrz ni)
+C_HEAD_GAP = 2.5                        # hlava CS645 2,5 mm od vnitřní stěny – mezera pro ohyb kabelu Pt100 a vlákna nahoru
+C_PAD_OUT = 0.5                         # podložky G10 vyčnívají 0,5 mm z kapes (hl. 19,5) – cela stojí jen na 3 bodech, ne na tištěném dně
