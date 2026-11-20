@@ -393,7 +393,7 @@ def main():
                               ["čela kolmá k ose (sloupek stojí ve dně patky P04 na podélníku), sražení 0,5 × 45°",
                                "svěrky P02 a P03 se nasunou shora, P04 drží patu"], pdf))
         made.append(sheet_bar("E7-B03", "G10 pad, podložka ⌀20", "sklotextit G10 / FR4, tyč ⌀20", 20, p.C_INS_T, 3,
-                              ["3 kusy, délka 40 ±0,05, čela rovnoběžná ≤ 0,05 (všechny 3 stejně)",
+                              [f"3 kusy, délka {p.C_INS_T:g} ±0,05, čela rovnoběžná ≤ 0,05 (všechny 3 stejně)",
                                "v kapsách ⌀20,4 ve dně cely, vyčnívají 0,5 mm"], pdf, chamfer=0.3))
         for prof in bp.PROFILES:
             made.append(sheet_profile(prof, pdf))

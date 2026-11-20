@@ -279,7 +279,7 @@ def n02(pdf):
     ax.text(14, 98, "Elektroizolanty Praha – sklotextit G10, tyč ⌀20 × 1000 mm", fontsize=9.5, weight="bold", color=CUT)
     S2 = 0.22
     used = bar(ax, 14, 74, [("B03", p.C_INS_T)] * 3, S2 * 1.6, 8, f"B03 podložky ⌀20 × {p.C_INS_T:g} – 3 ks z jedné tyče",
-               "délka 40 ±0,05, čela rovnoběžná ≤ 0,05 – všechny tři stejné (cela na nich stojí)")
+               f"délka {p.C_INS_T:g} ±0,05, čela rovnoběžná ≤ 0,05 – všechny tři stejné (cela na nich stojí)")
     ax.text(14, 58, f"Zbytek tyče ≈ {1000 - used:g} mm (rezerva). Pokud firma neřeže na přesnou délku: nařezat "
                     "s přídavkem 1 mm a čela srovnat\nbroušením na rovné desce (smirkový papír), všechny tři najednou "
                     "v přípravku.", fontsize=7, color=MUTE)
