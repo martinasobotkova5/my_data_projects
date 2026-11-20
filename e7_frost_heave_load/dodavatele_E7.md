@@ -57,6 +57,7 @@ Stav 19. 11. 2026. Ceny jsou orientační, většinou bez DPH, a je potřeba je 
 | firma | soubory |
 |---|---|
 | ENPRAG | `vyroba/narezy/E7_narezy_profily_ENPRAG.pdf`, `poptavka_ramu.md` |
+| HENNLICH (igus) | `poptavka_igus_HENNLICH.md` |
 | Kovohutě Rokycany | `vyroba/narezy/E7_narezy_invar_Rokycany.pdf` (B01: závit M6 nahoře, důlek 90° dole), `poptavka_invar_Rokycany.md` |
 | Elektroizolanty Praha | `vyroba/narezy/E7_narezy_G10_Elektroizolanty.pdf` |
 | grupol.cz | `vyroba/laser/*.dxf` |
